@@ -1,0 +1,75 @@
+{
+  "cli": {
+    "version": ">= 16.0.0"
+  },
+  "build": {
+    "base": {
+      "env": {
+        "THEME_VARIANT": "default"
+      }
+    },
+    "default": {
+      "extends": "base"
+    },
+    "classic": {
+      "extends": "base",
+      "env": {
+        "THEME_VARIANT": "classic"
+      }
+    },
+    "zen-ink": {
+      "extends": "base",
+      "env": {
+        "THEME_VARIANT": "zen-ink"
+      }
+    },
+    "forest-breath": {
+      "extends": "base",
+      "env": {
+        "THEME_VARIANT": "forest-breath"
+      }
+    },
+    "force": {
+      "extends": "base",
+      "env": {
+        "THEME_VARIANT": "force"
+      }
+    },
+    "pure-luxury": {
+      "extends": "base",
+      "env": {
+        "THEME_VARIANT": "pure-luxury"
+      }
+    },
+    "innovation": {
+      "extends": "base",
+      "env": {
+        "THEME_VARIANT": "innovation"
+      }
+    },
+    "pastel-calm": {
+      "extends": "base",
+      "env": {
+        "THEME_VARIANT": "pastel-calm"
+      }
+    },
+    "retro-sport": {
+      "extends": "base",
+      "env": {
+        "THEME_VARIANT": "retro-sport"
+      }
+    },
+    "pulse": {
+      "extends": "base",
+      "env": {
+        "THEME_VARIANT": "pulse"
+      }
+    },
+    "rogue": {
+      "extends": "base",
+      "env": {
+        "THEME_VARIANT": "rogue"
+      }
+    }
+  }
+}

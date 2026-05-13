@@ -1,0 +1,90 @@
+import type { ExpoConfig } from 'expo/config';
+
+type ThemeVariant =
+  | 'default'
+  | 'classic'
+  | 'zen-ink'
+  | 'forest-breath'
+  | 'force'
+  | 'pure-luxury'
+  | 'innovation'
+  | 'pastel-calm'
+  | 'retro-sport'
+  | 'pulse'
+  | 'rogue';
+
+const THEME_ICON_MAP: Record<ThemeVariant, string> = {
+  default: './assets/images/icon.png',
+  classic: './assets/images/logo.png',
+  'zen-ink': './assets/images/theme-zen.ink.png',
+  'forest-breath': './assets/images/theme-forest-breath.png',
+  force: './assets/images/theme-force.png',
+  'pure-luxury': './assets/images/theme-pure-luxury-logo.png',
+  innovation: './assets/images/theme-innovation-logo.png',
+  'pastel-calm': './assets/images/theme-pastel-calm-logo.png',
+  'retro-sport': './assets/images/theme-retro-sport-logo.png',
+  pulse: './assets/images/theme-pulse.png',
+  rogue: './assets/images/theme-rogue.png',
+};
+
+const themeVariant = (process.env.THEME_VARIANT as ThemeVariant | undefined) ?? 'default';
+const selectedIcon = THEME_ICON_MAP[themeVariant] ?? THEME_ICON_MAP.default;
+
+const config: ExpoConfig = {
+  name: 'daely-rn',
+  slug: 'daely-rn',
+  version: '1.0.0',
+  orientation: 'portrait',
+  icon: selectedIcon,
+  scheme: 'daelyrn',
+  userInterfaceStyle: 'automatic',
+  newArchEnabled: true,
+  ios: {
+    supportsTablet: true,
+    bundleIdentifier: 'com.daely.app',
+    icon: selectedIcon,
+  },
+  android: {
+    package: 'com.daely.app',
+    adaptiveIcon: {
+      backgroundColor: '#E6F4FE',
+      foregroundImage: selectedIcon,
+      backgroundImage: './assets/images/android-icon-background.png',
+      monochromeImage: './assets/images/android-icon-monochrome.png',
+    },
+    edgeToEdgeEnabled: true,
+    predictiveBackGestureEnabled: false,
+  },
+  web: {
+    output: 'static',
+    favicon: './assets/images/favicon.png',
+  },
+  plugins: [
+    'expo-router',
+    [
+      'expo-splash-screen',
+      {
+        image: './assets/images/splash-icon.png',
+        imageWidth: 200,
+        resizeMode: 'contain',
+        backgroundColor: '#ffffff',
+        dark: {
+          backgroundColor: '#000000',
+        },
+      },
+    ],
+    'expo-font',
+  ],
+  experiments: {
+    typedRoutes: true,
+    reactCompiler: true,
+  },
+  extra: {
+    eas: {
+      projectId: '14bbaac1-4dc2-4a7b-98c5-d3f826e4ceab',
+    },
+    themeVariant,
+  },
+};
+
+export default config;

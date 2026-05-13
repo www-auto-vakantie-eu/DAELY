@@ -1,0 +1,190 @@
+{
+  "home": {
+    "subtitle": "Kleine stappen, groot verschil",
+    "protocol_by": "Protocol door",
+    "welcome_back": "Welkom terug,",
+    "initializing": "Protocol Initialiseren...",
+    "daily_protocol": "DAGELIJKS PROTOCOL",
+    "library": "BIBLIOTHEEK",
+    "my_workouts": "Mijn Workouts",
+    "train_like_pro": "Train als een pro.",
+    "personal_collection": "Jouw persoonlijke collectie van trainingsprotocollen.",
+    "start_protocol": "Start Protocol",
+    "open_library": "Open Bibliotheek",
+    "most_recent": "MEEST RECENT",
+    "meals_macros": "MAALTIJDEN & MACRO'S",
+    "my_nutrition": "Mijn Voedingsschema",
+    "fuel_body": "Voed je lichaam voor optimale prestaties.",
+    "view_plan": "BEKIJK SCHEMA",
+    "stats_analysis": "STATISTIEKEN & ANALYSE",
+    "my_progress": "Mijn Voortgang",
+    "track_journey": "Houd je reis bij en vier de successen.",
+    "view_progress": "BEKIJK VOORTGANG",
+    "ai_generated": "AI GEGENEREERD",
+    "my_personalized_plan": "Mijn Persoonlijke Schema",
+    "roadmap_success": "Jouw persoonlijke routekaart naar succes.",
+    "open_plan": "OPEN SCHEMA",
+    "daily_tracking": "DAGELIJKSE TRACKING",
+    "my_habits": "Mijn Gewoontes",
+    "small_actions": "Kleine dagelijkse acties zorgen voor enorme resultaten.",
+    "track_habits": "TRACK GEWOONTES",
+    "calendar_schedule": "Kalender & Schema",
+    "plan_success": "Plan je succes"
+  },
+  "disciplines": {
+    "title": "Bibliotheek.",
+    "subtitle": "Beheers elke beweging",
+    "workouts": "Workouts",
+    "exercises": "Oefeningen",
+    "programs": "Programma's",
+    "create_workout": "Eigen Workout Maken",
+    "search_exercises": "Zoek oefeningen...",
+    "all": "Alles",
+    "min": "MIN",
+    "weeks": "WEKEN",
+    "no_programs": "Nog geen programma's beschikbaar."
+  },
+  "nutrition": {
+    "title": "Voeding.",
+    "subtitle": "Voeding die resultaten oplevert",
+    "protocol_filters": "Protocol Filters",
+    "clear_all": "Alles Wissen",
+    "apply_filters": "Filters Toepassen",
+    "active": "Actief:",
+    "kcal": "KCAL",
+    "g_protein": "G EIWIT"
+  },
+  "mind": {
+    "title": "Geest.",
+    "subtitle": "Train je geest net als je lichaam.",
+    "back_to_categories": "Terug naar Categorieën",
+    "mins": "MIN",
+    "no_sessions": "Nog geen sessies gevonden in deze categorie.",
+    "categories": {
+      "signature_methods": "Kenmerkende Methoden",
+      "focus": "Focus",
+      "recovery": "Herstel",
+      "sleep": "Slaap",
+      "pre_game": "Pre-Game"
+    }
+  },
+  "community": {
+    "title": "Community.",
+    "subtitle": "Elite meesters van beweging."
+  },
+  "athlete": {
+    "title": "Identiteit.",
+    "subtitle": "Kwantificatie van je eigen discipline en progressie.",
+    "tabs": {
+      "profile": "Profiel",
+      "partners": "Partners",
+      "challenges": "Uitdagingen",
+      "events": "Evenementen"
+    },
+    "profile": {
+      "elite_member": "ELITE LID",
+      "days": "Dagen",
+      "rank": "Rang",
+      "achievements": "Prestaties",
+      "badges": "Badges",
+      "feedback_title": "Help ons verbeteren!",
+      "feedback_desc": "Deel je ervaring en maak kans op exclusieve prijzen en extra XP.",
+      "feedback_btn": "Deel je feedback & Win prijzen!"
+    },
+    "partners": {
+      "all": "Alles",
+      "apparel": "Kleding",
+      "nutrition": "Voeding",
+      "supplements": "Supplementen",
+      "memberships": "Abonnementen",
+      "discount": "10% KORTING",
+      "automatic": "AUTOMATISCH"
+    },
+    "challenges": {
+      "active": "Actief",
+      "current_goals": "Huidige Doelen",
+      "days_left": "Dagen Over",
+      "no_active": "Geen actieve uitdagingen. Start er hieronder een!",
+      "discover": "Ontdekken",
+      "available": "Beschikbare Uitdagingen",
+      "objective": "Doelstelling",
+      "progress": "Voortgang",
+      "day": "Dag",
+      "of": "van",
+      "complete_day": "Voltooi Dag",
+      "daily_tasks": "Dagelijkse Taken",
+      "more_days": "meer dagen",
+      "start": "Start Uitdaging",
+      "difficulty": {
+        "beginner": "Beginner",
+        "intermediate": "Gemiddeld",
+        "advanced": "Gevorderd"
+      }
+    },
+    "events": {
+      "discover": "Ontdekken",
+      "upcoming": "Aankomende Evenementen",
+      "participants": "Deelnemers",
+      "type": "Type",
+      "level": "Niveau",
+      "about": "Over het Evenement",
+      "register": "Nu Registreren",
+      "event_types": {
+        "obstacle_run": "Obstakelrun",
+        "fitness_race": "Fitness Race",
+        "trifecta_weekend": "Trifecta Weekend",
+        "functional_fitness": "Functionele Fitness",
+        "bodybuilding": "Bodybuilding",
+        "powerlifting": "Powerliften",
+        "weightlifting": "Gewichtheffen",
+        "expo_competition": "Expo & Competitie",
+        "festival": "Festival",
+        "conference": "Conferentie",
+        "awards": "Awards"
+      },
+      "event_stats_types": {
+        "ocr": "OCR",
+        "fitness_race": "Fitness Race",
+        "crossfit": "CrossFit",
+        "bodybuilding": "Bodybuilding",
+        "powerlifting": "Powerliften",
+        "olympic_lifting": "Olympisch Gewichtheffen",
+        "expo": "Expo",
+        "lifestyle": "Lifestyle",
+        "business": "Zakelijk",
+        "awards": "Awards"
+      },
+      "event_levels": {
+        "all_levels": "Alle Niveaus",
+        "advanced": "Gevorderd",
+        "extreme": "Extreem",
+        "elite": "Elite",
+        "beginner_intermediate": "Beginner/Gemiddeld",
+        "pro_amateur": "Pro/Amateur",
+        "professional": "Professioneel",
+        "executive": "Executive"
+      }
+    },
+    "creator": {
+      "following": "Volgend",
+      "follow": "Volgen",
+      "activity": "Activiteit",
+      "workouts": "Workouts",
+      "nutrition": "Voeding",
+      "activity_items": {
+        "bench_press": "100kg Bankdrukken Voltooid",
+        "bench_press_time": "2 dagen geleden",
+        "meditation": "6 Fase Meditatie Afgerond",
+        "meditation_time": "4 dagen geleden",
+        "nutrition_plan": "Nieuw voedingsschema gemaakt",
+        "nutrition_plan_time": "1 week geleden"
+      },
+      "kcal": "KCAL",
+      "protein": "G EIWIT"
+    },
+    "signature": {
+      "method_steps": "Methode Stappen",
+      "start_session": "Start Sessie"
+    }
+  }
+}

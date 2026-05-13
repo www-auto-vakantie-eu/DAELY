@@ -1,0 +1,117 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: users
+    // Document ID: {userId} (matches auth.uid)
+    // Fields:
+    //   - uid: string (required, immutable) - matches auth.uid
+    //   - email: string (required) - user's email
+    //   - displayName: string (optional) - user's display name
+    //   - photoURL: string (optional) - user's photo URL
+    //   - role: string (required, enum: ['admin', 'user']) - user's role
+    //   - streak: number (optional) - current streak
+    //   - daelyPoints: number (optional) - accumulated points
+    //   - followedCreators: list (optional) - list of creator IDs
+    //   - activeHomeCreatorId: string (optional) - selected creator ID
+    //   - createdAt: timestamp (required, immutable)
+    //   - updatedAt: timestamp (required)
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() &&
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    function uidUnchanged() {
+      return !('uid' in request.resource.data) || request.resource.data.uid == request.auth.uid;
+    }
+
+    function uidNotModified() {
+      return !('uid' in request.resource.data) || request.resource.data.uid == resource.data.uid;
+    }
+
+    function isValidEmail(email) {
+      return email is string && email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+    }
+
+    function hasRequiredUserFields(data) {
+      return data.keys().hasAll(['uid', 'email', 'role', 'createdAt', 'updatedAt']);
+    }
+
+    function isValidUser(data) {
+            return hasRequiredUserFields(data) &&
+              data.uid is string && data.uid.size() > 0 && data.uid.size() < 128 &&
+              isValidEmail(data.email) &&
+              data.role in ['admin', 'user', 'influencer', 'partner', 'event_manager'] &&
+              data.createdAt is timestamp &&
+              data.updatedAt is timestamp &&
+             (!('displayName' in data) || (data.displayName is string && data.displayName.size() <= 100)) &&
+             (!('photoURL' in data) || (data.photoURL is string && data.photoURL.size() <= 2048)) &&
+             (!('streak' in data) || (data.streak is number && data.streak >= 0)) &&
+             (!('daelyPoints' in data) || (data.daelyPoints is number && data.daelyPoints >= 0 && data.daelyPoints <= 1000000)) &&
+             (!('followedCreators' in data) || (data.followedCreators is list && data.followedCreators.size() <= 100)) &&
+             (!('activeHomeCreatorId' in data) || data.activeHomeCreatorId == null || (data.activeHomeCreatorId is string && data.activeHomeCreatorId.size() <= 128));
+    }
+
+    function isValidWorkoutHistory(data) {
+      return data.keys().hasAll(['userId', 'workoutId', 'title', 'durationMinutes', 'completedAt']) &&
+             data.userId is string && data.userId.size() > 0 && data.userId.size() < 128 &&
+             data.workoutId is string && data.workoutId.size() > 0 && data.workoutId.size() < 128 &&
+             data.title is string && data.title.size() > 0 && data.title.size() < 256 &&
+             data.durationMinutes is number && data.durationMinutes >= 1 && data.durationMinutes <= 1440 &&
+             data.completedAt is timestamp &&
+             (!('caloriesBurned' in data) || (data.caloriesBurned is number && data.caloriesBurned >= 0)) &&
+             (!('completedSetsCount' in data) || (data.completedSetsCount is number && data.completedSetsCount >= 0));
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow create: if isAuthenticated() && isOwner(userId) && isValidUser(request.resource.data) && uidUnchanged() && (request.resource.data.role == 'user' || isAdmin());
+      allow update: if isAuthenticated() && isOwner(userId) && isValidUser(request.resource.data) && uidNotModified() && request.resource.data.createdAt == resource.data.createdAt && (request.resource.data.role == resource.data.role || isAdmin());
+      allow delete: if isAdmin();
+      
+      match /workoutHistory/{historyId} {
+        allow read: if isOwner(userId) || isAdmin();
+        allow create: if isAuthenticated() && isOwner(userId) && isValidWorkoutHistory(request.resource.data) && request.resource.data.userId == request.auth.uid;
+        allow update: if isAuthenticated() && isOwner(userId) && isValidWorkoutHistory(request.resource.data) && request.resource.data.userId == resource.data.userId && request.resource.data.completedAt == resource.data.completedAt;
+        allow delete: if isOwner(userId) || isAdmin();
+      }
+
+      match /weightLogs/{logId} {
+        allow read, write: if isOwner(userId) || isAdmin();
+      }
+
+      match /nutrition/{docId} {
+        allow read, write: if isOwner(userId) || isAdmin();
+      }
+
+      match /dailyHabits/{dateId} {
+        allow read, write: if isOwner(userId) || isAdmin();
+      }
+
+      match /customWorkouts/{workoutId} {
+        allow read, write: if isOwner(userId) || isAdmin();
+      }
+    }
+  }
+}

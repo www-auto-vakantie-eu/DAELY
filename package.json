@@ -1,0 +1,42 @@
+{
+  "name": "copy-of-copy-of-copy-of-copy-of-copy-of-daely-performance---elite-multi-sport-system",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "start": "npm --prefix daely-rn start",
+    "app": "npm --prefix daely-rn start",
+    "android": "npm --prefix daely-rn run android",
+    "ios": "npm --prefix daely-rn run ios",
+    "web": "npm --prefix daely-rn run web",
+    "web:dev": "vite",
+    "web:start": "node server.ts",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@google/genai": "^1.41.0",
+    "better-sqlite3": "^12.6.2",
+    "express": "^5.2.1",
+    "firebase": "^12.10.0",
+    "i18next": "^25.8.13",
+    "playwright": "^1.58.2",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "react-i18next": "^16.5.4",
+    "react-markdown": "^10.1.0",
+    "react-router-dom": "^7.13.1",
+    "recharts": "^3.8.0",
+    "tsx": "^4.21.0",
+    "zustand": "^5.0.11"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/express": "^5.0.6",
+    "@types/node": "^22.14.0",
+    "@vitejs/plugin-react": "^5.0.0",
+    "typescript": "~5.8.2",
+    "vite": "^6.2.0"
+  }
+}

@@ -1,0 +1,100 @@
+1. Barbell Bench Press
+2. Incline Barbell Bench Press
+3. Decline Barbell Bench Press
+4. Close Grip Bench Press
+5. Wide Grip Bench Press
+6. Reverse Grip Bench Press
+7. Guillotine Bench Press
+8. Paused Bench Press
+9. Tempo Bench Press
+10. Spoto Press
+11. Dumbbell Bench Press
+12. Incline Dumbbell Press
+13. Decline Dumbbell Press
+14. Neutral Grip Dumbbell Press
+15. Alternating Dumbbell Press
+16. Single Arm Dumbbell Press
+17. Dumbbell Fly
+18. Incline Dumbbell Fly
+19. Decline Dumbbell Fly
+20. Dumbbell Squeeze Press
+21. Machine Chest Press
+22. Incline Machine Press
+23. Plate Loaded Chest Press
+24. Hammer Strength Chest Press
+25. Seated Chest Press Machine
+26. Iso-Lateral Chest Press
+27. Machine Pec Fly
+28. Incline Machine Fly
+29. Decline Machine Press
+30. Converging Chest Press
+31. Cable Chest Fly
+32. Low Cable Fly
+33. High Cable Fly
+34. Standing Cable Press
+35. Single Arm Cable Press
+36. Cable Crossover
+37. Low to High Cable Fly
+38. High to Low Cable Fly
+39. Cable Chest Press
+40. Kneeling Cable Fly
+41. Push-Up
+42. Wide Push-Up
+43. Close Push-Up
+44. Decline Push-Up
+45. Incline Push-Up
+46. Archer Push-Up
+47. Plyometric Push-Up
+48. Diamond Push-Up
+49. Explosive Push-Up
+50. Spiderman Push-Up
+51. Ring Push-Up
+52. Ring Fly
+53. Korean Dips
+54. Straight Bar Dips
+55. Chest Dips
+56. Weighted Dips
+57. Pseudo Planche Push-Up
+58. Planche Push-Up
+59. Deep Push-Ups
+60. Typewriter Push-Ups
+61. One Arm Push-Up
+62. Weighted Push-Up
+63. Deficit Push-Up
+64. Resistance Band Push-Up
+65. Explosive Clap Push-Up
+66. Ring Archer Push-Up
+67. Ring Chest Press
+68. Bulgarian Push-Up
+69. Feet Elevated Ring Push-Up
+70. Suspended Push-Up
+71. Landmine Chest Press
+72. Landmine Floor Press
+73. Landmine Incline Press
+74. Kettlebell Floor Press
+75. Kettlebell Chest Press
+76. Medicine Ball Push-Up
+77. Medicine Ball Chest Throw
+78. Resistance Band Chest Press
+79. Resistance Band Fly
+80. Plate Press
+81. Pec Deck Fly
+82. Incline Pec Deck
+83. Decline Pec Deck
+84. Cable Standing Fly
+85. Cable Seated Fly
+86. Plate Squeeze Press
+87. Isometric Chest Squeeze
+88. Floor Fly
+89. Floor Press
+90. Dumbbell Pullover
+91. Svend Press
+92. Guillotine Press
+93. Hex Press
+94. Chaos Push-Up
+95. Tempo Push-Up
+96. Paused Push-Up
+97. Banded Bench Press
+98. Reverse Band Bench Press
+99. Slingshot Bench Press
+100. Chain Bench Press

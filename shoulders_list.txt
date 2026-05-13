@@ -1,0 +1,25 @@
+1. Barbell Overhead Press
+2. Standing Military Press
+3. Behind the Neck Press
+4. Push Press
+5. Barbell Front Raise
+6. Dumbbell Shoulder Press
+7. Arnold Press
+8. Dumbbell Lateral Raise
+9. Dumbbell Front Raise
+10. Dumbbell Rear Delt Fly
+11. Cable Lateral Raise
+12. Single Arm Cable Lateral Raise
+13. Cable Front Raise
+14. Cable Rear Delt Fly
+15. Cable Face Pull
+16. Machine Shoulder Press
+17. Plate Loaded Shoulder Press
+18. Machine Lateral Raise
+19. Reverse Pec Deck
+20. Smith Machine Shoulder Press
+21. Handstand Push-Up
+22. Pike Push-Up
+23. Wall Handstand Push-Up
+24. Landmine Shoulder Press
+25. Resistance Band Lateral Raise

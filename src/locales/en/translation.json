@@ -1,0 +1,190 @@
+{
+  "home": {
+    "subtitle": "Small steps, big difference",
+    "protocol_by": "Protocol by",
+    "welcome_back": "Welcome back,",
+    "initializing": "Initializing Protocol...",
+    "daily_protocol": "DAILY PROTOCOL",
+    "library": "LIBRARY",
+    "my_workouts": "My Workouts",
+    "train_like_pro": "Train like a pro.",
+    "personal_collection": "Your personal collection of training protocols.",
+    "start_protocol": "Start Protocol",
+    "open_library": "Open Library",
+    "most_recent": "MOST RECENT",
+    "meals_macros": "MEALS & MACROS",
+    "my_nutrition": "My Nutrition Plan",
+    "fuel_body": "Fuel your body for optimal performance.",
+    "view_plan": "VIEW PLAN",
+    "stats_analysis": "STATISTICS & ANALYSIS",
+    "my_progress": "My Progress",
+    "track_journey": "Track your journey and celebrate successes.",
+    "view_progress": "VIEW PROGRESS",
+    "ai_generated": "AI GENERATED",
+    "my_personalized_plan": "My Personalized Plan",
+    "roadmap_success": "Your personal roadmap to success.",
+    "open_plan": "OPEN PLAN",
+    "daily_tracking": "DAILY TRACKING",
+    "my_habits": "My Habits",
+    "small_actions": "Small daily actions create massive results.",
+    "track_habits": "TRACK HABITS",
+    "calendar_schedule": "Calendar & Schedule",
+    "plan_success": "Plan your success"
+  },
+  "disciplines": {
+    "title": "Library.",
+    "subtitle": "Master every movement",
+    "workouts": "Workouts",
+    "exercises": "Exercises",
+    "programs": "Programs",
+    "create_workout": "Create Custom Workout",
+    "search_exercises": "Search exercises...",
+    "all": "All",
+    "min": "MIN",
+    "weeks": "WEEKS",
+    "no_programs": "No programs available yet."
+  },
+  "nutrition": {
+    "title": "Nutrition.",
+    "subtitle": "Nutrition that delivers results",
+    "protocol_filters": "Protocol Filters",
+    "clear_all": "Clear All",
+    "apply_filters": "Apply Filters",
+    "active": "Active:",
+    "kcal": "KCAL",
+    "g_protein": "G PROTEIN"
+  },
+  "mind": {
+    "title": "Mind.",
+    "subtitle": "Train your mind like your body.",
+    "back_to_categories": "Back to Categories",
+    "mins": "MINS",
+    "no_sessions": "No sessions found in this category yet.",
+    "categories": {
+      "signature_methods": "Signature Methods",
+      "focus": "Focus",
+      "recovery": "Recovery",
+      "sleep": "Sleep",
+      "pre_game": "Pre-Game"
+    }
+  },
+  "community": {
+    "title": "Community.",
+    "subtitle": "Elite masters of movement."
+  },
+  "athlete": {
+    "title": "Identity.",
+    "subtitle": "Quantification of your own discipline and progression.",
+    "tabs": {
+      "profile": "Profile",
+      "partners": "Partners",
+      "challenges": "Challenges",
+      "events": "Events"
+    },
+    "profile": {
+      "elite_member": "ELITE MEMBER",
+      "days": "Days",
+      "rank": "Rank",
+      "achievements": "Achievements",
+      "badges": "Badges",
+      "feedback_title": "Help us improve!",
+      "feedback_desc": "Share your experience and win exclusive prizes and extra XP.",
+      "feedback_btn": "Share your feedback & Win prizes!"
+    },
+    "partners": {
+      "all": "All",
+      "apparel": "Apparel",
+      "nutrition": "Nutrition",
+      "supplements": "Supplements",
+      "memberships": "Memberships",
+      "discount": "10% DISCOUNT",
+      "automatic": "AUTOMATIC"
+    },
+    "challenges": {
+      "active": "Active",
+      "current_goals": "Current Goals",
+      "days_left": "Days Left",
+      "no_active": "No active challenges. Start one below!",
+      "discover": "Discover",
+      "available": "Available Challenges",
+      "objective": "Objective",
+      "progress": "Progress",
+      "day": "Day",
+      "of": "of",
+      "complete_day": "Complete Day",
+      "daily_tasks": "Daily Tasks",
+      "more_days": "more days",
+      "start": "Start Challenge",
+      "difficulty": {
+        "beginner": "Beginner",
+        "intermediate": "Intermediate",
+        "advanced": "Advanced"
+      }
+    },
+    "events": {
+      "discover": "Discover",
+      "upcoming": "Upcoming Events",
+      "participants": "Participants",
+      "type": "Type",
+      "level": "Level",
+      "about": "About the Event",
+      "register": "Register Now",
+      "event_types": {
+        "obstacle_run": "Obstacle Run",
+        "fitness_race": "Fitness Race",
+        "trifecta_weekend": "Trifecta Weekend",
+        "functional_fitness": "Functional Fitness",
+        "bodybuilding": "Bodybuilding",
+        "powerlifting": "Powerlifting",
+        "weightlifting": "Weightlifting",
+        "expo_competition": "Expo & Competition",
+        "festival": "Festival",
+        "conference": "Conference",
+        "awards": "Awards"
+      },
+      "event_stats_types": {
+        "ocr": "OCR",
+        "fitness_race": "Fitness Race",
+        "crossfit": "CrossFit",
+        "bodybuilding": "Bodybuilding",
+        "powerlifting": "Powerlifting",
+        "olympic_lifting": "Olympic Lifting",
+        "expo": "Expo",
+        "lifestyle": "Lifestyle",
+        "business": "Business",
+        "awards": "Awards"
+      },
+      "event_levels": {
+        "all_levels": "All Levels",
+        "advanced": "Advanced",
+        "extreme": "Extreme",
+        "elite": "Elite",
+        "beginner_intermediate": "Beginner/Intermediate",
+        "pro_amateur": "Pro/Amateur",
+        "professional": "Professional",
+        "executive": "Executive"
+      }
+    },
+    "creator": {
+      "following": "Following",
+      "follow": "Follow",
+      "activity": "Activity",
+      "workouts": "Workouts",
+      "nutrition": "Nutrition",
+      "activity_items": {
+        "bench_press": "100kg Bench Press Completed",
+        "bench_press_time": "2 days ago",
+        "meditation": "6 Phase Meditation Finished",
+        "meditation_time": "4 days ago",
+        "nutrition_plan": "New nutrition plan created",
+        "nutrition_plan_time": "1 week ago"
+      },
+      "kcal": "KCAL",
+      "protein": "G PROTEIN"
+    },
+    "signature": {
+      "method_steps": "Method Steps",
+      "start_session": "Start Session"
+    }
+  }
+}

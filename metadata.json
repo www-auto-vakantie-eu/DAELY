@@ -1,0 +1,9 @@
+{
+  "name": "DAELY Project XX",
+  "description": "Een high-end multi-sport health & performance platform geïnspireerd door top-apps zoals CENTR en Freeletics. Bevat uitgebreide libraries voor fitness, hyrox, voeding en meer.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone",
+    "screen-wake-lock"
+  ]
+}

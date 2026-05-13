@@ -1,0 +1,25 @@
+1. Barbell Bent Over Row
+2. Pendlay Row
+3. Wide Grip Barbell Row
+4. Yates Row
+5. Seal Row
+6. Single Arm Dumbbell Row
+7. Chest Supported Dumbbell Row
+8. Incline Bench Dumbbell Row
+9. Renegade Row
+10. Dumbbell Reverse Fly
+11. Seated Cable Row
+12. Wide Grip Cable Row
+13. Single Arm Cable Row
+14. Face Pull
+15. Cable Rear Delt Fly
+16. Machine Row
+17. Hammer Strength Row
+18. Chest Supported Machine Row
+19. Reverse Pec Deck Fly
+20. Plate Loaded Row
+21. Pull-Up
+22. Wide Grip Pull-Up
+23. Inverted Row
+24. TRX Row
+25. Ring Row

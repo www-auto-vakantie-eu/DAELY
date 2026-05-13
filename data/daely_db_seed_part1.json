@@ -1,0 +1,331 @@
+
+[
+  {
+    "export": "EXPORT_1",
+    "data": {
+      "meta": {
+        "app": "DAELY",
+        "seed_version": "1.0",
+        "locale": "nl-NL",
+        "currency": "EUR"
+      },
+      "subscription_plans": [
+        {
+          "id": "aur_sub_000001",
+          "name": "DAELY Basic",
+          "price_eur": 9.99,
+          "billing_period": "monthly",
+          "features_included": [
+            "Toegang tot alle Discipline Libraries",
+            "Basis Workout Tracking",
+            "Basis Analytics",
+            "Toegang tot Open Creator content"
+          ],
+          "features_locked": [
+            "Premium Voedingsplannen",
+            "Advanced Performance Analytics",
+            "Elite Gauntlet Challenges",
+            "Directe Messaging met Coaches"
+          ],
+          "is_active": true
+        },
+        {
+          "id": "aur_sub_000002",
+          "name": "DAELY Pro",
+          "price_eur": 14.99,
+          "billing_period": "monthly",
+          "features_included": [
+            "Alles in Basic",
+            "Alle Pro Creator Programs",
+            "Gepersonaliseerde Voedingsplannen",
+            "Mind Meditatie Bibliotheek",
+            "Advanced Performance Analytics"
+          ],
+          "features_locked": [
+            "Elite Creator Content",
+            "Directe Messaging met Coaches",
+            "Gauntlet Rewards",
+            "Early Access Features"
+          ],
+          "is_active": true
+        },
+        {
+          "id": "aur_sub_000003",
+          "name": "DAELY Elite",
+          "price_eur": 19.99,
+          "billing_period": "monthly",
+          "features_included": [
+            "Alles in Pro",
+            "Alle Verified Creator Content",
+            "DAELY Gauntlet (Premium Challenges)",
+            "Directe Messaging met geselecteerde Coaches",
+            "Advanced HRV & Biometric Data",
+            "Lifetime Elite Badge"
+          ],
+          "features_locked": [],
+          "is_active": true
+        }
+      ],
+      "disciplines": [
+        {
+          "id": "aur_dis_000001",
+          "name": "Fitness",
+          "slug": "fitness",
+          "description": "De ultieme library voor hypertrofie en algehele lichaamscompositie.",
+          "primary_goals": [
+            "Spiermassa",
+            "Lichaamscompositie",
+            "Kracht"
+          ],
+          "level_range": "beginner-expert",
+          "icon_key": "fitness_icon",
+          "cover_image_key": "fitness_cover"
+        },
+        {
+          "id": "aur_dis_000002",
+          "name": "Heavyweight",
+          "slug": "heavyweight",
+          "description": "Focus op pure kracht en de 'Big Three' van powerlifting.",
+          "primary_goals": [
+            "Maximale Kracht",
+            "Techniek",
+            "Power"
+          ],
+          "level_range": "intermediate-expert",
+          "icon_key": "heavyweight_icon",
+          "cover_image_key": "heavyweight_cover"
+        },
+        {
+          "id": "aur_dis_000003",
+          "name": "Hardlopen",
+          "slug": "hardlopen",
+          "description": "Van 5km sprints tot marathon endurance protocollen.",
+          "primary_goals": [
+            "Uithoudingsvermogen",
+            "Snelheid",
+            "Cardiovasculaire Gezondheid"
+          ],
+          "level_range": "beginner-expert",
+          "icon_key": "running_icon",
+          "cover_image_key": "running_cover"
+        },
+        {
+          "id": "aur_dis_000004",
+          "name": "Calisthenics",
+          "slug": "calisthenics",
+          "description": "Beheersing van het eigen lichaamsgewicht en statische skills.",
+          "primary_goals": [
+            "Body Control",
+            "Relatieve Kracht",
+            "Skills"
+          ],
+          "level_range": "beginner-expert",
+          "icon_key": "calisthenics_icon",
+          "cover_image_key": "calisthenics_cover"
+        },
+        {
+          "id": "aur_dis_000005",
+          "name": "Mobiliteit",
+          "slug": "mobiliteit",
+          "description": "Verbeter je range of motion en voorkom blessures.",
+          "primary_goals": [
+            "Flexibiliteit",
+            "Gewrichtsgezondheid",
+            "Herstel"
+          ],
+          "level_range": "beginner-expert",
+          "icon_key": "mobility_icon",
+          "cover_image_key": "mobility_cover"
+        },
+        {
+          "id": "aur_dis_000006",
+          "name": "Hyrox",
+          "slug": "hyrox",
+          "description": "Specifieke voorbereiding op de wereldwijde fitness race.",
+          "primary_goals": [
+            "Race Readiness",
+            "Conditioning",
+            "Functionele Kracht"
+          ],
+          "level_range": "intermediate-expert",
+          "icon_key": "hyrox_icon",
+          "cover_image_key": "hyrox_cover"
+        },
+        {
+          "id": "aur_dis_000007",
+          "name": "Yoga",
+          "slug": "yoga",
+          "description": "Balans tussen fysieke kracht en mentale rust via asanas.",
+          "primary_goals": [
+            "Balans",
+            "Focus",
+            "Flexibiliteit"
+          ],
+          "level_range": "beginner-expert",
+          "icon_key": "yoga_icon",
+          "cover_image_key": "yoga_cover"
+        },
+        {
+          "id": "aur_dis_000008",
+          "name": "Pilates",
+          "slug": "pilates",
+          "description": "Versterk je core en verbeter je houding door precisie.",
+          "primary_goals": [
+            "Core Kracht",
+            "Houding",
+            "Control"
+          ],
+          "level_range": "beginner-intermediate",
+          "icon_key": "pilates_icon",
+          "cover_image_key": "pilates_cover"
+        },
+        {
+          "id": "aur_dis_000009",
+          "name": "Combat Training",
+          "slug": "combat-training",
+          "description": "Technieken uit MMA en boksen voor conditie en strijdbaarheid.",
+          "primary_goals": [
+            "Zelfverdediging",
+            "Agility",
+            "Conditie"
+          ],
+          "level_range": "beginner-advanced",
+          "icon_key": "combat_icon",
+          "cover_image_key": "combat_cover"
+        }
+      ],
+      "muscle_groups": [
+        { "id": "aur_mus_000001", "name": "Borst", "slug": "borst" },
+        { "id": "aur_mus_000002", "name": "Bovenrug", "slug": "bovenrug" },
+        { "id": "aur_mus_000003", "name": "Onderrug", "slug": "onderrug" },
+        { "id": "aur_mus_000004", "name": "Schouders", "slug": "schouders" },
+        { "id": "aur_mus_000005", "name": "Triceps", "slug": "triceps" },
+        { "id": "aur_mus_000006", "name": "Biceps", "slug": "biceps" },
+        { "id": "aur_mus_000007", "name": "Buik", "slug": "buik" },
+        { "id": "aur_mus_000008", "name": "Benen", "slug": "benen" },
+        { "id": "aur_mus_000009", "name": "Billen", "slug": "billen" }
+      ],
+      "equipment": [
+        { "id": "aur_equ_000001", "name": "Barbell", "slug": "barbell", "category": "free_weights" },
+        { "id": "aur_equ_000002", "name": "Dumbbells", "slug": "dumbbells", "category": "free_weights" },
+        { "id": "aur_equ_000003", "name": "Kettlebell", "slug": "kettlebell", "category": "free_weights" },
+        { "id": "aur_equ_000004", "name": "Pull-up Bar", "slug": "pull-up-bar", "category": "bodyweight" },
+        { "id": "aur_equ_000005", "name": "Dip Bars", "slug": "dip-bars", "category": "bodyweight" },
+        { "id": "aur_equ_000006", "name": "Weight Bench", "slug": "weight-bench", "category": "free_weights" },
+        { "id": "aur_equ_000007", "name": "Squat Rack", "slug": "squat-rack", "category": "free_weights" },
+        { "id": "aur_equ_000008", "name": "Cable Machine", "slug": "cable-machine", "category": "machines" },
+        { "id": "aur_equ_000009", "name": "Leg Press", "slug": "leg-press", "category": "machines" },
+        { "id": "aur_equ_000010", "name": "Lat Pulldown Machine", "slug": "lat-pulldown-machine", "category": "machines" },
+        { "id": "aur_equ_000011", "name": "Rowing Machine", "slug": "rowing-machine", "category": "cardio" },
+        { "id": "aur_equ_000012", "name": "Treadmill", "slug": "treadmill", "category": "cardio" },
+        { "id": "aur_equ_000013", "name": "Yoga Mat", "slug": "yoga-mat", "category": "mobility" },
+        { "id": "aur_equ_000014", "name": "Foam Roller", "slug": "foam-roller", "category": "mobility" },
+        { "id": "aur_equ_000015", "name": "Resistance Bands", "slug": "resistance-bands", "category": "misc" },
+        { "id": "aur_equ_000016", "name": "SkiErg", "slug": "skierg", "category": "cardio" },
+        { "id": "aur_equ_000017", "name": "Sled", "slug": "sled", "category": "machines" },
+        { "id": "aur_equ_000018", "name": "Medicine Ball", "slug": "medicine-ball", "category": "free_weights" },
+        { "id": "aur_equ_000019", "name": "EZ Bar", "slug": "ez-bar", "category": "free_weights" },
+        { "id": "aur_equ_000020", "name": "Parallettes", "slug": "parallettes", "category": "bodyweight" },
+        { "id": "aur_equ_000021", "name": "Gymnastic Rings", "slug": "gymnastic-rings", "category": "bodyweight" },
+        { "id": "aur_equ_000022", "name": "Smith Machine", "slug": "smith-machine", "category": "machines" },
+        { "id": "aur_equ_000023", "name": "Leg Extension Machine", "slug": "leg-extension-machine", "category": "machines" },
+        { "id": "aur_equ_000024", "name": "Leg Curl Machine", "slug": "leg-curl-machine", "category": "machines" },
+        { "id": "aur_equ_000025", "name": "Calf Raise Machine", "slug": "calf-raise-machine", "category": "machines" },
+        { "id": "aur_equ_000026", "name": "Pec Deck Machine", "slug": "pec-deck-machine", "category": "machines" },
+        { "id": "aur_equ_000027", "name": "Assault Bike", "slug": "assault-bike", "category": "cardio" },
+        { "id": "aur_equ_000028", "name": "Battle Ropes", "slug": "battle-ropes", "category": "misc" },
+        { "id": "aur_equ_000029", "name": "Weight Belt", "slug": "weight-belt", "category": "misc" },
+        { "id": "aur_equ_000030", "name": "Boxing Gloves", "slug": "boxing-gloves", "category": "misc" },
+        { "id": "aur_equ_000031", "name": "Heavy Bag", "slug": "heavy-bag", "category": "misc" },
+        { "id": "aur_equ_000032", "name": "Ab Wheel", "slug": "ab-wheel", "category": "bodyweight" },
+        { "id": "aur_equ_000033", "name": "Yoga Blocks", "slug": "yoga-blocks", "category": "mobility" },
+        { "id": "aur_equ_000034", "name": "Jump Rope", "slug": "jump-rope", "category": "cardio" },
+        { "id": "aur_equ_000035", "name": "Sandbag", "slug": "sandbag", "category": "free_weights" }
+      ],
+      "exercises": [
+        {
+          "id": "aur_exe_000001",
+          "discipline_id": "aur_dis_000001",
+          "name": "Barbell Bench Press",
+          "slug": "barbell-bench-press",
+          "difficulty": "intermediate",
+          "primary_muscle_group_id": "aur_mus_000001",
+          "secondary_muscle_group_ids": ["aur_mus_000004", "aur_mus_000005"],
+          "equipment_ids": ["aur_equ_000001", "aur_equ_000006", "aur_equ_000007"],
+          "description_short": "De gouden standaard voor borstkracht en massa.",
+          "coaching_cues": [
+            "Houd je voeten stevig op de grond",
+            "Trek je schouderbladen naar elkaar toe",
+            "Laat de stang zakken tot het midden van je borst"
+          ],
+          "common_mistakes": [
+            "Het opwippen van de stang op de borst",
+            "Het loslaten van de voeten van de vloer",
+            "Te veel gewicht gebruiken ten koste van vorm"
+          ],
+          "contraindications": [
+            "Recente schouderblessures",
+            "Polsinstabiliteit"
+          ],
+          "rep_scheme_examples": ["3x8-10", "4x6", "5x5"],
+          "duration_seconds_min": 30,
+          "duration_seconds_max": 60,
+          "video_key": "v_bench_press",
+          "calories_estimate_min": 15,
+          "calories_estimate_max": 25
+        },
+        {
+          "id": "aur_exe_000002",
+          "discipline_id": "aur_dis_000001",
+          "name": "Incline Dumbbell Press",
+          "slug": "incline-dumbbell-press",
+          "difficulty": "intermediate",
+          "primary_muscle_group_id": "aur_mus_000001",
+          "secondary_muscle_group_ids": ["aur_mus_000004"],
+          "equipment_ids": ["aur_equ_000002", "aur_equ_000006"],
+          "description_short": "Focus op de bovenkant van de borstspieren.",
+          "coaching_cues": [
+            "Zet het bankje op een hoek van 30-45 graden",
+            "Breng de dumbbells gecontroleerd omlaag",
+            "Strek je armen volledig uit zonder de ellebogen te locken"
+          ],
+          "common_mistakes": [
+            "Bankje te steil zetten (focus verschuift naar schouders)",
+            "Dumbbells tegen elkaar tikken bovenin"
+          ],
+          "contraindications": ["Voorste schouder pijn"],
+          "rep_scheme_examples": ["3x12", "4x10"],
+          "duration_seconds_min": 40,
+          "duration_seconds_max": 60,
+          "video_key": "v_incline_db_press",
+          "calories_estimate_min": 10,
+          "calories_estimate_max": 20
+        },
+        {
+          "id": "aur_exe_000003",
+          "discipline_id": "aur_dis_000001",
+          "name": "Cable Crossover",
+          "slug": "cable-crossover",
+          "difficulty": "beginner",
+          "primary_muscle_group_id": "aur_mus_000001",
+          "secondary_muscle_group_ids": [],
+          "equipment_ids": ["aur_equ_000008"],
+          "description_short": "Isolatie oefening voor de borst met constante spanning.",
+          "coaching_cues": [
+            "Stap een klein stukje naar voren",
+            "Houd een lichte buiging in de ellebogen",
+            "Knijp je borstspieren hard samen in het midden"
+          ],
+          "common_mistakes": ["Armen te veel buigen (wordt een press)"],
+          "contraindications": [],
+          "rep_scheme_examples": ["3x15", "4x12"],
+          "duration_seconds_min": 45,
+          "duration_seconds_max": 75,
+          "video_key": "v_cable_crossover",
+          "calories_estimate_min": 8,
+          "calories_estimate_max": 15
+        }
+      ]
+    }
+  }
+]

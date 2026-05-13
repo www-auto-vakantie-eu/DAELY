@@ -1,0 +1,412 @@
+[
+  {
+    "id": "f_w_new_1",
+    "discipline_id": "fitness",
+    "name": "Full Body Strength Workout",
+    "duration_min": 45,
+    "difficulty": "Beginner",
+    "goal": "Kracht opbouwen",
+    "exercises": [
+      {
+        "exercise_id": "legs_25_1",
+        "sets": 4,
+        "reps": "6",
+        "rest_sec": 90
+      },
+      {
+        "exercise_id": "f_ex1",
+        "sets": 4,
+        "reps": "6",
+        "rest_sec": 90
+      },
+      {
+        "exercise_id": "upper_back_25_1",
+        "sets": 3,
+        "reps": "8",
+        "rest_sec": 90
+      },
+      {
+        "exercise_id": "shoulders_25_6",
+        "sets": 3,
+        "reps": "10",
+        "rest_sec": 90
+      },
+      {
+        "exercise_id": "f_ex23",
+        "sets": 3,
+        "reps": "45 sec",
+        "rest_sec": 90
+      }
+    ],
+    "rest_between_sets_sec": 90
+  },
+  {
+    "id": "f_w_new_2",
+    "discipline_id": "fitness",
+    "name": "Chest & Triceps Workout",
+    "duration_min": 45,
+    "difficulty": "Intermediate",
+    "goal": "Upper body push strength",
+    "exercises": [
+      {
+        "exercise_id": "f_ex1",
+        "sets": 4,
+        "reps": "8",
+        "rest_sec": 60
+      },
+      {
+        "exercise_id": "f_chest_5",
+        "sets": 3,
+        "reps": "10",
+        "rest_sec": 60
+      },
+      {
+        "exercise_id": "chest_100_31",
+        "sets": 3,
+        "reps": "12",
+        "rest_sec": 60
+      },
+      {
+        "exercise_id": "f_ex12",
+        "sets": 3,
+        "reps": "12",
+        "rest_sec": 60
+      },
+      {
+        "exercise_id": "triceps_25_21",
+        "sets": 3,
+        "reps": "12",
+        "rest_sec": 60
+      }
+    ],
+    "rest_between_sets_sec": 60
+  },
+  {
+    "id": "f_w_new_3",
+    "discipline_id": "fitness",
+    "name": "Back & Biceps Workout",
+    "duration_min": 45,
+    "difficulty": "Intermediate",
+    "goal": "Pull strength",
+    "exercises": [
+      {
+        "exercise_id": "f_ex6",
+        "sets": 4,
+        "reps": "8",
+        "rest_sec": 60
+      },
+      {
+        "exercise_id": "hw_ex7",
+        "sets": 4,
+        "reps": "8",
+        "rest_sec": 60
+      },
+      {
+        "exercise_id": "f_ex5",
+        "sets": 3,
+        "reps": "10",
+        "rest_sec": 60
+      },
+      {
+        "exercise_id": "biceps_25_1",
+        "sets": 3,
+        "reps": "10",
+        "rest_sec": 60
+      },
+      {
+        "exercise_id": "biceps_25_8",
+        "sets": 3,
+        "reps": "12",
+        "rest_sec": 60
+      }
+    ],
+    "rest_between_sets_sec": 60
+  },
+  {
+    "id": "f_w_new_4",
+    "discipline_id": "fitness",
+    "name": "Leg Day Workout",
+    "duration_min": 45,
+    "difficulty": "Intermediate",
+    "goal": "Onderlichaam kracht",
+    "exercises": [
+      {
+        "exercise_id": "legs_25_1",
+        "sets": 4,
+        "reps": "6",
+        "rest_sec": 90
+      },
+      {
+        "exercise_id": "hw_ex16",
+        "sets": 4,
+        "reps": "8",
+        "rest_sec": 90
+      },
+      {
+        "exercise_id": "f_ex16",
+        "sets": 3,
+        "reps": "10",
+        "rest_sec": 90
+      },
+      {
+        "exercise_id": "f_ex20",
+        "sets": 3,
+        "reps": "12",
+        "rest_sec": 90
+      },
+      {
+        "exercise_id": "f_ex_calf_1",
+        "sets": 4,
+        "reps": "15",
+        "rest_sec": 90
+      }
+    ],
+    "rest_between_sets_sec": 90
+  },
+  {
+    "id": "f_w_new_5",
+    "discipline_id": "fitness",
+    "name": "Shoulder Builder Workout",
+    "duration_min": 45,
+    "difficulty": "Intermediate",
+    "goal": "Schouders sterker maken",
+    "exercises": [
+      {
+        "exercise_id": "shoulders_25_1",
+        "sets": 4,
+        "reps": "6",
+        "rest_sec": 60
+      },
+      {
+        "exercise_id": "shoulders_25_8",
+        "sets": 3,
+        "reps": "12",
+        "rest_sec": 60
+      },
+      {
+        "exercise_id": "shoulders_25_7",
+        "sets": 3,
+        "reps": "10",
+        "rest_sec": 60
+      },
+      {
+        "exercise_id": "shoulders_25_15",
+        "sets": 3,
+        "reps": "12",
+        "rest_sec": 60
+      },
+      {
+        "exercise_id": "upper_back_25_15",
+        "sets": 3,
+        "reps": "12",
+        "rest_sec": 60
+      }
+    ],
+    "rest_between_sets_sec": 60
+  },
+  {
+    "id": "f_w_new_6",
+    "discipline_id": "fitness",
+    "name": "Core & Abs Workout",
+    "duration_min": 45,
+    "difficulty": "Intermediate",
+    "goal": "Core stabiliteit",
+    "exercises": [
+      {
+        "exercise_id": "f_ex24",
+        "sets": 3,
+        "reps": "12",
+        "rest_sec": 45
+      },
+      {
+        "exercise_id": "f_ex25",
+        "sets": 3,
+        "reps": "20",
+        "rest_sec": 45
+      },
+      {
+        "exercise_id": "f_ex23",
+        "sets": 3,
+        "reps": "60 sec",
+        "rest_sec": 45
+      },
+      {
+        "exercise_id": "f_ex_core_1",
+        "sets": 3,
+        "reps": "20",
+        "rest_sec": 45
+      },
+      {
+        "exercise_id": "f_ex_core_2",
+        "sets": 3,
+        "reps": "10",
+        "rest_sec": 45
+      }
+    ],
+    "rest_between_sets_sec": 45
+  },
+  {
+    "id": "f_w_new_7",
+    "discipline_id": "fitness",
+    "name": "Upper Body Workout",
+    "duration_min": 45,
+    "difficulty": "Intermediate",
+    "goal": "Bovenlichaam spiergroei",
+    "exercises": [
+      {
+        "exercise_id": "f_ex1",
+        "sets": 4,
+        "reps": "8",
+        "rest_sec": 60
+      },
+      {
+        "exercise_id": "f_ex6",
+        "sets": 4,
+        "reps": "8",
+        "rest_sec": 60
+      },
+      {
+        "exercise_id": "f_ex9",
+        "sets": 3,
+        "reps": "10",
+        "rest_sec": 60
+      },
+      {
+        "exercise_id": "biceps_25_1",
+        "sets": 3,
+        "reps": "10",
+        "rest_sec": 60
+      },
+      {
+        "exercise_id": "f_ex12",
+        "sets": 3,
+        "reps": "12",
+        "rest_sec": 60
+      }
+    ],
+    "rest_between_sets_sec": 60
+  },
+  {
+    "id": "f_w_new_8",
+    "discipline_id": "fitness",
+    "name": "Lower Body Workout",
+    "duration_min": 45,
+    "difficulty": "Intermediate",
+    "goal": "Kracht en stabiliteit",
+    "exercises": [
+      {
+        "exercise_id": "hw_ex2",
+        "sets": 4,
+        "reps": "6",
+        "rest_sec": 90
+      },
+      {
+        "exercise_id": "f_ex21",
+        "sets": 4,
+        "reps": "8",
+        "rest_sec": 90
+      },
+      {
+        "exercise_id": "legs_25_8",
+        "sets": 3,
+        "reps": "10",
+        "rest_sec": 90
+      },
+      {
+        "exercise_id": "f_ex18",
+        "sets": 3,
+        "reps": "12",
+        "rest_sec": 90
+      },
+      {
+        "exercise_id": "f_ex_calf_1",
+        "sets": 4,
+        "reps": "15",
+        "rest_sec": 90
+      }
+    ],
+    "rest_between_sets_sec": 90
+  },
+  {
+    "id": "f_w_new_9",
+    "discipline_id": "fitness",
+    "name": "Push Workout",
+    "duration_min": 45,
+    "difficulty": "Intermediate",
+    "goal": "Borst, schouders en triceps",
+    "exercises": [
+      {
+        "exercise_id": "f_ex1",
+        "sets": 4,
+        "reps": "8",
+        "rest_sec": 60
+      },
+      {
+        "exercise_id": "f_chest_5",
+        "sets": 3,
+        "reps": "10",
+        "rest_sec": 60
+      },
+      {
+        "exercise_id": "f_ex9",
+        "sets": 3,
+        "reps": "10",
+        "rest_sec": 60
+      },
+      {
+        "exercise_id": "f_ex10",
+        "sets": 3,
+        "reps": "12",
+        "rest_sec": 60
+      },
+      {
+        "exercise_id": "f_ex12",
+        "sets": 3,
+        "reps": "12",
+        "rest_sec": 60
+      }
+    ],
+    "rest_between_sets_sec": 60
+  },
+  {
+    "id": "f_w_new_10",
+    "discipline_id": "fitness",
+    "name": "Pull Workout",
+    "duration_min": 45,
+    "difficulty": "Intermediate",
+    "goal": "Rug en biceps",
+    "exercises": [
+      {
+        "exercise_id": "f_ex7",
+        "sets": 4,
+        "reps": "5",
+        "rest_sec": 90
+      },
+      {
+        "exercise_id": "f_ex6",
+        "sets": 4,
+        "reps": "8",
+        "rest_sec": 90
+      },
+      {
+        "exercise_id": "f_ex5",
+        "sets": 3,
+        "reps": "10",
+        "rest_sec": 90
+      },
+      {
+        "exercise_id": "upper_back_25_14",
+        "sets": 3,
+        "reps": "12",
+        "rest_sec": 90
+      },
+      {
+        "exercise_id": "biceps_25_8",
+        "sets": 3,
+        "reps": "12",
+        "rest_sec": 90
+      }
+    ],
+    "rest_between_sets_sec": 90
+  }
+]

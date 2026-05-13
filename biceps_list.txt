@@ -1,0 +1,25 @@
+1. Barbell Curl
+2. EZ Bar Curl
+3. Wide Grip Barbell Curl
+4. Close Grip Barbell Curl
+5. Reverse Barbell Curl
+6. Dumbbell Curl
+7. Alternating Dumbbell Curl
+8. Hammer Curl
+9. Concentration Curl
+10. Incline Dumbbell Curl
+11. Cable Biceps Curl
+12. Rope Hammer Curl
+13. Single Arm Cable Curl
+14. High Cable Curl
+15. Cable Preacher Curl
+16. Preacher Curl Machine
+17. Seated Biceps Curl Machine
+18. Plate Loaded Curl Machine
+19. Cable Curl Machine
+20. Arm Curl Machine
+21. Chin-Up
+22. Underhand Grip Pull-Up
+23. Ring Chin-Up
+24. TRX Biceps Curl
+25. Inverted Chin-Up

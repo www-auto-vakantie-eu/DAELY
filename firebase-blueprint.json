@@ -1,0 +1,223 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile data including app state like followed creators and points.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "The unique identifier of the user, matching the Firebase Auth UID."
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "The user's email address."
+        },
+        "displayName": {
+          "type": "string",
+          "description": "The user's display name."
+        },
+        "photoURL": {
+          "type": "string",
+          "description": "URL to the user's profile photo."
+        },
+        "role": {
+          "type": "string",
+          "enum": ["admin", "user"],
+          "description": "The user's role for RBAC."
+        },
+        "streak": {
+          "type": "number",
+          "description": "The user's current login/activity streak."
+        },
+        "daelyPoints": {
+          "type": "number",
+          "description": "The user's accumulated Daely Points."
+        },
+        "followedCreators": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of creator IDs the user is following."
+        },
+        "activeHomeCreatorId": {
+          "type": "string",
+          "description": "The currently selected creator ID for the home screen perspective."
+        },
+        "createdAt": {
+          "type": "timestamp",
+          "description": "When the user profile was created."
+        },
+        "updatedAt": {
+          "type": "timestamp",
+          "description": "When the user profile was last updated."
+        }
+      },
+      "required": ["uid", "email", "role", "createdAt", "updatedAt"]
+    },
+    "WorkoutHistory": {
+      "title": "WorkoutHistory",
+      "description": "A record of a completed workout by a user.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "The ID of the user who completed the workout."
+        },
+        "workoutId": {
+          "type": "string",
+          "description": "The ID of the workout template."
+        },
+        "title": {
+          "type": "string",
+          "description": "The title of the workout."
+        },
+        "durationMinutes": {
+          "type": "number",
+          "description": "The duration of the workout in minutes."
+        },
+        "caloriesBurned": {
+          "type": "number",
+          "description": "Estimated calories burned."
+        },
+        "completedSetsCount": {
+          "type": "number",
+          "description": "The number of sets completed."
+        },
+        "exercises": {
+          "type": "array",
+          "description": "List of exercises performed with sets, reps, and weight."
+        },
+        "completedAt": {
+          "type": "timestamp",
+          "description": "When the workout was completed."
+        }
+      },
+      "required": ["userId", "workoutId", "title", "durationMinutes", "completedAt"]
+    },
+    "WeightLog": {
+      "title": "WeightLog",
+      "description": "A record of a user's weight at a specific time.",
+      "type": "object",
+      "properties": {
+        "weight": {
+          "type": "number",
+          "description": "The user's weight in kg."
+        },
+        "date": {
+          "type": "string",
+          "description": "Formatted date string."
+        },
+        "timestamp": {
+          "type": "timestamp",
+          "description": "When the weight was logged."
+        }
+      },
+      "required": ["weight", "date", "timestamp"]
+    },
+    "NutritionPlan": {
+      "title": "NutritionPlan",
+      "description": "The user's weekly nutrition plan.",
+      "type": "object",
+      "properties": {
+        "plan": {
+          "type": "array",
+          "description": "Array of daily nutrition plans."
+        }
+      },
+      "required": ["plan"]
+    },
+    "DailyHabits": {
+      "title": "DailyHabits",
+      "description": "The user's habits for a specific day.",
+      "type": "object",
+      "properties": {
+        "habits": {
+          "type": "object",
+          "description": "Map of habit IDs to boolean completion status."
+        },
+        "updatedAt": {
+          "type": "timestamp",
+          "description": "When the habits were last updated."
+        }
+      },
+      "required": ["habits", "updatedAt"]
+    },
+    "CustomWorkout": {
+      "title": "CustomWorkout",
+      "description": "A custom workout created by the user.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the custom workout."
+        },
+        "description": {
+          "type": "string",
+          "description": "Description of the custom workout."
+        },
+        "discipline_id": {
+          "type": "string",
+          "description": "The discipline ID."
+        },
+        "duration_min": {
+          "type": "number",
+          "description": "Estimated duration in minutes."
+        },
+        "difficulty": {
+          "type": "string",
+          "description": "Difficulty level."
+        },
+        "exercises": {
+          "type": "array",
+          "description": "List of exercises in the workout."
+        },
+        "createdAt": {
+          "type": "timestamp",
+          "description": "When the custom workout was created."
+        }
+      },
+      "required": ["name", "exercises", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": {
+        "$ref": "#/entities/UserProfile"
+      },
+      "description": "Stores user profiles and their app state."
+    },
+    "/users/{userId}/workoutHistory/{historyId}": {
+      "schema": {
+        "$ref": "#/entities/WorkoutHistory"
+      },
+      "description": "Stores the user's completed workouts."
+    },
+    "/users/{userId}/weightLogs/{logId}": {
+      "schema": {
+        "$ref": "#/entities/WeightLog"
+      },
+      "description": "Stores the user's weight logs."
+    },
+    "/users/{userId}/nutrition/weeklyPlan": {
+      "schema": {
+        "$ref": "#/entities/NutritionPlan"
+      },
+      "description": "Stores the user's weekly nutrition plan."
+    },
+    "/users/{userId}/dailyHabits/{dateId}": {
+      "schema": {
+        "$ref": "#/entities/DailyHabits"
+      },
+      "description": "Stores the user's daily habits."
+    },
+    "/users/{userId}/customWorkouts/{workoutId}": {
+      "schema": {
+        "$ref": "#/entities/CustomWorkout"
+      },
+      "description": "Stores the user's custom workouts."
+    }
+  }
+}

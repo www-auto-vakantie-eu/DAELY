@@ -1,0 +1,25 @@
+1. Barbell Back Squat
+2. Front Squat
+3. Romanian Deadlift
+4. Barbell Hip Thrust
+5. Barbell Lunges
+6. Dumbbell Goblet Squat
+7. Dumbbell Walking Lunges
+8. Dumbbell Bulgarian Split Squat
+9. Dumbbell Step-Ups
+10. Dumbbell Romanian Deadlift
+11. Leg Press
+12. Hack Squat Machine
+13. Seated Leg Curl
+14. Lying Leg Curl
+15. Leg Extension
+16. Bodyweight Squat
+17. Jump Squat
+18. Reverse Lunges
+19. Pistol Squat
+20. Wall Sit
+21. Box Jumps
+22. Kettlebell Swings
+23. Sled Push
+24. Sled Pull
+25. Curtsy Lunge

@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            daely-rn/package-lock.json
+
+      - name: Install root dependencies
+        run: npm ci
+
+      - name: Install mobile dependencies
+        run: npm ci --prefix daely-rn
+
+      - name: Typecheck root
+        run: npx tsc --noEmit
+
+      - name: Typecheck mobile
+        run: npx tsc --noEmit --project daely-rn/tsconfig.json
+
+      - name: Lint mobile
+        run: npm run lint --prefix daely-rn
+
+      - name: Build web
+        run: npm run build

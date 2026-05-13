@@ -1,0 +1,102 @@
+{
+  "pushQuickWins": {
+    "day1": {
+      "slot1": {
+        "nl": "Start: 12 min kracht nu",
+        "en": "Start now: 12 min strength"
+      },
+      "slot2": {
+        "nl": "Eiwitwrap in 15 min",
+        "en": "Protein wrap in 15 min"
+      },
+      "slot3": {
+        "nl": "5 min reset voor rust",
+        "en": "5 min reset for calm"
+      }
+    },
+    "day2": {
+      "slot1": {
+        "nl": "15 min intervalrun nu",
+        "en": "15 min interval run now"
+      },
+      "slot2": {
+        "nl": "Al 10+ min bewogen?",
+        "en": "Moved 10+ min today?"
+      },
+      "slot3": {
+        "nl": "Plan je sessie voor morgen",
+        "en": "Plan tomorrow session now"
+      }
+    },
+    "day3": {
+      "slot1": {
+        "nl": "Kegel reset 10 min (kies route)",
+        "en": "Kegel reset 10 min (pick route)"
+      },
+      "slot2": {
+        "nl": "3 nieuwe techniek-cues live",
+        "en": "3 new technique cues live"
+      },
+      "slot3": {
+        "nl": "Midweek reset in 5 min",
+        "en": "Midweek reset in 5 min"
+      }
+    },
+    "day4": {
+      "slot1": {
+        "nl": "Quick Strength variant B",
+        "en": "Quick Strength variant B"
+      },
+      "slot2": {
+        "nl": "Budget wrap-variant live",
+        "en": "Budget wrap variant live"
+      },
+      "slot3": {
+        "nl": "Wat was je obstakel vandaag?",
+        "en": "What is your obstacle today?"
+      }
+    },
+    "day5": {
+      "slot1": {
+        "nl": "Intervalrun progressie nu",
+        "en": "Interval run progression now"
+      },
+      "slot2": {
+        "nl": "Deel je win van de week",
+        "en": "Share your win this week"
+      },
+      "slot3": {
+        "nl": "Kies je weekend mini-doel",
+        "en": "Pick your weekend mini-goal"
+      }
+    },
+    "day6": {
+      "slot1": {
+        "nl": "Kies: 12m kracht of 15m run",
+        "en": "Pick: 12m strength or 15m run"
+      },
+      "slot2": {
+        "nl": "Lunchhack: gebruik leftovers",
+        "en": "Lunch hack: use leftovers"
+      },
+      "slot3": {
+        "nl": "Downshift: 5 min reset",
+        "en": "Downshift: 5 min reset"
+      }
+    },
+    "day7": {
+      "slot1": {
+        "nl": "10 min adem + mobiliteit",
+        "en": "10 min breath + mobility"
+      },
+      "slot2": {
+        "nl": "Hoeveel sessies haalde je?",
+        "en": "How many sessions did you do?"
+      },
+      "slot3": {
+        "nl": "Plan je 3 doelen voor morgen",
+        "en": "Plan your 3 goals for tomorrow"
+      }
+    }
+  }
+}
