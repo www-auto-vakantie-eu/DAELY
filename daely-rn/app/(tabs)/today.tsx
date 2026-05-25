@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react';
-import { ScrollView, StyleSheet, Text, View, Pressable } from 'react-native';
+import React, { useMemo, useState } from 'react';
+import { ScrollView, StyleSheet, Text, View, Pressable, ImageBackground, useWindowDimensions, NativeScrollEvent, NativeSyntheticEvent } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
@@ -23,11 +23,38 @@ const MACRO_DISTRIBUTION = [
   { label: 'Vetten', value: 51, color: '#F59E0B' },
 ];
 
+const TODAY_SWIPES = [
+  {
+    title: 'Welkom terug ...',
+    subtitle: 'Vandaag ligt er weer een sterke sessie voor je klaar.',
+    badge: 'DAELY TODAY',
+    image:
+      'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=1200&auto=format&fit=crop',
+  },
+  {
+    title: 'Hydrateer slim',
+    subtitle: 'Je hydratatie staat op 71%. Nog 2 glazen tot je dagdoel.',
+    badge: 'FOCUS',
+    image:
+      'https://images.unsplash.com/photo-1532634896-26909d0d4b6b?q=80&w=1200&auto=format&fit=crop',
+  },
+  {
+    title: 'Mindset momentum',
+    subtitle: 'Pak 8 minuten ademhaling voor maximale focus.',
+    badge: 'MIND',
+    image:
+      'https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=1200&auto=format&fit=crop',
+  },
+];
+
 export default function TodayScreen() {
   const router = useRouter();
   const theme = useTheme();
+  const { width } = useWindowDimensions();
+  const [activeHeroSlide, setActiveHeroSlide] = useState(0);
   const todayLabel = formatTodayLabel();
   const { workoutActivities, isAppHydrated } = useAppContext();
+  const heroSlideWidth = Math.max(width - 32, 280);
   const todayIsoDate = useMemo(() => {
     const d = new Date();
     const y = d.getFullYear();
@@ -46,6 +73,11 @@ export default function TodayScreen() {
     } else {
       router.push('/workouts');
     }
+  };
+
+  const handleHeroScrollEnd = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const nextIndex = Math.round(event.nativeEvent.contentOffset.x / heroSlideWidth);
+    setActiveHeroSlide(Math.min(Math.max(nextIndex, 0), TODAY_SWIPES.length - 1));
   };
 
   return (
@@ -89,6 +121,42 @@ export default function TodayScreen() {
         </View>
       </View>
 
+      <View style={styles.heroCarouselWrap}>
+        <ScrollView
+          horizontal
+          pagingEnabled
+          decelerationRate="fast"
+          showsHorizontalScrollIndicator={false}
+          snapToInterval={heroSlideWidth}
+          snapToAlignment="start"
+          onMomentumScrollEnd={handleHeroScrollEnd}
+          contentContainerStyle={styles.heroCarouselContent}
+        >
+          {TODAY_SWIPES.map((slide) => (
+            <ImageBackground
+              key={slide.title}
+              source={{ uri: slide.image }}
+              imageStyle={styles.heroSlideImage}
+              style={[styles.heroSlideCard, { width: heroSlideWidth }]}
+            >
+              <View style={styles.heroSlideOverlay}>
+                <Text style={styles.heroSlideBadge}>{slide.badge}</Text>
+                <Text style={styles.heroSlideTitle}>{slide.title}</Text>
+                <Text style={styles.heroSlideSubtitle}>{slide.subtitle}</Text>
+              </View>
+            </ImageBackground>
+          ))}
+        </ScrollView>
+        <View style={styles.heroDotsRow}>
+          {TODAY_SWIPES.map((slide, index) => (
+            <View
+              key={`${slide.title}-dot`}
+              style={[styles.heroDot, index === activeHeroSlide ? styles.heroDotActive : null]}
+            />
+          ))}
+        </View>
+      </View>
+
       <View style={styles.heroButtonWrap}>
         <Pressable
           style={styles.heroButton}
@@ -98,6 +166,25 @@ export default function TodayScreen() {
           <Text style={styles.heroButtonText}>
             Start Workout{todayWorkouts.length > 0 ? ' (gepland)' : ''}
           </Text>
+        </Pressable>
+      </View>
+
+      <View style={styles.quickKeysWrap}>
+        <Pressable style={[styles.quickKeyButton, { backgroundColor: '#16A34A' }]} onPress={() => router.push('/nutrition/add')}>
+          <MaterialCommunityIcons name="barcode-scan" size={16} color="#FFFFFF" />
+          <Text style={styles.quickKeyText}>Snel Toevoegen</Text>
+        </Pressable>
+        <Pressable style={[styles.quickKeyButton, { backgroundColor: '#2563EB' }]} onPress={() => router.push('/nutrition/compare')}>
+          <MaterialCommunityIcons name="scale-balance" size={16} color="#FFFFFF" />
+          <Text style={styles.quickKeyText}>Vergelijk Eten</Text>
+        </Pressable>
+        <Pressable style={[styles.quickKeyButton, { backgroundColor: '#F59E0B' }]} onPress={() => router.push('/my-nutrition')}>
+          <MaterialCommunityIcons name="notebook-outline" size={16} color="#FFFFFF" />
+          <Text style={styles.quickKeyText}>Mijn Voeding</Text>
+        </Pressable>
+        <Pressable style={[styles.quickKeyButton, { backgroundColor: '#4B5563' }]} onPress={() => router.push('/(tabs)/nutrition')}>
+          <MaterialCommunityIcons name="food-apple-outline" size={16} color="#FFFFFF" />
+          <Text style={styles.quickKeyText}>Voeding Overzicht</Text>
         </Pressable>
       </View>
 
@@ -318,8 +405,77 @@ const styles = StyleSheet.create({
     transform: [{ scale: 0.96 }],
     opacity: 0.9,
   },
+  heroCarouselWrap: {
+    marginBottom: 14,
+  },
+  heroCarouselContent: {
+    alignItems: 'stretch',
+  },
+  heroSlideCard: {
+    height: 162,
+    borderRadius: 18,
+    overflow: 'hidden',
+    marginRight: 10,
+  },
+  heroSlideImage: {
+    borderRadius: 18,
+  },
+  heroSlideOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(8, 14, 28, 0.48)',
+    paddingHorizontal: 14,
+    paddingVertical: 14,
+    justifyContent: 'flex-end',
+  },
+  heroSlideBadge: {
+    alignSelf: 'flex-start',
+    marginBottom: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 999,
+    backgroundColor: 'rgba(255, 255, 255, 0.18)',
+    color: '#FFFFFF',
+    fontSize: 10,
+    fontWeight: '700',
+    letterSpacing: 1,
+  },
+  heroSlideTitle: {
+    color: '#FFFFFF',
+    fontSize: 24,
+    lineHeight: 28,
+    fontWeight: '900',
+    letterSpacing: -0.4,
+  },
+  heroSlideSubtitle: {
+    marginTop: 4,
+    color: '#E5E7EB',
+    fontSize: 12,
+    lineHeight: 16,
+    fontWeight: '600',
+    maxWidth: '85%',
+  },
+  heroDotsRow: {
+    marginTop: 8,
+    marginBottom: 2,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+  },
+  heroDot: {
+    width: 7,
+    height: 7,
+    borderRadius: 4,
+    backgroundColor: '#CBD5E1',
+    opacity: 0.6,
+  },
+  heroDotActive: {
+    width: 20,
+    backgroundColor: '#2563EB',
+    opacity: 1,
+  },
   heroButtonWrap: {
-    marginBottom: 16,
+    marginBottom: 10,
   },
   heroButton: {
     backgroundColor: '#2563EB',
@@ -334,6 +490,27 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontWeight: '700',
     fontSize: 16,
+  },
+  quickKeysWrap: {
+    marginBottom: 16,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  quickKeyButton: {
+    width: '48.5%',
+    borderRadius: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+  },
+  quickKeyText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '700',
   },
   progressCard: {
     borderWidth: 1,

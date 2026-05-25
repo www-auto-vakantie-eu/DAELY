@@ -9,6 +9,9 @@ import { useTheme } from '@/hooks/use-theme';
 import { NUTRITION_MEALS } from '@/constants/nutrition-meals';
 import { useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import GlobalSearchModal from '../components/GlobalSearchModal';
+import { DISCIPLINES } from './disciplines';
+import { COMMUNITY_CREATORS } from '@/constants/community-creators';
 
 
 const FILTER_CATEGORIES = [
@@ -23,6 +26,68 @@ const FILTER_CATEGORIES = [
 
 
 export default function NutritionScreen() {
+  const [searchVisible, setSearchVisible] = useState(false);
+  const [searchResults, setSearchResults] = useState<Array<{ id: string; label: string; meta?: string; onSelect: () => void }>>([]);
+  const handleSearch = (query: string) => {
+    const normalizedQuery = query.trim().toLowerCase();
+    if (!normalizedQuery) {
+      setSearchResults([]);
+      return;
+    }
+
+    const results: Array<{ id: string; label: string; meta?: string; onSelect: () => void }> = [];
+    const seen = new Set<string>();
+    const addResult = (item: { id: string; label: string; meta?: string; onSelect: () => void }) => {
+      if (results.length >= 24) return;
+      if (seen.has(item.id)) return;
+      seen.add(item.id);
+      results.push(item);
+    };
+
+    NUTRITION_MEALS.forEach((meal) => {
+      const haystack = `${meal.title} ${meal.mealType} ${meal.description}`.toLowerCase();
+      if (!haystack.includes(normalizedQuery)) return;
+      addResult({
+        id: `meal-${meal.id}`,
+        label: meal.title,
+        meta: `Gerecht · ${meal.mealType}`,
+        onSelect: () => {
+          setSearchVisible(false);
+          router.push({ pathname: '/nutrition/[id]', params: { id: meal.id } });
+        },
+      });
+    });
+
+    DISCIPLINES.forEach((discipline) => {
+      const haystack = `${discipline.title} ${discipline.subtitle}`.toLowerCase();
+      if (!haystack.includes(normalizedQuery)) return;
+      addResult({
+        id: `discipline-${discipline.id}`,
+        label: discipline.title,
+        meta: 'Discipline',
+        onSelect: () => {
+          setSearchVisible(false);
+          router.push({ pathname: '/discipline/[slug]', params: { slug: discipline.slug } });
+        },
+      });
+    });
+
+    COMMUNITY_CREATORS.forEach((creator) => {
+      const haystack = `${creator.name} ${creator.specialty || ''}`.toLowerCase();
+      if (!haystack.includes(normalizedQuery)) return;
+      addResult({
+        id: `creator-${creator.id}`,
+        label: creator.name,
+        meta: 'Persoon · Community',
+        onSelect: () => {
+          setSearchVisible(false);
+          router.push({ pathname: '/community/creator/[id]', params: { id: creator.id } });
+        },
+      });
+    });
+
+    setSearchResults(results);
+  };
   const theme = useTheme();
   const router = useRouter();
   const [activeFilterCategory, setActiveFilterCategory] = useState(null);
@@ -59,10 +124,13 @@ export default function NutritionScreen() {
       {/* Header met titel, instellingen en winkelwagen */}
       <View style={styles.headerRow}>
         <View style={styles.headerTextBlock}>
-          <Text style={[styles.title, { color: theme.titleColor }]}>Maaltijden & Recepten</Text>
-          <Text style={[styles.subtitle, { color: theme.subtitleColor }]}>Bekijk alle sportmaaltijden en recepten</Text>
+          <Text style={[styles.title, { color: theme.titleColor }]}>Recepten</Text>
+          <Text style={[styles.subtitle, { color: theme.subtitleColor }]}>Bekijk alle sportrecepten</Text>
         </View>
         <View style={{ flexDirection: 'row', gap: 8 }}>
+          <Pressable style={styles.settingsPill} onPress={() => setSearchVisible(true)}>
+            <MaterialCommunityIcons name="magnify" size={22} color={theme.titleColor} />
+          </Pressable>
           <Pressable style={styles.settingsPill} onPress={() => {/* instellingen actie */}}>
             <MaterialCommunityIcons name="cog-outline" size={22} color={theme.titleColor} />
           </Pressable>
@@ -73,6 +141,23 @@ export default function NutritionScreen() {
       </View>
       <View style={{ height: 16 }} />
 
+      <View style={styles.quickActionsRow}>
+        <Pressable style={[styles.quickActionButton, styles.quickActionPrimary]} onPress={() => router.push('/nutrition/add')}>
+          <MaterialCommunityIcons name="plus-circle-outline" size={16} color="#FFFFFF" />
+          <Text style={styles.quickActionText}>Snel toevoegen</Text>
+        </Pressable>
+        <Pressable style={[styles.quickActionButton, styles.quickActionSecondary]} onPress={() => router.push('/my-nutrition')}>
+          <MaterialCommunityIcons name="notebook-outline" size={16} color="#FFFFFF" />
+          <Text style={styles.quickActionText}>Mijn Voeding</Text>
+        </Pressable>
+      </View>
+
+      <GlobalSearchModal
+        visible={searchVisible}
+        onClose={() => setSearchVisible(false)}
+        onSearch={handleSearch}
+        results={searchResults}
+      />
       {/* Filterbalk */}
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 12 }}>
         {FILTER_CATEGORIES.map(category => {
@@ -222,6 +307,32 @@ const styles = StyleSheet.create({
   settingsPillPressed: {
     transform: [{ scale: 0.96 }],
     opacity: 0.9,
+  },
+  quickActionsRow: {
+    flexDirection: 'row',
+    gap: 8,
+    marginBottom: 12,
+  },
+  quickActionButton: {
+    flex: 1,
+    borderRadius: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+  },
+  quickActionPrimary: {
+    backgroundColor: '#2563EB',
+  },
+  quickActionSecondary: {
+    backgroundColor: '#059669',
+  },
+  quickActionText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '700',
   },
   filterBarSection: {
     marginBottom: 14,

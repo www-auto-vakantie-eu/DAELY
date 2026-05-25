@@ -1,30 +1,249 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { useCallback, useState } from 'react';
+import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useFocusEffect, useRouter } from 'expo-router';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+
 import { useTheme } from '@/hooks/use-theme';
+import {
+  buildDayKey,
+  deleteNutritionLog,
+  getNutritionDailyTotals,
+  getNutritionLogsForDay,
+} from '@/services/nutrition-log';
+import type { NutritionDailyTotals, NutritionLogEntry } from '@/services/nutrition-log.types';
 
 export default function MyNutritionScreen() {
   const theme = useTheme();
+
+  const router = useRouter();
+  const [entries, setEntries] = useState<NutritionLogEntry[]>([]);
+  const [totals, setTotals] = useState<NutritionDailyTotals>({
+    dayKey: buildDayKey(new Date()),
+    kcal: 0,
+    protein: 0,
+    carbs: 0,
+    fats: 0,
+    itemCount: 0,
+  });
+
+  const loadToday = useCallback(async () => {
+    const dayKey = buildDayKey(new Date());
+    const [dayEntries, dayTotals] = await Promise.all([
+      getNutritionLogsForDay(dayKey),
+      getNutritionDailyTotals(dayKey),
+    ]);
+    setEntries(dayEntries);
+    setTotals(dayTotals);
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      void loadToday();
+    }, [loadToday])
+  );
+
+  const handleDelete = (id: string) => {
+    Alert.alert('Item verwijderen', 'Weet je zeker dat je dit item wilt verwijderen?', [
+      { text: 'Annuleren', style: 'cancel' },
+      {
+        text: 'Verwijderen',
+        style: 'destructive',
+        onPress: async () => {
+          await deleteNutritionLog(id);
+          await loadToday();
+        },
+      },
+    ]);
+  };
+
+  const todayLabel = new Date().toLocaleDateString('nl-NL', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+  });
+
   return (
-    <View style={[styles.container, { backgroundColor: theme.background }]}> 
-      <Text style={[styles.title, { color: theme.titleColor }]}>Mijn Voeding</Text>
-      <Text style={[styles.subtitle, { color: theme.subtitleColor }]}>Hier komt jouw voedingsinformatie, statistieken en weekgemiddelden.</Text>
-    </View>
+    <ScrollView style={[styles.screen, { backgroundColor: theme.background }]} contentContainerStyle={styles.content}>
+      <View style={styles.headerRow}>
+        <View>
+          <Text style={[styles.title, { color: theme.titleColor }]}>Mijn Voeding</Text>
+          <Text style={[styles.subtitle, { color: theme.subtitleColor }]}>{todayLabel.toUpperCase()}</Text>
+        </View>
+        <Pressable style={styles.addButton} onPress={() => router.push('/nutrition/add')}>
+          <MaterialCommunityIcons name="plus" size={15} color="#2563EB" />
+          <Text style={styles.addButtonText}>Snel toevoegen</Text>
+        </Pressable>
+      </View>
+
+      <Text style={[styles.sectionLabel, { color: theme.subtitleColor }]}>DAGTOTALEN</Text>
+      <View style={styles.totalsGrid}>
+        <View style={[styles.totalCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+          <Text style={[styles.totalValue, { color: theme.titleColor }]}>{totals.kcal}</Text>
+          <Text style={[styles.totalLabel, { color: theme.subtitleColor }]}>kcal</Text>
+        </View>
+        <View style={[styles.totalCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+          <Text style={[styles.totalValue, { color: theme.titleColor }]}>{totals.protein}g</Text>
+          <Text style={[styles.totalLabel, { color: theme.subtitleColor }]}>eiwit</Text>
+        </View>
+        <View style={[styles.totalCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+          <Text style={[styles.totalValue, { color: theme.titleColor }]}>{totals.carbs}g</Text>
+          <Text style={[styles.totalLabel, { color: theme.subtitleColor }]}>koolhydraten</Text>
+        </View>
+        <View style={[styles.totalCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+          <Text style={[styles.totalValue, { color: theme.titleColor }]}>{totals.fats}g</Text>
+          <Text style={[styles.totalLabel, { color: theme.subtitleColor }]}>vetten</Text>
+        </View>
+      </View>
+
+      <Text style={[styles.sectionLabel, { color: theme.subtitleColor }]}>LOGBOEK VANDAAG ({totals.itemCount})</Text>
+      {entries.length === 0 ? (
+        <View style={[styles.emptyCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+          <MaterialCommunityIcons name="silverware-fork-knife" size={20} color={theme.subtitleColor} />
+          <Text style={[styles.emptyText, { color: theme.subtitleColor }]}>Nog geen items toegevoegd vandaag.</Text>
+        </View>
+      ) : (
+        entries.map((entry) => (
+          <View key={entry.id} style={[styles.entryCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+            <View style={styles.entryTopRow}>
+              <View style={styles.entryLeft}>
+                <Text style={[styles.entryName, { color: theme.titleColor }]}>{entry.name}</Text>
+                <Text style={[styles.entryMeta, { color: theme.subtitleColor }]}>
+                  {entry.itemType} · {entry.mealType}
+                  {entry.amount && entry.amountUnit ? ` · ${entry.amount} ${entry.amountUnit}` : ''}
+                </Text>
+              </View>
+              <Pressable onPress={() => handleDelete(entry.id)} style={styles.deleteButton}>
+                <MaterialCommunityIcons name="trash-can-outline" size={18} color="#EF4444" />
+              </Pressable>
+            </View>
+            <Text style={[styles.entryMacros, { color: theme.subtitleColor }]}>
+              {entry.macros.kcal} kcal · E {entry.macros.protein}g · K {entry.macros.carbs}g · V {entry.macros.fats}g
+            </Text>
+          </View>
+        ))
+      )}
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  screen: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 24,
   },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
+  content: {
+    paddingHorizontal: 16,
+    paddingTop: 20,
+    paddingBottom: 88,
+  },
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
     marginBottom: 12,
   },
+  title: {
+    fontSize: 36,
+    lineHeight: 40,
+    fontWeight: '900',
+    letterSpacing: -0.9,
+  },
   subtitle: {
-    fontSize: 16,
-    textAlign: 'center',
+    marginTop: 4,
+    fontSize: 11,
+    fontWeight: '700',
+    letterSpacing: 1.2,
+  },
+  addButton: {
+    marginTop: 4,
+    backgroundColor: '#DBEAFE',
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  addButtonText: {
+    color: '#2563EB',
+    fontSize: 11,
+    fontWeight: '700',
+  },
+  sectionLabel: {
+    marginTop: 4,
+    marginBottom: 8,
+    marginLeft: 2,
+    fontSize: 11,
+    fontWeight: '700',
+    letterSpacing: 1.3,
+  },
+  totalsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+    marginBottom: 12,
+  },
+  totalCard: {
+    width: '48.5%',
+    borderWidth: 1,
+    borderRadius: 14,
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+  },
+  totalValue: {
+    fontSize: 22,
+    fontWeight: '900',
+    letterSpacing: -0.6,
+  },
+  totalLabel: {
+    marginTop: 3,
+    fontSize: 11,
+    fontWeight: '600',
+  },
+  emptyCard: {
+    borderWidth: 1,
+    borderRadius: 14,
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  emptyText: {
+    fontSize: 13,
+    fontWeight: '600',
+  },
+  entryCard: {
+    borderWidth: 1,
+    borderRadius: 14,
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+    marginBottom: 10,
+  },
+  entryTopRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    gap: 8,
+  },
+  entryLeft: {
+    flex: 1,
+  },
+  entryName: {
+    fontSize: 14,
+    fontWeight: '800',
+  },
+  entryMeta: {
+    marginTop: 2,
+    fontSize: 12,
+    fontWeight: '600',
+    textTransform: 'capitalize',
+  },
+  entryMacros: {
+    marginTop: 8,
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  deleteButton: {
+    padding: 4,
   },
 });
