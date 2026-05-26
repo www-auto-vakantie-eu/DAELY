@@ -5,6 +5,7 @@ import { Tabs, useRouter } from 'expo-router';
 import React, { useEffect } from 'react';
 import { Platform, View, Pressable, StyleSheet } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { GlobalCartButton } from '../components/GlobalCartButton';
 
 const styles = StyleSheet.create({
   globalCartButtonWrap: {
@@ -49,7 +50,7 @@ export default function TabLayout() {
 
   return (
     <View style={{ flex: 1 }}>
-      {/* Plaats de winkelwagenknop direct naast de instellingenknop in de header van elke pagina, zoals in nutrition.tsx. */}
+      <GlobalCartButton />
       <Tabs
         initialRouteName="today"
         screenOptions={{

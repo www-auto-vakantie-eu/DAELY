@@ -90,7 +90,7 @@ export default function MijnStatistiekenScreen() {
 
       {/* Charts Section */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Statistieken</Text>
+        <Text style={styles.sectionTitle}>Data</Text>
         <ChartPlaceholder title="Gewicht over tijd" />
         <ChartPlaceholder title="Workouts per week" />
         <ChartPlaceholder title="Calorieën verbrand" />

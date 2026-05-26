@@ -61,9 +61,9 @@ const MY_DOMAIN_CARDS = [
   },
   {
     id: 'stats',
-    title: 'Statistieken',
+    title: 'Data',
     description: 'Overzicht van al je statistieken op één plek.',
-    category: 'STATISTIEKEN',
+    category: 'DATA',
     accent: '#10B981',
     image: 'https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=1200&q=80',
     route: '/my-stats',
@@ -330,6 +330,15 @@ export default function HomeScreen() {
               <MaterialCommunityIcons name="gift" size={18} color="#FFFFFF" />
             </Pressable>
           ) : null}
+
+          <Pressable
+            style={({ pressed }) => [styles.quickActionButton, pressed ? styles.quickActionButtonPressed : null]}
+            onPress={() => handleCardPress('/find-coach')}
+          >
+            <MaterialCommunityIcons name="account-search-outline" size={18} color="#FFFFFF" />
+            <Text style={styles.quickActionText}>Vind Coach</Text>
+            <MaterialCommunityIcons name="arrow-right" size={18} color="#FFFFFF" />
+          </Pressable>
         </View>
 
         <View style={styles.bottomSpacer} />
