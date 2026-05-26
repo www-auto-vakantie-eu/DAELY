@@ -14,6 +14,7 @@ export interface CommunityCreator {
   followers: number;
   posts: number;
   bio: string;
+  country: CountryCode;
 }
 
 export interface PartnerBrand {
@@ -152,6 +153,7 @@ const fallbackCreatorsForCountry = (country: CountryCode): CommunityCreator[] =>
       followers: creator.followers + followerBoost,
       posts: creator.posts,
       bio: creator.bio,
+      country,
     };
   }).slice(0, 10);
 };
@@ -217,6 +219,7 @@ export const fetchCommunityCreators = async (country: CountryCode): Promise<Comm
       followers: parseFollowers(creator.followers),
       posts: Number.isFinite(Number(creator.active_subscribers)) ? Number(creator.active_subscribers) : 0,
       bio: String(creator.bio || ''),
+      country,
     }));
   } catch (error) {
     console.warn('Falling back to local community creators:', error);

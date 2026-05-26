@@ -40,6 +40,15 @@ function formatFollowers(n: number): string {
   return String(n);
 }
 
+function normalizeFilterLabel(value: string): string {
+  return value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toLowerCase();
+}
+
 // Herstel de volledige structuur van CreatorCard
 function CreatorCard({ creator, onPress }: { creator: CommunityCreator; onPress: () => void }) {
   const theme = useTheme();
@@ -431,6 +440,16 @@ export default function CommunityScreen() {
   // Filter logic for Creators
   useEffect(() => {
     let filtered = allCreators;
+
+    if (activeLanguage !== 'Alles') {
+      const selectedLanguageCountry = COUNTRY_OPTIONS.find(
+        (option) => normalizeFilterLabel(option.label) === normalizeFilterLabel(activeLanguage)
+      )?.code;
+      if (selectedLanguageCountry) {
+        filtered = filtered.filter((creator) => creator.country === selectedLanguageCountry);
+      }
+    }
+
     if (activeDiscipline !== 'Alles') {
       filtered = filtered.filter(c => c.specialty === activeDiscipline);
     }
@@ -445,9 +464,14 @@ export default function CommunityScreen() {
         return true;
       });
     }
-    // Geen filtering op taal/land mogelijk, alleen UI
+
     setVisibleCreators(filtered);
   }, [allCreators, activeDiscipline, activeType, activeLanguage]);
+
+  const hasActiveCreatorFilters = activeLanguage !== 'Alles' || activeDiscipline !== 'Alles' || activeType !== 'Alles';
+  const creatorsEmptyStateText = hasActiveCreatorFilters
+    ? 'Geen creators gevonden voor de gekozen filters.'
+    : 'Nog geen influencers voor dit land.';
 
 
   const loadFeed = useCallback(async (isRefresh = false) => {
@@ -691,7 +715,7 @@ export default function CommunityScreen() {
           ))}
           {visibleCreators.length === 0 ? (
             <View style={[styles.emptyState, { borderColor: theme.border, backgroundColor: theme.card }]}>
-              <Text style={[styles.emptyStateText, { color: theme.subtitleColor }]}>Nog geen influencers voor dit land.</Text>
+              <Text style={[styles.emptyStateText, { color: theme.subtitleColor }]}>{creatorsEmptyStateText}</Text>
             </View>
           ) : null}
           <View style={styles.bottomSpacer} />
@@ -764,7 +788,7 @@ export default function CommunityScreen() {
                   }}
                 >
                   <MaterialCommunityIcons name="heart-outline" size={16} color={theme.subtitleColor} />
-                  <Text style={[styles.engagementText, { color: theme.subtitleColor }]}>{Math.floor(Math.random() * 100)}</Text>
+                  <Text style={[styles.engagementText, { color: theme.subtitleColor }]}>{item.engagementCount}</Text>
                 </Pressable>
                 <Pressable
                   onPress={() => {
@@ -894,6 +918,11 @@ export default function CommunityScreen() {
               </Pressable>
             );
           })}
+          {filteredEvents.length === 0 ? (
+            <View style={[styles.emptyState, { borderColor: theme.border, backgroundColor: theme.card }]}>
+              <Text style={[styles.emptyStateText, { color: theme.subtitleColor }]}>Nog geen events voor dit filter.</Text>
+            </View>
+          ) : null}
           <View style={styles.bottomSpacer} />
         </ScrollView>
       </ScrollView>

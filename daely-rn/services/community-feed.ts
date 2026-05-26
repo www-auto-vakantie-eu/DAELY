@@ -48,6 +48,19 @@ export interface WorkoutFeedItem extends BaseFeedItem {
 
 export type FeedItem = PostFeedItem | MealFeedItem | WorkoutFeedItem;
 
+function hashString(value: string): number {
+  let hash = 0;
+  for (let i = 0; i < value.length; i += 1) {
+    hash = (hash * 31 + value.charCodeAt(i)) >>> 0;
+  }
+  return hash;
+}
+
+function stableEngagement(seed: string, min: number, max: number): number {
+  const span = Math.max(max - min + 1, 1);
+  return min + (hashString(seed) % span);
+}
+
 export async function getCommunitFeed(options?: {
   includeUnapproved?: boolean;
   limit?: number;
@@ -79,7 +92,7 @@ export async function getCommunitFeed(options?: {
       authorImage: 'https://images.unsplash.com/photo-1511690743698-d9d85f2fbf38?auto=format&fit=crop&w=400&q=80',
       authorType: 'creator',
       createdAt: post.createdAt,
-      engagementCount: Math.floor(Math.random() * 500),
+      engagementCount: stableEngagement(`post:${post.id}`, 24, 520),
       isApproved: post.status === 'approved',
       data: post,
       title: post.title,
@@ -101,7 +114,7 @@ export async function getCommunitFeed(options?: {
       authorImage: 'https://images.unsplash.com/photo-1511690743698-d9d85f2fbf38?auto=format&fit=crop&w=400&q=80',
       authorType: 'creator',
       createdAt: entry.createdAt,
-      engagementCount: Math.floor(Math.random() * 300),
+      engagementCount: stableEngagement(`meal:${entry.id}`, 16, 340),
       isApproved: entry.status === 'approved',
       data: meal,
       title: meal.title,
@@ -127,7 +140,7 @@ export async function getCommunitFeed(options?: {
       authorImage: 'https://images.unsplash.com/photo-1511690743698-d9d85f2fbf38?auto=format&fit=crop&w=400&q=80',
       authorType: 'creator',
       createdAt: entry.createdAt,
-      engagementCount: Math.floor(Math.random() * 400),
+      engagementCount: stableEngagement(`workout:${entry.id}`, 18, 420),
       isApproved: entry.status === 'approved',
       data: workout,
       title: workout.title,
