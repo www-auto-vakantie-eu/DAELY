@@ -12,6 +12,7 @@ import {
 } from 'firebase/auth';
 import { auth, googleProvider, db } from '../../firebase';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
+import type { UserRole } from '../../../types';
 
 const getAuthErrorMessage = (error: unknown, fallback: string) => {
   if (!error || typeof error !== 'object' || !('code' in error)) {
@@ -123,7 +124,7 @@ export const ForgotPasswordScreen: React.FC = () => {
   );
 };
 
-import type { UserRole } from '../../../types';
+export const CreateAccountScreen: React.FC = () => {
   const { setIsCreatingAccount, setIsLoggedIn } = useAppContext();
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);

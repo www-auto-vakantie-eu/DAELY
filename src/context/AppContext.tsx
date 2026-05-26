@@ -427,14 +427,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
               displayName: currentUser.displayName,
               photoURL: currentUser.photoURL,
               role: 'user',
-                        } else {
-                          // Haal de rol op uit het bestaande document
-                          const data = userDoc.data();
-                          if (data && data.role) {
-                            setUserRole(data.role as UserRole);
-                          } else {
-                            setUserRole('user');
-                          }
               streak: 0,
               daelyPoints: 0,
               followedCreators: [],
@@ -442,6 +434,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
               createdAt: serverTimestamp(),
               updatedAt: serverTimestamp()
             });
+            setUserRole('user');
+          } else {
+            const data = userDoc.data();
+            if (data && data.role) {
+              setUserRole(data.role as UserRole);
+            } else {
+              setUserRole('user');
+            }
           }
         } catch (error) {
           console.error("Error setting up user document:", error);
