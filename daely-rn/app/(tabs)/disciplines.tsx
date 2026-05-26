@@ -244,6 +244,21 @@ export const DISCIPLINES = [
   },
 ];
 
+const DISCIPLINE_FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&q=80';
+
+function getDisciplineImage(item: { image?: string; images?: { man?: string; vrouw?: string } }): string {
+  const directImage = typeof item.image === 'string' ? item.image.trim() : '';
+  if (directImage) return directImage;
+
+  const manImage = typeof item.images?.man === 'string' ? item.images.man.trim() : '';
+  if (manImage) return manImage;
+
+  const vrouwImage = typeof item.images?.vrouw === 'string' ? item.images.vrouw.trim() : '';
+  if (vrouwImage) return vrouwImage;
+
+  return DISCIPLINE_FALLBACK_IMAGE;
+}
+
 export default function DisciplinesScreen() {
   const [searchVisible, setSearchVisible] = useState(false);
   const [searchResults, setSearchResults] = useState<Array<{ id: string; label: string; meta?: string; onSelect: () => void }>>([]);
@@ -309,8 +324,6 @@ export default function DisciplinesScreen() {
   };
   const theme = useTheme();
   const router = useRouter();
-  // Voorbeeld: haal het geslacht van de gebruiker op (in praktijk uit context of storage)
-  const userGender: 'man' | 'vrouw' = 'man'; // Vervang dit door de echte gebruikerswaarde
   const visibleDisciplines = DISCIPLINES;
   const handleOpen = (slug: string) => {
     router.push({ pathname: '/discipline/[slug]', params: { slug } });
@@ -347,7 +360,7 @@ export default function DisciplinesScreen() {
               onPress={() => handleOpen(item.slug)}
             >
               <ImageBackground
-                source={{ uri: item.images?.[userGender] || item.images?.man || '' }}
+                source={{ uri: getDisciplineImage(item) }}
                 style={styles.cardImage}
                 imageStyle={styles.cardImageStyle}
               >
