@@ -49,6 +49,7 @@ export interface NutritionProductSummary {
   name: string;
   brand?: string;
   itemType: ProductItemType;
+  source: 'user' | 'open_food_facts' | 'usda' | 'brand' | 'admin';
   confidenceScore: number;
   verificationStatus: 'unverified' | 'community_verified' | 'label_verified' | 'admin_verified' | 'brand_verified';
   nutrients: {
@@ -118,6 +119,7 @@ function parseProductSummary(raw: Record<string, unknown>): NutritionProductSumm
     name: optionalString(raw.name) || 'Onbekend product',
     brand: optionalString(raw.brand),
     itemType: (optionalString(raw.itemType) as ProductItemType) || 'food',
+    source: (optionalString(raw.source) as NutritionProductSummary['source']) || 'user',
     confidenceScore: normalizeNumber(raw.confidenceScore),
     verificationStatus:
       (optionalString(raw.verificationStatus) as NutritionProductSummary['verificationStatus']) || 'unverified',

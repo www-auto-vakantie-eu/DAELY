@@ -22,6 +22,23 @@ import type { NutritionMealType } from '@/services/nutrition-log.types';
 const MEAL_TYPES: NutritionMealType[] = ['ontbijt', 'lunch', 'diner', 'snack', 'pre-workout', 'post-workout', 'supplement'];
 const UNIT_OPTIONS = ['gram', 'ml', 'portie', 'stuk'] as const;
 
+function barcodeSourceLabel(source?: BarcodeNutritionProduct['source']): string {
+  if (source === 'daely') return 'DAELY';
+  if (source === 'usda') return 'USDA';
+  if (source === 'open_food_facts') return 'Open Food Facts';
+  return 'Zelf toegevoegd';
+}
+
+function verificationHint(status?: string): string | null {
+  if (!status) return null;
+  if (status === 'admin_verified') return 'Geverifieerd door DAELY';
+  if (status === 'brand_verified') return 'Geverifieerd door merk';
+  if (status === 'label_verified') return 'Label geverifieerd';
+  if (status === 'community_verified') return 'Community geverifieerd';
+  if (status === 'unverified') return 'Community data (nog niet geverifieerd)';
+  return `Status: ${status}`;
+}
+
 export default function NutritionScanScreen() {
   const theme = useTheme();
   const router = useRouter();
@@ -104,7 +121,7 @@ export default function NutritionScanScreen() {
     try {
       await addNutritionLog({
         source: 'barcode',
-        itemType: 'food',
+        itemType: product.itemType || 'food',
         mealType,
         name: product.name,
         brand: product.brand,
@@ -200,6 +217,18 @@ export default function NutritionScanScreen() {
               {product.imageUrl ? <Image source={{ uri: product.imageUrl }} style={styles.productImage} /> : null}
               <Text style={[styles.productName, { color: theme.titleColor }]}>{product.name}</Text>
               <Text style={[styles.productBrand, { color: theme.subtitleColor }]}>{product.brand || 'Merk onbekend'}</Text>
+
+              <View style={styles.sourceInfoRow}>
+                <View style={styles.sourceBadge}>
+                  <Text style={styles.sourceBadgeText}>{barcodeSourceLabel(product.source)}</Text>
+                </View>
+                {verificationHint(product.verificationStatus) ? (
+                  <Text style={[styles.verificationText, { color: product.verificationStatus === 'unverified' ? '#B45309' : theme.subtitleColor }]}> 
+                    {verificationHint(product.verificationStatus)}
+                    {product.confidenceScore ? ` · Confidence ${product.confidenceScore}` : ''}
+                  </Text>
+                ) : null}
+              </View>
 
               <View style={styles.metaBlock}>
                 <Text style={[styles.metaText, { color: theme.subtitleColor }]}>kcal: {product.kcal}</Text>
@@ -393,6 +422,27 @@ const styles = StyleSheet.create({
   },
   metaBlock: {
     gap: 2,
+  },
+  sourceInfoRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+    gap: 8,
+  },
+  sourceBadge: {
+    borderRadius: 999,
+    backgroundColor: '#DBEAFE',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+  },
+  sourceBadgeText: {
+    color: '#1E3A8A',
+    fontSize: 10,
+    fontWeight: '800',
+  },
+  verificationText: {
+    fontSize: 11,
+    fontWeight: '600',
   },
   metaText: {
     fontSize: 12,

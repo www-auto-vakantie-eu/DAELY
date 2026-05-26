@@ -21,10 +21,21 @@ import type { NutritionMealType } from '@/services/nutrition-log.types';
 const MEAL_TYPES: NutritionMealType[] = ['ontbijt', 'lunch', 'diner', 'snack', 'pre-workout', 'post-workout', 'supplement'];
 const UNIT_OPTIONS = ['gram', 'ml', 'portie', 'stuk', 'scoop', 'tablet', 'capsule'] as const;
 
-function sourceLabel(source: NutritionSearchResult['source']): string {
+function sourceLabel(source: NutritionSearchResult['source'], originSource?: NutritionSearchResult['originSource']): string {
+  if (source === 'daely' && originSource === 'user') return 'Zelf toegevoegd';
   if (source === 'open_food_facts') return 'Open Food Facts';
   if (source === 'usda') return 'USDA';
   return 'DAELY';
+}
+
+function verificationHint(status?: string): string | null {
+  if (!status) return null;
+  if (status === 'admin_verified') return 'Geverifieerd door DAELY';
+  if (status === 'brand_verified') return 'Geverifieerd door merk';
+  if (status === 'label_verified') return 'Label geverifieerd';
+  if (status === 'community_verified') return 'Community geverifieerd';
+  if (status === 'unverified') return 'Community data (nog niet geverifieerd)';
+  return `Status: ${status}`;
 }
 
 export default function NutritionSearchScreen() {
@@ -197,7 +208,7 @@ export default function NutritionSearchScreen() {
                 <View style={styles.resultTopRow}>
                   <Text style={[styles.resultName, { color: theme.titleColor }]}>{item.name}</Text>
                   <View style={[styles.sourceBadge, { backgroundColor: isActive ? '#DBEAFE' : '#E5E7EB' }]}>
-                    <Text style={styles.sourceBadgeText}>{sourceLabel(item.source)}</Text>
+                    <Text style={styles.sourceBadgeText}>{sourceLabel(item.source, item.originSource)}</Text>
                   </View>
                 </View>
 
@@ -206,7 +217,9 @@ export default function NutritionSearchScreen() {
                 </Text>
 
                 {item.verificationStatus ? (
-                  <Text style={[styles.resultStatus, { color: theme.subtitleColor }]}>Status: {item.verificationStatus}{item.confidenceScore ? ` · Confidence ${item.confidenceScore}` : ''}</Text>
+                  <Text style={[styles.resultStatus, { color: item.verificationStatus === 'unverified' ? '#B45309' : theme.subtitleColor }]}>
+                    {verificationHint(item.verificationStatus)}{item.confidenceScore ? ` · Confidence ${item.confidenceScore}` : ''}
+                  </Text>
                 ) : null}
               </Pressable>
             );
@@ -218,7 +231,13 @@ export default function NutritionSearchScreen() {
         <View style={[styles.selectionCard, { borderColor: theme.border, backgroundColor: theme.card }]}> 
           {selected.imageUrl ? <Image source={{ uri: selected.imageUrl }} style={styles.selectionImage} /> : null}
           <Text style={[styles.selectionTitle, { color: theme.titleColor }]}>{selected.name}</Text>
-          <Text style={[styles.selectionMeta, { color: theme.subtitleColor }]}>{selected.brand || 'Onbekend merk'} · {sourceLabel(selected.source)}</Text>
+          <Text style={[styles.selectionMeta, { color: theme.subtitleColor }]}>{selected.brand || 'Onbekend merk'} · {sourceLabel(selected.source, selected.originSource)}</Text>
+
+          {selected.verificationStatus ? (
+            <Text style={[styles.selectionVerification, { color: selected.verificationStatus === 'unverified' ? '#B45309' : theme.subtitleColor }]}> 
+              {verificationHint(selected.verificationStatus)}{selected.confidenceScore ? ` · Confidence ${selected.confidenceScore}` : ''}
+            </Text>
+          ) : null}
 
           <Text style={[styles.macrosText, { color: theme.subtitleColor }]}>
             {selected.kcal} kcal · E {selected.protein}g · K {selected.carbs}g · V {selected.fats}g
@@ -405,6 +424,10 @@ const styles = StyleSheet.create({
   },
   selectionMeta: {
     fontSize: 12,
+    fontWeight: '600',
+  },
+  selectionVerification: {
+    fontSize: 11,
     fontWeight: '600',
   },
   macrosText: {

@@ -449,6 +449,7 @@ async function startServer() {
   type NutritionSearchResult = {
     externalId: string;
     source: NutritionSearchSource;
+    originSource?: string;
     name: string;
     brand?: string;
     barcode?: string;
@@ -839,6 +840,7 @@ async function startServer() {
         results.push({
           externalId: `daely-${row.id}`,
           source: "daely",
+          originSource: toStringOrUndefined(row.source),
           name: safeResultString(row.name, "Onbekend product"),
           brand: toStringOrUndefined(row.brand),
           barcode: normalizeBarcode(row.barcode),

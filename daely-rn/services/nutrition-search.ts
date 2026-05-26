@@ -31,6 +31,7 @@ export type NutritionSearchItemType = 'food' | 'drink' | 'supplement';
 export interface NutritionSearchResult {
   externalId: string;
   source: NutritionSearchSource;
+  originSource?: 'user' | 'open_food_facts' | 'usda' | 'brand' | 'admin';
   name: string;
   brand?: string;
   barcode?: string;
@@ -106,6 +107,13 @@ export async function searchNutrition(query: string): Promise<NutritionSearchRes
     .map((item) => ({
       externalId: toStringOptional(item.externalId) || `result-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
       source: sanitizeSource(item.source),
+      originSource: (() => {
+        const raw = toStringOptional(item.originSource);
+        if (raw === 'user' || raw === 'open_food_facts' || raw === 'usda' || raw === 'brand' || raw === 'admin') {
+          return raw;
+        }
+        return undefined;
+      })(),
       name: toStringOptional(item.name) || 'Onbekend product',
       brand: toStringOptional(item.brand),
       barcode: toStringOptional(item.barcode),

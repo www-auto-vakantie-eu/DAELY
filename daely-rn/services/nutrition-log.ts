@@ -269,3 +269,39 @@ export async function getNutritionDailyTotals(dayKey: string): Promise<Nutrition
 
   return totals;
 }
+
+function buildRecentUniqueKey(entry: NutritionLogEntry): string {
+  const name = entry.name.trim().toLowerCase();
+  const brand = (entry.brand || '').trim().toLowerCase();
+  const kcal = Number(entry.macros.kcal.toFixed(2));
+  const protein = Number(entry.macros.protein.toFixed(2));
+  const carbs = Number(entry.macros.carbs.toFixed(2));
+  const fats = Number(entry.macros.fats.toFixed(2));
+  return `${name}|${brand}|${kcal}|${protein}|${carbs}|${fats}`;
+}
+
+export async function getRecentUniqueNutritionItems(limit = 5): Promise<NutritionLogEntry[]> {
+  const allEntries = await getNutritionLogs();
+  if (limit <= 0) {
+    return [];
+  }
+
+  const seen = new Set<string>();
+  const recent: NutritionLogEntry[] = [];
+
+  for (const entry of allEntries) {
+    const key = buildRecentUniqueKey(entry);
+    if (seen.has(key)) {
+      continue;
+    }
+
+    seen.add(key);
+    recent.push(entry);
+
+    if (recent.length >= limit) {
+      break;
+    }
+  }
+
+  return recent;
+}

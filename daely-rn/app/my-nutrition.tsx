@@ -10,7 +10,44 @@ import {
   getNutritionDailyTotals,
   getNutritionLogsForDay,
 } from '@/services/nutrition-log';
-import type { NutritionDailyTotals, NutritionLogEntry } from '@/services/nutrition-log.types';
+import type { NutritionDailyTotals, NutritionLogEntry, NutritionMealType } from '@/services/nutrition-log.types';
+
+const MEAL_ORDER: NutritionMealType[] = ['ontbijt', 'lunch', 'diner', 'snack', 'pre-workout', 'post-workout', 'supplement'];
+
+const MEAL_LABELS: Record<NutritionMealType, string> = {
+  ontbijt: 'Ontbijt',
+  lunch: 'Lunch',
+  diner: 'Diner',
+  snack: 'Snack',
+  'pre-workout': 'Pre-workout',
+  'post-workout': 'Post-workout',
+  supplement: 'Supplement',
+};
+
+function groupByMealType(entries: NutritionLogEntry[]) {
+  return MEAL_ORDER
+    .map((mealType) => {
+      const items = entries.filter((entry) => entry.mealType === mealType);
+      if (items.length === 0) return null;
+
+      const subtotals = items.reduce(
+        (accumulator, entry) => ({
+          kcal: Number((accumulator.kcal + entry.macros.kcal).toFixed(2)),
+          protein: Number((accumulator.protein + entry.macros.protein).toFixed(2)),
+          carbs: Number((accumulator.carbs + entry.macros.carbs).toFixed(2)),
+          fats: Number((accumulator.fats + entry.macros.fats).toFixed(2)),
+        }),
+        { kcal: 0, protein: 0, carbs: 0, fats: 0 }
+      );
+
+      return {
+        mealType,
+        items,
+        subtotals,
+      };
+    })
+    .filter((group): group is { mealType: NutritionMealType; items: NutritionLogEntry[]; subtotals: { kcal: number; protein: number; carbs: number; fats: number } } => !!group);
+}
 
 export default function MyNutritionScreen() {
   const theme = useTheme();
@@ -62,6 +99,8 @@ export default function MyNutritionScreen() {
     month: 'long',
   });
 
+  const mealGroups = groupByMealType(entries);
+
   return (
     <ScrollView style={[styles.screen, { backgroundColor: theme.background }]} contentContainerStyle={styles.content}>
       <View style={styles.headerRow}>
@@ -102,23 +141,34 @@ export default function MyNutritionScreen() {
           <Text style={[styles.emptyText, { color: theme.subtitleColor }]}>Nog geen items toegevoegd vandaag.</Text>
         </View>
       ) : (
-        entries.map((entry) => (
-          <View key={entry.id} style={[styles.entryCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-            <View style={styles.entryTopRow}>
-              <View style={styles.entryLeft}>
-                <Text style={[styles.entryName, { color: theme.titleColor }]}>{entry.name}</Text>
-                <Text style={[styles.entryMeta, { color: theme.subtitleColor }]}>
-                  {entry.itemType} · {entry.mealType}
-                  {entry.amount && entry.amountUnit ? ` · ${entry.amount} ${entry.amountUnit}` : ''}
+        mealGroups.map((group) => (
+          <View key={group.mealType} style={[styles.groupCard, { borderColor: theme.border, backgroundColor: theme.card }]}>
+            <View style={styles.groupHeader}>
+              <Text style={[styles.groupTitle, { color: theme.titleColor }]}>{MEAL_LABELS[group.mealType]}</Text>
+              <Text style={[styles.groupSubtotal, { color: theme.subtitleColor }]}>
+                {group.subtotals.kcal} kcal · E {group.subtotals.protein}g · K {group.subtotals.carbs}g · V {group.subtotals.fats}g
+              </Text>
+            </View>
+
+            {group.items.map((entry) => (
+              <View key={entry.id} style={[styles.entryCard, { borderColor: theme.border }]}> 
+                <View style={styles.entryTopRow}>
+                  <View style={styles.entryLeft}>
+                    <Text style={[styles.entryName, { color: theme.titleColor }]}>{entry.name}</Text>
+                    <Text style={[styles.entryMeta, { color: theme.subtitleColor }]}>
+                      {entry.itemType}
+                      {entry.amount && entry.amountUnit ? ` · ${entry.amount} ${entry.amountUnit}` : ''}
+                    </Text>
+                  </View>
+                  <Pressable onPress={() => handleDelete(entry.id)} style={styles.deleteButton}>
+                    <MaterialCommunityIcons name="trash-can-outline" size={18} color="#EF4444" />
+                  </Pressable>
+                </View>
+                <Text style={[styles.entryMacros, { color: theme.subtitleColor }]}>
+                  {entry.macros.kcal} kcal · E {entry.macros.protein}g · K {entry.macros.carbs}g · V {entry.macros.fats}g
                 </Text>
               </View>
-              <Pressable onPress={() => handleDelete(entry.id)} style={styles.deleteButton}>
-                <MaterialCommunityIcons name="trash-can-outline" size={18} color="#EF4444" />
-              </Pressable>
-            </View>
-            <Text style={[styles.entryMacros, { color: theme.subtitleColor }]}>
-              {entry.macros.kcal} kcal · E {entry.macros.protein}g · K {entry.macros.carbs}g · V {entry.macros.fats}g
-            </Text>
+            ))}
           </View>
         ))
       )}
@@ -212,12 +262,31 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '600',
   },
-  entryCard: {
+  groupCard: {
     borderWidth: 1,
     borderRadius: 14,
-    paddingHorizontal: 12,
-    paddingVertical: 12,
+    paddingHorizontal: 10,
+    paddingVertical: 10,
     marginBottom: 10,
+    gap: 8,
+  },
+  groupHeader: {
+    gap: 2,
+    paddingHorizontal: 2,
+  },
+  groupTitle: {
+    fontSize: 15,
+    fontWeight: '800',
+  },
+  groupSubtotal: {
+    fontSize: 11,
+    fontWeight: '700',
+  },
+  entryCard: {
+    borderWidth: 1,
+    borderRadius: 12,
+    paddingHorizontal: 10,
+    paddingVertical: 10,
   },
   entryTopRow: {
     flexDirection: 'row',

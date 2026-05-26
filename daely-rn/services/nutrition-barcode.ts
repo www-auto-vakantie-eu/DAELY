@@ -30,6 +30,10 @@ export interface BarcodeNutritionProduct {
   brand?: string;
   barcode: string;
   imageUrl?: string;
+  source?: 'daely' | 'open_food_facts' | 'usda' | 'manual';
+  verificationStatus?: string;
+  confidenceScore?: number;
+  itemType?: 'food' | 'drink' | 'supplement';
   kcal: number;
   protein: number;
   carbs: number;
@@ -40,12 +44,15 @@ export interface BarcodeNutritionProduct {
   servingUnit: string;
 }
 
-function toNumber(value: unknown): number {
-  if (typeof value === 'number' && Number.isFinite(value)) return Math.max(0, Number(value.toFixed(2)));
-  if (typeof value === 'string') {
-    const parsed = Number.parseFloat(value.replace(',', '.').trim());
-    if (Number.isFinite(parsed)) return Math.max(0, Number(parsed.toFixed(2)));
+function toNumber(...values: unknown[]): number {
+  for (const value of values) {
+    if (typeof value === 'number' && Number.isFinite(value)) return Math.max(0, Number(value.toFixed(2)));
+    if (typeof value === 'string') {
+      const parsed = Number.parseFloat(value.replace(',', '.').trim());
+      if (Number.isFinite(parsed)) return Math.max(0, Number(parsed.toFixed(2)));
+    }
   }
+
   return 0;
 }
 
@@ -61,8 +68,10 @@ export async function lookupBarcodeProduct(barcode: string): Promise<BarcodeNutr
     throw new Error('Ongeldige barcode.');
   }
 
+  let sourceHint: BarcodeNutritionProduct['source'] | undefined = 'daely';
   let response = await fetch(`${API_BASE_URL}/api/nutrition/products/barcode/${encodeURIComponent(cleaned)}`);
   if (response.status === 404) {
+    sourceHint = 'open_food_facts';
     response = await fetch(`${API_BASE_URL}/api/nutrition/barcode/${encodeURIComponent(cleaned)}`);
   }
   if (response.status === 404) {
@@ -83,22 +92,43 @@ export async function lookupBarcodeProduct(barcode: string): Promise<BarcodeNutr
   }
 
   const data = (await response.json()) as Record<string, unknown>;
+  const nutrients = ((data.nutrients as Record<string, unknown>) || {}) as Record<string, unknown>;
+
+  const sourceRaw = toOptionalString(data.source);
+  const normalizedSource: BarcodeNutritionProduct['source'] = sourceRaw === 'open_food_facts' || sourceRaw === 'usda'
+    ? sourceRaw
+    : sourceRaw === 'user' || sourceRaw === 'admin' || sourceRaw === 'brand'
+      ? 'daely'
+      : sourceHint;
+
+  const itemType = toOptionalString(data.itemType);
+  const normalizedItemType: BarcodeNutritionProduct['itemType'] = itemType === 'drink' || itemType === 'supplement' ? itemType : 'food';
+
+  const perUnit = toOptionalString(nutrients.perUnit);
+  const servingUnit = perUnit === '100ml' ? 'ml' : perUnit === 'serving' ? 'portie' : perUnit === '100g' ? 'gram' : undefined;
 
   return {
     name: typeof data.name === 'string' && data.name.trim().length > 0 ? data.name.trim() : 'Onbekend product',
     brand: toOptionalString(data.brand),
     barcode: typeof data.barcode === 'string' && data.barcode.trim().length > 0 ? data.barcode.trim() : cleaned,
     imageUrl: toOptionalString(data.imageUrl),
-    kcal: toNumber(data.kcal),
-    protein: toNumber(data.protein),
-    carbs: toNumber(data.carbs),
-    fats: toNumber(data.fats),
-    sugar: toNumber(data.sugar),
-    salt: toNumber(data.salt),
+    source: normalizedSource,
+    verificationStatus: toOptionalString(data.verificationStatus),
+    confidenceScore: (() => {
+      const score = toNumber(data.confidenceScore);
+      return score > 0 ? score : undefined;
+    })(),
+    itemType: normalizedItemType,
+    kcal: toNumber(data.kcal, nutrients.kcal),
+    protein: toNumber(data.protein, nutrients.protein),
+    carbs: toNumber(data.carbs, nutrients.carbs),
+    fats: toNumber(data.fats, nutrients.fats),
+    sugar: toNumber(data.sugar, nutrients.sugar),
+    salt: toNumber(data.salt, nutrients.salt),
     servingSize: (() => {
-      const serving = toNumber(data.servingSize);
+      const serving = toNumber(data.servingSize, nutrients.servingSize);
       return serving > 0 ? serving : 100;
     })(),
-    servingUnit: toOptionalString(data.servingUnit) ?? 'gram',
+    servingUnit: toOptionalString(data.servingUnit) || servingUnit || 'gram',
   };
 }

@@ -1,20 +1,53 @@
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 
 import { useTheme } from '@/hooks/use-theme';
-import { addNutritionLog } from '@/services/nutrition-log';
+import { addNutritionLog, getRecentUniqueNutritionItems } from '@/services/nutrition-log';
+import {
+  addFavoriteNutritionItem,
+  buildFavoriteNutritionKey,
+  getFavoriteNutritionItems,
+  removeFavoriteNutritionItem,
+  type FavoriteNutritionItem,
+} from '@/services/nutrition-favorites';
 import {
   contributeNutritionProduct,
   searchNutritionProducts,
   type NutritionProductSummary,
 } from '@/services/nutrition-products';
-import type { NutritionItemType, NutritionMealType } from '@/services/nutrition-log.types';
+import type { NutritionItemType, NutritionLogEntry, NutritionMealType, NutritionSourceType } from '@/services/nutrition-log.types';
 
 const ITEM_TYPES: NutritionItemType[] = ['food', 'drink', 'supplement'];
 const MEAL_TYPES: NutritionMealType[] = ['ontbijt', 'lunch', 'diner', 'snack', 'pre-workout', 'post-workout', 'supplement'];
 const UNITS = ['gram', 'ml', 'portie', 'stuk', 'scoop', 'tablet', 'capsule'] as const;
+
+function sourceLabel(source: NutritionSourceType): string {
+  if (source === 'daely') return 'DAELY';
+  if (source === 'open_food_facts') return 'Open Food Facts';
+  if (source === 'usda') return 'USDA';
+  if (source === 'barcode') return 'Barcode';
+  return 'Zelf toegevoegd';
+}
+
+function productSourceLabel(source: NutritionProductSummary['source']): string {
+  if (source === 'open_food_facts') return 'Open Food Facts';
+  if (source === 'usda') return 'USDA';
+  if (source === 'brand') return 'Merk';
+  if (source === 'admin') return 'DAELY';
+  return 'Zelf toegevoegd';
+}
+
+function verificationHint(status?: string): string | null {
+  if (!status) return null;
+  if (status === 'admin_verified') return 'Geverifieerd door DAELY';
+  if (status === 'brand_verified') return 'Geverifieerd door merk';
+  if (status === 'label_verified') return 'Label geverifieerd';
+  if (status === 'community_verified') return 'Community geverifieerd';
+  if (status === 'unverified') return 'Community data (nog niet geverifieerd)';
+  return `Status: ${status}`;
+}
 
 export default function AddNutritionScreen() {
   const router = useRouter();
@@ -36,12 +69,119 @@ export default function AddNutritionScreen() {
   const [didSearchCatalog, setDidSearchCatalog] = useState(false);
   const [isSearchingCatalog, setIsSearchingCatalog] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [recentItems, setRecentItems] = useState<NutritionLogEntry[]>([]);
+  const [favoriteItems, setFavoriteItems] = useState<FavoriteNutritionItem[]>([]);
+  const [quickSuccessKey, setQuickSuccessKey] = useState<string | null>(null);
 
   const canSubmit = useMemo(() => name.trim().length > 0 && !isSaving, [name, isSaving]);
 
   const parseNumber = (value: string): number => {
     const parsed = Number.parseFloat(value.replace(',', '.').trim());
     return Number.isFinite(parsed) ? Math.max(0, parsed) : 0;
+  };
+
+  const loadQuickLists = useCallback(async () => {
+    const [recent, favorites] = await Promise.all([
+      getRecentUniqueNutritionItems(5),
+      getFavoriteNutritionItems(),
+    ]);
+    setRecentItems(recent.slice(0, 5));
+    setFavoriteItems(favorites.slice(0, 5));
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      void loadQuickLists();
+    }, [loadQuickLists])
+  );
+
+  const favoriteKeys = useMemo(() => new Set(favoriteItems.map((item) => item.key)), [favoriteItems]);
+
+  const applyRecentItem = (entry: NutritionLogEntry) => {
+    setName(entry.name);
+    setBrand(entry.brand || '');
+    setItemType(entry.itemType);
+    setMealType(entry.mealType);
+    setAmount(entry.amount ? String(entry.amount) : '100');
+    setAmountUnit((entry.amountUnit as (typeof UNITS)[number]) || 'gram');
+    setKcal(String(entry.macros.kcal));
+    setProtein(String(entry.macros.protein));
+    setCarbs(String(entry.macros.carbs));
+    setFats(String(entry.macros.fats));
+    setNotes(entry.notes || '');
+  };
+
+  const applyFavoriteItem = (item: FavoriteNutritionItem) => {
+    setName(item.name);
+    setBrand(item.brand || '');
+    setItemType(item.itemType);
+    setMealType(item.mealType);
+    setAmount(String(item.amount));
+    setAmountUnit((item.amountUnit as (typeof UNITS)[number]) || 'gram');
+    setKcal(String(item.macros.kcal));
+    setProtein(String(item.macros.protein));
+    setCarbs(String(item.macros.carbs));
+    setFats(String(item.macros.fats));
+    setNotes(item.notes || '');
+  };
+
+  const addEntryToFavorites = async (entry: NutritionLogEntry) => {
+    await addFavoriteNutritionItem({
+      name: entry.name,
+      brand: entry.brand,
+      source: entry.source,
+      itemType: entry.itemType,
+      mealType: entry.mealType,
+      amount: entry.amount || 100,
+      amountUnit: entry.amountUnit || 'gram',
+      macros: entry.macros,
+      notes: entry.notes,
+    });
+    await loadQuickLists();
+  };
+
+  const removeEntryFromFavorites = async (entry: NutritionLogEntry) => {
+    const key = buildFavoriteNutritionKey({
+      name: entry.name,
+      brand: entry.brand,
+      macros: entry.macros,
+    });
+    await removeFavoriteNutritionItem(key);
+    await loadQuickLists();
+  };
+
+  const quickAddFromEntry = async (entry: NutritionLogEntry, key: string) => {
+    await addNutritionLog({
+      source: entry.source,
+      itemType: entry.itemType,
+      mealType: entry.mealType,
+      name: entry.name,
+      brand: entry.brand,
+      amount: entry.amount || 100,
+      amountUnit: entry.amountUnit || 'gram',
+      macros: entry.macros,
+      notes: entry.notes,
+    });
+    setQuickSuccessKey(key);
+    setTimeout(() => setQuickSuccessKey((current) => (current === key ? null : current)), 1200);
+    await loadQuickLists();
+  };
+
+  const quickAddFromFavorite = async (item: FavoriteNutritionItem, key: string) => {
+    await addNutritionLog({
+      source: item.source,
+      itemType: item.itemType,
+      mealType: item.mealType,
+      name: item.name,
+      brand: item.brand,
+      amount: item.amount,
+      amountUnit: item.amountUnit,
+      macros: item.macros,
+      notes: item.notes,
+    });
+    setQuickSuccessKey(key);
+    setTimeout(() => setQuickSuccessKey((current) => (current === key ? null : current)), 1200);
+    await loadQuickLists();
   };
 
   const handleSearchCatalog = async () => {
@@ -138,6 +278,7 @@ export default function AddNutritionScreen() {
           onPress: () => router.replace('/my-nutrition'),
         },
       ]);
+      await loadQuickLists();
     } catch (error) {
       Alert.alert('Opslaan mislukt', error instanceof Error ? error.message : 'Onbekende fout.');
     } finally {
@@ -169,6 +310,95 @@ export default function AddNutritionScreen() {
       </View>
 
       <View style={styles.block}>
+        <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Recent toegevoegd</Text>
+        {recentItems.length === 0 ? (
+          <Text style={[styles.catalogHintText, { color: theme.subtitleColor }]}>Nog geen recente items beschikbaar.</Text>
+        ) : (
+          <View style={styles.catalogResultsWrap}>
+            {recentItems.map((entry) => {
+              const favoriteKey = buildFavoriteNutritionKey({ name: entry.name, brand: entry.brand, macros: entry.macros });
+              const isFavorite = favoriteKeys.has(favoriteKey);
+              const successKey = `recent-${favoriteKey}`;
+
+              return (
+                <View key={`recent-${entry.id}`} style={[styles.quickCard, { borderColor: theme.border, backgroundColor: theme.card }]}>
+                  <View style={styles.quickRowTop}>
+                    <View style={styles.quickTextWrap}>
+                      <Text style={[styles.catalogResultTitle, { color: theme.titleColor }]}>{entry.name}</Text>
+                      <Text style={[styles.catalogResultMeta, { color: theme.subtitleColor }]}>
+                        {entry.brand || 'Onbekend merk'} · {entry.macros.kcal} kcal · {sourceLabel(entry.source)}
+                      </Text>
+                      <Text style={[styles.catalogResultMeta, { color: theme.subtitleColor }]}>
+                        Laatst: {entry.amount || 100} {entry.amountUnit || 'gram'} · {entry.mealType}
+                      </Text>
+                    </View>
+                    <Pressable
+                      style={[styles.iconButton, { borderColor: theme.border }]}
+                      onPress={() => void (isFavorite ? removeEntryFromFavorites(entry) : addEntryToFavorites(entry))}
+                    >
+                      <MaterialCommunityIcons name={isFavorite ? 'star' : 'star-outline'} size={18} color={isFavorite ? '#F59E0B' : theme.titleColor} />
+                    </Pressable>
+                  </View>
+
+                  <View style={styles.quickActionRow}>
+                    <Pressable style={styles.todayButton} onPress={() => void quickAddFromEntry(entry, successKey)}>
+                      <Text style={styles.todayButtonText}>{quickSuccessKey === successKey ? 'Toegevoegd' : '+ Vandaag'}</Text>
+                    </Pressable>
+                    <Pressable style={[styles.secondaryChipButton, { borderColor: theme.border }]} onPress={() => applyRecentItem(entry)}>
+                      <Text style={[styles.secondaryChipButtonText, { color: theme.titleColor }]}>Aanpassen</Text>
+                    </Pressable>
+                  </View>
+                </View>
+              );
+            })}
+          </View>
+        )}
+      </View>
+
+      <View style={styles.block}>
+        <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Favorieten</Text>
+        {favoriteItems.length === 0 ? (
+          <Text style={[styles.catalogHintText, { color: theme.subtitleColor }]}>Nog geen favorieten. Markeer een recent item met de ster.</Text>
+        ) : (
+          <View style={styles.catalogResultsWrap}>
+            {favoriteItems.map((item) => {
+              const successKey = `favorite-${item.key}`;
+              return (
+                <View key={`favorite-${item.key}`} style={[styles.quickCard, { borderColor: theme.border, backgroundColor: theme.card }]}>
+                  <View style={styles.quickRowTop}>
+                    <View style={styles.quickTextWrap}>
+                      <Text style={[styles.catalogResultTitle, { color: theme.titleColor }]}>{item.name}</Text>
+                      <Text style={[styles.catalogResultMeta, { color: theme.subtitleColor }]}>
+                        {item.brand || 'Onbekend merk'} · {item.macros.kcal} kcal · {sourceLabel(item.source)}
+                      </Text>
+                      <Text style={[styles.catalogResultMeta, { color: theme.subtitleColor }]}>
+                        Laatst: {item.amount} {item.amountUnit || 'gram'} · {item.mealType}
+                      </Text>
+                    </View>
+                    <Pressable
+                      style={[styles.iconButton, { borderColor: theme.border }]}
+                      onPress={() => void removeFavoriteNutritionItem(item.key).then(loadQuickLists)}
+                    >
+                      <MaterialCommunityIcons name="star" size={18} color="#F59E0B" />
+                    </Pressable>
+                  </View>
+
+                  <View style={styles.quickActionRow}>
+                    <Pressable style={styles.todayButton} onPress={() => void quickAddFromFavorite(item, successKey)}>
+                      <Text style={styles.todayButtonText}>{quickSuccessKey === successKey ? 'Toegevoegd' : '+ Vandaag'}</Text>
+                    </Pressable>
+                    <Pressable style={[styles.secondaryChipButton, { borderColor: theme.border }]} onPress={() => applyFavoriteItem(item)}>
+                      <Text style={[styles.secondaryChipButtonText, { color: theme.titleColor }]}>Aanpassen</Text>
+                    </Pressable>
+                  </View>
+                </View>
+              );
+            })}
+          </View>
+        )}
+      </View>
+
+      <View style={styles.block}>
         <Text style={[styles.label, { color: theme.subtitleColor }]}>Naam</Text>
         <TextInput value={name} onChangeText={setName} placeholder="Bijv. Protein shake" placeholderTextColor="#9CA3AF" style={[styles.input, { borderColor: theme.border, color: theme.titleColor, backgroundColor: theme.card }]} />
 
@@ -191,8 +421,13 @@ export default function AddNutritionScreen() {
               >
                 <Text style={[styles.catalogResultTitle, { color: theme.titleColor }]}>{product.name}</Text>
                 <Text style={[styles.catalogResultMeta, { color: theme.subtitleColor }]}>
-                  {product.brand || 'Onbekend merk'} · {product.nutrients.kcal} kcal · {product.itemType}
+                  {product.brand || 'Onbekend merk'} · {product.nutrients.kcal} kcal · {product.itemType} · {productSourceLabel(product.source)}
                 </Text>
+                {verificationHint(product.verificationStatus) ? (
+                  <Text style={[styles.catalogHintText, { color: product.verificationStatus === 'unverified' ? '#B45309' : theme.subtitleColor }]}>
+                    {verificationHint(product.verificationStatus)}
+                  </Text>
+                ) : null}
               </Pressable>
             ))}
           </View>
@@ -400,6 +635,10 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     letterSpacing: 1,
   },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: '900',
+  },
   catalogSearchButton: {
     borderWidth: 1,
     borderRadius: 10,
@@ -435,6 +674,55 @@ const styles = StyleSheet.create({
     marginTop: 2,
     fontSize: 11,
     fontWeight: '600',
+  },
+  quickCard: {
+    borderWidth: 1,
+    borderRadius: 12,
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+    gap: 8,
+  },
+  quickRowTop: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    gap: 8,
+  },
+  quickTextWrap: {
+    flex: 1,
+  },
+  iconButton: {
+    borderWidth: 1,
+    borderRadius: 999,
+    width: 32,
+    height: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  quickActionRow: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  todayButton: {
+    backgroundColor: '#2563EB',
+    borderRadius: 999,
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+  },
+  todayButtonText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '800',
+  },
+  secondaryChipButton: {
+    borderWidth: 1,
+    borderRadius: 999,
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+  },
+  secondaryChipButtonText: {
+    fontSize: 12,
+    fontWeight: '700',
   },
   input: {
     borderWidth: 1,
