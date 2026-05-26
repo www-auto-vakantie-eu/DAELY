@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { API_BASE_URL } from '@/services/api-base';
 
 const STORAGE_KEY = 'daely.settings.requests.v1';
 
@@ -20,8 +21,6 @@ export interface SettingsRequest {
 export interface SubmitSettingsRequestOptions {
   forceLocal?: boolean;
 }
-
-const API_BASE_URL = (process.env.EXPO_PUBLIC_API_BASE_URL ?? 'http://localhost:8081').replace(/\/$/, '');
 
 const SYNC_TIMEOUT_MS = 5_000;
 const RETRY_DELAYS_MS = [350, 900];

@@ -1,31 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Constants from 'expo-constants';
-
-const RAW_API_BASE_URL = (process.env.EXPO_PUBLIC_API_BASE_URL ?? 'http://localhost:8085').replace(/\/$/, '');
+import { API_BASE_URL } from '@/services/api-base';
 const CONTRIBUTOR_ID_STORAGE_KEY = 'daely.nutrition.contributor.id.v1';
-
-function resolveApiBaseUrl(): string {
-  const localhostMatch = RAW_API_BASE_URL.match(/^https?:\/\/(localhost|127\.0\.0\.1)(?::(\d+))?$/i);
-  if (!localhostMatch) {
-    return RAW_API_BASE_URL;
-  }
-
-  const fallbackPort = localhostMatch[2] ?? '8085';
-  const hostUri =
-    Constants.expoConfig?.hostUri ||
-    (Constants as any)?.manifest2?.extra?.expoClient?.hostUri ||
-    (Constants as any)?.manifest?.debuggerHost ||
-    '';
-
-  const host = typeof hostUri === 'string' && hostUri.length > 0 ? hostUri.split(':')[0] : '';
-  if (!host) {
-    return RAW_API_BASE_URL;
-  }
-
-  return `http://${host}:${fallbackPort}`;
-}
-
-const API_BASE_URL = resolveApiBaseUrl();
 
 export type ProductItemType = 'food' | 'drink' | 'supplement';
 

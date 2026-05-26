@@ -4,6 +4,7 @@ export type CreatorBadge = 'VERIFIED' | 'PRO' | 'ELITE' | 'COACH';
 
 import { COMMUNITY_CREATORS } from '@/constants/community-creators';
 import { PARTNERS } from '@/constants/partners';
+import { API_BASE_URL } from '@/services/api-base';
 
 export interface CommunityCreator {
   id: string;
@@ -38,8 +39,6 @@ export interface CommunityEvent {
   accent: string;
   logoUrl: string;
 }
-
-const API_BASE_URL = (process.env.EXPO_PUBLIC_API_BASE_URL || 'http://localhost:8081').replace(/\/$/, '');
 
 const buildUrl = (path: string, country: CountryCode) => {
   const separator = path.includes('?') ? '&' : '?';
