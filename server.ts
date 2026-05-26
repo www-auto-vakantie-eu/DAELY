@@ -147,6 +147,93 @@ db.exec(`
   );
 `);
 
+db.exec(`
+  CREATE TABLE IF NOT EXISTS nutrition_products (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    barcode TEXT,
+    name TEXT NOT NULL,
+    brand TEXT,
+    country TEXT,
+    language TEXT,
+    category TEXT,
+    item_type TEXT NOT NULL,
+    image_url TEXT,
+    label_image_url TEXT,
+    source TEXT NOT NULL DEFAULT 'user',
+    verification_status TEXT NOT NULL DEFAULT 'unverified',
+    confidence_score REAL NOT NULL DEFAULT 0.3,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+  );
+
+  CREATE INDEX IF NOT EXISTS idx_nutrition_products_barcode ON nutrition_products(barcode);
+  CREATE INDEX IF NOT EXISTS idx_nutrition_products_name ON nutrition_products(name);
+`);
+
+db.exec(`
+  CREATE TABLE IF NOT EXISTS nutrition_product_nutrients (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    product_id INTEGER NOT NULL,
+    per_unit TEXT NOT NULL DEFAULT '100g',
+    kcal REAL NOT NULL DEFAULT 0,
+    protein REAL NOT NULL DEFAULT 0,
+    carbs REAL NOT NULL DEFAULT 0,
+    fats REAL NOT NULL DEFAULT 0,
+    sugar REAL NOT NULL DEFAULT 0,
+    salt REAL NOT NULL DEFAULT 0,
+    sodium REAL NOT NULL DEFAULT 0,
+    fiber REAL NOT NULL DEFAULT 0,
+    caffeine REAL NOT NULL DEFAULT 0,
+    creatine REAL NOT NULL DEFAULT 0,
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (product_id) REFERENCES nutrition_products(id)
+  );
+
+  CREATE INDEX IF NOT EXISTS idx_nutrition_product_nutrients_product_id ON nutrition_product_nutrients(product_id);
+`);
+
+db.exec(`
+  CREATE TABLE IF NOT EXISTS nutrition_product_contributions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    product_id INTEGER,
+    anonymous_user_id TEXT,
+    device_id TEXT,
+    submitted_barcode TEXT,
+    submitted_name TEXT,
+    submitted_brand TEXT,
+    submitted_country TEXT,
+    submitted_language TEXT,
+    submitted_item_type TEXT,
+    submitted_nutrition_json TEXT,
+    submitted_image_url TEXT,
+    submitted_label_image_url TEXT,
+    status TEXT NOT NULL DEFAULT 'pending',
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (product_id) REFERENCES nutrition_products(id)
+  );
+
+  CREATE INDEX IF NOT EXISTS idx_nutrition_product_contributions_status ON nutrition_product_contributions(status);
+`);
+
+db.exec(`
+  CREATE TABLE IF NOT EXISTS nutrition_product_reports (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    product_id INTEGER NOT NULL,
+    anonymous_user_id TEXT,
+    device_id TEXT,
+    reason TEXT NOT NULL,
+    corrected_values_json TEXT,
+    status TEXT NOT NULL DEFAULT 'open',
+    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (product_id) REFERENCES nutrition_products(id)
+  );
+
+  CREATE INDEX IF NOT EXISTS idx_nutrition_product_reports_product_id ON nutrition_product_reports(product_id);
+`);
+
 // Add exercises column to existing table if it doesn't exist
 try {
   db.exec(`ALTER TABLE workouts ADD COLUMN exercises TEXT;`);
@@ -158,6 +245,12 @@ async function startServer() {
   const app = express();
   const PORT = Number(process.env.PORT) || 8085;
   const HMR_PORT = Number(process.env.HMR_PORT) || 24679;
+  const PRODUCT_ITEM_TYPES = ["food", "drink", "supplement"] as const;
+  const PRODUCT_SOURCES = ["user", "open_food_facts", "usda", "brand", "admin"] as const;
+  const VERIFICATION_STATUSES = ["unverified", "community_verified", "label_verified", "admin_verified", "brand_verified"] as const;
+  const CONTRIBUTION_STATUSES = ["pending", "approved", "rejected", "merged"] as const;
+  const REPORT_STATUSES = ["open", "resolved", "rejected"] as const;
+  const PER_UNIT_VALUES = ["100g", "100ml", "serving"] as const;
 
   const toNutritionNumber = (...values: unknown[]): number => {
     for (const value of values) {
@@ -229,6 +322,127 @@ async function startServer() {
     }
     return String(value);
   };
+
+  const toStringOrUndefined = (value: unknown): string | undefined => {
+    if (typeof value !== "string") {
+      return undefined;
+    }
+
+    const trimmed = value.trim();
+    return trimmed.length > 0 ? trimmed : undefined;
+  };
+
+  const toNonNegativeNumber = (value: unknown): number => {
+    if (typeof value === "number" && Number.isFinite(value)) {
+      return Math.max(0, Number(value.toFixed(2)));
+    }
+
+    if (typeof value === "string") {
+      const cleaned = value.replace(",", ".").trim();
+      if (!cleaned) return 0;
+      const parsed = Number.parseFloat(cleaned);
+      if (Number.isFinite(parsed)) {
+        return Math.max(0, Number(parsed.toFixed(2)));
+      }
+    }
+
+    return 0;
+  };
+
+  const parseNutritionPayload = (payload: unknown) => {
+    const source = typeof payload === "string" ? (() => {
+      try {
+        return JSON.parse(payload);
+      } catch {
+        return {};
+      }
+    })() : (payload || {});
+
+    const obj = typeof source === "object" && source !== null ? (source as Record<string, unknown>) : {};
+    const perUnitRaw = toStringOrUndefined(obj.perUnit) || "100g";
+    const perUnit = (PER_UNIT_VALUES as readonly string[]).includes(perUnitRaw) ? perUnitRaw : "100g";
+
+    return {
+      perUnit,
+      kcal: toNonNegativeNumber(obj.kcal),
+      protein: toNonNegativeNumber(obj.protein),
+      carbs: toNonNegativeNumber(obj.carbs),
+      fats: toNonNegativeNumber(obj.fats),
+      sugar: toNonNegativeNumber(obj.sugar),
+      salt: toNonNegativeNumber(obj.salt),
+      sodium: toNonNegativeNumber(obj.sodium),
+      fiber: toNonNegativeNumber(obj.fiber),
+      caffeine: toNonNegativeNumber(obj.caffeine),
+      creatine: toNonNegativeNumber(obj.creatine),
+    };
+  };
+
+  const computeConfidenceScore = (data: {
+    barcode?: string;
+    name?: string;
+    brand?: string;
+    imageUrl?: string;
+    nutrients: ReturnType<typeof parseNutritionPayload>;
+  }) => {
+    let score = 0.2;
+    if (data.barcode) score += 0.25;
+    if (data.name) score += 0.2;
+    if (data.brand) score += 0.1;
+    if (data.imageUrl) score += 0.1;
+
+    const nutrientFields = [
+      data.nutrients.kcal,
+      data.nutrients.protein,
+      data.nutrients.carbs,
+      data.nutrients.fats,
+      data.nutrients.sugar,
+      data.nutrients.salt,
+      data.nutrients.sodium,
+      data.nutrients.fiber,
+      data.nutrients.caffeine,
+      data.nutrients.creatine,
+    ];
+
+    const positiveNutrients = nutrientFields.filter((value) => value > 0).length;
+    if (positiveNutrients >= 4) {
+      score += 0.15;
+    } else if (positiveNutrients >= 2) {
+      score += 0.08;
+    }
+
+    return Number(Math.min(0.95, score).toFixed(2));
+  };
+
+  const mapProductRow = (row: any) => ({
+    id: row.id,
+    barcode: row.barcode || undefined,
+    name: row.name,
+    brand: row.brand || undefined,
+    country: row.country || undefined,
+    language: row.language || undefined,
+    category: row.category || undefined,
+    itemType: row.item_type,
+    imageUrl: row.image_url || undefined,
+    labelImageUrl: row.label_image_url || undefined,
+    source: row.source,
+    verificationStatus: row.verification_status,
+    confidenceScore: Number(row.confidence_score || 0),
+    nutrients: {
+      perUnit: row.per_unit || "100g",
+      kcal: toNonNegativeNumber(row.kcal),
+      protein: toNonNegativeNumber(row.protein),
+      carbs: toNonNegativeNumber(row.carbs),
+      fats: toNonNegativeNumber(row.fats),
+      sugar: toNonNegativeNumber(row.sugar),
+      salt: toNonNegativeNumber(row.salt),
+      sodium: toNonNegativeNumber(row.sodium),
+      fiber: toNonNegativeNumber(row.fiber),
+      caffeine: toNonNegativeNumber(row.caffeine),
+      creatine: toNonNegativeNumber(row.creatine),
+    },
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  });
 
   app.use(express.json());
   app.use((req, res, next) => {
@@ -530,6 +744,323 @@ async function startServer() {
     res.json(partners);
   });
 
+  app.get("/api/nutrition/products/search", (req, res) => {
+    const query = typeof req.query.query === "string" ? req.query.query.trim() : "";
+    if (!query) {
+      return res.json([]);
+    }
+
+    const like = `%${query}%`;
+    const stmt = db.prepare(
+      `SELECT p.*,
+              (SELECT per_unit FROM nutrition_product_nutrients n WHERE n.product_id = p.id ORDER BY n.updated_at DESC, n.id DESC LIMIT 1) AS per_unit,
+              (SELECT kcal FROM nutrition_product_nutrients n WHERE n.product_id = p.id ORDER BY n.updated_at DESC, n.id DESC LIMIT 1) AS kcal,
+              (SELECT protein FROM nutrition_product_nutrients n WHERE n.product_id = p.id ORDER BY n.updated_at DESC, n.id DESC LIMIT 1) AS protein,
+              (SELECT carbs FROM nutrition_product_nutrients n WHERE n.product_id = p.id ORDER BY n.updated_at DESC, n.id DESC LIMIT 1) AS carbs,
+              (SELECT fats FROM nutrition_product_nutrients n WHERE n.product_id = p.id ORDER BY n.updated_at DESC, n.id DESC LIMIT 1) AS fats,
+              (SELECT sugar FROM nutrition_product_nutrients n WHERE n.product_id = p.id ORDER BY n.updated_at DESC, n.id DESC LIMIT 1) AS sugar,
+              (SELECT salt FROM nutrition_product_nutrients n WHERE n.product_id = p.id ORDER BY n.updated_at DESC, n.id DESC LIMIT 1) AS salt,
+              (SELECT sodium FROM nutrition_product_nutrients n WHERE n.product_id = p.id ORDER BY n.updated_at DESC, n.id DESC LIMIT 1) AS sodium,
+              (SELECT fiber FROM nutrition_product_nutrients n WHERE n.product_id = p.id ORDER BY n.updated_at DESC, n.id DESC LIMIT 1) AS fiber,
+              (SELECT caffeine FROM nutrition_product_nutrients n WHERE n.product_id = p.id ORDER BY n.updated_at DESC, n.id DESC LIMIT 1) AS caffeine,
+              (SELECT creatine FROM nutrition_product_nutrients n WHERE n.product_id = p.id ORDER BY n.updated_at DESC, n.id DESC LIMIT 1) AS creatine
+         FROM nutrition_products p
+        WHERE (p.name LIKE ? OR p.brand LIKE ? OR p.barcode LIKE ?)
+          AND (p.verification_status != 'unverified' OR p.confidence_score >= 0.65)
+        ORDER BY
+          CASE p.verification_status
+            WHEN 'admin_verified' THEN 1
+            WHEN 'brand_verified' THEN 2
+            WHEN 'label_verified' THEN 3
+            WHEN 'community_verified' THEN 4
+            ELSE 5
+          END,
+          p.confidence_score DESC,
+          p.updated_at DESC
+        LIMIT 20`
+    );
+
+    const rows = stmt.all(like, like, like);
+    res.json(rows.map(mapProductRow));
+  });
+
+  app.get("/api/nutrition/products/barcode/:barcode", (req, res) => {
+    const barcodeRaw = typeof req.params.barcode === "string" ? req.params.barcode.trim() : "";
+    const barcode = barcodeRaw.replace(/\s+/g, "");
+    if (!barcode) {
+      return res.status(400).json({ error: "Invalid barcode" });
+    }
+
+    const stmt = db.prepare(
+      `SELECT p.*,
+              (SELECT per_unit FROM nutrition_product_nutrients n WHERE n.product_id = p.id ORDER BY n.updated_at DESC, n.id DESC LIMIT 1) AS per_unit,
+              (SELECT kcal FROM nutrition_product_nutrients n WHERE n.product_id = p.id ORDER BY n.updated_at DESC, n.id DESC LIMIT 1) AS kcal,
+              (SELECT protein FROM nutrition_product_nutrients n WHERE n.product_id = p.id ORDER BY n.updated_at DESC, n.id DESC LIMIT 1) AS protein,
+              (SELECT carbs FROM nutrition_product_nutrients n WHERE n.product_id = p.id ORDER BY n.updated_at DESC, n.id DESC LIMIT 1) AS carbs,
+              (SELECT fats FROM nutrition_product_nutrients n WHERE n.product_id = p.id ORDER BY n.updated_at DESC, n.id DESC LIMIT 1) AS fats,
+              (SELECT sugar FROM nutrition_product_nutrients n WHERE n.product_id = p.id ORDER BY n.updated_at DESC, n.id DESC LIMIT 1) AS sugar,
+              (SELECT salt FROM nutrition_product_nutrients n WHERE n.product_id = p.id ORDER BY n.updated_at DESC, n.id DESC LIMIT 1) AS salt,
+              (SELECT sodium FROM nutrition_product_nutrients n WHERE n.product_id = p.id ORDER BY n.updated_at DESC, n.id DESC LIMIT 1) AS sodium,
+              (SELECT fiber FROM nutrition_product_nutrients n WHERE n.product_id = p.id ORDER BY n.updated_at DESC, n.id DESC LIMIT 1) AS fiber,
+              (SELECT caffeine FROM nutrition_product_nutrients n WHERE n.product_id = p.id ORDER BY n.updated_at DESC, n.id DESC LIMIT 1) AS caffeine,
+              (SELECT creatine FROM nutrition_product_nutrients n WHERE n.product_id = p.id ORDER BY n.updated_at DESC, n.id DESC LIMIT 1) AS creatine
+         FROM nutrition_products p
+        WHERE p.barcode = ?
+        ORDER BY p.confidence_score DESC, p.updated_at DESC
+        LIMIT 1`
+    );
+
+    const row = stmt.get(barcode);
+    if (!row) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+
+    res.json(mapProductRow(row));
+  });
+
+  app.post("/api/nutrition/products/contribute", (req, res) => {
+    try {
+      const anonymousUserId = toStringOrUndefined(req.body?.anonymousUserId);
+      const deviceId = toStringOrUndefined(req.body?.deviceId);
+      if (!anonymousUserId && !deviceId) {
+        return res.status(400).json({ error: "anonymousUserId or deviceId is required" });
+      }
+
+      const submittedBarcode = toStringOrUndefined(req.body?.submittedBarcode)?.replace(/\s+/g, "");
+      const submittedName = toStringOrUndefined(req.body?.submittedName);
+      const submittedBrand = toStringOrUndefined(req.body?.submittedBrand);
+      const submittedCountry = toStringOrUndefined(req.body?.submittedCountry);
+      const submittedLanguage = toStringOrUndefined(req.body?.submittedLanguage);
+      const submittedItemTypeRaw = toStringOrUndefined(req.body?.submittedItemType) || "food";
+      const submittedItemType = (PRODUCT_ITEM_TYPES as readonly string[]).includes(submittedItemTypeRaw)
+        ? submittedItemTypeRaw
+        : null;
+
+      if (!submittedItemType) {
+        return res.status(400).json({ error: "Invalid submittedItemType" });
+      }
+
+      if (!submittedBarcode && !submittedName) {
+        return res.status(400).json({ error: "submittedBarcode or submittedName is required" });
+      }
+
+      const submittedImageUrl = toStringOrUndefined(req.body?.submittedImageUrl);
+      const submittedLabelImageUrl = toStringOrUndefined(req.body?.submittedLabelImageUrl);
+      const sourceRaw = toStringOrUndefined(req.body?.source) || "user";
+      const source = (PRODUCT_SOURCES as readonly string[]).includes(sourceRaw) ? sourceRaw : "user";
+      const category = toStringOrUndefined(req.body?.submittedCategory);
+      const nutrients = parseNutritionPayload(req.body?.submittedNutritionJson);
+      const confidenceScore = computeConfidenceScore({
+        barcode: submittedBarcode,
+        name: submittedName,
+        brand: submittedBrand,
+        imageUrl: submittedImageUrl,
+        nutrients,
+      });
+
+      let productId: number | null = null;
+
+      if (submittedBarcode) {
+        const existingByBarcode = db.prepare(
+          `SELECT id
+             FROM nutrition_products
+            WHERE barcode = ?
+            ORDER BY confidence_score DESC, updated_at DESC
+            LIMIT 1`
+        ).get(submittedBarcode) as { id: number } | undefined;
+
+        if (existingByBarcode?.id) {
+          productId = existingByBarcode.id;
+        }
+      }
+
+      if (!productId && submittedName) {
+        const insertProduct = db.prepare(
+          `INSERT INTO nutrition_products (
+             barcode,
+             name,
+             brand,
+             country,
+             language,
+             category,
+             item_type,
+             image_url,
+             label_image_url,
+             source,
+             verification_status,
+             confidence_score,
+             created_at,
+             updated_at
+           ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'unverified', ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`
+        );
+
+        const insertProductInfo = insertProduct.run(
+          submittedBarcode || null,
+          submittedName,
+          submittedBrand || null,
+          submittedCountry || null,
+          submittedLanguage || null,
+          category || null,
+          submittedItemType,
+          submittedImageUrl || null,
+          submittedLabelImageUrl || null,
+          source,
+          confidenceScore
+        );
+
+        productId = Number(insertProductInfo.lastInsertRowid);
+      }
+
+      if (productId) {
+        const insertNutrients = db.prepare(
+          `INSERT INTO nutrition_product_nutrients (
+             product_id,
+             per_unit,
+             kcal,
+             protein,
+             carbs,
+             fats,
+             sugar,
+             salt,
+             sodium,
+             fiber,
+             caffeine,
+             creatine,
+             created_at,
+             updated_at
+           ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`
+        );
+
+        insertNutrients.run(
+          productId,
+          nutrients.perUnit,
+          nutrients.kcal,
+          nutrients.protein,
+          nutrients.carbs,
+          nutrients.fats,
+          nutrients.sugar,
+          nutrients.salt,
+          nutrients.sodium,
+          nutrients.fiber,
+          nutrients.caffeine,
+          nutrients.creatine
+        );
+      }
+
+      const contributionStatus = "pending";
+      if (!(CONTRIBUTION_STATUSES as readonly string[]).includes(contributionStatus)) {
+        return res.status(500).json({ error: "Invalid contribution status configuration" });
+      }
+
+      const contributionInsert = db.prepare(
+        `INSERT INTO nutrition_product_contributions (
+           product_id,
+           anonymous_user_id,
+           device_id,
+           submitted_barcode,
+           submitted_name,
+           submitted_brand,
+           submitted_country,
+           submitted_language,
+           submitted_item_type,
+           submitted_nutrition_json,
+           submitted_image_url,
+           submitted_label_image_url,
+           status,
+           created_at,
+           updated_at
+         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`
+      );
+
+      const contributionInfo = contributionInsert.run(
+        productId,
+        anonymousUserId || null,
+        deviceId || null,
+        submittedBarcode || null,
+        submittedName || null,
+        submittedBrand || null,
+        submittedCountry || null,
+        submittedLanguage || null,
+        submittedItemType,
+        JSON.stringify(nutrients),
+        submittedImageUrl || null,
+        submittedLabelImageUrl || null,
+        contributionStatus
+      );
+
+      res.status(201).json({
+        contributionId: Number(contributionInfo.lastInsertRowid),
+        productId,
+        status: contributionStatus,
+      });
+    } catch (error: any) {
+      console.error("Error creating nutrition contribution:", error);
+      res.status(500).json({ error: "Failed to create contribution", details: error?.message });
+    }
+  });
+
+  app.post("/api/nutrition/products/:id/report", (req, res) => {
+    try {
+      const productId = Number.parseInt(req.params.id, 10);
+      if (!Number.isFinite(productId) || productId <= 0) {
+        return res.status(400).json({ error: "Invalid product id" });
+      }
+
+      const productExists = db.prepare("SELECT id FROM nutrition_products WHERE id = ? LIMIT 1").get(productId) as { id: number } | undefined;
+      if (!productExists?.id) {
+        return res.status(404).json({ error: "Product not found" });
+      }
+
+      const anonymousUserId = toStringOrUndefined(req.body?.anonymousUserId);
+      const deviceId = toStringOrUndefined(req.body?.deviceId);
+      if (!anonymousUserId && !deviceId) {
+        return res.status(400).json({ error: "anonymousUserId or deviceId is required" });
+      }
+
+      const reason = toStringOrUndefined(req.body?.reason);
+      if (!reason) {
+        return res.status(400).json({ error: "reason is required" });
+      }
+
+      const correctedValues = parseNutritionPayload(req.body?.correctedValuesJson);
+      const reportStatus = "open";
+      if (!(REPORT_STATUSES as readonly string[]).includes(reportStatus)) {
+        return res.status(500).json({ error: "Invalid report status configuration" });
+      }
+
+      const insertReport = db.prepare(
+        `INSERT INTO nutrition_product_reports (
+           product_id,
+           anonymous_user_id,
+           device_id,
+           reason,
+           corrected_values_json,
+           status,
+           created_at,
+           updated_at
+         ) VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`
+      );
+
+      const info = insertReport.run(
+        productId,
+        anonymousUserId || null,
+        deviceId || null,
+        reason,
+        JSON.stringify(correctedValues),
+        reportStatus
+      );
+
+      res.status(201).json({
+        reportId: Number(info.lastInsertRowid),
+        productId,
+        status: reportStatus,
+      });
+    } catch (error: any) {
+      console.error("Error creating nutrition product report:", error);
+      res.status(500).json({ error: "Failed to create report", details: error?.message });
+    }
+  });
+
   app.get("/api/nutrition/barcode/:barcode", async (req, res) => {
     const barcodeRaw = typeof req.params.barcode === "string" ? req.params.barcode.trim() : "";
     const barcode = barcodeRaw.replace(/\s+/g, "");
@@ -585,6 +1116,10 @@ async function startServer() {
         servingSize: servingQuantity > 0 ? servingQuantity : 100,
         servingUnit,
       };
+
+      if (!(VERIFICATION_STATUSES as readonly string[]).includes("unverified")) {
+        return res.status(500).json({ error: "Invalid verification status configuration" });
+      }
 
       res.json(normalized);
     } catch (error: any) {

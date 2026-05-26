@@ -5,6 +5,11 @@ import { useRouter } from 'expo-router';
 
 import { useTheme } from '@/hooks/use-theme';
 import { addNutritionLog } from '@/services/nutrition-log';
+import {
+  contributeNutritionProduct,
+  searchNutritionProducts,
+  type NutritionProductSummary,
+} from '@/services/nutrition-products';
 import type { NutritionItemType, NutritionMealType } from '@/services/nutrition-log.types';
 
 const ITEM_TYPES: NutritionItemType[] = ['food', 'drink', 'supplement'];
@@ -26,6 +31,10 @@ export default function AddNutritionScreen() {
   const [carbs, setCarbs] = useState('');
   const [fats, setFats] = useState('');
   const [notes, setNotes] = useState('');
+  const [shareWithCommunity, setShareWithCommunity] = useState(false);
+  const [searchResults, setSearchResults] = useState<NutritionProductSummary[]>([]);
+  const [didSearchCatalog, setDidSearchCatalog] = useState(false);
+  const [isSearchingCatalog, setIsSearchingCatalog] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
   const canSubmit = useMemo(() => name.trim().length > 0 && !isSaving, [name, isSaving]);
@@ -33,6 +42,46 @@ export default function AddNutritionScreen() {
   const parseNumber = (value: string): number => {
     const parsed = Number.parseFloat(value.replace(',', '.').trim());
     return Number.isFinite(parsed) ? Math.max(0, parsed) : 0;
+  };
+
+  const handleSearchCatalog = async () => {
+    const query = name.trim();
+    if (!query) {
+      setDidSearchCatalog(true);
+      setSearchResults([]);
+      return;
+    }
+
+    setIsSearchingCatalog(true);
+    try {
+      const results = await searchNutritionProducts(query);
+      setSearchResults(results);
+      setDidSearchCatalog(true);
+    } catch (error) {
+      Alert.alert('Zoeken mislukt', error instanceof Error ? error.message : 'Onbekende fout.');
+      setDidSearchCatalog(true);
+      setSearchResults([]);
+    } finally {
+      setIsSearchingCatalog(false);
+    }
+  };
+
+  const applyCatalogProduct = (product: NutritionProductSummary) => {
+    setName(product.name);
+    setBrand(product.brand || '');
+    setItemType(product.itemType);
+    setKcal(String(product.nutrients.kcal));
+    setProtein(String(product.nutrients.protein));
+    setCarbs(String(product.nutrients.carbs));
+    setFats(String(product.nutrients.fats));
+
+    if (product.nutrients.perUnit === '100ml') {
+      setAmount('100');
+      setAmountUnit('ml');
+    } else if (product.nutrients.perUnit === '100g') {
+      setAmount('100');
+      setAmountUnit('gram');
+    }
   };
 
   const handleSave = async () => {
@@ -57,7 +106,33 @@ export default function AddNutritionScreen() {
         notes,
       });
 
-      Alert.alert('Opgeslagen', 'Item toegevoegd aan Mijn Voeding.', [
+      let contributionFailed = false;
+      if (shareWithCommunity) {
+        try {
+          await contributeNutritionProduct({
+            submittedName: name,
+            submittedBrand: brand,
+            submittedItemType: itemType,
+            submittedNutritionJson: {
+              perUnit: amountUnit === 'ml' ? '100ml' : 'serving',
+              kcal: parseNumber(kcal),
+              protein: parseNumber(protein),
+              carbs: parseNumber(carbs),
+              fats: parseNumber(fats),
+            },
+            source: 'user',
+          });
+        } catch (error) {
+          console.warn('Nutrition contribution failed:', error);
+          contributionFailed = true;
+        }
+      }
+
+      const successMessage = contributionFailed
+        ? 'Item toegevoegd aan Mijn Voeding. Anonieme bijdrage aan DAELY database is niet gelukt.'
+        : 'Item toegevoegd aan Mijn Voeding.';
+
+      Alert.alert('Opgeslagen', successMessage, [
         {
           text: 'Bekijk logboek',
           onPress: () => router.replace('/my-nutrition'),
@@ -90,6 +165,32 @@ export default function AddNutritionScreen() {
       <View style={styles.block}>
         <Text style={[styles.label, { color: theme.subtitleColor }]}>Naam</Text>
         <TextInput value={name} onChangeText={setName} placeholder="Bijv. Protein shake" placeholderTextColor="#9CA3AF" style={[styles.input, { borderColor: theme.border, color: theme.titleColor, backgroundColor: theme.card }]} />
+
+        <Pressable style={[styles.catalogSearchButton, { borderColor: theme.border, backgroundColor: theme.card }]} onPress={handleSearchCatalog}>
+          <MaterialCommunityIcons name="database-search" size={16} color={theme.titleColor} />
+          <Text style={[styles.catalogSearchText, { color: theme.titleColor }]}>{isSearchingCatalog ? 'Zoeken...' : 'Zoek in DAELY database'}</Text>
+        </Pressable>
+
+        {didSearchCatalog && searchResults.length === 0 ? (
+          <Text style={[styles.catalogHintText, { color: theme.subtitleColor }]}>Geen product gevonden. Voeg dit product zelf toe.</Text>
+        ) : null}
+
+        {searchResults.length > 0 ? (
+          <View style={styles.catalogResultsWrap}>
+            {searchResults.map((product) => (
+              <Pressable
+                key={`${product.id}`}
+                style={[styles.catalogResultCard, { borderColor: theme.border, backgroundColor: theme.card }]}
+                onPress={() => applyCatalogProduct(product)}
+              >
+                <Text style={[styles.catalogResultTitle, { color: theme.titleColor }]}>{product.name}</Text>
+                <Text style={[styles.catalogResultMeta, { color: theme.subtitleColor }]}>
+                  {product.brand || 'Onbekend merk'} · {product.nutrients.kcal} kcal · {product.itemType}
+                </Text>
+              </Pressable>
+            ))}
+          </View>
+        ) : null}
 
         <Text style={[styles.label, { color: theme.subtitleColor }]}>Merk (optioneel)</Text>
         <TextInput value={brand} onChangeText={setBrand} placeholder="Bijv. XXL Nutrition" placeholderTextColor="#9CA3AF" style={[styles.input, { borderColor: theme.border, color: theme.titleColor, backgroundColor: theme.card }]} />
@@ -180,6 +281,21 @@ export default function AddNutritionScreen() {
       </View>
 
       <Pressable
+        style={[styles.shareRow, { borderColor: theme.border, backgroundColor: theme.card }]}
+        onPress={() => setShareWithCommunity((current) => !current)}
+      >
+        <MaterialCommunityIcons
+          name={shareWithCommunity ? 'checkbox-marked' : 'checkbox-blank-outline'}
+          size={20}
+          color={shareWithCommunity ? '#2563EB' : theme.subtitleColor}
+        />
+        <View style={styles.shareTextWrap}>
+          <Text style={[styles.shareTitle, { color: theme.titleColor }]}>Help andere sporters</Text>
+          <Text style={[styles.shareSubtitle, { color: theme.subtitleColor }]}>Voeg dit product anoniem toe aan de DAELY database</Text>
+        </View>
+      </Pressable>
+
+      <Pressable
         style={[styles.saveButton, !canSubmit ? styles.saveButtonDisabled : null]}
         onPress={handleSave}
         disabled={!canSubmit}
@@ -247,10 +363,67 @@ const styles = StyleSheet.create({
   block: {
     gap: 8,
   },
+  shareRow: {
+    borderWidth: 1,
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  shareTextWrap: {
+    flex: 1,
+  },
+  shareTitle: {
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  shareSubtitle: {
+    marginTop: 2,
+    fontSize: 11,
+    fontWeight: '500',
+  },
   label: {
     fontSize: 11,
     fontWeight: '700',
     letterSpacing: 1,
+  },
+  catalogSearchButton: {
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    alignSelf: 'flex-start',
+  },
+  catalogSearchText: {
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  catalogHintText: {
+    fontSize: 11,
+    fontWeight: '600',
+  },
+  catalogResultsWrap: {
+    gap: 8,
+  },
+  catalogResultCard: {
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+  },
+  catalogResultTitle: {
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  catalogResultMeta: {
+    marginTop: 2,
+    fontSize: 11,
+    fontWeight: '600',
   },
   input: {
     borderWidth: 1,

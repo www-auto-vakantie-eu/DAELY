@@ -61,7 +61,10 @@ export async function lookupBarcodeProduct(barcode: string): Promise<BarcodeNutr
     throw new Error('Ongeldige barcode.');
   }
 
-  const response = await fetch(`${API_BASE_URL}/api/nutrition/barcode/${encodeURIComponent(cleaned)}`);
+  let response = await fetch(`${API_BASE_URL}/api/nutrition/products/barcode/${encodeURIComponent(cleaned)}`);
+  if (response.status === 404) {
+    response = await fetch(`${API_BASE_URL}/api/nutrition/barcode/${encodeURIComponent(cleaned)}`);
+  }
   if (response.status === 404) {
     return null;
   }
