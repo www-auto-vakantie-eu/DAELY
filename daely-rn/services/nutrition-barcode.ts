@@ -97,8 +97,10 @@ export async function lookupBarcodeProduct(barcode: string): Promise<BarcodeNutr
   const sourceRaw = toOptionalString(data.source);
   const normalizedSource: BarcodeNutritionProduct['source'] = sourceRaw === 'open_food_facts' || sourceRaw === 'usda'
     ? sourceRaw
-    : sourceRaw === 'user' || sourceRaw === 'admin' || sourceRaw === 'brand'
-      ? 'daely'
+    : sourceRaw === 'user'
+      ? 'manual'
+      : sourceRaw === 'admin' || sourceRaw === 'brand'
+        ? 'daely'
       : sourceHint;
 
   const itemType = toOptionalString(data.itemType);

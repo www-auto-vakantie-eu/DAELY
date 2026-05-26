@@ -72,6 +72,7 @@ export default function AddNutritionScreen() {
   const [recentItems, setRecentItems] = useState<NutritionLogEntry[]>([]);
   const [favoriteItems, setFavoriteItems] = useState<FavoriteNutritionItem[]>([]);
   const [quickSuccessKey, setQuickSuccessKey] = useState<string | null>(null);
+  const [quickAddBusyKey, setQuickAddBusyKey] = useState<string | null>(null);
 
   const canSubmit = useMemo(() => name.trim().length > 0 && !isSaving, [name, isSaving]);
 
@@ -151,37 +152,59 @@ export default function AddNutritionScreen() {
   };
 
   const quickAddFromEntry = async (entry: NutritionLogEntry, key: string) => {
-    await addNutritionLog({
-      source: entry.source,
-      itemType: entry.itemType,
-      mealType: entry.mealType,
-      name: entry.name,
-      brand: entry.brand,
-      amount: entry.amount || 100,
-      amountUnit: entry.amountUnit || 'gram',
-      macros: entry.macros,
-      notes: entry.notes,
-    });
-    setQuickSuccessKey(key);
-    setTimeout(() => setQuickSuccessKey((current) => (current === key ? null : current)), 1200);
-    await loadQuickLists();
+    if (quickAddBusyKey) {
+      return;
+    }
+
+    setQuickAddBusyKey(key);
+    try {
+      await addNutritionLog({
+        source: entry.source,
+        itemType: entry.itemType,
+        mealType: entry.mealType,
+        name: entry.name,
+        brand: entry.brand,
+        amount: entry.amount || 100,
+        amountUnit: entry.amountUnit || 'gram',
+        macros: entry.macros,
+        notes: entry.notes,
+      });
+      setQuickSuccessKey(key);
+      setTimeout(() => setQuickSuccessKey((current) => (current === key ? null : current)), 1200);
+      await loadQuickLists();
+    } catch (error) {
+      Alert.alert('Quick add mislukt', error instanceof Error ? error.message : 'Onbekende fout.');
+    } finally {
+      setQuickAddBusyKey((current) => (current === key ? null : current));
+    }
   };
 
   const quickAddFromFavorite = async (item: FavoriteNutritionItem, key: string) => {
-    await addNutritionLog({
-      source: item.source,
-      itemType: item.itemType,
-      mealType: item.mealType,
-      name: item.name,
-      brand: item.brand,
-      amount: item.amount,
-      amountUnit: item.amountUnit,
-      macros: item.macros,
-      notes: item.notes,
-    });
-    setQuickSuccessKey(key);
-    setTimeout(() => setQuickSuccessKey((current) => (current === key ? null : current)), 1200);
-    await loadQuickLists();
+    if (quickAddBusyKey) {
+      return;
+    }
+
+    setQuickAddBusyKey(key);
+    try {
+      await addNutritionLog({
+        source: item.source,
+        itemType: item.itemType,
+        mealType: item.mealType,
+        name: item.name,
+        brand: item.brand,
+        amount: item.amount,
+        amountUnit: item.amountUnit,
+        macros: item.macros,
+        notes: item.notes,
+      });
+      setQuickSuccessKey(key);
+      setTimeout(() => setQuickSuccessKey((current) => (current === key ? null : current)), 1200);
+      await loadQuickLists();
+    } catch (error) {
+      Alert.alert('Quick add mislukt', error instanceof Error ? error.message : 'Onbekende fout.');
+    } finally {
+      setQuickAddBusyKey((current) => (current === key ? null : current));
+    }
   };
 
   const handleSearchCatalog = async () => {
@@ -341,8 +364,14 @@ export default function AddNutritionScreen() {
                   </View>
 
                   <View style={styles.quickActionRow}>
-                    <Pressable style={styles.todayButton} onPress={() => void quickAddFromEntry(entry, successKey)}>
-                      <Text style={styles.todayButtonText}>{quickSuccessKey === successKey ? 'Toegevoegd' : '+ Vandaag'}</Text>
+                    <Pressable
+                      style={[styles.todayButton, quickAddBusyKey ? styles.todayButtonDisabled : null]}
+                      onPress={() => void quickAddFromEntry(entry, successKey)}
+                      disabled={!!quickAddBusyKey}
+                    >
+                      <Text style={styles.todayButtonText}>
+                        {quickAddBusyKey === successKey ? 'Bezig...' : quickSuccessKey === successKey ? 'Toegevoegd' : '+ Vandaag'}
+                      </Text>
                     </Pressable>
                     <Pressable style={[styles.secondaryChipButton, { borderColor: theme.border }]} onPress={() => applyRecentItem(entry)}>
                       <Text style={[styles.secondaryChipButtonText, { color: theme.titleColor }]}>Aanpassen</Text>
@@ -384,8 +413,14 @@ export default function AddNutritionScreen() {
                   </View>
 
                   <View style={styles.quickActionRow}>
-                    <Pressable style={styles.todayButton} onPress={() => void quickAddFromFavorite(item, successKey)}>
-                      <Text style={styles.todayButtonText}>{quickSuccessKey === successKey ? 'Toegevoegd' : '+ Vandaag'}</Text>
+                    <Pressable
+                      style={[styles.todayButton, quickAddBusyKey ? styles.todayButtonDisabled : null]}
+                      onPress={() => void quickAddFromFavorite(item, successKey)}
+                      disabled={!!quickAddBusyKey}
+                    >
+                      <Text style={styles.todayButtonText}>
+                        {quickAddBusyKey === successKey ? 'Bezig...' : quickSuccessKey === successKey ? 'Toegevoegd' : '+ Vandaag'}
+                      </Text>
                     </Pressable>
                     <Pressable style={[styles.secondaryChipButton, { borderColor: theme.border }]} onPress={() => applyFavoriteItem(item)}>
                       <Text style={[styles.secondaryChipButtonText, { color: theme.titleColor }]}>Aanpassen</Text>
@@ -708,6 +743,9 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     paddingHorizontal: 12,
     paddingVertical: 7,
+  },
+  todayButtonDisabled: {
+    opacity: 0.6,
   },
   todayButtonText: {
     color: '#FFFFFF',

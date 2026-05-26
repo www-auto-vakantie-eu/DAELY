@@ -865,12 +865,27 @@ async function startServer() {
 
     try {
       const fetchOffProducts = async (url: string): Promise<any[]> => {
-        const response = await fetch(url, {
-          headers: {
-            Accept: "application/json",
-            "User-Agent": "DAELY/1.0 (+https://daely.app)",
-          },
-        });
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 6000);
+
+        let response: Response;
+        try {
+          response = await fetch(url, {
+            headers: {
+              Accept: "application/json",
+              "User-Agent": "DAELY/1.0 (+https://daely.app)",
+            },
+            signal: controller.signal,
+          });
+        } catch (error) {
+          if (error instanceof Error && error.name === "AbortError") {
+            console.warn("Open Food Facts request timed out");
+            return [];
+          }
+          throw error;
+        } finally {
+          clearTimeout(timeout);
+        }
 
         if (!response.ok) {
           return [];
