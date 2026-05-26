@@ -26,3 +26,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local environment files (keep examples tracked)
+/.env
+/daely-rn/.env
