@@ -1,3 +1,4 @@
+import "dotenv/config";
 import express from "express";
 import { createServer as createViteServer } from "vite";
 import Database from "better-sqlite3";
@@ -7,6 +8,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { challenges as seedChallenges, creators as seedCreators, recipes as seedRecipes } from "./data/seedData";
 import { EVENTS_DATA } from "./src/data/appData";
+import { getFitbitAuthUrl, getFitbitAccessToken, getFitbitSteps } from "./fitbit";
 
 const SUPPORTED_COUNTRIES = ["NL", "FR", "BE", "DE", "ES", "GB", "US"] as const;
 type CountryCode = (typeof SUPPORTED_COUNTRIES)[number];
@@ -154,8 +156,57 @@ try {
 
 async function startServer() {
   const app = express();
-  const PORT = Number(process.env.PORT) || 8081;
+  const PORT = Number(process.env.PORT) || 8085;
   const HMR_PORT = Number(process.env.HMR_PORT) || 24679;
+
+  const toNutritionNumber = (...values: unknown[]): number => {
+    for (const value of values) {
+      if (typeof value === "number" && Number.isFinite(value)) {
+        return Math.max(0, Number(value.toFixed(2)));
+      }
+      if (typeof value === "string") {
+        const normalized = value.replace(",", ".").trim();
+        if (!normalized) continue;
+        const parsed = Number.parseFloat(normalized);
+        if (Number.isFinite(parsed)) {
+          return Math.max(0, Number(parsed.toFixed(2)));
+        }
+      }
+    }
+    return 0;
+  };
+
+  const parseServingFromText = (value: unknown): { size: number | null; unit: string | null } => {
+    if (typeof value !== "string") {
+      return { size: null, unit: null };
+    }
+
+    const match = value.trim().match(/(\d+[\d.,]*)\s*(g|gram|gr|ml|l|kg|cl)\b/i);
+    if (!match) {
+      return { size: null, unit: null };
+    }
+
+    const rawSize = Number.parseFloat(match[1].replace(",", "."));
+    if (!Number.isFinite(rawSize)) {
+      return { size: null, unit: null };
+    }
+
+    const rawUnit = match[2].toLowerCase();
+    if (rawUnit === "gram" || rawUnit === "gr") {
+      return { size: rawSize, unit: "gram" };
+    }
+    if (rawUnit === "kg") {
+      return { size: Number((rawSize * 1000).toFixed(2)), unit: "gram" };
+    }
+    if (rawUnit === "l") {
+      return { size: Number((rawSize * 1000).toFixed(2)), unit: "ml" };
+    }
+    if (rawUnit === "cl") {
+      return { size: Number((rawSize * 10).toFixed(2)), unit: "ml" };
+    }
+
+    return { size: rawSize, unit: rawUnit };
+  };
 
   const toIntOrNull = (value: unknown): number | null => {
     if (typeof value === "number" && Number.isFinite(value)) {
@@ -180,7 +231,253 @@ async function startServer() {
   };
 
   app.use(express.json());
+  app.use((req, res, next) => {
+      // --- FITBIT API ---
 
+      // 1. Authorisatie URL ophalen
+      app.get("/api/fitbit/auth/url", (req, res) => {
+        try {
+          const url = getFitbitAuthUrl();
+          res.json({ authorizeUrl: url });
+        } catch (error: any) {
+          res.status(500).json({ error: "Failed to build FitBit authorization URL", details: error?.message });
+        }
+      });
+
+      // 2. OAuth callback: code omwisselen voor token
+      app.get("/api/fitbit/oauth/callback", async (req, res) => {
+        const code = typeof req.query.code === "string" ? req.query.code.trim() : "";
+        if (!code) return res.status(400).json({ error: "Missing OAuth code" });
+        try {
+          const token = await getFitbitAccessToken(code);
+          res.json({ token });
+        } catch (error: any) {
+          res.status(500).json({ error: "Failed to exchange OAuth code", details: error?.message });
+        }
+      });
+
+      // 3. Haal stappen-data op
+      app.get("/api/fitbit/steps", async (req, res) => {
+        const accessToken = typeof req.headers.authorization === "string" && req.headers.authorization.startsWith("Bearer ")
+          ? req.headers.authorization.slice("Bearer ".length).trim()
+          : (typeof req.query.accessToken === "string" ? req.query.accessToken.trim() : null);
+        if (!accessToken) return res.status(401).json({ error: "Missing FitBit access token" });
+        try {
+          const date = typeof req.query.date === "string" ? req.query.date : "today";
+          const steps = await getFitbitSteps(accessToken, date);
+          res.json(steps);
+        } catch (error: any) {
+          res.status(500).json({ error: "Failed to fetch FitBit steps", details: error?.message });
+        }
+      });
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization, x-whoop-access-token");
+    res.header("Access-Control-Allow-Methods", "GET,POST,PATCH,DELETE,OPTIONS");
+
+    if (req.method === "OPTIONS") {
+      return res.sendStatus(204);
+    }
+
+    next();
+  });
+
+  const getWhoopAccessTokenFromRequest = (req: express.Request) => {
+    const authHeader = req.headers.authorization;
+    if (authHeader?.startsWith("Bearer ")) {
+      return authHeader.slice("Bearer ".length).trim();
+    }
+
+    const tokenHeader = req.headers["x-whoop-access-token"];
+    if (typeof tokenHeader === "string" && tokenHeader.trim().length > 0) {
+      return tokenHeader.trim();
+    }
+
+    const queryToken = req.query.accessToken;
+    if (typeof queryToken === "string" && queryToken.trim().length > 0) {
+      return queryToken.trim();
+    }
+
+    return null;
+  };
+
+  app.get("/api/whoop/auth/url", async (req, res) => {
+    try {
+      const state =
+        typeof req.query.state === "string" && req.query.state.trim().length > 0
+          ? req.query.state.trim()
+          : `daely-${Date.now()}`;
+      const redirectUri =
+        typeof req.query.redirectUri === "string" && req.query.redirectUri.trim().length > 0
+          ? req.query.redirectUri.trim()
+          : undefined;
+
+      const { getWhoopAuthorizeUrl } = await import("./whoop");
+      const authorizeUrl = getWhoopAuthorizeUrl(state, redirectUri);
+
+      res.json({ authorizeUrl, state });
+    } catch (error: any) {
+      console.error("WHOOP auth URL error:", error);
+      res.status(500).json({ error: "Failed to build WHOOP authorization URL", details: error?.message });
+    }
+  });
+
+  app.get("/api/whoop/oauth/callback", async (req, res) => {
+    const code = typeof req.query.code === "string" ? req.query.code.trim() : "";
+    const state = typeof req.query.state === "string" ? req.query.state.trim() : "";
+
+    if (!code) {
+      return res.status(400).json({ error: "Missing OAuth code" });
+    }
+
+    try {
+      const { exchangeWhoopCodeForToken } = await import("./whoop");
+      const token = await exchangeWhoopCodeForToken(code);
+      res.json({ state, token });
+    } catch (error: any) {
+      console.error("WHOOP token exchange error:", error);
+      res.status(500).json({ error: "Failed to exchange OAuth code", details: error?.message });
+    }
+  });
+
+  app.post("/api/whoop/oauth/exchange", async (req, res) => {
+    const code = typeof req.body?.code === "string" ? req.body.code.trim() : "";
+    const redirectUri = typeof req.body?.redirectUri === "string" ? req.body.redirectUri.trim() : "";
+    const state = typeof req.body?.state === "string" ? req.body.state.trim() : "";
+
+    if (!code) {
+      return res.status(400).json({ error: "Missing OAuth code" });
+    }
+
+    if (!redirectUri) {
+      return res.status(400).json({ error: "Missing redirectUri" });
+    }
+
+    try {
+      const { exchangeWhoopCodeForToken } = await import("./whoop");
+      const token = await exchangeWhoopCodeForToken(code, redirectUri);
+      res.json({ state, token });
+    } catch (error: any) {
+      console.error("WHOOP token exchange error:", error);
+      res.status(500).json({ error: "Failed to exchange OAuth code", details: error?.message });
+    }
+  });
+
+  app.post("/api/whoop/oauth/refresh", async (req, res) => {
+    const refreshToken = typeof req.body?.refreshToken === "string" ? req.body.refreshToken.trim() : "";
+
+    if (!refreshToken) {
+      return res.status(400).json({ error: "Missing refreshToken" });
+    }
+
+    try {
+      const { refreshWhoopAccessToken } = await import("./whoop");
+      const token = await refreshWhoopAccessToken(refreshToken);
+      res.json(token);
+    } catch (error: any) {
+      console.error("WHOOP token refresh error:", error);
+      res.status(500).json({ error: "Failed to refresh token", details: error?.message });
+    }
+  });
+
+  app.get("/api/whoop/profile", async (req, res) => {
+    const accessToken = getWhoopAccessTokenFromRequest(req);
+
+    if (!accessToken) {
+      return res.status(401).json({ error: "Missing WHOOP access token" });
+    }
+
+    try {
+      const { getWhoopProfile } = await import("./whoop");
+      const profile = await getWhoopProfile(accessToken);
+      res.json(profile);
+    } catch (error: any) {
+      console.error("WHOOP profile error:", error);
+      res.status(500).json({ error: "Failed to fetch WHOOP profile", details: error?.message });
+    }
+  });
+
+  app.get("/api/whoop/body-measurement", async (req, res) => {
+    const accessToken = getWhoopAccessTokenFromRequest(req);
+
+    if (!accessToken) {
+      return res.status(401).json({ error: "Missing WHOOP access token" });
+    }
+
+    try {
+      const { getWhoopBodyMeasurement } = await import("./whoop");
+      const bodyMeasurement = await getWhoopBodyMeasurement(accessToken);
+      res.json(bodyMeasurement);
+    } catch (error: any) {
+      console.error("WHOOP body measurement error:", error);
+      res.status(500).json({ error: "Failed to fetch WHOOP body measurement", details: error?.message });
+    }
+  });
+
+  app.get("/api/whoop/recovery", async (req, res) => {
+    const accessToken = getWhoopAccessTokenFromRequest(req);
+
+    if (!accessToken) {
+      return res.status(401).json({ error: "Missing WHOOP access token" });
+    }
+
+    try {
+      const { getWhoopRecoveryCollection } = await import("./whoop");
+      const recovery = await getWhoopRecoveryCollection(accessToken, {
+        limit: typeof req.query.limit === "string" ? req.query.limit : undefined,
+        start: typeof req.query.start === "string" ? req.query.start : undefined,
+        end: typeof req.query.end === "string" ? req.query.end : undefined,
+        nextToken: typeof req.query.nextToken === "string" ? req.query.nextToken : undefined,
+      });
+      res.json(recovery);
+    } catch (error: any) {
+      console.error("WHOOP recovery error:", error);
+      res.status(500).json({ error: "Failed to fetch WHOOP recovery", details: error?.message });
+    }
+  });
+
+  app.get("/api/whoop/sleep", async (req, res) => {
+    const accessToken = getWhoopAccessTokenFromRequest(req);
+
+    if (!accessToken) {
+      return res.status(401).json({ error: "Missing WHOOP access token" });
+    }
+
+    try {
+      const { getWhoopSleepCollection } = await import("./whoop");
+      const sleep = await getWhoopSleepCollection(accessToken, {
+        limit: typeof req.query.limit === "string" ? req.query.limit : undefined,
+        start: typeof req.query.start === "string" ? req.query.start : undefined,
+        end: typeof req.query.end === "string" ? req.query.end : undefined,
+        nextToken: typeof req.query.nextToken === "string" ? req.query.nextToken : undefined,
+      });
+      res.json(sleep);
+    } catch (error: any) {
+      console.error("WHOOP sleep error:", error);
+      res.status(500).json({ error: "Failed to fetch WHOOP sleep", details: error?.message });
+    }
+  });
+
+  app.get("/api/whoop/workout", async (req, res) => {
+    const accessToken = getWhoopAccessTokenFromRequest(req);
+
+    if (!accessToken) {
+      return res.status(401).json({ error: "Missing WHOOP access token" });
+    }
+
+    try {
+      const { getWhoopWorkoutCollection } = await import("./whoop");
+      const workout = await getWhoopWorkoutCollection(accessToken, {
+        limit: typeof req.query.limit === "string" ? req.query.limit : undefined,
+        start: typeof req.query.start === "string" ? req.query.start : undefined,
+        end: typeof req.query.end === "string" ? req.query.end : undefined,
+        nextToken: typeof req.query.nextToken === "string" ? req.query.nextToken : undefined,
+      });
+      res.json(workout);
+    } catch (error: any) {
+      console.error("WHOOP workout error:", error);
+      res.status(500).json({ error: "Failed to fetch WHOOP workout", details: error?.message });
+    }
+  });
   // API Routes
   app.get("/api/health", (req, res) => {
     res.json({ status: "ok" });
@@ -231,6 +528,69 @@ async function startServer() {
       .filter((partner) => isVisibleForCountry(partner, country))
       .map(({ global, countries, ...partner }) => partner);
     res.json(partners);
+  });
+
+  app.get("/api/nutrition/barcode/:barcode", async (req, res) => {
+    const barcodeRaw = typeof req.params.barcode === "string" ? req.params.barcode.trim() : "";
+    const barcode = barcodeRaw.replace(/\s+/g, "");
+
+    if (!/^\d{8,14}$/.test(barcode)) {
+      return res.status(400).json({ error: "Invalid barcode" });
+    }
+
+    try {
+      const response = await fetch(`https://world.openfoodfacts.org/api/v2/product/${encodeURIComponent(barcode)}.json`);
+      if (!response.ok) {
+        return res.status(502).json({ error: "Barcode lookup failed" });
+      }
+
+      const payload = (await response.json()) as any;
+      if (!payload || payload.status !== 1 || !payload.product) {
+        return res.status(404).json({ error: "Product not found" });
+      }
+
+      const product = payload.product || {};
+      const nutriments = product.nutriments || {};
+
+      const parsedServing = parseServingFromText(product.serving_size);
+      const servingQuantity = toNutritionNumber(product.serving_quantity, parsedServing.size);
+      const servingUnit = typeof product.serving_quantity_unit === "string" && product.serving_quantity_unit.trim().length > 0
+        ? product.serving_quantity_unit.trim().toLowerCase()
+        : (parsedServing.unit || "gram");
+
+      const normalized = {
+        name:
+          (typeof product.product_name === "string" && product.product_name.trim()) ||
+          (typeof product.product_name_en === "string" && product.product_name_en.trim()) ||
+          "Onbekend product",
+        brand:
+          (typeof product.brands === "string" && product.brands.split(",")[0]?.trim()) ||
+          undefined,
+        barcode,
+        imageUrl:
+          (typeof product.image_front_url === "string" && product.image_front_url.trim()) ||
+          (typeof product.image_url === "string" && product.image_url.trim()) ||
+          undefined,
+        kcal: toNutritionNumber(
+          nutriments["energy-kcal_serving"],
+          nutriments["energy-kcal_100g"],
+          nutriments["energy-kcal"],
+          nutriments["energy-kcal_value"]
+        ),
+        protein: toNutritionNumber(nutriments.proteins_serving, nutriments.proteins_100g, nutriments.proteins),
+        carbs: toNutritionNumber(nutriments.carbohydrates_serving, nutriments.carbohydrates_100g, nutriments.carbohydrates),
+        fats: toNutritionNumber(nutriments.fat_serving, nutriments.fat_100g, nutriments.fat),
+        sugar: toNutritionNumber(nutriments.sugars_serving, nutriments.sugars_100g, nutriments.sugars),
+        salt: toNutritionNumber(nutriments.salt_serving, nutriments.salt_100g, nutriments.salt),
+        servingSize: servingQuantity > 0 ? servingQuantity : 100,
+        servingUnit,
+      };
+
+      res.json(normalized);
+    } catch (error: any) {
+      console.error("Barcode lookup error:", error);
+      res.status(500).json({ error: "Failed to lookup barcode", details: error?.message });
+    }
   });
 
   app.post("/api/ai/chat", async (req, res) => {

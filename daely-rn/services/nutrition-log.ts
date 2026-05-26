@@ -15,7 +15,7 @@ const STORAGE_KEY = 'daely.nutrition.logs.v1';
 
 const ITEM_TYPES: NutritionItemType[] = ['food', 'drink', 'supplement'];
 const MEAL_TYPES: NutritionMealType[] = ['ontbijt', 'lunch', 'diner', 'snack', 'pre-workout', 'post-workout', 'supplement'];
-const SOURCE_TYPES: NutritionSourceType[] = ['manual'];
+const SOURCE_TYPES: NutritionSourceType[] = ['manual', 'barcode'];
 
 function toNonNegativeNumber(value: unknown): number {
   if (typeof value === 'number' && Number.isFinite(value)) {

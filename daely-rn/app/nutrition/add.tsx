@@ -82,6 +82,11 @@ export default function AddNutritionScreen() {
       <Text style={[styles.title, { color: theme.titleColor }]}>Snel Toevoegen</Text>
       <Text style={[styles.subtitle, { color: theme.subtitleColor }]}>Voeding, drinken of supplement toevoegen.</Text>
 
+      <Pressable style={[styles.scanShortcutButton, { borderColor: theme.border, backgroundColor: theme.card }]} onPress={() => router.push('/nutrition/scan')}>
+        <MaterialCommunityIcons name="barcode-scan" size={16} color={theme.titleColor} />
+        <Text style={[styles.scanShortcutText, { color: theme.titleColor }]}>Barcode scannen</Text>
+      </Pressable>
+
       <View style={styles.block}>
         <Text style={[styles.label, { color: theme.subtitleColor }]}>Naam</Text>
         <TextInput value={name} onChangeText={setName} placeholder="Bijv. Protein shake" placeholderTextColor="#9CA3AF" style={[styles.input, { borderColor: theme.border, color: theme.titleColor, backgroundColor: theme.card }]} />
@@ -223,6 +228,21 @@ const styles = StyleSheet.create({
     marginTop: -4,
     fontSize: 13,
     fontWeight: '500',
+  },
+  scanShortcutButton: {
+    marginTop: 2,
+    alignSelf: 'flex-start',
+    borderWidth: 1,
+    borderRadius: 999,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  scanShortcutText: {
+    fontSize: 12,
+    fontWeight: '700',
   },
   block: {
     gap: 8,

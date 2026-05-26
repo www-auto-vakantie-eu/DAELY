@@ -170,8 +170,12 @@ export default function TodayScreen() {
       </View>
 
       <View style={styles.quickKeysWrap}>
-        <Pressable style={[styles.quickKeyButton, { backgroundColor: '#16A34A' }]} onPress={() => router.push('/nutrition/add')}>
+        <Pressable style={[styles.quickKeyButton, { backgroundColor: '#0EA5E9' }]} onPress={() => router.push('/nutrition/scan')}>
           <MaterialCommunityIcons name="barcode-scan" size={16} color="#FFFFFF" />
+          <Text style={styles.quickKeyText}>Barcode Scannen</Text>
+        </Pressable>
+        <Pressable style={[styles.quickKeyButton, { backgroundColor: '#16A34A' }]} onPress={() => router.push('/nutrition/add')}>
+          <MaterialCommunityIcons name="plus-circle-outline" size={16} color="#FFFFFF" />
           <Text style={styles.quickKeyText}>Snel Toevoegen</Text>
         </Pressable>
         <Pressable style={[styles.quickKeyButton, { backgroundColor: '#2563EB' }]} onPress={() => router.push('/nutrition/compare')}>

@@ -11,13 +11,15 @@
     "ios": "npm --prefix daely-rn run ios",
     "web": "npm --prefix daely-rn run web",
     "web:dev": "vite",
-    "web:start": "node server.ts",
+    "web:start": "tsx server.ts",
     "build": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {
     "@google/genai": "^1.41.0",
+    "axios": "^1.16.1",
     "better-sqlite3": "^12.6.2",
+    "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "firebase": "^12.10.0",
     "i18next": "^25.8.13",
