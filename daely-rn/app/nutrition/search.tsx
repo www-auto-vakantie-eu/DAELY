@@ -30,11 +30,11 @@ function sourceLabel(source: NutritionSearchResult['source'], originSource?: Nut
 
 function verificationHint(status?: string): string | null {
   if (!status) return null;
-  if (status === 'admin_verified') return 'Geverifieerd door DAELY';
-  if (status === 'brand_verified') return 'Geverifieerd door merk';
-  if (status === 'label_verified') return 'Label geverifieerd';
-  if (status === 'community_verified') return 'Community geverifieerd';
-  if (status === 'unverified') return 'Community data (nog niet geverifieerd)';
+  if (status === 'admin_verified') return 'DAELY geverifieerd';
+  if (status === 'brand_verified') return 'Merk geverifieerd';
+  if (status === 'label_verified') return 'Label gecheckt';
+  if (status === 'community_verified') return 'Community check';
+  if (status === 'unverified') return 'Niet officieel geverifieerd';
   return `Status: ${status}`;
 }
 
@@ -147,7 +147,11 @@ export default function NutritionSearchScreen() {
   };
 
   return (
-    <ScrollView style={[styles.screen, { backgroundColor: theme.background }]} contentContainerStyle={styles.content}>
+    <ScrollView
+      style={[styles.screen, { backgroundColor: theme.background }]}
+      contentContainerStyle={styles.content}
+      keyboardShouldPersistTaps="handled"
+    >
       <View style={styles.headerRow}>
         <Pressable style={[styles.backButton, { borderColor: theme.border, backgroundColor: theme.card }]} onPress={() => router.back()}>
           <MaterialCommunityIcons name="arrow-left" size={18} color={theme.titleColor} />
@@ -156,16 +160,19 @@ export default function NutritionSearchScreen() {
       </View>
 
       <Text style={[styles.title, { color: theme.titleColor }]}>Handmatig zoeken</Text>
-      <Text style={[styles.subtitle, { color: theme.subtitleColor }]}>Zoek voeding, drinken of supplementen uit meerdere bronnen.</Text>
+      <Text style={[styles.subtitle, { color: theme.subtitleColor }]}>Zoek producten en voeg direct toe aan vandaag.</Text>
 
-      <TextInput
-        value={query}
-        onChangeText={setQuery}
-        placeholder="Zoek voeding, drinken of supplement..."
-        placeholderTextColor="#9CA3AF"
-        autoCapitalize="none"
-        style={[styles.searchInput, { borderColor: theme.border, color: theme.titleColor, backgroundColor: theme.card }]}
-      />
+      <View style={[styles.searchField, { borderColor: theme.border, backgroundColor: theme.card }]}>
+        <MaterialCommunityIcons name="magnify" size={18} color={theme.subtitleColor} />
+        <TextInput
+          value={query}
+          onChangeText={setQuery}
+          placeholder="Zoek op naam, merk of barcode"
+          placeholderTextColor="#9CA3AF"
+          autoCapitalize="none"
+          style={[styles.searchInput, { color: theme.titleColor }]}
+        />
+      </View>
 
       {!canSearch ? (
         <Text style={[styles.infoText, { color: theme.subtitleColor }]}>Typ minimaal 3 tekens om te zoeken.</Text>
@@ -190,7 +197,7 @@ export default function NutritionSearchScreen() {
           <Text style={[styles.stateText, { color: theme.subtitleColor }]}>Geen resultaten gevonden.</Text>
           <Pressable style={[styles.addManualButton, { borderColor: theme.border }]} onPress={() => router.push('/nutrition/add')}>
             <MaterialCommunityIcons name="plus-circle-outline" size={16} color={theme.titleColor} />
-            <Text style={[styles.addManualButtonText, { color: theme.titleColor }]}>Zelf item toevoegen</Text>
+            <Text style={[styles.addManualButtonText, { color: theme.titleColor }]}>Zelf toevoegen</Text>
           </Pressable>
         </View>
       ) : null}
@@ -207,7 +214,7 @@ export default function NutritionSearchScreen() {
               >
                 <View style={styles.resultTopRow}>
                   <Text style={[styles.resultName, { color: theme.titleColor }]}>{item.name}</Text>
-                  <View style={[styles.sourceBadge, { backgroundColor: isActive ? '#DBEAFE' : '#E5E7EB' }]}>
+                  <View style={[styles.sourceBadge, { backgroundColor: isActive ? '#DBEAFE' : '#EEF2FF' }]}>
                     <Text style={styles.sourceBadgeText}>{sourceLabel(item.source, item.originSource)}</Text>
                   </View>
                 </View>
@@ -218,7 +225,7 @@ export default function NutritionSearchScreen() {
 
                 {item.verificationStatus ? (
                   <Text style={[styles.resultStatus, { color: item.verificationStatus === 'unverified' ? '#B45309' : theme.subtitleColor }]}>
-                    {verificationHint(item.verificationStatus)}{item.confidenceScore ? ` · Confidence ${item.confidenceScore}` : ''}
+                    {verificationHint(item.verificationStatus)}{item.confidenceScore ? ` · ${item.confidenceScore}` : ''}
                   </Text>
                 ) : null}
               </Pressable>
@@ -228,14 +235,14 @@ export default function NutritionSearchScreen() {
       ) : null}
 
       {selected ? (
-        <View style={[styles.selectionCard, { borderColor: theme.border, backgroundColor: theme.card }]}> 
+        <View style={[styles.selectionCard, { borderColor: theme.border, backgroundColor: theme.card }]}>
           {selected.imageUrl ? <Image source={{ uri: selected.imageUrl }} style={styles.selectionImage} /> : null}
           <Text style={[styles.selectionTitle, { color: theme.titleColor }]}>{selected.name}</Text>
           <Text style={[styles.selectionMeta, { color: theme.subtitleColor }]}>{selected.brand || 'Onbekend merk'} · {sourceLabel(selected.source, selected.originSource)}</Text>
 
           {selected.verificationStatus ? (
-            <Text style={[styles.selectionVerification, { color: selected.verificationStatus === 'unverified' ? '#B45309' : theme.subtitleColor }]}> 
-              {verificationHint(selected.verificationStatus)}{selected.confidenceScore ? ` · Confidence ${selected.confidenceScore}` : ''}
+            <Text style={[styles.selectionVerification, { color: selected.verificationStatus === 'unverified' ? '#B45309' : theme.subtitleColor }]}>
+              {verificationHint(selected.verificationStatus)}{selected.confidenceScore ? ` · ${selected.confidenceScore}` : ''}
             </Text>
           ) : null}
 
@@ -296,10 +303,10 @@ export default function NutritionSearchScreen() {
 const styles = StyleSheet.create({
   screen: { flex: 1 },
   content: {
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 96,
-    gap: 12,
+    paddingHorizontal: 18,
+    paddingTop: 18,
+    paddingBottom: 102,
+    gap: 14,
   },
   headerRow: {
     flexDirection: 'row',
@@ -327,13 +334,19 @@ const styles = StyleSheet.create({
   subtitle: {
     marginTop: -4,
     fontSize: 13,
-    fontWeight: '500',
+    fontWeight: '600',
+  },
+  searchField: {
+    borderWidth: 1,
+    borderRadius: 13,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
   searchInput: {
-    borderWidth: 1,
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    paddingVertical: 11,
+    flex: 1,
     fontSize: 14,
     fontWeight: '600',
   },
@@ -367,14 +380,14 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   resultsWrap: {
-    gap: 8,
+    gap: 10,
   },
   resultCard: {
     borderWidth: 1,
-    borderRadius: 12,
-    paddingHorizontal: 10,
-    paddingVertical: 10,
-    gap: 4,
+    borderRadius: 14,
+    paddingHorizontal: 11,
+    paddingVertical: 11,
+    gap: 5,
   },
   resultTopRow: {
     flexDirection: 'row',
@@ -393,7 +406,7 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
   },
   sourceBadgeText: {
-    color: '#111827',
+    color: '#1E3A8A',
     fontSize: 10,
     fontWeight: '800',
   },
@@ -407,10 +420,10 @@ const styles = StyleSheet.create({
   },
   selectionCard: {
     borderWidth: 1,
-    borderRadius: 14,
+    borderRadius: 16,
     paddingHorizontal: 12,
     paddingVertical: 12,
-    gap: 8,
+    gap: 9,
   },
   selectionImage: {
     width: '100%',

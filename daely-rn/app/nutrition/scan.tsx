@@ -31,11 +31,11 @@ function barcodeSourceLabel(source?: BarcodeNutritionProduct['source']): string 
 
 function verificationHint(status?: string): string | null {
   if (!status) return null;
-  if (status === 'admin_verified') return 'Geverifieerd door DAELY';
-  if (status === 'brand_verified') return 'Geverifieerd door merk';
-  if (status === 'label_verified') return 'Label geverifieerd';
-  if (status === 'community_verified') return 'Community geverifieerd';
-  if (status === 'unverified') return 'Community data (nog niet geverifieerd)';
+  if (status === 'admin_verified') return 'DAELY geverifieerd';
+  if (status === 'brand_verified') return 'Merk geverifieerd';
+  if (status === 'label_verified') return 'Label gecheckt';
+  if (status === 'community_verified') return 'Community check';
+  if (status === 'unverified') return 'Niet officieel geverifieerd';
   return `Status: ${status}`;
 }
 
@@ -168,7 +168,11 @@ export default function NutritionScanScreen() {
   }
 
   return (
-    <ScrollView style={[styles.screen, { backgroundColor: theme.background }]} contentContainerStyle={styles.content}>
+    <ScrollView
+      style={[styles.screen, { backgroundColor: theme.background }]}
+      contentContainerStyle={styles.content}
+      keyboardShouldPersistTaps="handled"
+    >
       <View style={styles.headerRow}>
         <Pressable style={[styles.backButton, { borderColor: theme.border, backgroundColor: theme.card }]} onPress={() => router.back()}>
           <MaterialCommunityIcons name="arrow-left" size={18} color={theme.titleColor} />
@@ -177,7 +181,7 @@ export default function NutritionScanScreen() {
       </View>
 
       <Text style={[styles.title, { color: theme.titleColor }]}>Barcode scannen</Text>
-      <Text style={[styles.subtitle, { color: theme.subtitleColor }]}>Scan een product en voeg het direct toe aan Mijn Voeding.</Text>
+      <Text style={[styles.subtitle, { color: theme.subtitleColor }]}>Scan een barcode en voeg direct toe aan je daglog.</Text>
 
       {!hasResult && (
         <View style={[styles.cameraWrap, { borderColor: theme.border, backgroundColor: theme.card }]}>
@@ -190,7 +194,12 @@ export default function NutritionScanScreen() {
             }}
           />
           <View pointerEvents="none" style={styles.overlay}>
-            <View style={styles.scanFrame} />
+            <View style={styles.scanFrame}>
+              <View style={styles.scanCornerTopLeft} />
+              <View style={styles.scanCornerTopRight} />
+              <View style={styles.scanCornerBottomLeft} />
+              <View style={styles.scanCornerBottomRight} />
+            </View>
             <Text style={styles.overlayText}>Richt de barcode binnen het kader</Text>
           </View>
           {isHandlingScan && (
@@ -225,7 +234,7 @@ export default function NutritionScanScreen() {
                 {verificationHint(product.verificationStatus) ? (
                   <Text style={[styles.verificationText, { color: product.verificationStatus === 'unverified' ? '#B45309' : theme.subtitleColor }]}> 
                     {verificationHint(product.verificationStatus)}
-                    {product.confidenceScore ? ` · Confidence ${product.confidenceScore}` : ''}
+                        {product.confidenceScore ? ` · ${product.confidenceScore}` : ''}
                   </Text>
                 ) : null}
               </View>
@@ -237,7 +246,7 @@ export default function NutritionScanScreen() {
                 <Text style={[styles.metaText, { color: theme.subtitleColor }]}>Vetten: {product.fats}g</Text>
               </View>
 
-              <Text style={[styles.label, { color: theme.subtitleColor }]}>Meal type</Text>
+              <Text style={[styles.label, { color: theme.subtitleColor }]}>Eetmoment</Text>
               <View style={styles.chipRow}>
                 {MEAL_TYPES.map((value) => {
                   const selected = mealType === value;
@@ -284,10 +293,18 @@ export default function NutritionScanScreen() {
             </>
           ) : null}
 
-          <Pressable style={[styles.secondaryButton, { borderColor: theme.border }]} onPress={resetForRescan}>
-            <MaterialCommunityIcons name="refresh" size={16} color={theme.titleColor} />
-            <Text style={[styles.secondaryButtonText, { color: theme.titleColor }]}>Opnieuw scannen</Text>
-          </Pressable>
+          <View style={styles.secondaryActionRow}>
+            <Pressable style={[styles.secondaryButton, { borderColor: theme.border }]} onPress={resetForRescan}>
+              <MaterialCommunityIcons name="refresh" size={16} color={theme.titleColor} />
+              <Text style={[styles.secondaryButtonText, { color: theme.titleColor }]}>Opnieuw scannen</Text>
+            </Pressable>
+            {notFoundMessage ? (
+              <Pressable style={[styles.secondaryButton, styles.secondaryWarmButton]} onPress={() => router.push('/nutrition/add')}>
+                <MaterialCommunityIcons name="plus-circle-outline" size={16} color="#92400E" />
+                <Text style={[styles.secondaryButtonText, styles.secondaryWarmButtonText]}>Zelf toevoegen</Text>
+              </Pressable>
+            ) : null}
+          </View>
           {scannedCode ? <Text style={[styles.scannedCode, { color: theme.subtitleColor }]}>Barcode: {scannedCode}</Text> : null}
         </View>
       )}
@@ -300,10 +317,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 88,
-    gap: 12,
+    paddingHorizontal: 18,
+    paddingTop: 18,
+    paddingBottom: 98,
+    gap: 14,
   },
   centered: {
     flex: 1,
@@ -346,11 +363,11 @@ const styles = StyleSheet.create({
   subtitle: {
     marginTop: -4,
     fontSize: 13,
-    fontWeight: '500',
+    fontWeight: '600',
   },
   cameraWrap: {
     borderWidth: 1,
-    borderRadius: 14,
+    borderRadius: 16,
     overflow: 'hidden',
     height: 360,
   },
@@ -367,9 +384,53 @@ const styles = StyleSheet.create({
     width: '72%',
     height: 120,
     borderWidth: 2,
-    borderColor: '#FFFFFF',
-    borderRadius: 12,
+    borderColor: 'rgba(255,255,255,0.45)',
+    borderRadius: 14,
     backgroundColor: 'rgba(0,0,0,0.15)',
+  },
+  scanCornerTopLeft: {
+    position: 'absolute',
+    top: -2,
+    left: -2,
+    width: 26,
+    height: 26,
+    borderTopWidth: 4,
+    borderLeftWidth: 4,
+    borderColor: '#FFFFFF',
+    borderTopLeftRadius: 12,
+  },
+  scanCornerTopRight: {
+    position: 'absolute',
+    top: -2,
+    right: -2,
+    width: 26,
+    height: 26,
+    borderTopWidth: 4,
+    borderRightWidth: 4,
+    borderColor: '#FFFFFF',
+    borderTopRightRadius: 12,
+  },
+  scanCornerBottomLeft: {
+    position: 'absolute',
+    bottom: -2,
+    left: -2,
+    width: 26,
+    height: 26,
+    borderBottomWidth: 4,
+    borderLeftWidth: 4,
+    borderColor: '#FFFFFF',
+    borderBottomLeftRadius: 12,
+  },
+  scanCornerBottomRight: {
+    position: 'absolute',
+    bottom: -2,
+    right: -2,
+    width: 26,
+    height: 26,
+    borderBottomWidth: 4,
+    borderRightWidth: 4,
+    borderColor: '#FFFFFF',
+    borderBottomRightRadius: 12,
   },
   overlayText: {
     color: '#FFFFFF',
@@ -394,9 +455,9 @@ const styles = StyleSheet.create({
   },
   resultCard: {
     borderWidth: 1,
-    borderRadius: 14,
+    borderRadius: 16,
     padding: 12,
-    gap: 10,
+    gap: 11,
   },
   notFoundTitle: {
     fontSize: 16,
@@ -452,7 +513,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
     fontSize: 11,
     fontWeight: '700',
-    letterSpacing: 1,
+    letterSpacing: 0.8,
   },
   chipRow: {
     flexDirection: 'row',
@@ -518,11 +579,25 @@ const styles = StyleSheet.create({
   secondaryButton: {
     borderWidth: 1,
     borderRadius: 12,
-    paddingVertical: 10,
+    paddingVertical: 9,
+    paddingHorizontal: 12,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 6,
+    flex: 1,
+  },
+  secondaryActionRow: {
+    flexDirection: 'row',
+    gap: 8,
+    flexWrap: 'wrap',
+  },
+  secondaryWarmButton: {
+    borderColor: '#D97706',
+    backgroundColor: '#FFFBEB',
+  },
+  secondaryWarmButtonText: {
+    color: '#92400E',
   },
   secondaryButtonText: {
     fontSize: 12,

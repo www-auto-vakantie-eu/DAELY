@@ -114,7 +114,7 @@ export default function MyNutritionScreen() {
         </Pressable>
       </View>
 
-      <Text style={[styles.sectionLabel, { color: theme.subtitleColor }]}>DAGTOTALEN</Text>
+      <Text style={[styles.sectionLabel, { color: theme.subtitleColor }]}>DAGOVERZICHT</Text>
       <View style={styles.totalsGrid}>
         <View style={[styles.totalCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
           <Text style={[styles.totalValue, { color: theme.titleColor }]}>{totals.kcal}</Text>
@@ -138,16 +138,14 @@ export default function MyNutritionScreen() {
       {entries.length === 0 ? (
         <View style={[styles.emptyCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
           <MaterialCommunityIcons name="silverware-fork-knife" size={20} color={theme.subtitleColor} />
-          <Text style={[styles.emptyText, { color: theme.subtitleColor }]}>Nog geen items toegevoegd vandaag.</Text>
+          <Text style={[styles.emptyText, { color: theme.subtitleColor }]}>Nog geen items gelogd vandaag.</Text>
         </View>
       ) : (
         mealGroups.map((group) => (
           <View key={group.mealType} style={[styles.groupCard, { borderColor: theme.border, backgroundColor: theme.card }]}>
             <View style={styles.groupHeader}>
               <Text style={[styles.groupTitle, { color: theme.titleColor }]}>{MEAL_LABELS[group.mealType]}</Text>
-              <Text style={[styles.groupSubtotal, { color: theme.subtitleColor }]}>
-                {group.subtotals.kcal} kcal · E {group.subtotals.protein}g · K {group.subtotals.carbs}g · V {group.subtotals.fats}g
-              </Text>
+              <Text style={[styles.groupSubtotal, { color: theme.subtitleColor }]}>{group.subtotals.kcal} kcal · E {group.subtotals.protein}g · K {group.subtotals.carbs}g · V {group.subtotals.fats}g</Text>
             </View>
 
             {group.items.map((entry) => (
@@ -181,9 +179,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    paddingHorizontal: 16,
-    paddingTop: 20,
-    paddingBottom: 88,
+    paddingHorizontal: 18,
+    paddingTop: 22,
+    paddingBottom: 96,
   },
   headerRow: {
     flexDirection: 'row',
@@ -206,9 +204,11 @@ const styles = StyleSheet.create({
   addButton: {
     marginTop: 4,
     backgroundColor: '#DBEAFE',
+    borderWidth: 1,
+    borderColor: '#BFDBFE',
     borderRadius: 999,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
+    paddingHorizontal: 11,
+    paddingVertical: 7,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
@@ -220,27 +220,27 @@ const styles = StyleSheet.create({
   },
   sectionLabel: {
     marginTop: 4,
-    marginBottom: 8,
+    marginBottom: 9,
     marginLeft: 2,
     fontSize: 11,
     fontWeight: '700',
-    letterSpacing: 1.3,
+    letterSpacing: 1.2,
   },
   totalsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 10,
-    marginBottom: 12,
+    marginBottom: 14,
   },
   totalCard: {
     width: '48.5%',
     borderWidth: 1,
-    borderRadius: 14,
+    borderRadius: 16,
     paddingHorizontal: 12,
-    paddingVertical: 12,
+    paddingVertical: 13,
   },
   totalValue: {
-    fontSize: 22,
+    fontSize: 23,
     fontWeight: '900',
     letterSpacing: -0.6,
   },
@@ -264,28 +264,28 @@ const styles = StyleSheet.create({
   },
   groupCard: {
     borderWidth: 1,
-    borderRadius: 14,
-    paddingHorizontal: 10,
-    paddingVertical: 10,
-    marginBottom: 10,
-    gap: 8,
+    borderRadius: 16,
+    paddingHorizontal: 11,
+    paddingVertical: 11,
+    marginBottom: 11,
+    gap: 9,
   },
   groupHeader: {
     gap: 2,
     paddingHorizontal: 2,
   },
   groupTitle: {
-    fontSize: 15,
-    fontWeight: '800',
+    fontSize: 16,
+    fontWeight: '900',
   },
   groupSubtotal: {
     fontSize: 11,
-    fontWeight: '700',
+    fontWeight: '600',
   },
   entryCard: {
     borderWidth: 1,
-    borderRadius: 12,
-    paddingHorizontal: 10,
+    borderRadius: 13,
+    paddingHorizontal: 11,
     paddingVertical: 10,
   },
   entryTopRow: {
@@ -303,16 +303,20 @@ const styles = StyleSheet.create({
   },
   entryMeta: {
     marginTop: 2,
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '600',
     textTransform: 'capitalize',
   },
   entryMacros: {
-    marginTop: 8,
-    fontSize: 12,
+    marginTop: 9,
+    fontSize: 11,
     fontWeight: '700',
   },
   deleteButton: {
-    padding: 4,
+    padding: 6,
+    borderRadius: 999,
+    backgroundColor: '#FEF2F2',
+    borderWidth: 1,
+    borderColor: '#FEE2E2',
   },
 });

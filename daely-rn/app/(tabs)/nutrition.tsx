@@ -24,6 +24,41 @@ const FILTER_CATEGORIES = [
   { key: 'exclusions', label: 'Uitsluiten', options: ['Geen noten', 'Geen Zuivel', 'Geen Gluten', 'Geen Soja', 'Zout Arm'] },
 ];
 
+const NUTRITION_ACTIONS = [
+  {
+    key: 'scan',
+    title: 'Barcode scannen',
+    subtitle: 'Snel product herkennen',
+    icon: 'barcode-scan' as const,
+    style: 'quickActionTertiary' as const,
+    route: '/nutrition/scan' as const,
+  },
+  {
+    key: 'search',
+    title: 'Handmatig zoeken',
+    subtitle: 'Zoek in meerdere bronnen',
+    icon: 'text-search' as const,
+    style: 'quickActionSearch' as const,
+    route: '/nutrition/search' as const,
+  },
+  {
+    key: 'add',
+    title: 'Zelf toevoegen',
+    subtitle: 'Maak een nieuw item',
+    icon: 'plus-circle-outline' as const,
+    style: 'quickActionPrimary' as const,
+    route: '/nutrition/add' as const,
+  },
+  {
+    key: 'logbook',
+    title: 'Mijn Voeding',
+    subtitle: 'Bekijk vandaag en totalen',
+    icon: 'notebook-outline' as const,
+    style: 'quickActionSecondary' as const,
+    route: '/my-nutrition' as const,
+  },
+];
+
 
 export default function NutritionScreen() {
   const [searchVisible, setSearchVisible] = useState(false);
@@ -141,23 +176,23 @@ export default function NutritionScreen() {
       </View>
       <View style={{ height: 16 }} />
 
-      <View style={styles.quickActionsRow}>
-        <Pressable style={[styles.quickActionButton, styles.quickActionPrimary]} onPress={() => router.push('/nutrition/add')}>
-          <MaterialCommunityIcons name="plus-circle-outline" size={16} color="#FFFFFF" />
-          <Text style={styles.quickActionText}>Snel toevoegen</Text>
-        </Pressable>
-        <Pressable style={[styles.quickActionButton, styles.quickActionSearch]} onPress={() => router.push('/nutrition/search')}>
-          <MaterialCommunityIcons name="text-search" size={16} color="#FFFFFF" />
-          <Text style={styles.quickActionText}>Handmatig zoeken</Text>
-        </Pressable>
-        <Pressable style={[styles.quickActionButton, styles.quickActionTertiary]} onPress={() => router.push('/nutrition/scan')}>
-          <MaterialCommunityIcons name="barcode-scan" size={16} color="#FFFFFF" />
-          <Text style={styles.quickActionText}>Barcode scannen</Text>
-        </Pressable>
-        <Pressable style={[styles.quickActionButton, styles.quickActionSecondary]} onPress={() => router.push('/my-nutrition')}>
-          <MaterialCommunityIcons name="notebook-outline" size={16} color="#FFFFFF" />
-          <Text style={styles.quickActionText}>Mijn Voeding</Text>
-        </Pressable>
+      <View style={styles.quickActionsBlock}>
+        <Text style={[styles.quickActionsTitle, { color: theme.titleColor }]}>Nutrition acties</Text>
+        <Text style={[styles.quickActionsSubtitle, { color: theme.subtitleColor }]}>Kies de snelste route voor je volgende log.</Text>
+
+        <View style={styles.quickActionsRow}>
+          {NUTRITION_ACTIONS.map((action) => (
+            <Pressable key={action.key} style={[styles.quickActionButton, styles[action.style]]} onPress={() => router.push(action.route)}>
+              <View style={styles.quickActionIconBubble}>
+                <MaterialCommunityIcons name={action.icon} size={18} color="#FFFFFF" />
+              </View>
+              <View style={styles.quickActionTextWrap}>
+                <Text style={styles.quickActionText}>{action.title}</Text>
+                <Text style={styles.quickActionSubText}>{action.subtitle}</Text>
+              </View>
+            </Pressable>
+          ))}
+        </View>
       </View>
 
       <GlobalSearchModal
@@ -320,17 +355,43 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 8,
-    marginBottom: 12,
+    marginBottom: 10,
+  },
+  quickActionsBlock: {
+    marginBottom: 8,
+    gap: 4,
+  },
+  quickActionsTitle: {
+    fontSize: 16,
+    fontWeight: '900',
+    letterSpacing: -0.3,
+  },
+  quickActionsSubtitle: {
+    marginBottom: 6,
+    fontSize: 12,
+    fontWeight: '600',
   },
   quickActionButton: {
     width: '48.5%',
-    borderRadius: 12,
-    paddingVertical: 10,
+    borderRadius: 14,
+    paddingVertical: 12,
     paddingHorizontal: 12,
     flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 8,
+  },
+  quickActionIconBubble: {
+    width: 28,
+    height: 28,
+    borderRadius: 999,
+    backgroundColor: 'rgba(255,255,255,0.2)',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 6,
+    marginTop: 1,
+  },
+  quickActionTextWrap: {
+    flex: 1,
+    gap: 2,
   },
   quickActionPrimary: {
     backgroundColor: '#2563EB',
@@ -347,7 +408,12 @@ const styles = StyleSheet.create({
   quickActionText: {
     color: '#FFFFFF',
     fontSize: 12,
-    fontWeight: '700',
+    fontWeight: '800',
+  },
+  quickActionSubText: {
+    color: 'rgba(255,255,255,0.86)',
+    fontSize: 10,
+    fontWeight: '600',
   },
   filterBarSection: {
     marginBottom: 14,

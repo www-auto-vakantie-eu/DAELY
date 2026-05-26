@@ -310,7 +310,11 @@ export default function AddNutritionScreen() {
   };
 
   return (
-    <ScrollView style={[styles.screen, { backgroundColor: theme.background }]} contentContainerStyle={styles.content}>
+    <ScrollView
+      style={[styles.screen, { backgroundColor: theme.background }]}
+      contentContainerStyle={styles.content}
+      keyboardShouldPersistTaps="handled"
+    >
       <View style={styles.headerRow}>
         <Pressable style={[styles.backButton, { borderColor: theme.border, backgroundColor: theme.card }]} onPress={() => router.back()}>
           <MaterialCommunityIcons name="chevron-left" size={20} color={theme.titleColor} />
@@ -318,8 +322,8 @@ export default function AddNutritionScreen() {
         </Pressable>
       </View>
 
-      <Text style={[styles.title, { color: theme.titleColor }]}>Snel Toevoegen</Text>
-      <Text style={[styles.subtitle, { color: theme.subtitleColor }]}>Voeding, drinken of supplement toevoegen.</Text>
+      <Text style={[styles.title, { color: theme.titleColor }]}>Zelf toevoegen</Text>
+      <Text style={[styles.subtitle, { color: theme.subtitleColor }]}>Log voeding snel en duidelijk voor vandaag.</Text>
 
       <View style={styles.shortcutRow}>
         <Pressable style={[styles.scanShortcutButton, { borderColor: theme.border, backgroundColor: theme.card }]} onPress={() => router.push('/nutrition/scan')}>
@@ -332,10 +336,10 @@ export default function AddNutritionScreen() {
         </Pressable>
       </View>
 
-      <View style={styles.block}>
+      <View style={[styles.block, { borderColor: theme.border, backgroundColor: theme.card }]}>
         <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Recent toegevoegd</Text>
         {recentItems.length === 0 ? (
-          <Text style={[styles.catalogHintText, { color: theme.subtitleColor }]}>Nog geen recente items beschikbaar.</Text>
+          <Text style={[styles.catalogHintText, { color: theme.subtitleColor }]}>Nog geen recente items. Voeg eerst iets toe.</Text>
         ) : (
           <View style={styles.catalogResultsWrap}>
             {recentItems.map((entry) => {
@@ -352,7 +356,7 @@ export default function AddNutritionScreen() {
                         {entry.brand || 'Onbekend merk'} · {entry.macros.kcal} kcal · {sourceLabel(entry.source)}
                       </Text>
                       <Text style={[styles.catalogResultMeta, { color: theme.subtitleColor }]}>
-                        Laatst: {entry.amount || 100} {entry.amountUnit || 'gram'} · {entry.mealType}
+                        Snel opnieuw toevoegen · {entry.amount || 100} {entry.amountUnit || 'gram'} · {entry.mealType}
                       </Text>
                     </View>
                     <Pressable
@@ -369,12 +373,10 @@ export default function AddNutritionScreen() {
                       onPress={() => void quickAddFromEntry(entry, successKey)}
                       disabled={!!quickAddBusyKey}
                     >
-                      <Text style={styles.todayButtonText}>
-                        {quickAddBusyKey === successKey ? 'Bezig...' : quickSuccessKey === successKey ? 'Toegevoegd' : '+ Vandaag'}
-                      </Text>
+                      <Text style={styles.todayButtonText}>{quickAddBusyKey === successKey ? 'Bezig...' : quickSuccessKey === successKey ? 'Toegevoegd aan vandaag' : '+ Vandaag'}</Text>
                     </Pressable>
                     <Pressable style={[styles.secondaryChipButton, { borderColor: theme.border }]} onPress={() => applyRecentItem(entry)}>
-                      <Text style={[styles.secondaryChipButtonText, { color: theme.titleColor }]}>Aanpassen</Text>
+                      <Text style={[styles.secondaryChipButtonText, { color: theme.titleColor }]}>Wijzig</Text>
                     </Pressable>
                   </View>
                 </View>
@@ -384,7 +386,7 @@ export default function AddNutritionScreen() {
         )}
       </View>
 
-      <View style={styles.block}>
+      <View style={[styles.block, { borderColor: theme.border, backgroundColor: theme.card }]}>
         <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Favorieten</Text>
         {favoriteItems.length === 0 ? (
           <Text style={[styles.catalogHintText, { color: theme.subtitleColor }]}>Nog geen favorieten. Markeer een recent item met de ster.</Text>
@@ -401,7 +403,7 @@ export default function AddNutritionScreen() {
                         {item.brand || 'Onbekend merk'} · {item.macros.kcal} kcal · {sourceLabel(item.source)}
                       </Text>
                       <Text style={[styles.catalogResultMeta, { color: theme.subtitleColor }]}>
-                        Laatst: {item.amount} {item.amountUnit || 'gram'} · {item.mealType}
+                        Snel opnieuw toevoegen · {item.amount} {item.amountUnit || 'gram'} · {item.mealType}
                       </Text>
                     </View>
                     <Pressable
@@ -418,12 +420,10 @@ export default function AddNutritionScreen() {
                       onPress={() => void quickAddFromFavorite(item, successKey)}
                       disabled={!!quickAddBusyKey}
                     >
-                      <Text style={styles.todayButtonText}>
-                        {quickAddBusyKey === successKey ? 'Bezig...' : quickSuccessKey === successKey ? 'Toegevoegd' : '+ Vandaag'}
-                      </Text>
+                      <Text style={styles.todayButtonText}>{quickAddBusyKey === successKey ? 'Bezig...' : quickSuccessKey === successKey ? 'Toegevoegd aan vandaag' : '+ Vandaag'}</Text>
                     </Pressable>
                     <Pressable style={[styles.secondaryChipButton, { borderColor: theme.border }]} onPress={() => applyFavoriteItem(item)}>
-                      <Text style={[styles.secondaryChipButtonText, { color: theme.titleColor }]}>Aanpassen</Text>
+                      <Text style={[styles.secondaryChipButtonText, { color: theme.titleColor }]}>Wijzig</Text>
                     </Pressable>
                   </View>
                 </View>
@@ -433,13 +433,13 @@ export default function AddNutritionScreen() {
         )}
       </View>
 
-      <View style={styles.block}>
-        <Text style={[styles.label, { color: theme.subtitleColor }]}>Naam</Text>
+      <View style={[styles.block, { borderColor: theme.border, backgroundColor: theme.card }]}>
+        <Text style={[styles.label, { color: theme.subtitleColor }]}>Product</Text>
         <TextInput value={name} onChangeText={setName} placeholder="Bijv. Protein shake" placeholderTextColor="#9CA3AF" style={[styles.input, { borderColor: theme.border, color: theme.titleColor, backgroundColor: theme.card }]} />
 
         <Pressable style={[styles.catalogSearchButton, { borderColor: theme.border, backgroundColor: theme.card }]} onPress={handleSearchCatalog}>
           <MaterialCommunityIcons name="database-search" size={16} color={theme.titleColor} />
-          <Text style={[styles.catalogSearchText, { color: theme.titleColor }]}>{isSearchingCatalog ? 'Zoeken...' : 'Zoek in DAELY database'}</Text>
+          <Text style={[styles.catalogSearchText, { color: theme.titleColor }]}>{isSearchingCatalog ? 'Zoeken...' : 'Zoek in DAELY producten'}</Text>
         </Pressable>
 
         {didSearchCatalog && searchResults.length === 0 ? (
@@ -472,7 +472,7 @@ export default function AddNutritionScreen() {
         <TextInput value={brand} onChangeText={setBrand} placeholder="Bijv. XXL Nutrition" placeholderTextColor="#9CA3AF" style={[styles.input, { borderColor: theme.border, color: theme.titleColor, backgroundColor: theme.card }]} />
       </View>
 
-      <View style={styles.block}>
+      <View style={[styles.block, { borderColor: theme.border, backgroundColor: theme.card }]}>
         <Text style={[styles.label, { color: theme.subtitleColor }]}>Type</Text>
         <View style={styles.chipRow}>
           {ITEM_TYPES.map((value) => {
@@ -506,7 +506,7 @@ export default function AddNutritionScreen() {
         </View>
       </View>
 
-      <View style={styles.block}>
+      <View style={[styles.block, { borderColor: theme.border, backgroundColor: theme.card }]}>
         <Text style={[styles.label, { color: theme.subtitleColor }]}>Hoeveelheid</Text>
         <View style={styles.inlineRow}>
           <TextInput
@@ -534,7 +534,7 @@ export default function AddNutritionScreen() {
         </View>
       </View>
 
-      <View style={styles.block}>
+      <View style={[styles.block, { borderColor: theme.border, backgroundColor: theme.card }]}>
         <Text style={[styles.label, { color: theme.subtitleColor }]}>Macro's</Text>
         <View style={styles.macroGrid}>
           <TextInput value={kcal} onChangeText={setKcal} placeholder="kcal" keyboardType="decimal-pad" placeholderTextColor="#9CA3AF" style={[styles.input, styles.macroInput, { borderColor: theme.border, color: theme.titleColor, backgroundColor: theme.card }]} />
@@ -544,7 +544,7 @@ export default function AddNutritionScreen() {
         </View>
       </View>
 
-      <View style={styles.block}>
+      <View style={[styles.block, { borderColor: theme.border, backgroundColor: theme.card }]}>
         <Text style={[styles.label, { color: theme.subtitleColor }]}>Notities (optioneel)</Text>
         <TextInput
           value={notes}
@@ -567,7 +567,7 @@ export default function AddNutritionScreen() {
         />
         <View style={styles.shareTextWrap}>
           <Text style={[styles.shareTitle, { color: theme.titleColor }]}>Help andere sporters</Text>
-          <Text style={[styles.shareSubtitle, { color: theme.subtitleColor }]}>Voeg dit product anoniem toe aan de DAELY database</Text>
+          <Text style={[styles.shareSubtitle, { color: theme.subtitleColor }]}>Help andere sporters met betere productdata</Text>
         </View>
       </Pressable>
 
@@ -577,7 +577,7 @@ export default function AddNutritionScreen() {
         disabled={!canSubmit}
       >
         <MaterialCommunityIcons name="content-save-outline" size={18} color="#FFFFFF" />
-        <Text style={styles.saveButtonText}>{isSaving ? 'Opslaan...' : 'Opslaan'}</Text>
+        <Text style={styles.saveButtonText}>{isSaving ? 'Opslaan...' : 'Toevoegen aan vandaag'}</Text>
       </Pressable>
     </ScrollView>
   );
@@ -588,10 +588,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 92,
-    gap: 12,
+    paddingHorizontal: 18,
+    paddingTop: 18,
+    paddingBottom: 98,
+    gap: 14,
   },
   headerRow: {
     flexDirection: 'row',
@@ -642,13 +642,17 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   block: {
-    gap: 8,
+    gap: 9,
+    borderWidth: 1,
+    borderRadius: 14,
+    paddingHorizontal: 12,
+    paddingVertical: 11,
   },
   shareRow: {
     borderWidth: 1,
-    borderRadius: 12,
+    borderRadius: 14,
     paddingHorizontal: 12,
-    paddingVertical: 10,
+    paddingVertical: 11,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
@@ -671,8 +675,9 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
   sectionTitle: {
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: '900',
+    letterSpacing: -0.2,
   },
   catalogSearchButton: {
     borderWidth: 1,
@@ -697,9 +702,9 @@ const styles = StyleSheet.create({
   },
   catalogResultCard: {
     borderWidth: 1,
-    borderRadius: 10,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
+    borderRadius: 12,
+    paddingHorizontal: 11,
+    paddingVertical: 9,
   },
   catalogResultTitle: {
     fontSize: 13,
@@ -712,10 +717,10 @@ const styles = StyleSheet.create({
   },
   quickCard: {
     borderWidth: 1,
-    borderRadius: 12,
-    paddingHorizontal: 10,
-    paddingVertical: 10,
-    gap: 8,
+    borderRadius: 14,
+    paddingHorizontal: 11,
+    paddingVertical: 11,
+    gap: 10,
   },
   quickRowTop: {
     flexDirection: 'row',
@@ -737,26 +742,27 @@ const styles = StyleSheet.create({
   quickActionRow: {
     flexDirection: 'row',
     gap: 8,
+    alignItems: 'center',
   },
   todayButton: {
-    backgroundColor: '#2563EB',
+    backgroundColor: '#1D4ED8',
     borderRadius: 999,
-    paddingHorizontal: 12,
-    paddingVertical: 7,
+    paddingHorizontal: 11,
+    paddingVertical: 6,
   },
   todayButtonDisabled: {
     opacity: 0.6,
   },
   todayButtonText: {
     color: '#FFFFFF',
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '800',
   },
   secondaryChipButton: {
     borderWidth: 1,
     borderRadius: 999,
-    paddingHorizontal: 12,
-    paddingVertical: 7,
+    paddingHorizontal: 11,
+    paddingVertical: 6,
   },
   secondaryChipButtonText: {
     fontSize: 12,
