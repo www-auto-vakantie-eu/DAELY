@@ -146,6 +146,10 @@ export default function NutritionScreen() {
           <MaterialCommunityIcons name="plus-circle-outline" size={16} color="#FFFFFF" />
           <Text style={styles.quickActionText}>Snel toevoegen</Text>
         </Pressable>
+        <Pressable style={[styles.quickActionButton, styles.quickActionSearch]} onPress={() => router.push('/nutrition/search')}>
+          <MaterialCommunityIcons name="text-search" size={16} color="#FFFFFF" />
+          <Text style={styles.quickActionText}>Handmatig zoeken</Text>
+        </Pressable>
         <Pressable style={[styles.quickActionButton, styles.quickActionTertiary]} onPress={() => router.push('/nutrition/scan')}>
           <MaterialCommunityIcons name="barcode-scan" size={16} color="#FFFFFF" />
           <Text style={styles.quickActionText}>Barcode scannen</Text>
@@ -336,6 +340,9 @@ const styles = StyleSheet.create({
   },
   quickActionTertiary: {
     backgroundColor: '#0EA5E9',
+  },
+  quickActionSearch: {
+    backgroundColor: '#7C3AED',
   },
   quickActionText: {
     color: '#FFFFFF',

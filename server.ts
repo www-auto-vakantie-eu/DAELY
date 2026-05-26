@@ -444,6 +444,68 @@ async function startServer() {
     updatedAt: row.updated_at,
   });
 
+  type NutritionSearchSource = "daely" | "open_food_facts" | "usda";
+
+  type NutritionSearchResult = {
+    externalId: string;
+    source: NutritionSearchSource;
+    name: string;
+    brand?: string;
+    barcode?: string;
+    itemType: "food" | "drink" | "supplement";
+    kcal: number;
+    protein: number;
+    carbs: number;
+    fats: number;
+    sugar: number;
+    salt: number;
+    sodium: number;
+    servingSize: number;
+    servingUnit: string;
+    imageUrl?: string;
+    verificationStatus?: string;
+    confidenceScore?: number;
+  };
+
+  const normalizeBarcode = (value: unknown): string | undefined => {
+    if (typeof value !== "string") return undefined;
+    const compact = value.replace(/\s+/g, "").trim();
+    return compact.length > 0 ? compact : undefined;
+  };
+
+  const inferItemType = (name: unknown, brand?: unknown, categories?: unknown): "food" | "drink" | "supplement" => {
+    const haystack = `${toStringOrUndefined(name) || ""} ${toStringOrUndefined(brand) || ""} ${toStringOrUndefined(categories) || ""}`.toLowerCase();
+
+    if (/whey|protein powder|supplement|capsule|tablet|creatine|pre[- ]?workout|multivitamin|bcaa|omega/.test(haystack)) {
+      return "supplement";
+    }
+    if (/drink|juice|water|cola|soda|milk|tea|coffee|beverage|smoothie/.test(haystack)) {
+      return "drink";
+    }
+    return "food";
+  };
+
+  const buildSearchDedupKey = (item: NutritionSearchResult): string => {
+    if (item.barcode) {
+      return `barcode:${item.barcode}`;
+    }
+    const name = item.name.trim().toLowerCase();
+    const brand = (item.brand || "").trim().toLowerCase();
+    return `name:${name}|brand:${brand}`;
+  };
+
+  const mapPerUnitToServing = (perUnit: unknown): { servingSize: number; servingUnit: string } => {
+    const normalized = toStringOrUndefined(perUnit) || "100g";
+    if (normalized === "100ml") return { servingSize: 100, servingUnit: "ml" };
+    if (normalized === "serving") return { servingSize: 1, servingUnit: "portie" };
+    return { servingSize: 100, servingUnit: "gram" };
+  };
+
+  const safeResultString = (value: unknown, fallback: string): string => {
+    const normalized = toStringOrUndefined(value);
+    return normalized || fallback;
+  };
+
   app.use(express.json());
   app.use((req, res, next) => {
       // --- FITBIT API ---
@@ -742,6 +804,185 @@ async function startServer() {
       .filter((partner) => isVisibleForCountry(partner, country))
       .map(({ global, countries, ...partner }) => partner);
     res.json(partners);
+  });
+
+  app.get("/api/nutrition/search", async (req, res) => {
+    const query = typeof req.query.query === "string" ? req.query.query.trim() : "";
+    if (!query) {
+      return res.json([]);
+    }
+
+    const results: NutritionSearchResult[] = [];
+
+    try {
+      const like = `%${query}%`;
+      const stmt = db.prepare(
+        `SELECT p.*,
+                (SELECT per_unit FROM nutrition_product_nutrients n WHERE n.product_id = p.id ORDER BY n.updated_at DESC, n.id DESC LIMIT 1) AS per_unit,
+                (SELECT kcal FROM nutrition_product_nutrients n WHERE n.product_id = p.id ORDER BY n.updated_at DESC, n.id DESC LIMIT 1) AS kcal,
+                (SELECT protein FROM nutrition_product_nutrients n WHERE n.product_id = p.id ORDER BY n.updated_at DESC, n.id DESC LIMIT 1) AS protein,
+                (SELECT carbs FROM nutrition_product_nutrients n WHERE n.product_id = p.id ORDER BY n.updated_at DESC, n.id DESC LIMIT 1) AS carbs,
+                (SELECT fats FROM nutrition_product_nutrients n WHERE n.product_id = p.id ORDER BY n.updated_at DESC, n.id DESC LIMIT 1) AS fats,
+                (SELECT sugar FROM nutrition_product_nutrients n WHERE n.product_id = p.id ORDER BY n.updated_at DESC, n.id DESC LIMIT 1) AS sugar,
+                (SELECT salt FROM nutrition_product_nutrients n WHERE n.product_id = p.id ORDER BY n.updated_at DESC, n.id DESC LIMIT 1) AS salt,
+                (SELECT sodium FROM nutrition_product_nutrients n WHERE n.product_id = p.id ORDER BY n.updated_at DESC, n.id DESC LIMIT 1) AS sodium
+           FROM nutrition_products p
+          WHERE (p.name LIKE ? OR p.brand LIKE ? OR p.barcode LIKE ?)
+            AND (p.verification_status != 'unverified' OR p.confidence_score >= 0.65)
+          ORDER BY p.confidence_score DESC, p.updated_at DESC
+          LIMIT 20`
+      );
+
+      const daelyRows = stmt.all(like, like, like) as any[];
+      for (const row of daelyRows) {
+        const serving = mapPerUnitToServing(row.per_unit);
+        results.push({
+          externalId: `daely-${row.id}`,
+          source: "daely",
+          name: safeResultString(row.name, "Onbekend product"),
+          brand: toStringOrUndefined(row.brand),
+          barcode: normalizeBarcode(row.barcode),
+          itemType: inferItemType(row.name, row.brand, row.category),
+          kcal: toNutritionNumber(row.kcal),
+          protein: toNutritionNumber(row.protein),
+          carbs: toNutritionNumber(row.carbs),
+          fats: toNutritionNumber(row.fats),
+          sugar: toNutritionNumber(row.sugar),
+          salt: toNutritionNumber(row.salt),
+          sodium: toNutritionNumber(row.sodium),
+          servingSize: serving.servingSize,
+          servingUnit: serving.servingUnit,
+          imageUrl: toStringOrUndefined(row.image_url),
+          verificationStatus: toStringOrUndefined(row.verification_status),
+          confidenceScore: toNutritionNumber(row.confidence_score),
+        });
+      }
+    } catch (error) {
+      console.error("DAELY nutrition search error:", error);
+    }
+
+    try {
+      const fetchOffProducts = async (url: string): Promise<any[]> => {
+        const response = await fetch(url, {
+          headers: {
+            Accept: "application/json",
+            "User-Agent": "DAELY/1.0 (+https://daely.app)",
+          },
+        });
+
+        if (!response.ok) {
+          return [];
+        }
+
+        const payload = (await response.json()) as any;
+        return Array.isArray(payload?.products) ? payload.products : [];
+      };
+
+      const primaryOffUrl = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(query)}&search_simple=1&action=process&json=1&page=1&page_size=12`;
+      const fallbackOffUrl = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(query)}&search_simple=1&action=process&json=1&page=1&page_size=24`;
+
+      let products = await fetchOffProducts(primaryOffUrl);
+      if (products.length === 0) {
+        products = await fetchOffProducts(fallbackOffUrl);
+      }
+
+      for (const product of products) {
+          const nutriments = product?.nutriments || {};
+          const parsedServing = parseServingFromText(product?.serving_size);
+          const servingSize = toNutritionNumber(product?.serving_quantity, parsedServing.size, 100) || 100;
+          const servingUnit =
+            toStringOrUndefined(product?.serving_quantity_unit)?.toLowerCase() ||
+            parsedServing.unit ||
+            (inferItemType(product?.product_name, product?.brands, product?.categories) === "drink" ? "ml" : "gram");
+
+          results.push({
+            externalId: `off-${safeResultString(product?._id, `${Date.now()}-${Math.random()}`)}`,
+            source: "open_food_facts",
+            name: safeResultString(product?.product_name || product?.product_name_en, "Onbekend product"),
+            brand: toStringOrUndefined(product?.brands)?.split(",")[0]?.trim(),
+            barcode: normalizeBarcode(product?.code),
+            itemType: inferItemType(product?.product_name, product?.brands, product?.categories),
+            kcal: toNutritionNumber(
+              nutriments["energy-kcal_serving"],
+              nutriments["energy-kcal_100g"],
+              nutriments["energy-kcal"]
+            ),
+            protein: toNutritionNumber(nutriments?.proteins_serving, nutriments?.proteins_100g, nutriments?.proteins),
+            carbs: toNutritionNumber(nutriments?.carbohydrates_serving, nutriments?.carbohydrates_100g, nutriments?.carbohydrates),
+            fats: toNutritionNumber(nutriments?.fat_serving, nutriments?.fat_100g, nutriments?.fat),
+            sugar: toNutritionNumber(nutriments?.sugars_serving, nutriments?.sugars_100g, nutriments?.sugars),
+            salt: toNutritionNumber(nutriments?.salt_serving, nutriments?.salt_100g, nutriments?.salt),
+            sodium: toNutritionNumber(nutriments?.sodium_serving, nutriments?.sodium_100g, nutriments?.sodium),
+            servingSize,
+            servingUnit,
+            imageUrl: toStringOrUndefined(product?.image_front_url) || toStringOrUndefined(product?.image_url),
+          });
+      }
+    } catch (error) {
+      console.error("Open Food Facts search error:", error);
+    }
+
+    const usdaApiKey = toStringOrUndefined(process.env.USDA_API_KEY);
+    if (usdaApiKey) {
+      try {
+        const usdaUrl = `https://api.nal.usda.gov/fdc/v1/foods/search?api_key=${encodeURIComponent(usdaApiKey)}&query=${encodeURIComponent(query)}&pageSize=10`;
+        const response = await fetch(usdaUrl);
+        if (response.ok) {
+          const payload = (await response.json()) as any;
+          const foods = Array.isArray(payload?.foods) ? payload.foods : [];
+
+          const readNutrient = (food: any, names: string[]) => {
+            const nutrients = Array.isArray(food?.foodNutrients) ? food.foodNutrients : [];
+            for (const name of names) {
+              const match = nutrients.find((n: any) =>
+                typeof n?.nutrientName === "string" && n.nutrientName.toLowerCase().includes(name.toLowerCase())
+              );
+              if (match) {
+                return toNutritionNumber(match.value);
+              }
+            }
+            return 0;
+          };
+
+          for (const food of foods) {
+            const servingSize = toNutritionNumber(food?.servingSize, 100) || 100;
+            const servingUnit = toStringOrUndefined(food?.servingSizeUnit)?.toLowerCase() || "gram";
+            results.push({
+              externalId: `usda-${safeResultString(food?.fdcId, `${Date.now()}-${Math.random()}`)}`,
+              source: "usda",
+              name: safeResultString(food?.description, "Onbekend product"),
+              brand: toStringOrUndefined(food?.brandOwner),
+              barcode: normalizeBarcode(toStringOrUndefined(food?.gtinUpc)),
+              itemType: inferItemType(food?.description, food?.brandOwner, food?.foodCategory),
+              kcal: readNutrient(food, ["energy"]),
+              protein: readNutrient(food, ["protein"]),
+              carbs: readNutrient(food, ["carbohydrate"]),
+              fats: readNutrient(food, ["total lipid", "fat"]),
+              sugar: readNutrient(food, ["sugar"]),
+              salt: readNutrient(food, ["salt"]),
+              sodium: readNutrient(food, ["sodium"]),
+              servingSize,
+              servingUnit,
+            });
+          }
+        }
+      } catch (error) {
+        console.error("USDA search error:", error);
+      }
+    }
+
+    const deduped = new Map<string, NutritionSearchResult>();
+    for (const item of results) {
+      const name = item.name.trim();
+      if (!name) continue;
+      const key = buildSearchDedupKey(item);
+      if (!deduped.has(key)) {
+        deduped.set(key, item);
+      }
+      if (deduped.size >= 20) break;
+    }
+
+    return res.json(Array.from(deduped.values()).slice(0, 20));
   });
 
   app.get("/api/nutrition/products/search", (req, res) => {

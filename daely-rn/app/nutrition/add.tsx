@@ -157,10 +157,16 @@ export default function AddNutritionScreen() {
       <Text style={[styles.title, { color: theme.titleColor }]}>Snel Toevoegen</Text>
       <Text style={[styles.subtitle, { color: theme.subtitleColor }]}>Voeding, drinken of supplement toevoegen.</Text>
 
-      <Pressable style={[styles.scanShortcutButton, { borderColor: theme.border, backgroundColor: theme.card }]} onPress={() => router.push('/nutrition/scan')}>
-        <MaterialCommunityIcons name="barcode-scan" size={16} color={theme.titleColor} />
-        <Text style={[styles.scanShortcutText, { color: theme.titleColor }]}>Barcode scannen</Text>
-      </Pressable>
+      <View style={styles.shortcutRow}>
+        <Pressable style={[styles.scanShortcutButton, { borderColor: theme.border, backgroundColor: theme.card }]} onPress={() => router.push('/nutrition/scan')}>
+          <MaterialCommunityIcons name="barcode-scan" size={16} color={theme.titleColor} />
+          <Text style={[styles.scanShortcutText, { color: theme.titleColor }]}>Barcode scannen</Text>
+        </Pressable>
+        <Pressable style={[styles.scanShortcutButton, { borderColor: theme.border, backgroundColor: theme.card }]} onPress={() => router.push('/nutrition/search')}>
+          <MaterialCommunityIcons name="text-search" size={16} color={theme.titleColor} />
+          <Text style={[styles.scanShortcutText, { color: theme.titleColor }]}>Handmatig zoeken</Text>
+        </Pressable>
+      </View>
 
       <View style={styles.block}>
         <Text style={[styles.label, { color: theme.subtitleColor }]}>Naam</Text>
@@ -355,6 +361,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
+  },
+  shortcutRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
   },
   scanShortcutText: {
     fontSize: 12,

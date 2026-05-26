@@ -9,7 +9,7 @@ export type NutritionMealType =
   | 'post-workout'
   | 'supplement';
 
-export type NutritionSourceType = 'manual' | 'barcode';
+export type NutritionSourceType = 'manual' | 'barcode' | 'daely' | 'open_food_facts' | 'usda';
 
 export interface NutritionMacros {
   kcal: number;
