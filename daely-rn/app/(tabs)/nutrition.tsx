@@ -166,10 +166,10 @@ export default function NutritionScreen() {
           <Pressable style={styles.settingsPill} onPress={() => setSearchVisible(true)}>
             <MaterialCommunityIcons name="magnify" size={22} color={theme.titleColor} />
           </Pressable>
-          <Pressable style={styles.settingsPill} onPress={() => {/* instellingen actie */}}>
+          <Pressable style={styles.settingsPill} onPress={() => router.push('/(tabs)/athlete')}>
             <MaterialCommunityIcons name="cog-outline" size={22} color={theme.titleColor} />
           </Pressable>
-          <Pressable style={styles.settingsPill} onPress={() => {/* winkelwagen actie */}}>
+          <Pressable style={styles.settingsPill} onPress={() => router.push('/(tabs)/cart')}>
             <MaterialCommunityIcons name="shopping-outline" size={22} color={theme.titleColor} />
           </Pressable>
         </View>

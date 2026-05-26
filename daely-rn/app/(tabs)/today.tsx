@@ -114,7 +114,7 @@ export default function TodayScreen() {
               { backgroundColor: theme.card, borderColor: theme.border },
               pressed ? styles.settingsPillPressed : null,
             ]}
-            onPress={() => {/* winkelwagen actie */}}
+            onPress={() => router.push('/(tabs)/cart')}
           >
             <MaterialCommunityIcons name="shopping-outline" size={20} color={theme.titleColor} />
           </Pressable>

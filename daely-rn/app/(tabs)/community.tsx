@@ -1,5 +1,6 @@
+import { PARTNERS } from '@/constants/partners';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { StyleSheet, ScrollView, View, Text, Pressable, Image, Dimensions, NativeSyntheticEvent, NativeScrollEvent, Linking, type ImageSourcePropType, RefreshControl } from 'react-native';
+import { StyleSheet, ScrollView, View, Text, Pressable, Image, Dimensions, NativeSyntheticEvent, NativeScrollEvent, Linking, type ImageSourcePropType, RefreshControl, Modal, TouchableOpacity } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
@@ -17,8 +18,10 @@ import {
 } from '@/services/content-api';
 import { getCommunitFeed, formatFeedDate, type FeedItem, type FeedItemType } from '@/services/community-feed';
 import { EngagementPanel } from '@/components/EngagementPanel';
+import GlobalSearchModal from '../components/GlobalSearchModal';
 
 const { width: screenWidth } = Dimensions.get('window');
+const CREATOR_FILTERS = ['Taal', 'Discipline', 'Coach / PT'] as const;
 const PARTNER_FILTERS = ['Alles', 'Kleding', 'Voeding', 'Supplementen', 'Lidmaatschappen'] as const;
 const COMMUNITY_EVENT_FILTERS = ['Alles', 'Hyrox', 'Obstacle', 'Running'] as const;
 const FEED_FILTER_OPTIONS: FeedItemType[] = ['post', 'meal', 'workout'];
@@ -37,6 +40,7 @@ function formatFollowers(n: number): string {
   return String(n);
 }
 
+// Herstel de volledige structuur van CreatorCard
 function CreatorCard({ creator, onPress }: { creator: CommunityCreator; onPress: () => void }) {
   const theme = useTheme();
   const badgeStyle = BADGE_COLORS[creator.badge];
@@ -44,8 +48,7 @@ function CreatorCard({ creator, onPress }: { creator: CommunityCreator; onPress:
   return (
     <Pressable
       style={[styles.card, { backgroundColor: theme.card, shadowColor: theme.titleColor }]}
-      onPress={onPress}
-    >
+      onPress={onPress}>
       <View style={styles.avatarWrap}>
         <View style={styles.avatarRing}>
           <Image source={{ uri: creator.image }} style={styles.avatar} />
@@ -58,36 +61,6 @@ function CreatorCard({ creator, onPress }: { creator: CommunityCreator; onPress:
           <MaterialCommunityIcons name="check-decagram" size={18} color="#3B82F6" style={styles.checkIcon} />
         </View>
         <Text style={[styles.specialty, { color: theme.subtitleColor }]}>{creator.specialty}</Text>
-        {/* Socials */}
-        {creator.socials && (
-          <View style={{ flexDirection: 'row', gap: 12, marginTop: 8, marginBottom: 4, alignSelf: 'flex-start' }}>
-            {creator.socials.instagram ? (
-              <Pressable onPress={() => Linking.openURL(creator.socials.instagram)}>
-                <MaterialCommunityIcons name="instagram" size={20} color="#C13584" />
-              </Pressable>
-            ) : null}
-            {creator.socials.facebook ? (
-              <Pressable onPress={() => Linking.openURL(creator.socials.facebook)}>
-                <MaterialCommunityIcons name="facebook" size={20} color="#1877F3" />
-              </Pressable>
-            ) : null}
-            {creator.socials.tiktok ? (
-              <Pressable onPress={() => Linking.openURL(creator.socials.tiktok)}>
-                <MaterialCommunityIcons name="music" size={20} color="#000" />
-              </Pressable>
-            ) : null}
-            {creator.socials.snapchat ? (
-              <Pressable onPress={() => Linking.openURL(creator.socials.snapchat)}>
-                <MaterialCommunityIcons name="snapchat" size={20} color="#FFFC00" />
-              </Pressable>
-            ) : null}
-            {creator.socials.youtube ? (
-              <Pressable onPress={() => Linking.openURL(creator.socials.youtube)}>
-                <MaterialCommunityIcons name="youtube" size={20} color="#FF0000" />
-              </Pressable>
-            ) : null}
-          </View>
-        )}
       </View>
 
       <MaterialCommunityIcons name="chevron-right" size={22} color={theme.subtitleColor} style={styles.chevron} />
@@ -146,14 +119,12 @@ function PartnerCard({
 }) {
   const theme = useTheme();
 
-  const openPartnerOffer = async () => {
-    if (!partner.offerUrl) return;
-    const separator = partner.offerUrl.includes('?') ? '&' : '?';
-    const targetUrl = `${partner.offerUrl}${separator}coupon=${encodeURIComponent(partner.discountCode)}`;
-    const canOpen = await Linking.canOpenURL(targetUrl);
-    if (canOpen) {
-      await Linking.openURL(targetUrl);
-    }
+  const router = useRouter();
+  // Automatisch alle [id]-nl varianten mappen naar [id]
+  const idMap: Record<string, string> = Object.fromEntries(PARTNERS.map(p => [`${p.id}-nl`, p.id]));
+  const openPartnerOffer = () => {
+    const realId = idMap[partner.id] || partner.id;
+    router.push({ pathname: '/partners/[id]', params: { id: realId } });
   };
 
   return (
@@ -242,26 +213,172 @@ function EventLogo({
 }
 
 export default function CommunityScreen() {
+  const [searchVisible, setSearchVisible] = useState(false);
+  const [searchResults, setSearchResults] = useState<Array<{ id: string; label: string; meta?: string; onSelect: () => void }>>([]);
+  // Filter states for Creators
+  const [activeDiscipline, setActiveDiscipline] = useState<string>('Alles');
+  const [activeType, setActiveType] = useState<string>('Alles');
+  const [activeLanguage, setActiveLanguage] = useState<string>('Alles');
+  const [filterModal, setFilterModal] = useState<{ type: 'Taal' | 'Discipline' | 'Coach / PT' | null, visible: boolean }>({ type: null, visible: false });
+
+  // ...andere state...
+
+
+  const handleSearch = (query: string) => {
+    const normalizedQuery = query.trim().toLowerCase();
+    if (!normalizedQuery) {
+      setSearchResults([]);
+      return;
+    }
+
+    const partnerIdMap: Record<string, string> = Object.fromEntries(PARTNERS.map((p) => [`${p.id}-nl`, p.id]));
+    const results: Array<{ id: string; label: string; meta?: string; onSelect: () => void }> = [];
+    const seen = new Set<string>();
+    const addResult = (item: { id: string; label: string; meta?: string; onSelect: () => void }) => {
+      if (results.length >= 24) return;
+      if (seen.has(item.id)) return;
+      seen.add(item.id);
+      results.push(item);
+    };
+
+    allCreators.forEach((creator) => {
+      const haystack = `${creator.name} ${creator.specialty}`.toLowerCase();
+      if (!haystack.includes(normalizedQuery)) return;
+      addResult({
+        id: `creator-${creator.id}`,
+        label: creator.name,
+        meta: `Persoon · ${creator.specialty}`,
+        onSelect: () => {
+          setSearchVisible(false);
+          switchTab(0);
+          router.push({ pathname: '/community/creator/[id]', params: { id: creator.id } });
+        },
+      });
+    });
+
+    availablePartners.forEach((partner) => {
+      const haystack = `${partner.name} ${partner.group} ${partner.discountLabel}`.toLowerCase();
+      if (!haystack.includes(normalizedQuery)) return;
+      addResult({
+        id: `partner-${partner.id}`,
+        label: partner.name,
+        meta: `Partner · ${partner.group}`,
+        onSelect: () => {
+          const realId = partnerIdMap[partner.id] || partner.id;
+          setSearchVisible(false);
+          switchTab(2);
+          router.push({ pathname: '/partners/[id]', params: { id: realId } });
+        },
+      });
+    });
+
+    countryEvents.forEach((event) => {
+      const haystack = `${event.title} ${event.type} ${event.location}`.toLowerCase();
+      if (!haystack.includes(normalizedQuery)) return;
+      addResult({
+        id: `event-${event.id}`,
+        label: event.title,
+        meta: `Event · ${event.type} · ${event.location}`,
+        onSelect: () => {
+          setSearchVisible(false);
+          switchTab(3);
+        },
+      });
+    });
+
+    feedItems.forEach((item) => {
+      if (item.type === 'meal') {
+        const haystack = `${item.title} ${item.mealType}`.toLowerCase();
+        if (!haystack.includes(normalizedQuery)) return;
+        addResult({
+          id: `meal-${item.id}`,
+          label: item.title,
+          meta: `Gerecht · ${item.mealType}`,
+          onSelect: () => {
+            setSearchVisible(false);
+            switchTab(1);
+            setSelectedFeedFilter('meal');
+          },
+        });
+      }
+
+      if (item.type === 'workout') {
+        const haystack = `${item.title} ${item.workoutType} ${item.duration}`.toLowerCase();
+        if (!haystack.includes(normalizedQuery)) return;
+        addResult({
+          id: `workout-${item.id}`,
+          label: item.title,
+          meta: `Workout · ${item.workoutType}`,
+          onSelect: () => {
+            setSearchVisible(false);
+            switchTab(1);
+            setSelectedFeedFilter('workout');
+          },
+        });
+      }
+    });
+
+    Array.from(new Set(allCreators.map((creator) => creator.specialty).filter(Boolean))).forEach((discipline) => {
+      if (!discipline.toLowerCase().includes(normalizedQuery)) return;
+      addResult({
+        id: `discipline-${discipline}`,
+        label: discipline,
+        meta: 'Discipline',
+        onSelect: () => {
+          setSearchVisible(false);
+          switchTab(0);
+          setActiveDiscipline(discipline);
+        },
+      });
+    });
+
+    setSearchResults(results);
+  };
   const theme = useTheme();
   const router = useRouter();
-  const { appSettings, accountType, updateAppSetting } = useAppContext();
+  const { appSettings, accountType } = useAppContext();
   const [regionFilter, setRegionFilter] = useState<'MY_COUNTRY' | 'ALL'>('MY_COUNTRY');
   const selectedCountry = regionFilter === 'MY_COUNTRY' ? appSettings.accountCountry : 'ALL';
     // Regiofilter UI
     const handleRegionChange = (filter: 'MY_COUNTRY' | 'ALL') => {
       setRegionFilter(filter);
-      // Optioneel: voorkeur opslaan
-      updateAppSetting('communityRegionFilter', filter);
     };
   const pagerRef = useRef<ScrollView | null>(null);
   const [activeTab, setActiveTab] = useState(0);
   const [activePartnerFilter, setActivePartnerFilter] = useState<(typeof PARTNER_FILTERS)[number]>('Alles');
   const [activeEventFilter, setActiveEventFilter] = useState<(typeof COMMUNITY_EVENT_FILTERS)[number]>('Alles');
+  const [allCreators, setAllCreators] = useState<CommunityCreator[]>([]);
   const [visibleCreators, setVisibleCreators] = useState<CommunityCreator[]>([]);
   const [availablePartners, setAvailablePartners] = useState<PartnerBrand[]>([]);
   const [countryEvents, setCountryEvents] = useState<CommunityEvent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+
   const [loadError, setLoadError] = useState('');
+
+  // Filteropties moeten ná state ivm allCreators
+  // Landen waar we actief zijn (uit COUNTRY_OPTIONS)
+  const COUNTRY_OPTIONS = [
+    { code: 'NL', label: 'Nederland', flag: 'NL' },
+    { code: 'FR', label: 'Frankrijk', flag: 'FR' },
+    { code: 'BE', label: 'Belgie', flag: 'BE' },
+    { code: 'DE', label: 'Duitsland', flag: 'DE' },
+    { code: 'ES', label: 'Spanje', flag: 'ES' },
+    { code: 'GB', label: 'Verenigd Koninkrijk', flag: 'GB' },
+    { code: 'US', label: 'Verenigde Staten', flag: 'US' },
+  ];
+  const languageOptions = ['Alles', ...COUNTRY_OPTIONS.map(c => c.label)];
+
+  // Disciplines uit DISCIPLINES constant
+  const DISCIPLINES = [
+    { id: '1', title: 'Fitness' },
+    { id: '2', title: 'CrossFit' },
+    { id: '3', title: 'Zwaargewicht' },
+    { id: '4', title: 'Hyrox' },
+    { id: '5', title: 'Yoga' },
+    // Voeg hier alle andere disciplines toe zoals in de DISCIPLINES constant
+  ];
+  const disciplineOptions = ['Alles', ...DISCIPLINES.map(d => d.title)];
+  const typeOptions = ['Alles', 'Coach/Personal Trainer', 'Geen Coach/PT'];
 
   // Feed states
   const [feedItems, setFeedItems] = useState<FeedItem[]>([]);
@@ -281,12 +398,13 @@ export default function CommunityScreen() {
         setLoadError('');
         setIsLoading(true);
         const [creators, partners, events] = await Promise.all([
-          fetchCommunityCreators(selectedCountry),
-          fetchCommunityPartners(selectedCountry),
-          fetchCommunityEvents(selectedCountry),
+          fetchCommunityCreators(selectedCountry as CountryCode),
+          fetchCommunityPartners(selectedCountry as CountryCode),
+          fetchCommunityEvents(selectedCountry as CountryCode),
         ]);
 
         if (isMounted) {
+          setAllCreators(creators);
           setVisibleCreators(creators);
           setAvailablePartners(partners);
           setCountryEvents(events);
@@ -309,6 +427,28 @@ export default function CommunityScreen() {
       isMounted = false;
     };
   }, [selectedCountry]);
+
+  // Filter logic for Creators
+  useEffect(() => {
+    let filtered = allCreators;
+    if (activeDiscipline !== 'Alles') {
+      filtered = filtered.filter(c => c.specialty === activeDiscipline);
+    }
+    if (activeType !== 'Alles') {
+      filtered = filtered.filter(c => {
+        if (activeType === 'Coach/Personal Trainer') {
+          return c.specialty?.toLowerCase().includes('coach') || c.specialty?.toLowerCase().includes('personal trainer');
+        }
+        if (activeType === 'Geen Coach/PT') {
+          return !c.specialty?.toLowerCase().includes('coach') && !c.specialty?.toLowerCase().includes('personal trainer');
+        }
+        return true;
+      });
+    }
+    // Geen filtering op taal/land mogelijk, alleen UI
+    setVisibleCreators(filtered);
+  }, [allCreators, activeDiscipline, activeType, activeLanguage]);
+
 
   const loadFeed = useCallback(async (isRefresh = false) => {
     try {
@@ -376,64 +516,45 @@ export default function CommunityScreen() {
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}> 
       <View style={{ flexDirection: 'row', justifyContent: 'center', marginBottom: 8 }}>
-        <Pressable
-          style={{
-            paddingVertical: 6,
-            paddingHorizontal: 16,
-            borderRadius: 16,
-            backgroundColor: regionFilter === 'MY_COUNTRY' ? theme.card : theme.background,
-            borderWidth: 1,
-            borderColor: regionFilter === 'MY_COUNTRY' ? theme.titleColor : theme.border,
-            marginRight: 8,
-          }}
-          onPress={() => handleRegionChange('MY_COUNTRY')}
-        >
-          <Text style={{ color: regionFilter === 'MY_COUNTRY' ? theme.titleColor : theme.subtitleColor }}>
-            Mijn land
-          </Text>
-        </Pressable>
-        <Pressable
-          style={{
-            paddingVertical: 6,
-            paddingHorizontal: 16,
-            borderRadius: 16,
-            backgroundColor: regionFilter === 'ALL' ? theme.card : theme.background,
-            borderWidth: 1,
-            borderColor: regionFilter === 'ALL' ? theme.titleColor : theme.border,
-          }}
-          onPress={() => handleRegionChange('ALL')}
-        >
-          <Text style={{ color: regionFilter === 'ALL' ? theme.titleColor : theme.subtitleColor }}>
-            Alle landen
-          </Text>
-        </Pressable>
       </View>
       <View style={styles.content}>
         <View style={styles.headerBlock}>
           <View style={styles.headerTextWrap}>
-            <Text style={[styles.title, { color: theme.titleColor }]}>Community.</Text>
+            <Text style={[styles.title, { color: theme.titleColor }]}>Community</Text>
             <Text style={[styles.subtitle, { color: theme.subtitleColor }]}>Swipe tussen influencers, partners en events.</Text>
           </View>
-          <Pressable
-            style={({ pressed }) => [
-              styles.settingsPill,
-              { backgroundColor: theme.card, borderColor: theme.border },
-              pressed ? styles.settingsPillPressed : null,
-            ]}
-            onPress={() => router.push('/(tabs)/athlete')}
-          >
-            <MaterialCommunityIcons name="cog-outline" size={20} color={theme.titleColor} />
-          </Pressable>
-          <Pressable
-            style={({ pressed }) => [
-              styles.settingsPill,
-              { backgroundColor: theme.card, borderColor: theme.border },
-              pressed ? styles.settingsPillPressed : null,
-            ]}
-            onPress={() => {/* winkelwagen actie */}}
-          >
-            <MaterialCommunityIcons name="shopping-outline" size={20} color={theme.titleColor} />
-          </Pressable>
+          <View style={{ flexDirection: 'row', gap: 8 }}>
+            <Pressable
+              style={({ pressed }) => [
+                styles.settingsPill,
+                { backgroundColor: theme.card, borderColor: theme.border },
+                pressed ? styles.settingsPillPressed : null,
+              ]}
+              onPress={() => setSearchVisible(true)}
+            >
+              <MaterialCommunityIcons name="magnify" size={20} color={theme.titleColor} />
+            </Pressable>
+            <Pressable
+              style={({ pressed }) => [
+                styles.settingsPill,
+                { backgroundColor: theme.card, borderColor: theme.border },
+                pressed ? styles.settingsPillPressed : null,
+              ]}
+              onPress={() => router.push('/(tabs)/athlete')}
+            >
+              <MaterialCommunityIcons name="cog-outline" size={20} color={theme.titleColor} />
+            </Pressable>
+            <Pressable
+              style={({ pressed }) => [
+                styles.settingsPill,
+                { backgroundColor: theme.card, borderColor: theme.border },
+                pressed ? styles.settingsPillPressed : null,
+              ]}
+              onPress={() => router.push('/(tabs)/cart')}
+            >
+              <MaterialCommunityIcons name="shopping-outline" size={20} color={theme.titleColor} />
+            </Pressable>
+          </View>
         </View>
 
         <View style={[styles.segmentedWrap, { backgroundColor: theme.card, borderColor: theme.border }]}> 
@@ -463,38 +584,7 @@ export default function CommunityScreen() {
           </Pressable>
         </View>
 
-        <Pressable
-          style={[styles.creatorPanel, { backgroundColor: theme.card, borderColor: theme.border }]}
-          onPress={() => {
-            if (accountType === 'influencer') {
-              router.push('/(tabs)/creator-studio');
-            }
-          }}
-          disabled={accountType !== 'influencer'}
-        >
-          <View style={styles.creatorPanelLeft}>
-            <View style={[styles.creatorPanelIconWrap, { backgroundColor: accountType === 'influencer' ? '#DBEAFE' : '#F3F4F6' }]}>
-              <MaterialCommunityIcons
-                name={accountType === 'influencer' ? 'badge-account-horizontal-outline' : 'lock-outline'}
-                size={18}
-                color={accountType === 'influencer' ? '#1D4ED8' : '#6B7280'}
-              />
-            </View>
-            <View style={styles.creatorPanelTextWrap}>
-              <Text style={[styles.creatorPanelTitle, { color: theme.titleColor }]}>Creator Studio</Text>
-              <Text style={[styles.creatorPanelSubtitle, { color: theme.subtitleColor }]}> 
-                {accountType === 'influencer'
-                  ? 'Beheer je creator-profiel, posts en partnerdeals.'
-                  : 'Alleen beschikbaar voor influencer-accounts op uitnodiging.'}
-              </Text>
-            </View>
-          </View>
-          <MaterialCommunityIcons
-            name={accountType === 'influencer' ? 'chevron-right' : 'lock'}
-            size={20}
-            color={theme.subtitleColor}
-          />
-        </Pressable>
+        {/* Creator Studio-balk verwijderd */}
 
         {isLoading ? (
           <View style={[styles.emptyState, { borderColor: theme.border, backgroundColor: theme.card }]}>
@@ -509,6 +599,12 @@ export default function CommunityScreen() {
         ) : null}
       </View>
 
+      <GlobalSearchModal
+        visible={searchVisible}
+        onClose={() => setSearchVisible(false)}
+        onSearch={handleSearch}
+        results={searchResults}
+      />
       <ScrollView
         ref={pagerRef}
         horizontal
@@ -517,11 +613,75 @@ export default function CommunityScreen() {
         showsHorizontalScrollIndicator={false}
         style={styles.pager}
       >
+
+        {/* Creators Tab: Filterbalk (zonder filter functionaliteit) + lijst */}
         <ScrollView
           style={styles.page}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.pageContent}
         >
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.filterRow}
+            style={styles.filterScroll}
+          >
+            {CREATOR_FILTERS.map((filter) => {
+              let activeValue = '';
+              if (filter === 'Taal') activeValue = activeLanguage;
+              if (filter === 'Discipline') activeValue = activeDiscipline;
+              if (filter === 'Coach / PT') activeValue = activeType;
+              return (
+                <Pressable
+                  key={filter}
+                  style={[
+                    styles.filterChip,
+                    { backgroundColor: theme.card, borderColor: theme.border },
+                  ]}
+                  onPress={() => setFilterModal({ type: filter, visible: true })}
+                >
+                  <Text
+                    style={[
+                      styles.filterChipText,
+                      { color: theme.subtitleColor },
+                    ]}
+                  >
+                    {filter.toUpperCase()} {activeValue !== 'Alles' ? `: ${activeValue}` : ''}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </ScrollView>
+
+          {/* Filter Modal */}
+          <Modal
+            visible={filterModal.visible}
+            transparent
+            animationType="fade"
+            onRequestClose={() => setFilterModal({ type: null, visible: false })}
+          >
+            <TouchableOpacity style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.18)', justifyContent: 'center', alignItems: 'center' }} activeOpacity={1} onPressOut={() => setFilterModal({ type: null, visible: false })}>
+              <View style={{ minWidth: 220, backgroundColor: theme.card, borderRadius: 18, padding: 18, elevation: 8 }}>
+                <Text style={{ fontWeight: '700', fontSize: 16, marginBottom: 12, color: theme.titleColor }}>Kies een optie</Text>
+                {filterModal.type === 'Taal' && languageOptions.map(opt => (
+                  <Pressable key={opt} style={{ paddingVertical: 8 }} onPress={() => { setActiveLanguage(opt); setFilterModal({ type: null, visible: false }); }}>
+                    <Text style={{ color: opt === activeLanguage ? theme.tabBarActive : theme.subtitleColor, fontWeight: opt === activeLanguage ? '700' : '400' }}>{opt}</Text>
+                  </Pressable>
+                ))}
+                {filterModal.type === 'Discipline' && disciplineOptions.map(opt => (
+                  <Pressable key={opt} style={{ paddingVertical: 8 }} onPress={() => { setActiveDiscipline(opt); setFilterModal({ type: null, visible: false }); }}>
+                    <Text style={{ color: opt === activeDiscipline ? theme.tabBarActive : theme.subtitleColor, fontWeight: opt === activeDiscipline ? '700' : '400' }}>{opt}</Text>
+                  </Pressable>
+                ))}
+                {filterModal.type === 'Coach / PT' && typeOptions.map(opt => (
+                  <Pressable key={opt} style={{ paddingVertical: 8 }} onPress={() => { setActiveType(opt); setFilterModal({ type: null, visible: false }); }}>
+                    <Text style={{ color: opt === activeType ? theme.tabBarActive : theme.subtitleColor, fontWeight: opt === activeType ? '700' : '400' }}>{opt}</Text>
+                  </Pressable>
+                ))}
+              </View>
+            </TouchableOpacity>
+          </Modal>
+
           {visibleCreators.map((creator) => (
             <CreatorCard
               key={creator.id}
@@ -543,66 +703,9 @@ export default function CommunityScreen() {
           contentContainerStyle={styles.pageContent}
           refreshControl={<RefreshControl refreshing={feedRefreshing} onRefresh={() => loadFeed(true)} />}
         >
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.filterRow}
-            style={styles.filterScroll}
-          >
-            <Pressable
-              style={[
-                styles.filterChip,
-                selectedFeedFilter === 'all'
-                  ? styles.filterChipActive
-                  : { backgroundColor: theme.card, borderColor: theme.border },
-              ]}
-              onPress={() => setSelectedFeedFilter('all')}
-            >
-              <Text
-                style={[
-                  styles.filterChipText,
-                  { color: selectedFeedFilter === 'all' ? '#FFFFFF' : theme.subtitleColor },
-                ]}
-              >
-                ALLES
-              </Text>
-            </Pressable>
-            {FEED_FILTER_OPTIONS.map((filter) => {
-              const selected = selectedFeedFilter === filter;
-              return (
-                <Pressable
-                  key={filter}
-                  style={[
-                    styles.filterChip,
-                    selected
-                      ? styles.filterChipActive
-                      : { backgroundColor: theme.card, borderColor: theme.border },
-                  ]}
-                  onPress={() => setSelectedFeedFilter(filter)}
-                >
-                  <Text
-                    style={[
-                      styles.filterChipText,
-                      { color: selected ? '#FFFFFF' : theme.subtitleColor },
-                    ]}
-                  >
-                    {filter.toUpperCase()}
-                  </Text>
-                </Pressable>
-              );
-            })}
-          </ScrollView>
+          {/* Filterknoppen verwijderd zoals gevraagd */}
 
-          <View style={styles.feedHeaderRow}>
-            <Text style={[styles.partnerSectionLabel, { color: theme.subtitleColor }]}>FEED</Text>
-            <Pressable onPress={() => setFeedSortBy(feedSortBy === 'recent' ? 'popular' : 'recent')}>
-              <MaterialCommunityIcons
-                name={feedSortBy === 'recent' ? 'clock-outline' : 'fire'}
-                size={18}
-                color={theme.subtitleColor}
-              />
-            </Pressable>
-          </View>
+          {/* FEED label en symbool verwijderd zoals gevraagd */}
 
           {feedLoading && filteredFeedItems.length === 0 ? (
             <View style={[styles.emptyState, { borderColor: theme.border, backgroundColor: theme.card }]}>
@@ -724,7 +827,7 @@ export default function CommunityScreen() {
             })}
           </ScrollView>
 
-          <Text style={[styles.partnerSectionLabel, { color: theme.subtitleColor }]}>{sectionLabel}</Text>
+
 
           {filteredPartners.map((partner) => (
             <PartnerCard key={partner.id} partner={partner} />
@@ -774,11 +877,23 @@ export default function CommunityScreen() {
             })}
           </ScrollView>
 
-          <Text style={[styles.partnerSectionLabel, { color: theme.subtitleColor }]}>AANKOMENDE EVENTS</Text>
 
-          {filteredEvents.map((event) => (
-            <EventCard key={event.id} event={event} />
-          ))}
+
+          {filteredEvents.map((event) => {
+            let eventPage: '/events/hyrox' | '/events/obstacle-run' | '/events/running-day' | null = null;
+            if (event.type?.toLowerCase().includes('hyrox') || event.title?.toLowerCase().includes('hyrox')) {
+              eventPage = '/events/hyrox';
+            } else if (event.type?.toLowerCase().includes('obstacle') || event.title?.toLowerCase().includes('obstacle')) {
+              eventPage = '/events/obstacle-run';
+            } else if (event.type?.toLowerCase().includes('running') || event.title?.toLowerCase().includes('running')) {
+              eventPage = '/events/running-day';
+            }
+            return (
+              <Pressable key={event.id} onPress={() => { if (eventPage) router.push(eventPage); }} style={{ marginBottom: 16 }}>
+                <EventCard event={event} />
+              </Pressable>
+            );
+          })}
           <View style={styles.bottomSpacer} />
         </ScrollView>
       </ScrollView>
