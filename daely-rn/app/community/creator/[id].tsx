@@ -63,7 +63,7 @@ export default function CreatorProfileScreen() {
       <View style={{ position: 'relative' }}>
         {(profile.headerImage || (profile.gallery && profile.gallery.length > 0 && profile.gallery[0].type === 'image')) && (
           <Image
-            source={{ uri: profile.headerImage || profile.gallery[0].url }}
+            source={{ uri: profile.headerImage || profile.gallery?.[0]?.url || '' }}
             style={[styles.headerBackground, { position: 'absolute', top: 0, left: 0, right: 0, height: 180, zIndex: 0 }]}
             resizeMode="cover"
             blurRadius={2}
@@ -133,7 +133,7 @@ export default function CreatorProfileScreen() {
         </Pressable>
         <Pressable
           style={[styles.messageButton, { backgroundColor: theme.primary || '#2563EB' }]}
-          onPress={() => router.push('/(tabs)/community/creator/voorbeeld-creator-commerce')}
+          onPress={() => router.push(`/community/creator/${id}-partners`)}
         >
           <MaterialCommunityIcons name="gift-outline" size={16} color="#FFFFFF" />
           <Text style={[styles.messageButtonText, { color: '#FFFFFF' }]}>Samenwerkingen</Text>

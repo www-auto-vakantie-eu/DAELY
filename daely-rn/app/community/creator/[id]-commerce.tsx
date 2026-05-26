@@ -1,6 +1,12 @@
 
+import React, { useState } from 'react';
+import { Alert, Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+
 import { COMMUNITY_CREATORS } from '@/constants/community-creators';
-import { StyleSheet } from 'react-native';
+import { useTheme } from '@/hooks/use-theme';
+import { useCartStore } from '@/store/cartStore';
 // ...existing code...
 
 // --- Component ---

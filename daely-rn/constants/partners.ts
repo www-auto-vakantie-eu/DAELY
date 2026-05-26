@@ -1,3 +1,4 @@
+
 export interface PartnerBrand {
   id: string;
   name: string;
@@ -11,6 +12,20 @@ export interface PartnerBrand {
 }
 
 export const PARTNERS: PartnerBrand[] = [
+    {
+      id: 'muscle-meat',
+      name: 'Muscle Meat',
+      category: '',
+      group: 'Voeding',
+      summary: '',
+      image: '',
+      discountLabel: '',
+      discountCode: '',
+      offerUrl: 'https://musclemeat.nl/',
+      socials: {
+        instagram: 'https://www.instagram.com/musclemeatnl/',
+      },
+    },
   {
     id: 'myprotein',
     name: 'MyProtein',
@@ -21,6 +36,17 @@ export const PARTNERS: PartnerBrand[] = [
     discountLabel: '10% korting',
     discountCode: 'DAELY-MP-10',
     offerUrl: 'https://www.myprotein.com',
+  },
+  {
+    id: 'aybl',
+    name: 'Aybl',
+    category: 'Kleding Partners',
+    group: 'Kleding',
+    summary: 'Premium activewear voor vrouwen. Ontdek de nieuwste collecties en samenwerkingen.',
+    image: 'https://aybl.com/cdn/shop/files/AYBL_Logo_White_Transparent_200x.png',
+    discountLabel: '10% korting',
+    discountCode: 'DAELY-AYBL-10',
+    offerUrl: 'https://www.aybl.com/',
   },
   {
     id: 'body-fit',

@@ -12,9 +12,16 @@ export type Partner = {
 
 // Dummy mapping: creatorId -> partnerIds
 const CREATOR_PARTNERS: Record<string, string[]> = {
+    'olivier-richters': ['muscle-meat'],
   'tim-hofman': ['myprotein', 'body-fit'],
   'marijn-kuipers': ['xxl-nutrition', 'optimum-nutrition'],
   'elise-janssen': ['orangefit'],
+  'evelien-van-pelt': [],
+  'demi-van-den-wildenberg': [],
+  'lisa-benschop': [],
+  'anette-grytsje-visser': [],
+  'anna-louise-gille': [],
+  'danique-hosmar': [],
   // ...meer mappings
 };
 
@@ -261,12 +268,7 @@ export async function getCreatorProfile(creatorId: string): Promise<CreatorProfi
       { type: 'image', url: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80' },
       { type: 'video', url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' }
     ],
-    socials: {
-      instagram: 'https://instagram.com/example',
-      youtube: 'https://youtube.com/example',
-      tiktok: 'https://tiktok.com/@example',
-      website: 'https://example.com'
-    }
+    socials: creator.socials || {},
   };
 }
 

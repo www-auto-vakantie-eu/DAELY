@@ -1,85 +1,104 @@
+
 import { useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, Text, View, Image, Pressable, Linking } from 'react-native';
+import { ScrollView, View, Image, Pressable, Text, Linking } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useTheme } from '@/hooks/use-theme';
 import { getCreatorPartners, type Partner } from '@/services/creator-profiles';
+
 
 export default function CreatorPartnersScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const theme = useTheme();
+  // Strip '-partners' van id indien aanwezig
+  const creatorId = id?.endsWith('-partners') ? id.slice(0, -9) : id;
   const [partners, setPartners] = useState<Partner[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadPartners = async () => {
-      if (!id) return;
-      const data = await getCreatorPartners(id);
+      if (!creatorId) return;
+      const data = await getCreatorPartners(creatorId);
       setPartners(data);
       setLoading(false);
     };
     loadPartners();
-  }, [id]);
+  }, [creatorId]);
 
-  if (loading) {
-    return (
-      <View style={[styles.screen, { backgroundColor: theme.background }]}> 
-        <Text style={{ color: theme.titleColor, marginTop: 40, textAlign: 'center' }}>Laden...</Text>
-      </View>
-    );
-  }
-
-  if (!partners || partners.length === 0) {
-    return (
-      <View style={[styles.screen, { backgroundColor: theme.background }]}> 
-        <Text style={{ color: theme.titleColor, marginTop: 40, textAlign: 'center' }}>Geen samenwerkingen gevonden.</Text>
-      </View>
-    );
-  }
+  // Voorbeeld data voor uitgelichte bundel (hardcoded, want Muscle Meat heeft geen bundel info)
+  const bundle = {
+    title: "Olivier's Muscle Recovery Bundle",
+    description: 'Alles voor spierherstel: kip, rund, vis en supplementen.',
+    image: 'https://images.unsplash.com/photo-1519864600265-abb23847ef2c?auto=format&fit=crop&w=400&q=80',
+    saveText: 'Je bespaart €12,50 met Olivier’s bundel.',
+  };
 
   return (
-    <ScrollView style={[styles.screen, { backgroundColor: theme.background }]} contentContainerStyle={styles.content}>
-      <Text style={[styles.title, { color: theme.titleColor }]}>Samenwerkingen & Partners</Text>
-      {partners.map((partner) => (
-        <View key={partner.id} style={[styles.partnerCard, { backgroundColor: theme.card, borderColor: theme.border, borderWidth: 1 }]}> 
-          <View style={styles.partnerHeader}>
-            {partner.logo && (
-              <Image source={{ uri: partner.logo }} style={styles.partnerLogo} />
-            )}
-            <View style={{ flex: 1 }}>
-              <Text style={[styles.partnerName, { color: theme.titleColor }]}>{partner.name}</Text>
-              {partner.website && (
-                <Pressable onPress={() => Linking.openURL(partner.website)}>
-                  <Text style={[styles.partnerLink, { color: theme.primary }]}>Bezoek website</Text>
-                </Pressable>
-              )}
-            </View>
-          </View>
-          {partner.description && (
-            <Text style={[styles.partnerDescription, { color: theme.subtitleColor }]}>{partner.description}</Text>
-          )}
-          {partner.promotion && (
-            <View style={styles.promotionBox}>
-              <MaterialCommunityIcons name="gift-outline" size={18} color={theme.primary} />
-              <Text style={[styles.promotionText, { color: theme.primary }]}>{partner.promotion}</Text>
-            </View>
-          )}
+    <ScrollView style={{ flex: 1, backgroundColor: '#F3F4F6' }} contentContainerStyle={{ padding: 20 }}>
+      {/* Header */}
+      <View style={{ alignItems: 'center', marginBottom: 28 }}>
+        <Image source={{ uri: partners[0]?.logo || 'https://randomuser.me/api/portraits/men/32.jpg' }} style={{ width: 96, height: 96, borderRadius: 48, marginBottom: 12 }} />
+        <Text style={{ fontSize: 26, fontWeight: 'bold', marginBottom: 4 }}>Samenwerkingen van Olivier</Text>
+        <Text style={{ fontSize: 16, color: '#374151', textAlign: 'center' }}>
+          Ontdek de merken, producten en exclusieve acties die Olivier speciaal voor deze community heeft geselecteerd. Voeg losse producten toe of kies direct een complete creator-bundel met automatische korting in je winkelwagen.
+        </Text>
+      </View>
+
+      {/* Uitgelichte actie/deal */}
+      <View style={{ backgroundColor: '#fff', borderRadius: 16, padding: 20, marginBottom: 28, shadowColor: '#000', shadowOpacity: 0.06, shadowRadius: 8, elevation: 2 }}>
+        <Text style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 6 }}>{bundle.title}</Text>
+        <Text style={{ fontSize: 15, color: '#374151', marginBottom: 12 }}>{bundle.description}</Text>
+        <Image source={{ uri: bundle.image }} style={{ width: '100%', height: 140, borderRadius: 12, marginBottom: 14 }} />
+        <View style={{ flexDirection: 'row', gap: 12, marginBottom: 10 }}>
+          <Pressable style={{ backgroundColor: '#2563EB', borderRadius: 8, paddingVertical: 10, paddingHorizontal: 16, flexDirection: 'row', alignItems: 'center', marginRight: 8 }} onPress={() => {}}>
+            <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 15 }}>Voeg bundel toe aan winkelwagen</Text>
+          </Pressable>
+          <Pressable style={{ backgroundColor: '#E5E7EB', borderRadius: 8, paddingVertical: 10, paddingHorizontal: 16, flexDirection: 'row', alignItems: 'center' }} onPress={() => {}}>
+            <Text style={{ color: '#111827', fontWeight: 'bold', fontSize: 15 }}>Bekijk producten</Text>
+          </Pressable>
         </View>
-      ))}
+        <Text style={{ color: '#059669', fontWeight: 'bold', fontSize: 15 }}>{bundle.saveText}</Text>
+      </View>
+
+      {/* Merken waarmee Olivier samenwerkt */}
+      <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 10 }}>Merken waarmee Olivier samenwerkt</Text>
+      <View style={{ flexDirection: 'row', gap: 16, marginBottom: 28 }}>
+        {partners.map((partner) => (
+          <View key={partner.id} style={{ backgroundColor: '#fff', borderRadius: 14, padding: 16, alignItems: 'center', flex: 1, shadowColor: '#000', shadowOpacity: 0.04, shadowRadius: 6, elevation: 1 }}>
+            {partner.logo && <Image source={{ uri: partner.logo }} style={{ width: 48, height: 48, borderRadius: 24, marginBottom: 8 }} />}
+            <Text style={{ fontWeight: 'bold', fontSize: 16, marginBottom: 4 }}>{partner.name}</Text>
+            <Text style={{ fontSize: 13, color: '#374151', textAlign: 'center', marginBottom: 6 }}>{partner.description || `Olivier werkt samen met ${partner.name}.`}</Text>
+            {partner.promotion && <Text style={{ fontSize: 13, color: '#059669', marginBottom: 6 }}>{partner.promotion}</Text>}
+            <Text style={{ fontSize: 12, color: '#6B7280', marginBottom: 8 }}>Waarom samen? Kwaliteit, innovatie en comfort.</Text>
+            {partner.website && (
+              <Pressable style={{ backgroundColor: '#2563EB', borderRadius: 8, paddingVertical: 8, paddingHorizontal: 14 }} onPress={() => Linking.openURL(partner.website || '')}>
+                <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 14 }}>Bekijk {partner.name} selectie</Text>
+              </Pressable>
+            )}
+          </View>
+        ))}
+      </View>
+
+      {/* Productkaarten uit samenwerkingen (optioneel, voorbeeld) */}
+      <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 10 }}>Producten uit samenwerkingen</Text>
+      <View style={{ gap: 18, marginBottom: 32 }}>
+        {/* Voorbeeld productkaart */}
+        <View style={{ backgroundColor: '#fff', borderRadius: 14, padding: 16, flexDirection: 'row', gap: 16, alignItems: 'center', shadowColor: '#000', shadowOpacity: 0.04, shadowRadius: 6, elevation: 1 }}>
+          <Image source={{ uri: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80' }} style={{ width: 80, height: 80, borderRadius: 10, marginRight: 10 }} />
+          <View style={{ flex: 1 }}>
+            <Text style={{ fontWeight: 'bold', fontSize: 16 }}>Muscle Meat Kipfilet</Text>
+            <Text style={{ fontSize: 13, color: '#374151', marginBottom: 2 }}>Muscle Meat</Text>
+            <Text style={{ fontSize: 13, color: '#059669', marginBottom: 2 }}>Met Olivier-code: €19,99</Text>
+            <Text style={{ fontSize: 13, color: '#374151', marginBottom: 4 }}>Aanbevolen door Olivier voor spierherstel en eiwitinname.</Text>
+            <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center', marginBottom: 4 }}>
+              <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#111827' }}>€24,99</Text>
+              <Text style={{ fontSize: 14, color: '#059669', fontWeight: 'bold' }}>€19,99</Text>
+            </View>
+            <Text style={{ fontSize: 12, color: '#6B7280', marginBottom: 6 }}>Inhoud: 1kg, 2kg, 5kg</Text>
+            <Pressable style={{ backgroundColor: '#2563EB', borderRadius: 8, paddingVertical: 8, paddingHorizontal: 14, alignSelf: 'flex-start' }} onPress={() => {}}>
+              <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 14 }}>Voeg toe aan winkelwagen</Text>
+            </Pressable>
+          </View>
+        </View>
+      </View>
     </ScrollView>
   );
 }
 
-const styles = StyleSheet.create({
-  screen: { flex: 1 },
-  content: { padding: 16, paddingBottom: 80 },
-  title: { fontSize: 20, fontWeight: '900', marginBottom: 24, textAlign: 'center' },
-  partnerCard: { borderRadius: 14, padding: 16, marginBottom: 18 },
-  partnerHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 8, gap: 12 },
-  partnerLogo: { width: 48, height: 48, borderRadius: 12, marginRight: 12 },
-  partnerName: { fontSize: 16, fontWeight: '700' },
-  partnerLink: { fontSize: 13, fontWeight: '600', marginTop: 2 },
-  partnerDescription: { fontSize: 13, marginTop: 8 },
-  promotionBox: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 10, backgroundColor: '#F3F4F6', borderRadius: 8, padding: 8 },
-  promotionText: { fontSize: 13, fontWeight: '700' },
-});

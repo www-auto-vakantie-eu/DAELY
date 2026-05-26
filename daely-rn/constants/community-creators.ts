@@ -1,19 +1,77 @@
-// ...bestaande creators...
 export type CreatorBadge = 'VERIFIED' | 'PRO' | 'ELITE' | 'COACH';
 
 export interface CommunityCreator {
   id: string;
   name: string;
   specialty: string;
-  badge: CreatorBadge;
+  badge?: CreatorBadge;
   image: string;
   followers: number;
   posts: number;
   bio: string;
   headerImage?: string; // NIEUW veld voor headerafbeelding
+  socials?: {
+    instagram?: string;
+    youtube?: string;
+    tiktok?: string;
+    website?: string;
+    facebook?: string;
+  };
 }
 
 export const COMMUNITY_CREATORS: CommunityCreator[] = [
+  {
+    id: 'danique-hosmar',
+    name: 'Danique Hosmar',
+    specialty: '',
+    image: '',
+    followers: 0,
+    posts: 0,
+    bio: '',
+    headerImage: '',
+    socials: {
+      instagram: 'https://www.instagram.com/danique.hosmar/',
+    },
+  },
+      {
+        id: 'olivier-richters',
+        name: 'Olivier Richters',
+        specialty: '',
+        image: '',
+        followers: 0,
+        posts: 0,
+        bio: '',
+        headerImage: '',
+        socials: {
+          instagram: 'https://www.instagram.com/thedutchgiant/',
+        },
+      },
+      {
+        id: 'evelien-van-pelt',
+        name: 'Evelien van Pelt',
+        specialty: '',
+        image: '',
+        followers: 0,
+        posts: 0,
+        bio: '',
+        headerImage: '',
+        socials: {
+          instagram: 'https://www.instagram.com/eveliennellen/',
+        },
+      },
+    {
+      id: 'dieke',
+      name: 'Dieke',
+      specialty: '',
+      image: '',
+      followers: 0,
+      posts: 0,
+      bio: '',
+      headerImage: '',
+      socials: {
+        instagram: 'https://www.instagram.com/__diekex/',
+      },
+    },
   {
     id: 'sylvana-ijsselmuiden',
     name: 'Sylvana Ijsselmuiden',
