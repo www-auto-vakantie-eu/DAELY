@@ -4,12 +4,21 @@ import { useRouter } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
 import { useAppContext } from '@/contexts/AppContext';
 
+type MainTabKey = 'today' | 'profile' | 'disciplines' | 'nutrition' | 'mind' | 'community';
+
 type TabOption = {
-  key: 'today' | 'profile' | 'disciplines' | 'nutrition' | 'mind' | 'community' | 'feed' | 'progress';
+  key: MainTabKey;
   label: string;
   icon: string;
   description: string;
   locked?: boolean;
+};
+
+type CommunityOption = {
+  key: 'feed';
+  label: string;
+  icon: string;
+  description: string;
 };
 
 export default function TabVisibilitySettings() {
@@ -23,15 +32,14 @@ export default function TabVisibilitySettings() {
     { key: 'disciplines', label: 'Bibliotheek', icon: 'dumbbell', description: 'Toon Bibliotheek tab' },
     { key: 'nutrition', label: 'Voeding', icon: 'silverware-fork-knife', description: 'Toon Voeding tab' },
     { key: 'mind', label: 'Geest', icon: 'meditation', description: 'Toon Geest tab' },
-    { key: 'progress', label: 'Mijn Progress', icon: 'chart-bar', description: 'Toon Mijn Progress tab' },
     { key: 'community', label: 'Community', icon: 'account-multiple', description: 'Altijd zichtbaar als hoofdtab', locked: true },
   ];
 
-  const communityOptions: TabOption[] = [
+  const communityOptions: CommunityOption[] = [
     { key: 'feed', label: 'Feed', icon: 'newspaper', description: 'Extra feed binnen Community' },
   ];
 
-  const handleTabToggle = (tabKey: string, value: boolean) => {
+  const handleTabToggle = (tabKey: MainTabKey | 'feed', value: boolean) => {
     if (tabKey === 'community') {
       return;
     }
@@ -95,7 +103,7 @@ export default function TabVisibilitySettings() {
                   </Text>
                 </View>
                 <Switch
-                  value={appSettings.tabVisibility?.[tab.key as keyof typeof appSettings.tabVisibility] ?? true}
+                  value={appSettings.tabVisibility?.[tab.key] ?? true}
                   onValueChange={(value) => handleTabToggle(tab.key, value)}
                   disabled={tab.locked === true}
                   trackColor={{ false: '#D1D5DB', true: '#3B82F6' }}
@@ -122,7 +130,7 @@ export default function TabVisibilitySettings() {
                   </Text>
                 </View>
                 <Switch
-                  value={appSettings.tabVisibility?.[tab.key as keyof typeof appSettings.tabVisibility] ?? true}
+                  value={appSettings.tabVisibility?.[tab.key] ?? false}
                   onValueChange={(value) => handleTabToggle(tab.key, value)}
                   trackColor={{ false: '#D1D5DB', true: '#3B82F6' }}
                   thumbColor="#FFFFFF"
@@ -152,7 +160,7 @@ export default function TabVisibilitySettings() {
               nutrition: true,
               mind: true,
               community: true,
-              feed: true,
+              feed: false,
             };
             updateAppSetting('tabVisibility', allTabsVisible);
           }}

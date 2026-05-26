@@ -3,36 +3,66 @@ import { View, TouchableOpacity, Text, StyleSheet, Platform } from 'react-native
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import type { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { useTheme } from '@/hooks/use-theme';
+import { useAppContext } from '@/contexts/AppContext';
 
-const TAB_CONFIG = [
-  { name: 'today', label: 'Vandaag', icon: 'calendar-today' },
-  { name: 'index', label: 'Mijn', icon: 'account' },
-  { name: 'disciplines', label: 'Bibliotheek', icon: 'dumbbell' },
-  { name: 'nutrition', label: 'Voeding', icon: 'silverware-fork-knife' },
-  { name: 'mind', label: 'Mind', icon: 'meditation' },
-  { name: 'community', label: 'Community', icon: 'account-multiple' },
-];
+const DEFAULT_VISIBILITY = {
+  today: true,
+  profile: true,
+  disciplines: true,
+  nutrition: true,
+  mind: true,
+  community: true,
+  feed: false,
+} as const;
+
+const TAB_META: Record<string, { label: string; icon: string; visibilityKey?: keyof typeof DEFAULT_VISIBILITY }> = {
+  today: { label: 'Vandaag', icon: 'calendar-today', visibilityKey: 'today' },
+  index: { label: 'Mijn', icon: 'account', visibilityKey: 'profile' },
+  disciplines: { label: 'Bibliotheek', icon: 'dumbbell', visibilityKey: 'disciplines' },
+  nutrition: { label: 'Voeding', icon: 'silverware-fork-knife', visibilityKey: 'nutrition' },
+  mind: { label: 'Mind', icon: 'meditation', visibilityKey: 'mind' },
+  community: { label: 'Community', icon: 'account-multiple', visibilityKey: 'community' },
+};
+
+function isTabVisible(routeName: string, tabVisibility: Record<string, boolean | undefined>): boolean {
+  const meta = TAB_META[routeName];
+  if (!meta || !meta.visibilityKey) return true;
+  if (meta.visibilityKey === 'community') return true;
+  const value = tabVisibility[meta.visibilityKey];
+  return typeof value === 'boolean' ? value : DEFAULT_VISIBILITY[meta.visibilityKey];
+}
 
 export function CustomTabBar({ state, descriptors, navigation }: Pick<BottomTabBarProps, 'state' | 'descriptors' | 'navigation'>) {
   const theme = useTheme();
+  const { appSettings } = useAppContext();
+
+  const configuredVisibility = appSettings?.tabVisibility ?? DEFAULT_VISIBILITY;
+
+  const visibleRoutes = state.routes.filter((route) => isTabVisible(route.name, configuredVisibility));
+  const routesToRender = visibleRoutes.length > 0 ? visibleRoutes : state.routes;
+
   return (
     <View style={[styles.tabBar, { backgroundColor: theme.background, borderTopColor: theme.border }]}> 
-      {TAB_CONFIG.map((tab, index) => {
-        const isFocused = state.index === index;
-        const { options } = descriptors[state.routes[index].key] || {};
+      {routesToRender.map((route) => {
+        const meta = TAB_META[route.name] || {
+          label: route.name,
+          icon: 'circle-outline',
+        };
+        const isFocused = state.index === state.routes.findIndex((item) => item.key === route.key);
+        const { options } = descriptors[route.key] || {};
         const onPress = () => {
           const event = navigation.emit({
             type: 'tabPress',
-            target: state.routes[index].key,
+            target: route.key,
             canPreventDefault: true,
           });
           if (!isFocused && !event.defaultPrevented) {
-            navigation.navigate(tab.name);
+            navigation.navigate(route.name);
           }
         };
         return (
           <TouchableOpacity
-            key={tab.name}
+            key={route.key}
             accessibilityRole="button"
             accessibilityState={isFocused ? { selected: true } : {}}
             accessibilityLabel={options?.tabBarAccessibilityLabel}
@@ -42,12 +72,12 @@ export function CustomTabBar({ state, descriptors, navigation }: Pick<BottomTabB
             activeOpacity={0.7}
           >
             <MaterialCommunityIcons
-              name={tab.icon as any}
+              name={meta.icon as any}
               size={26}
               color={isFocused ? theme.tabBarActive : theme.tabBarInactive}
             />
             <Text style={{ color: isFocused ? theme.tabBarActive : theme.tabBarInactive, fontSize: 11 }}>
-              {tab.label}
+              {meta.label}
             </Text>
           </TouchableOpacity>
         );

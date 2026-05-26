@@ -38,6 +38,16 @@ export type UserProfile = {
   [key: string]: unknown;
 };
 
+export type TabVisibilitySettings = {
+  today: boolean;
+  profile: boolean;
+  disciplines: boolean;
+  nutrition: boolean;
+  mind: boolean;
+  community: boolean;
+  feed: boolean;
+};
+
 export type AppSettings = {
   notificationsEnabled: boolean;
   darkMode: boolean;
@@ -67,16 +77,48 @@ export type AppSettings = {
   includeLogs: boolean;
   feedbackSubmittedCount: number;
   referralYearSubscriptions: number;
-  tabVisibility: {
-    today: boolean;
-    profile: boolean;
-    disciplines: boolean;
-    nutrition: boolean;
-    mind: boolean;
-    community: boolean;
-    feed: boolean;
-  };
+  tabVisibility: TabVisibilitySettings;
 };
+
+const DEFAULT_TAB_VISIBILITY: TabVisibilitySettings = {
+  today: true,
+  profile: true,
+  disciplines: true,
+  nutrition: true,
+  mind: true,
+  community: true,
+  feed: false,
+};
+
+function sanitizeTabVisibility(raw: unknown): TabVisibilitySettings {
+  const source = raw && typeof raw === 'object' ? (raw as Record<string, unknown>) : {};
+
+  const next: TabVisibilitySettings = {
+    today: typeof source.today === 'boolean' ? source.today : DEFAULT_TAB_VISIBILITY.today,
+    profile: typeof source.profile === 'boolean' ? source.profile : DEFAULT_TAB_VISIBILITY.profile,
+    disciplines: typeof source.disciplines === 'boolean' ? source.disciplines : DEFAULT_TAB_VISIBILITY.disciplines,
+    nutrition: typeof source.nutrition === 'boolean' ? source.nutrition : DEFAULT_TAB_VISIBILITY.nutrition,
+    mind: typeof source.mind === 'boolean' ? source.mind : DEFAULT_TAB_VISIBILITY.mind,
+    community: true,
+    feed: typeof source.feed === 'boolean' ? source.feed : DEFAULT_TAB_VISIBILITY.feed,
+  };
+
+  if (!next.today && !next.profile && !next.disciplines && !next.nutrition && !next.mind && !next.community) {
+    return { ...DEFAULT_TAB_VISIBILITY };
+  }
+
+  return next;
+}
+
+function sanitizeAppSettings(raw: unknown): AppSettings {
+  const source = raw && typeof raw === 'object' ? (raw as Partial<AppSettings>) : {};
+
+  return {
+    ...DEFAULT_APP_SETTINGS,
+    ...source,
+    tabVisibility: sanitizeTabVisibility(source.tabVisibility),
+  };
+}
 
 const DEFAULT_APP_SETTINGS: AppSettings = {
   notificationsEnabled: true,
@@ -107,15 +149,7 @@ const DEFAULT_APP_SETTINGS: AppSettings = {
   includeLogs: true,
   feedbackSubmittedCount: 0,
   referralYearSubscriptions: 0,
-  tabVisibility: {
-    today: true,
-    profile: true,
-    disciplines: true,
-    nutrition: true,
-    mind: true,
-    community: true,
-    feed: false,
-  },
+  tabVisibility: DEFAULT_TAB_VISIBILITY,
   disciplineVisibility: {}, // discipline slug: true/false
 };
 
@@ -265,8 +299,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         }
 
         if (savedAppSettings) {
-          const parsed = JSON.parse(savedAppSettings) as Partial<AppSettings>;
-          setAppSettings({ ...DEFAULT_APP_SETTINGS, ...parsed });
+          const parsed = JSON.parse(savedAppSettings) as unknown;
+          setAppSettings(sanitizeAppSettings(parsed));
         }
 
         if (savedAccountType === 'standard' || savedAccountType === 'influencer' || savedAccountType === 'admin') {
@@ -318,7 +352,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
   const updateAppSetting = useCallback(<K extends keyof AppSettings>(key: K, value: AppSettings[K]) => {
     setAppSettings((prev) => {
-      const next = { ...prev, [key]: value };
+      const next = {
+        ...prev,
+        [key]: key === 'tabVisibility' ? sanitizeTabVisibility(value) : value,
+      } as AppSettings;
       AsyncStorage.setItem(STORAGE_KEYS.appSettings, JSON.stringify(next)).catch((error) => {
         console.error('Error saving app setting:', error);
       });
@@ -328,7 +365,11 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
   const updateAppSettings = useCallback((partial: Partial<AppSettings>) => {
     setAppSettings((prev) => {
-      const next = { ...prev, ...partial };
+      const next = {
+        ...prev,
+        ...partial,
+        tabVisibility: sanitizeTabVisibility(partial.tabVisibility ?? prev.tabVisibility),
+      };
       AsyncStorage.setItem(STORAGE_KEYS.appSettings, JSON.stringify(next)).catch((error) => {
         console.error('Error saving app settings:', error);
       });

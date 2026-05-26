@@ -146,6 +146,12 @@ export default function InstellingenScreen() {
             <MaterialCommunityIcons name="chevron-right" size={22} color="#D1D5DB" />
           </Pressable>
           <View style={styles.separator} />
+          <Pressable style={styles.settingRow} onPress={() => router.push('/(tabs)/tab-visibility-settings')}>
+            <MaterialCommunityIcons name="view-dashboard-outline" size={22} color="#6B7280" />
+            <Text style={styles.settingLabel}>Tabs tonen/verbergen</Text>
+            <MaterialCommunityIcons name="chevron-right" size={22} color="#D1D5DB" />
+          </Pressable>
+          <View style={styles.separator} />
           {/* Donkere modus optie verwijderd */}
           <View style={styles.separator} />
           <Pressable style={styles.settingRow} onPress={() => router.push('/(tabs)/notification-settings')}>
@@ -176,6 +182,19 @@ export default function InstellingenScreen() {
               thumbColor="#FFFFFF"
             />
           </View>
+          <View style={styles.separator} />
+          <View style={styles.separator} />
+          <Pressable style={styles.settingRow} onPress={() => router.push('/(tabs)/connected-devices')}>
+            <MaterialCommunityIcons name="link-variant" size={22} color="#6B7280" />
+            <Text style={styles.settingLabel}>Gekoppelde apparaten</Text>
+            <MaterialCommunityIcons name="chevron-right" size={22} color="#D1D5DB" />
+          </Pressable>
+          <View style={styles.separator} />
+          <Pressable style={styles.settingRow} onPress={() => router.push('/(tabs)/data-link')}>
+            <MaterialCommunityIcons name="plus-circle-outline" size={22} color="#6B7280" />
+            <Text style={styles.settingLabel}>Koppel nieuw apparaat</Text>
+            <MaterialCommunityIcons name="chevron-right" size={22} color="#D1D5DB" />
+          </Pressable>
         </View>
 
         {/* Sectie: Account */}
