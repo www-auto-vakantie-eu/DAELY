@@ -1,13 +1,13 @@
-import { View, Text, StyleSheet, ScrollView, Pressable, ImageBackground } from 'react-native';
+import { Alert, View, Text, StyleSheet, ScrollView, Pressable, ImageBackground } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
 
 export default function TappingScreen() {
   const theme = useTheme();
-  const accent = '#F4A259';
+  const router = useRouter();
 
-  const router = require('expo-router').useRouter();
   const tappingTechniques = [
     {
       id: 'basic',
@@ -43,6 +43,13 @@ export default function TappingScreen() {
     },
   ];
 
+  const openTechniqueFallback = (name: string) => {
+    Alert.alert('Binnenkort beschikbaar', `${name} detailpagina volgt binnenkort.`, [
+      { text: 'Terug naar Mind', onPress: () => router.replace('/(tabs)/mind') },
+      { text: 'Sluiten', style: 'cancel' },
+    ]);
+  };
+
   return (
     <ScrollView style={[styles.container, { backgroundColor: theme.background }]} showsVerticalScrollIndicator={false}>
       <View style={{ paddingTop: 18 }} />
@@ -50,7 +57,7 @@ export default function TappingScreen() {
         <Pressable
           key={tech.id}
           style={styles.bigCardWrap}
-          onPress={() => router.push(`/mind/tapping/${tech.id}`)}
+          onPress={() => openTechniqueFallback(tech.name)}
         >
           <View style={styles.shadowWrap}>
             <ImageBackground

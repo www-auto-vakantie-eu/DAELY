@@ -10,9 +10,33 @@ const STORAGE_KEYS = {
   isLoggedIn: 'daely.isLoggedIn',
   appSettings: 'daely.appSettings.v1',
   accountType: 'daely.accountType.v1',
+  userProfile: 'daely.userProfile.v1',
 };
 
 export type AccountType = 'standard' | 'influencer' | 'admin';
+
+export type UserProfile = {
+  name?: string;
+  email?: string;
+  country?: string;
+  birthdate?: string;
+  gender?: string;
+  username?: string;
+  trainingLevel?: string;
+  trainingPreferences?: string;
+  goals?: string;
+  bodyStats?: string;
+  injuries?: string;
+  equipment?: string;
+  motivation?: string;
+  notifications?: string;
+  role?: string;
+  integrations?: string;
+  contentStyle?: string;
+  eventGoals?: string;
+  privacy?: string;
+  [key: string]: unknown;
+};
 
 export type AppSettings = {
   notificationsEnabled: boolean;
@@ -149,6 +173,10 @@ interface AppContextType {
   appSettings: AppSettings;
   updateAppSetting: <K extends keyof AppSettings>(key: K, value: AppSettings[K]) => void;
   updateAppSettings: (partial: Partial<AppSettings>) => void;
+
+  // User profile (used by profile/health sub-screens)
+  user: UserProfile;
+  updateUser: (partial: Partial<UserProfile>) => Promise<void>;
   
   // Utilities
   fetchWorkouts: () => Promise<void>;
@@ -189,6 +217,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [selectedDiscipline, setSelectedDiscipline] = useState('All');
   const [selectedMuscleGroup, setSelectedMuscleGroup] = useState('All');
   const [appSettings, setAppSettings] = useState<AppSettings>(DEFAULT_APP_SETTINGS);
+  const [user, setUser] = useState<UserProfile>({});
   
   // Utilities
   const fetchWorkouts = useCallback(async () => {
@@ -219,11 +248,12 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   useEffect(() => {
     const hydrateAppPreferences = async () => {
       try {
-        const [savedThemeId, savedIsLoggedIn, savedAppSettings, savedAccountType] = await Promise.all([
+        const [savedThemeId, savedIsLoggedIn, savedAppSettings, savedAccountType, savedUserProfile] = await Promise.all([
           AsyncStorage.getItem(STORAGE_KEYS.activeThemeId),
           AsyncStorage.getItem(STORAGE_KEYS.isLoggedIn),
           AsyncStorage.getItem(STORAGE_KEYS.appSettings),
           AsyncStorage.getItem(STORAGE_KEYS.accountType),
+          AsyncStorage.getItem(STORAGE_KEYS.userProfile),
         ]);
 
         if (savedThemeId) {
@@ -241,6 +271,13 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
 
         if (savedAccountType === 'standard' || savedAccountType === 'influencer' || savedAccountType === 'admin') {
           setAccountTypeState(savedAccountType);
+        }
+
+        if (savedUserProfile) {
+          const parsedUserProfile = JSON.parse(savedUserProfile) as UserProfile;
+          if (parsedUserProfile && typeof parsedUserProfile === 'object') {
+            setUser(parsedUserProfile);
+          }
         }
       } catch (error) {
         console.error('Error hydrating app preferences:', error);
@@ -294,6 +331,16 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       const next = { ...prev, ...partial };
       AsyncStorage.setItem(STORAGE_KEYS.appSettings, JSON.stringify(next)).catch((error) => {
         console.error('Error saving app settings:', error);
+      });
+      return next;
+    });
+  }, []);
+
+  const updateUser = useCallback(async (partial: Partial<UserProfile>) => {
+    setUser((previous) => {
+      const next = { ...previous, ...partial };
+      AsyncStorage.setItem(STORAGE_KEYS.userProfile, JSON.stringify(next)).catch((error) => {
+        console.error('Error saving user profile:', error);
       });
       return next;
     });
@@ -364,6 +411,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     appSettings,
     updateAppSetting,
     updateAppSettings,
+    user,
+    updateUser,
     fetchWorkouts,
   };
 
