@@ -1,8 +1,10 @@
+
 import React, { useState, useRef } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import PageHeader from '../../components/PageHeader';
 import { SPORT_DISCIPLINES } from '../../constants/sport-disciplines';
+import { saveActivity } from 'services/activity-storage';
 
 const SESSION_STATUS = {
   NOT_STARTED: 'Nog niet gestart',
@@ -20,6 +22,8 @@ export default function StartActivityScreen() {
 
   const [status, setStatus] = useState<SessionStatus>('NOT_STARTED');
   const [seconds, setSeconds] = useState(0);
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
   const timerRef = useRef<number | null>(null);
 
   // Timer logic
@@ -72,6 +76,31 @@ export default function StartActivityScreen() {
     );
   }
 
+  const handleSave = async () => {
+    if (saving || saved || status !== 'FINISHED') return;
+    setSaving(true);
+    try {
+      const now = new Date();
+      const startedAt = new Date(now.getTime() - seconds * 1000);
+      await saveActivity({
+        id: `${discipline.id}-${now.getTime()}`,
+        disciplineId: discipline.id,
+        disciplineName: discipline.name,
+        trackingType: discipline.trackingType,
+        startedAt: startedAt.toISOString(),
+        endedAt: now.toISOString(),
+        durationSeconds: seconds,
+        status: 'completed',
+        createdAt: now.toISOString(),
+      });
+      setSaved(true);
+      Alert.alert('Opgeslagen', 'Activiteit succesvol opgeslagen.');
+    } catch (e) {
+      Alert.alert('Fout', 'Opslaan mislukt. Probeer opnieuw.');
+    }
+    setSaving(false);
+  };
+
   return (
     <View style={styles.container}>
       <PageHeader title={`Start ${discipline.name}`} />
@@ -100,9 +129,17 @@ export default function StartActivityScreen() {
           </TouchableOpacity>
         )}
       </View>
-      <TouchableOpacity style={[styles.button, styles.disabledButton]} disabled>
-        <Text style={styles.buttonText}>Activiteit opslaan (binnenkort)</Text>
+      <TouchableOpacity
+        style={[styles.button, styles.disabledButton, saved && styles.savedButton]}
+        onPress={handleSave}
+        disabled={saving || saved || status !== 'FINISHED'}
+        accessibilityRole="button"
+      >
+        <Text style={styles.buttonText}>
+          {saved ? 'Opgeslagen!' : saving ? 'Opslaan...' : 'Activiteit opslaan'}
+        </Text>
       </TouchableOpacity>
+      {saved && <Text style={styles.successText}>Activiteit opgeslagen.</Text>}
     </View>
   );
 }
@@ -158,5 +195,14 @@ const styles = StyleSheet.create({
   disabledButton: {
     backgroundColor: '#D1D5DB',
     marginTop: 12,
+  },
+  savedButton: {
+    backgroundColor: '#22C55E',
+  },
+  successText: {
+    color: '#22C55E',
+    fontSize: 16,
+    marginTop: 12,
+    textAlign: 'center',
   },
 });

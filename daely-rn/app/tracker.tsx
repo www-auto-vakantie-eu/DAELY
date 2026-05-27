@@ -1,19 +1,42 @@
 
 
-import React from 'react';
+
+import React, { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import PageHeader from './components/PageHeader';
 import { SPORT_DISCIPLINES } from './constants/sport-disciplines';
+import { getActivities, Activity } from 'services/activity-storage';
 
 export default function TrackerScreen() {
   const router = useRouter();
+  const [recentActivities, setRecentActivities] = useState<Activity[]>([]);
+
+  useEffect(() => {
+    getActivities().then((acts) => setRecentActivities(acts.slice(0, 3)));
+  }, []);
+
   return (
     <ScrollView style={styles.container}>
       <PageHeader title="DAELY Tracker" />
       <Text style={styles.description}>
         Track elke sport op de manier die past bij jouw discipline.
       </Text>
+
+      <View style={styles.recentBlock}>
+        <Text style={styles.recentTitle}>Laatste activiteiten</Text>
+        {recentActivities.length === 0 ? (
+          <Text style={styles.recentEmpty}>Nog geen activiteiten opgeslagen.</Text>
+        ) : (
+          recentActivities.map((a) => (
+            <View key={a.id} style={styles.recentItem}>
+              <Text style={styles.recentName}>{a.disciplineName}</Text>
+              <Text style={styles.recentMeta}>{a.durationSeconds}s · {new Date(a.endedAt).toLocaleDateString()}</Text>
+            </View>
+          ))
+        )}
+      </View>
+
       <View style={styles.grid}>
         {SPORT_DISCIPLINES.map((discipline) => (
           <Pressable
@@ -42,6 +65,39 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#4B5563',
     marginBottom: 16,
+  },
+  recentBlock: {
+    marginBottom: 24,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    padding: 16,
+    shadowColor: '#000',
+    shadowOpacity: 0.04,
+    shadowRadius: 2,
+    elevation: 1,
+  },
+  recentTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#1F2937',
+    marginBottom: 8,
+  },
+  recentEmpty: {
+    color: '#9CA3AF',
+    fontSize: 15,
+    fontStyle: 'italic',
+  },
+  recentItem: {
+    marginBottom: 8,
+  },
+  recentName: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: '#2563EB',
+  },
+  recentMeta: {
+    fontSize: 13,
+    color: '#6B7280',
   },
   grid: {
     flexDirection: 'row',
