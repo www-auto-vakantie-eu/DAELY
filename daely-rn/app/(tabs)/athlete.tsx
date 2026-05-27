@@ -1,3 +1,12 @@
+import { StyleSheet, ScrollView, View, Text, Pressable, Switch } from 'react-native';
+import { useCallback, useState } from 'react';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useAppContext } from '@/contexts/AppContext';
+import { useRouter } from 'expo-router';
+import { useTheme } from '@/hooks/use-theme';
+import { useFocusEffect } from '@react-navigation/native';
+import { getSettingsRequests, syncPendingSettingsRequests } from '@/services/settings-requests';
+
 function SettingsCartHeader({ theme, onSettings, onCart }: { theme: any; onSettings: () => void; onCart: () => void }) {
   return (
     <View style={{ flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', paddingHorizontal: 16, paddingTop: 24, paddingBottom: 8, backgroundColor: theme.background }}>
@@ -35,14 +44,6 @@ function SettingsCartHeader({ theme, onSettings, onCart }: { theme: any; onSetti
     </View>
   );
 }
-import { StyleSheet, ScrollView, View, Text, Pressable, Switch } from 'react-native';
-import { useCallback, useState } from 'react';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useAppContext } from '@/contexts/AppContext';
-import { useRouter } from 'expo-router';
-import { useTheme } from '@/hooks/use-theme';
-import { useFocusEffect } from '@react-navigation/native';
-import { getSettingsRequests, syncPendingSettingsRequests } from '@/services/settings-requests';
 
 function formatSyncTimestamp(iso: string | null): string {
   if (!iso) {
