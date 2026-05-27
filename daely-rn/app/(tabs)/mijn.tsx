@@ -2,41 +2,31 @@ import {
   Alert,
   Dimensions,
   ImageBackground,
-  return (
-    <ScrollView style={styles.container}>
-      <PageHeader title="Mijn" />
-      <View style={styles.cardsContainer}>
-        {MY_DOMAIN_CARDS.map((card) => (
-          <Pressable
-            key={card.id}
-            style={[styles.card, card.disabled && styles.cardDisabled]}
-            onPress={() => card.route && handleCardPress(card.route)}
-            disabled={card.disabled}
-          >
-            <ImageBackground source={{ uri: card.image }} style={styles.cardImage} imageStyle={{ borderRadius: 12 }}>
-              <LinearGradient
-                colors={['rgba(0,0,0,0.4)', 'rgba(0,0,0,0.1)']}
-                style={styles.cardGradient}
-              />
-              <View style={styles.cardContent}>
-                <Text style={[styles.cardTitle, { color: card.accent }]}>{card.title}</Text>
-                <Text style={styles.cardDescription}>{card.description}</Text>
-                <Text style={styles.cardCategory}>{card.category}</Text>
-              </View>
-            </ImageBackground>
-          </Pressable>
-        ))}
-        <Pressable
-          style={[styles.card, { backgroundColor: '#2563EB' }]}
-          onPress={() => handleCardPress('/activities')}
-        >
-          <View style={styles.cardContent}>
-            <Text style={[styles.cardTitle, { color: '#fff' }]}>Activiteiten</Text>
-            <Text style={[styles.cardDescription, { color: '#E0E7EF' }]}>Bekijk je opgeslagen activiteiten en details.</Text>
-            <Text style={[styles.cardCategory, { color: '#93C5FD' }]}>TRACKER</Text>
-          </View>
-        </Pressable>
-      </View>
+  Modal,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
+import { FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import { useState } from 'react';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useTheme } from '@/hooks/use-theme';
+import { useAppContext } from '@/contexts/AppContext';
+import { submitSettingsRequest } from '@/services/settings-requests';
+import PageHeader from '../components/PageHeader';
+
+const { height: screenHeight } = Dimensions.get('window');
+const isSmallScreen = screenHeight < 667;
+const CARD_HEIGHT = isSmallScreen ? 92 : 112;
+
+type MyDomainCard = {
+  id: string;
+  title: string;
+  description: string;
   category: string;
   accent: string;
   image: string;

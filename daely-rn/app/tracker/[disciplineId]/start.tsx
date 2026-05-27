@@ -1,10 +1,10 @@
 
 import React, { useState, useRef } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, TextInput, ScrollView } from 'react-native';
+import { useLocalSearchParams } from 'expo-router';
 import PageHeader from '../../components/PageHeader';
 import { SPORT_DISCIPLINES } from '../../constants/sport-disciplines';
-import { saveActivity } from 'services/activity-storage';
+import { saveActivity, type WorkoutExercise } from 'services/activity-storage';
 
 const SESSION_STATUS = {
   NOT_STARTED: 'Nog niet gestart',
@@ -15,15 +15,78 @@ const SESSION_STATUS = {
 
 type SessionStatus = keyof typeof SESSION_STATUS;
 
+type ExerciseDraft = {
+  id: string;
+  name: string;
+  sets: string;
+  reps: string;
+  weightKg: string;
+  notes: string;
+};
+
+function createExerciseDraft(): ExerciseDraft {
+  return {
+    id: `draft-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    name: '',
+    sets: '',
+    reps: '',
+    weightKg: '',
+    notes: '',
+  };
+}
+
+function toPositiveInt(value: string): number | null {
+  const normalized = value.trim();
+  if (normalized.length === 0) return null;
+  const parsed = Number(normalized);
+  if (!Number.isInteger(parsed) || parsed <= 0) return null;
+  return parsed;
+}
+
+function toOptionalPositiveNumber(value: string): number | undefined {
+  const normalized = value.trim();
+  if (normalized.length === 0) return undefined;
+  const parsed = Number(normalized);
+  if (!Number.isFinite(parsed) || parsed <= 0) return undefined;
+  return parsed;
+}
+
+function toWorkoutExercise(draft: ExerciseDraft): WorkoutExercise | null {
+  const name = draft.name.trim();
+  const sets = toPositiveInt(draft.sets);
+  const reps = toPositiveInt(draft.reps);
+  if (!name || sets === null || reps === null) return null;
+
+  return {
+    id: draft.id,
+    name,
+    sets,
+    reps,
+    weightKg: toOptionalPositiveNumber(draft.weightKg),
+    notes: draft.notes.trim().length > 0 ? draft.notes.trim() : undefined,
+  };
+}
+
+function calculateTotalVolumeKg(exercises: WorkoutExercise[]): number | undefined {
+  const total = exercises.reduce((sum, exercise) => {
+    if (exercise.weightKg === undefined) return sum;
+    return sum + exercise.sets * exercise.reps * exercise.weightKg;
+  }, 0);
+
+  return total > 0 ? total : undefined;
+}
+
 export default function StartActivityScreen() {
   const { disciplineId } = useLocalSearchParams<{ disciplineId: string }>();
-  const router = useRouter();
-  const discipline = SPORT_DISCIPLINES.find(d => d.id === disciplineId);
+  const discipline = SPORT_DISCIPLINES.find((d) => d.id === disciplineId);
+  const isWorkoutDiscipline = discipline?.trackingType === 'workout';
 
   const [status, setStatus] = useState<SessionStatus>('NOT_STARTED');
   const [seconds, setSeconds] = useState(0);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [workoutNotes, setWorkoutNotes] = useState('');
+  const [exerciseDrafts, setExerciseDrafts] = useState<ExerciseDraft[]>([createExerciseDraft()]);
   const timerRef = useRef<number | null>(null);
 
   // Timer logic
@@ -57,6 +120,28 @@ export default function StartActivityScreen() {
     stopTimer();
   };
 
+  const handleAddExercise = () => {
+    setExerciseDrafts((previous) => [...previous, createExerciseDraft()]);
+  };
+
+  const handleExerciseChange = (id: string, field: keyof ExerciseDraft, value: string) => {
+    setExerciseDrafts((previous) =>
+      previous.map((draft) => (draft.id === id ? { ...draft, [field]: value } : draft))
+    );
+  };
+
+  const buildWorkoutExercises = (): WorkoutExercise[] | null => {
+    const parsed = exerciseDrafts
+      .map((draft) => toWorkoutExercise(draft))
+      .filter((item): item is WorkoutExercise => item !== null);
+
+    if (parsed.length === 0) {
+      return null;
+    }
+
+    return parsed;
+  };
+
   React.useEffect(() => {
     return () => stopTimer();
   }, []);
@@ -78,10 +163,18 @@ export default function StartActivityScreen() {
 
   const handleSave = async () => {
     if (saving || saved || status !== 'FINISHED') return;
+
+    const workoutExercises = isWorkoutDiscipline ? buildWorkoutExercises() : null;
+    if (isWorkoutDiscipline && !workoutExercises) {
+      Alert.alert('Workout metrics ontbreken', 'Voeg minimaal een geldige oefening toe met naam, sets en reps.');
+      return;
+    }
+
     setSaving(true);
     try {
       const now = new Date();
       const startedAt = new Date(now.getTime() - seconds * 1000);
+      const totalVolumeKg = workoutExercises ? calculateTotalVolumeKg(workoutExercises) : undefined;
       await saveActivity({
         id: `${discipline.id}-${now.getTime()}`,
         disciplineId: discipline.id,
@@ -91,18 +184,28 @@ export default function StartActivityScreen() {
         endedAt: now.toISOString(),
         durationSeconds: seconds,
         status: 'completed',
+        metrics:
+          isWorkoutDiscipline && workoutExercises
+            ? {
+                workout: {
+                  exercises: workoutExercises,
+                  totalVolumeKg,
+                  notes: workoutNotes.trim().length > 0 ? workoutNotes.trim() : undefined,
+                },
+              }
+            : undefined,
         createdAt: now.toISOString(),
       });
       setSaved(true);
       Alert.alert('Opgeslagen', 'Activiteit succesvol opgeslagen.');
-    } catch (e) {
+    } catch {
       Alert.alert('Fout', 'Opslaan mislukt. Probeer opnieuw.');
     }
     setSaving(false);
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
       <PageHeader title={`Start ${discipline.name}`} />
       <Text style={styles.meta}>{discipline.category} · {discipline.trackingType}</Text>
       <Text style={styles.status}>Status: {SESSION_STATUS[status]}</Text>
@@ -129,6 +232,64 @@ export default function StartActivityScreen() {
           </TouchableOpacity>
         )}
       </View>
+
+      {isWorkoutDiscipline && (
+        <View style={styles.metricsBlock}>
+          <Text style={styles.metricsTitle}>Workout metrics</Text>
+          {exerciseDrafts.map((exercise, index) => (
+            <View key={exercise.id} style={styles.exerciseCard}>
+              <Text style={styles.exerciseTitle}>Oefening {index + 1}</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Oefeningnaam"
+                value={exercise.name}
+                onChangeText={(value) => handleExerciseChange(exercise.id, 'name', value)}
+              />
+              <View style={styles.rowInputs}>
+                <TextInput
+                  style={[styles.input, styles.halfInput]}
+                  placeholder="Sets"
+                  keyboardType="numeric"
+                  value={exercise.sets}
+                  onChangeText={(value) => handleExerciseChange(exercise.id, 'sets', value)}
+                />
+                <TextInput
+                  style={[styles.input, styles.halfInput]}
+                  placeholder="Reps"
+                  keyboardType="numeric"
+                  value={exercise.reps}
+                  onChangeText={(value) => handleExerciseChange(exercise.id, 'reps', value)}
+                />
+              </View>
+              <TextInput
+                style={styles.input}
+                placeholder="Gewicht (kg) optioneel"
+                keyboardType="decimal-pad"
+                value={exercise.weightKg}
+                onChangeText={(value) => handleExerciseChange(exercise.id, 'weightKg', value)}
+              />
+              <TextInput
+                style={[styles.input, styles.notesInput]}
+                placeholder="Notities optioneel"
+                value={exercise.notes}
+                onChangeText={(value) => handleExerciseChange(exercise.id, 'notes', value)}
+                multiline
+              />
+            </View>
+          ))}
+          <TouchableOpacity style={styles.secondaryButton} onPress={handleAddExercise} accessibilityRole="button">
+            <Text style={styles.secondaryButtonText}>+ Oefening toevoegen</Text>
+          </TouchableOpacity>
+          <TextInput
+            style={[styles.input, styles.notesInput]}
+            placeholder="Algemene workout-notities optioneel"
+            value={workoutNotes}
+            onChangeText={setWorkoutNotes}
+            multiline
+          />
+        </View>
+      )}
+
       <TouchableOpacity
         style={[styles.button, styles.disabledButton, saved && styles.savedButton]}
         onPress={handleSave}
@@ -140,7 +301,7 @@ export default function StartActivityScreen() {
         </Text>
       </TouchableOpacity>
       {saved && <Text style={styles.successText}>Activiteit opgeslagen.</Text>}
-    </View>
+    </ScrollView>
   );
 }
 
@@ -149,6 +310,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F3F4F6',
     padding: 16,
+  },
+  contentContainer: {
+    paddingBottom: 32,
   },
   fallback: {
     fontSize: 18,
@@ -178,6 +342,64 @@ const styles = StyleSheet.create({
     gap: 12,
     marginBottom: 24,
     justifyContent: 'center',
+  },
+  metricsBlock: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 10,
+    padding: 12,
+    marginBottom: 16,
+  },
+  metricsTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#1F2937',
+    marginBottom: 8,
+  },
+  exerciseCard: {
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    borderRadius: 8,
+    padding: 10,
+    marginBottom: 10,
+  },
+  exerciseTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#374151',
+    marginBottom: 8,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#D1D5DB',
+    backgroundColor: '#F9FAFB',
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    fontSize: 14,
+    color: '#111827',
+    marginBottom: 8,
+  },
+  rowInputs: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  halfInput: {
+    flex: 1,
+  },
+  notesInput: {
+    minHeight: 42,
+  },
+  secondaryButton: {
+    backgroundColor: '#E5E7EB',
+    borderRadius: 8,
+    paddingVertical: 10,
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  secondaryButtonText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#1F2937',
   },
   button: {
     backgroundColor: '#2563EB',

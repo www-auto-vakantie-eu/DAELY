@@ -33,9 +33,31 @@ export default function ActivityDetailScreen() {
       {activity.notes && (
         <Text style={styles.notes}>Notities: {activity.notes}</Text>
       )}
-      <View style={styles.placeholderBox}>
-        <Text style={styles.placeholder}>Metrics komen binnenkort voor deze discipline.</Text>
-      </View>
+      {activity.metrics?.workout ? (
+        <View style={styles.metricsBox}>
+          <Text style={styles.metricsTitle}>Workout metrics</Text>
+          {(activity.metrics.workout.exercises ?? []).map((exercise) => (
+            <View key={exercise.id} style={styles.exerciseItem}>
+              <Text style={styles.exerciseName}>{exercise.name}</Text>
+              <Text style={styles.exerciseMeta}>
+                {exercise.sets} sets · {exercise.reps} reps
+                {exercise.weightKg !== undefined ? ` · ${exercise.weightKg} kg` : ''}
+              </Text>
+              {exercise.notes ? <Text style={styles.exerciseNotes}>{exercise.notes}</Text> : null}
+            </View>
+          ))}
+          {activity.metrics.workout.totalVolumeKg !== undefined ? (
+            <Text style={styles.totalVolume}>Totaal volume: {Math.round(activity.metrics.workout.totalVolumeKg)} kg</Text>
+          ) : null}
+          {activity.metrics.workout.notes ? (
+            <Text style={styles.notes}>Workout notities: {activity.metrics.workout.notes}</Text>
+          ) : null}
+        </View>
+      ) : (
+        <View style={styles.placeholderBox}>
+          <Text style={styles.placeholder}>Metrics komen binnenkort voor deze discipline.</Text>
+        </View>
+      )}
     </ScrollView>
   );
 }
@@ -72,6 +94,41 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: '#374151',
     marginBottom: 12,
+  },
+  metricsBox: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 8,
+    padding: 14,
+    marginTop: 12,
+  },
+  metricsTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#1F2937',
+    marginBottom: 8,
+  },
+  exerciseItem: {
+    marginBottom: 10,
+  },
+  exerciseName: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#2563EB',
+  },
+  exerciseMeta: {
+    fontSize: 14,
+    color: '#4B5563',
+  },
+  exerciseNotes: {
+    fontSize: 13,
+    color: '#6B7280',
+    marginTop: 2,
+  },
+  totalVolume: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#1F2937',
+    marginTop: 4,
   },
   placeholderBox: {
     backgroundColor: '#E5E7EB',

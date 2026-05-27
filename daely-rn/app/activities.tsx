@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
+import { Text, StyleSheet, ScrollView, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import PageHeader from './components/PageHeader';
 import { getActivities, Activity } from 'services/activity-storage';
@@ -9,7 +9,12 @@ export default function ActivitiesScreen() {
   const router = useRouter();
 
   useEffect(() => {
-    getActivities().then((acts) => setActivities(acts));
+    getActivities().then((acts) => {
+      const sorted = [...acts].sort(
+        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+      setActivities(sorted);
+    });
   }, []);
 
   return (
@@ -26,6 +31,12 @@ export default function ActivitiesScreen() {
           >
             <Text style={styles.name}>{a.disciplineName}</Text>
             <Text style={styles.meta}>{a.trackingType} · {formatDuration(a.durationSeconds)} · {formatDate(a.endedAt)}</Text>
+            {a.metrics?.workout && (
+              <Text style={styles.workoutMeta}>
+                {a.metrics.workout.exercises?.length ?? 0} oefeningen
+                {a.metrics.workout.totalVolumeKg !== undefined ? ` · Volume ${Math.round(a.metrics.workout.totalVolumeKg)} kg` : ''}
+              </Text>
+            )}
             <Text style={styles.status}>{a.status}</Text>
           </Pressable>
         ))
@@ -80,5 +91,10 @@ const styles = StyleSheet.create({
   status: {
     fontSize: 13,
     color: '#22C55E',
+  },
+  workoutMeta: {
+    fontSize: 13,
+    color: '#374151',
+    marginBottom: 4,
   },
 });
