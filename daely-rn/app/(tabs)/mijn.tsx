@@ -17,6 +17,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '@/hooks/use-theme';
 import { useAppContext } from '@/contexts/AppContext';
 import { submitSettingsRequest } from '@/services/settings-requests';
+import PageHeader from '../components/PageHeader';
 
 const { height: screenHeight } = Dimensions.get('window');
 const isSmallScreen = screenHeight < 667;
@@ -244,23 +245,12 @@ export default function HomeScreen() {
   return (
     <View style={[styles.screen, { backgroundColor: theme.background }]}>
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-        <View style={styles.headerRow}>
-          <View>
-            <Text style={[styles.sessionTitle, { color: theme.titleColor }]}>Mijn.</Text>
-            {/* <Text style={[styles.sessionSubtitle, { color: theme.subtitleColor }]}>JOUW UITGEBREIDE OVERZICHT</Text> */}
-          </View>
-
-          <Pressable
-            style={({ pressed }) => [
-              styles.settingsPill,
-              { backgroundColor: theme.card, borderColor: theme.border },
-              pressed ? styles.settingsPillPressed : null,
-            ]}
-            onPress={() => handleCardPress('/(tabs)/athlete')}
-          >
-            <MaterialCommunityIcons name="cog-outline" size={20} color={theme.titleColor} />
-          </Pressable>
-        </View>
+        <PageHeader
+          title="Mijn"
+          onSettingsPress={() => handleCardPress('/(tabs)/athlete')}
+          onSearchPress={() => handleCardPress('/nutrition/search')}
+          onCartPress={() => handleCardPress('/(tabs)/cart')}
+        />
 
         {/* Weekoverzicht Sterke week verwijderd */}
 

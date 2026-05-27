@@ -3,6 +3,9 @@
 import React from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import { useTheme } from '@/hooks/use-theme';
+import PageHeader from './components/PageHeader';
 
 const styles = StyleSheet.create({
     kpiValue: {
@@ -279,8 +282,17 @@ function Goal({ text }: GoalProps) {
 
 
 function MyProgressScreen() {
+  const router = useRouter();
+  const theme = useTheme();
+
   return (
-    <ScrollView style={{ backgroundColor: '#F6F7F9' }} contentContainerStyle={styles.container}>
+    <ScrollView style={{ backgroundColor: theme.background }} contentContainerStyle={styles.container}>
+      <PageHeader
+        title="Progressie"
+        onSettingsPress={() => router.push('/(tabs)/athlete')}
+        onSearchPress={() => router.push('/nutrition/search')}
+        onCartPress={() => router.push('/(tabs)/cart')}
+      />
       {/* 1. Header / Intro */}
       <View style={styles.header}>
         <Text style={styles.title}>Mijn Progressie</Text>

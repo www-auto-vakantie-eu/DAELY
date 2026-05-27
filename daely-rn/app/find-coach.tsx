@@ -1,14 +1,22 @@
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { useState } from 'react';
+import { useRouter } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
+import PageHeader from './components/PageHeader';
 
 export default function FindCoachScreen() {
   const theme = useTheme();
+  const router = useRouter();
   const [filter, setFilter] = useState<'online' | 'personal'>('online');
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}> 
-      <Text style={[styles.title, { color: theme.titleColor }]}>Vind een Coach</Text>
+      <PageHeader
+        title="Find Coach"
+        onSettingsPress={() => router.push('/(tabs)/athlete')}
+        onSearchPress={() => router.push('/nutrition/search')}
+        onCartPress={() => router.push('/(tabs)/cart')}
+      />
       <View style={styles.filterRow}>
         <Pressable
           style={[styles.filterButton, filter === 'online' && styles.filterButtonActive]}
@@ -33,8 +41,7 @@ export default function FindCoachScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 24 },
-  title: { fontSize: 24, fontWeight: 'bold', marginBottom: 16 },
+  container: { flex: 1, paddingHorizontal: 24 },
   filterRow: { flexDirection: 'row', marginBottom: 24 },
   filterButton: {
     paddingVertical: 8,

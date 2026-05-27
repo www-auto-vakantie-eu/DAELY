@@ -19,6 +19,7 @@ import {
 import { getCommunitFeed, formatFeedDate, type FeedItem, type FeedItemType } from '@/services/community-feed';
 import { EngagementPanel } from '@/components/EngagementPanel';
 import GlobalSearchModal from '../components/GlobalSearchModal';
+import PageHeader from '../components/PageHeader';
 
 const { width: screenWidth } = Dimensions.get('window');
 const CREATOR_FILTERS = ['Taal', 'Discipline', 'Coach / PT'] as const;
@@ -543,41 +544,14 @@ export default function CommunityScreen() {
       </View>
       <View style={styles.content}>
         <View style={styles.headerBlock}>
+          <PageHeader
+            title="Community"
+            onSettingsPress={() => router.push('/(tabs)/athlete')}
+            onSearchPress={() => setSearchVisible(true)}
+            onCartPress={() => router.push('/(tabs)/cart')}
+          />
           <View style={styles.headerTextWrap}>
-            <Text style={[styles.title, { color: theme.titleColor }]}>Community</Text>
             <Text style={[styles.subtitle, { color: theme.subtitleColor }]}>Swipe tussen influencers, partners en events.</Text>
-          </View>
-          <View style={{ flexDirection: 'row', gap: 8 }}>
-            <Pressable
-              style={({ pressed }) => [
-                styles.settingsPill,
-                { backgroundColor: theme.card, borderColor: theme.border },
-                pressed ? styles.settingsPillPressed : null,
-              ]}
-              onPress={() => setSearchVisible(true)}
-            >
-              <MaterialCommunityIcons name="magnify" size={20} color={theme.titleColor} />
-            </Pressable>
-            <Pressable
-              style={({ pressed }) => [
-                styles.settingsPill,
-                { backgroundColor: theme.card, borderColor: theme.border },
-                pressed ? styles.settingsPillPressed : null,
-              ]}
-              onPress={() => router.push('/(tabs)/athlete')}
-            >
-              <MaterialCommunityIcons name="cog-outline" size={20} color={theme.titleColor} />
-            </Pressable>
-            <Pressable
-              style={({ pressed }) => [
-                styles.settingsPill,
-                { backgroundColor: theme.card, borderColor: theme.border },
-                pressed ? styles.settingsPillPressed : null,
-              ]}
-              onPress={() => router.push('/(tabs)/cart')}
-            >
-              <MaterialCommunityIcons name="shopping-outline" size={20} color={theme.titleColor} />
-            </Pressable>
           </View>
         </View>
 

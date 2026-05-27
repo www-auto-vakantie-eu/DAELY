@@ -1,6 +1,9 @@
 // Redesigned Mijn Statistieken page scaffold
 import React, { useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, ActivityIndicator, TouchableOpacity, Image, SectionList, FlatList, Modal, Switch } from 'react-native';
+import { useRouter } from 'expo-router';
+import { useTheme } from '@/hooks/use-theme';
+import PageHeader from '../components/PageHeader';
 // TODO: import Victory Native or other chart lib when installed
 // import { VictoryLine, VictoryBar, VictoryPie, VictoryArea, VictoryChart, VictoryTheme } from 'victory-native';
 
@@ -15,6 +18,8 @@ const ChartPlaceholder = ({ title }: { title: string }) => (
 );
 
 export default function MijnStatistiekenScreen() {
+  const router = useRouter();
+  const theme = useTheme();
   // State for loading, privacy, and settings
   const [loading, setLoading] = useState(false);
   const [settingsVisible, setSettingsVisible] = useState(false);
@@ -40,7 +45,13 @@ export default function MijnStatistiekenScreen() {
   }
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={[styles.container, { backgroundColor: theme.background }]}>
+      <PageHeader
+        title="Data"
+        onSettingsPress={() => router.push('/(tabs)/athlete')}
+        onSearchPress={() => router.push('/nutrition/search')}
+        onCartPress={() => router.push('/(tabs)/cart')}
+      />
       {/* Profile Section */}
       <View style={styles.profileRow}>
         <TouchableOpacity>

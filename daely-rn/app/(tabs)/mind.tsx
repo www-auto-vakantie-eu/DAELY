@@ -5,6 +5,7 @@ import { useRouter } from 'expo-router';
 import { useEffect, useRef } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MIND_CATEGORIES } from '@/constants/mind-categories';
+import PageHeader from '../components/PageHeader';
 // ...existing code...
 
 function hexToRgba(hex: string, alpha: number): string {
@@ -52,34 +53,12 @@ export default function MindScreen() {
   return (
     <ScrollView style={[styles.container, { backgroundColor: theme.background }]} showsVerticalScrollIndicator={false}>
       <View style={styles.content}>
-        <View style={styles.headerRow}>
-          <View style={styles.headerTextBlock}>
-            <Text style={[styles.title, { color: theme.titleColor }]}>Mind.</Text>
-            <Text style={[styles.subtitle, { color: theme.subtitleColor }]}>Kies een categorie en ontdek de juiste techniek.</Text>
-          </View>
-          <View style={{ flexDirection: 'row', gap: 8 }}>
-            <Pressable
-              style={({ pressed }) => [
-                styles.settingsPill,
-                { backgroundColor: theme.card, borderColor: theme.border },
-                pressed ? styles.settingsPillPressed : null,
-              ]}
-              onPress={() => router.push('/(tabs)/athlete')}
-            >
-              <MaterialCommunityIcons name="cog-outline" size={20} color={theme.titleColor} />
-            </Pressable>
-            <Pressable
-              style={({ pressed }) => [
-                styles.settingsPill,
-                { backgroundColor: theme.card, borderColor: theme.border },
-                pressed ? styles.settingsPillPressed : null,
-              ]}
-              onPress={() => router.push('/(tabs)/cart')}
-            >
-              <MaterialCommunityIcons name="shopping-outline" size={20} color={theme.titleColor} />
-            </Pressable>
-          </View>
-        </View>
+        <PageHeader
+          title="Mind"
+          onSettingsPress={() => router.push('/(tabs)/athlete')}
+          onSearchPress={() => router.push('/nutrition/search')}
+          onCartPress={() => router.push('/(tabs)/cart')}
+        />
 
         {/* Tapping als categoriekaart */}
         <Pressable

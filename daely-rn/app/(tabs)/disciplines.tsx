@@ -9,6 +9,7 @@ import { useRouter } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
 import { NUTRITION_MEALS } from '@/constants/nutrition-meals';
 import { COMMUNITY_CREATORS } from '@/constants/community-creators';
+import PageHeader from '../components/PageHeader';
 
 export const DISCIPLINES = [
   {
@@ -331,20 +332,12 @@ export default function DisciplinesScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.background }}>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, marginTop: 16, paddingHorizontal: 16 }}>
-        <Text style={{ fontSize: 68, lineHeight: 72, fontWeight: '900', letterSpacing: -2, color: theme.titleColor }}>Bibliotheek</Text>
-        <View style={{ flexDirection: 'row', gap: 8 }}>
-          <Pressable style={{ width: 42, height: 42, borderRadius: 21, borderWidth: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: theme.card, borderColor: theme.border }} onPress={() => setSearchVisible(true)}>
-            <MaterialCommunityIcons name="magnify" size={22} color={theme.titleColor} />
-          </Pressable>
-          <Pressable style={{ width: 42, height: 42, borderRadius: 21, borderWidth: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: theme.card, borderColor: theme.border }} onPress={() => router.push('/(tabs)/athlete')}>
-            <MaterialCommunityIcons name="cog-outline" size={22} color={theme.titleColor} />
-          </Pressable>
-          <Pressable style={{ width: 42, height: 42, borderRadius: 21, borderWidth: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: theme.card, borderColor: theme.border }} onPress={() => router.push('/(tabs)/cart')}>
-            <MaterialCommunityIcons name="shopping-outline" size={22} color={theme.titleColor} />
-          </Pressable>
-        </View>
-      </View>
+      <PageHeader
+        title="Bibliotheek"
+        onSettingsPress={() => router.push('/(tabs)/athlete')}
+        onSearchPress={() => setSearchVisible(true)}
+        onCartPress={() => router.push('/(tabs)/cart')}
+      />
       <GlobalSearchModal
         visible={searchVisible}
         onClose={() => setSearchVisible(false)}

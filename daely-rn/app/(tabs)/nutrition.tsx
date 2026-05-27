@@ -12,6 +12,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import GlobalSearchModal from '../components/GlobalSearchModal';
 import { DISCIPLINES } from './disciplines';
 import { COMMUNITY_CREATORS } from '@/constants/community-creators';
+import PageHeader from '../components/PageHeader';
 
 
 const FILTER_CATEGORIES = [
@@ -164,24 +165,12 @@ export default function NutritionScreen() {
       contentContainerStyle={{ padding: 16 }}
       showsVerticalScrollIndicator={false}
     >
-      {/* Header met titel, instellingen en winkelwagen */}
-      <View style={styles.headerRow}>
-        <View style={styles.headerTextBlock}>
-          <Text style={[styles.title, { color: theme.titleColor }]}>Recepten</Text>
-          <Text style={[styles.subtitle, { color: theme.subtitleColor }]}>Bekijk alle sportrecepten</Text>
-        </View>
-        <View style={{ flexDirection: 'row', gap: 8 }}>
-          <Pressable style={styles.settingsPill} onPress={() => setSearchVisible(true)}>
-            <MaterialCommunityIcons name="magnify" size={22} color={theme.titleColor} />
-          </Pressable>
-          <Pressable style={styles.settingsPill} onPress={() => router.push('/(tabs)/athlete')}>
-            <MaterialCommunityIcons name="cog-outline" size={22} color={theme.titleColor} />
-          </Pressable>
-          <Pressable style={styles.settingsPill} onPress={() => router.push('/(tabs)/cart')}>
-            <MaterialCommunityIcons name="shopping-outline" size={22} color={theme.titleColor} />
-          </Pressable>
-        </View>
-      </View>
+      <PageHeader
+        title="Voeding"
+        onSettingsPress={() => router.push('/(tabs)/athlete')}
+        onSearchPress={() => setSearchVisible(true)}
+        onCartPress={() => router.push('/(tabs)/cart')}
+      />
       <View style={{ height: 16 }} />
 
       <View style={styles.quickActionsBlock}>

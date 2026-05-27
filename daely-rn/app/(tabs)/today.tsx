@@ -5,6 +5,7 @@ import { useRouter } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
 import { useAppContext } from '@/contexts/AppContext';
 import { ACTIVITY_TYPE_LABELS } from '@/constants/workout-activities';
+import PageHeader from '../components/PageHeader';
 
 function formatTodayLabel(): string {
   const now = new Date();
@@ -82,43 +83,24 @@ export default function TodayScreen() {
 
   return (
     <ScrollView style={[styles.screen, { backgroundColor: theme.background }]} contentContainerStyle={styles.content}>
+      <PageHeader
+        title="Vandaag"
+        onSettingsPress={() => router.push('/(tabs)/athlete')}
+        onSearchPress={() => router.push('/nutrition/search')}
+        onCartPress={() => router.push('/(tabs)/cart')}
+      />
       <View style={styles.headerRow}>
-        <View>
-          <Text style={[styles.title, { color: theme.titleColor }]}>Vandaag.</Text>
-          <Text style={[styles.subtitle, { color: theme.subtitleColor }]}>{todayLabel.toUpperCase()}</Text>
-        </View>
-        <View style={styles.headerActions}>
-          <Pressable
-            style={({ pressed }) => [
-              styles.settingsPill,
-              { backgroundColor: theme.card, borderColor: theme.border },
-              pressed ? styles.settingsPillPressed : null,
-            ]}
-            onPress={() => router.push('/workouts/calendar')}
-          >
-            <MaterialCommunityIcons name="calendar-month-outline" size={20} color={theme.titleColor} />
-          </Pressable>
-          <Pressable
-            style={({ pressed }) => [
-              styles.settingsPill,
-              { backgroundColor: theme.card, borderColor: theme.border },
-              pressed ? styles.settingsPillPressed : null,
-            ]}
-            onPress={() => router.push('/(tabs)/athlete')}
-          >
-            <MaterialCommunityIcons name="cog-outline" size={20} color={theme.titleColor} />
-          </Pressable>
-          <Pressable
-            style={({ pressed }) => [
-              styles.settingsPill,
-              { backgroundColor: theme.card, borderColor: theme.border },
-              pressed ? styles.settingsPillPressed : null,
-            ]}
-            onPress={() => router.push('/(tabs)/cart')}
-          >
-            <MaterialCommunityIcons name="shopping-outline" size={20} color={theme.titleColor} />
-          </Pressable>
-        </View>
+        <Text style={[styles.subtitle, { color: theme.subtitleColor }]}>{todayLabel.toUpperCase()}</Text>
+        <Pressable
+          style={({ pressed }) => [
+            styles.settingsPill,
+            { backgroundColor: theme.card, borderColor: theme.border },
+            pressed ? styles.settingsPillPressed : null,
+          ]}
+          onPress={() => router.push('/workouts/calendar')}
+        >
+          <MaterialCommunityIcons name="calendar-month-outline" size={20} color={theme.titleColor} />
+        </Pressable>
       </View>
 
       <View style={styles.heroCarouselWrap}>

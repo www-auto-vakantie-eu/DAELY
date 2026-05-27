@@ -13,6 +13,7 @@ import {
   HEATMAP,
 } from '@/constants/workout-activities';
 import { getCreatorWorkoutEntries, type CreatorWorkoutEntry } from '@/services/creator-content';
+import PageHeader from '../components/PageHeader';
 
 type Filter = 'Alles' | 'Running' | 'Kracht' | 'HYROX' | 'Herstel';
 const FILTERS: Filter[] = ['Alles', 'Running', 'Kracht', 'HYROX', 'Herstel'];
@@ -81,6 +82,12 @@ export default function WorkoutsOverviewScreen() {
   return (
     <View style={[styles.screen, { backgroundColor: theme.background }]}> 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+        <PageHeader
+          title="Workouts"
+          onSettingsPress={() => router.push('/(tabs)/athlete')}
+          onSearchPress={() => router.push('/nutrition/search')}
+          onCartPress={() => router.push('/(tabs)/cart')}
+        />
         <View style={styles.topRow}>
           <Pressable
             style={[styles.backButton, { borderColor: theme.border, backgroundColor: theme.card }]}

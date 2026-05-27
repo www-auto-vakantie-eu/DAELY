@@ -11,6 +11,7 @@ import {
   getNutritionLogsForDay,
 } from '@/services/nutrition-log';
 import type { NutritionDailyTotals, NutritionLogEntry, NutritionMealType } from '@/services/nutrition-log.types';
+import PageHeader from './components/PageHeader';
 
 const MEAL_ORDER: NutritionMealType[] = ['ontbijt', 'lunch', 'diner', 'snack', 'pre-workout', 'post-workout', 'supplement'];
 
@@ -103,11 +104,14 @@ export default function MyNutritionScreen() {
 
   return (
     <ScrollView style={[styles.screen, { backgroundColor: theme.background }]} contentContainerStyle={styles.content}>
+      <PageHeader
+        title="My Nutrition"
+        onSettingsPress={() => router.push('/(tabs)/athlete')}
+        onSearchPress={() => router.push('/nutrition/search')}
+        onCartPress={() => router.push('/(tabs)/cart')}
+      />
       <View style={styles.headerRow}>
-        <View>
-          <Text style={[styles.title, { color: theme.titleColor }]}>Mijn Voeding</Text>
-          <Text style={[styles.subtitle, { color: theme.subtitleColor }]}>{todayLabel.toUpperCase()}</Text>
-        </View>
+        <Text style={[styles.subtitle, { color: theme.subtitleColor }]}>{todayLabel.toUpperCase()}</Text>
         <Pressable style={styles.addButton} onPress={() => router.push('/nutrition/add')}>
           <MaterialCommunityIcons name="plus" size={15} color="#2563EB" />
           <Text style={styles.addButtonText}>Snel toevoegen</Text>
