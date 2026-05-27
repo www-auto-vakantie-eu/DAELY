@@ -1,0 +1,84 @@
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
+import { useRouter } from 'expo-router';
+import PageHeader from './components/PageHeader';
+import { getActivities, Activity } from 'services/activity-storage';
+
+export default function ActivitiesScreen() {
+  const [activities, setActivities] = useState<Activity[]>([]);
+  const router = useRouter();
+
+  useEffect(() => {
+    getActivities().then((acts) => setActivities(acts));
+  }, []);
+
+  return (
+    <ScrollView style={styles.container}>
+      <PageHeader title="Activiteiten" />
+      {activities.length === 0 ? (
+        <Text style={styles.empty}>Nog geen activiteiten opgeslagen.</Text>
+      ) : (
+        activities.map((a) => (
+          <Pressable
+            key={a.id}
+            style={styles.item}
+            onPress={() => router.push({ pathname: '/activities/[id]', params: { id: a.id } })}
+          >
+            <Text style={styles.name}>{a.disciplineName}</Text>
+            <Text style={styles.meta}>{a.trackingType} · {formatDuration(a.durationSeconds)} · {formatDate(a.endedAt)}</Text>
+            <Text style={styles.status}>{a.status}</Text>
+          </Pressable>
+        ))
+      )}
+    </ScrollView>
+  );
+}
+
+function formatDuration(seconds: number) {
+  const min = Math.floor(seconds / 60);
+  const sec = seconds % 60;
+  return `${min}m ${sec}s`;
+}
+
+function formatDate(dateStr: string) {
+  const d = new Date(dateStr);
+  return d.toLocaleString();
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F3F4F6',
+    padding: 16,
+  },
+  empty: {
+    color: '#9CA3AF',
+    fontSize: 16,
+    marginTop: 32,
+    textAlign: 'center',
+  },
+  item: {
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    padding: 16,
+    marginBottom: 12,
+    shadowColor: '#000',
+    shadowOpacity: 0.04,
+    shadowRadius: 2,
+    elevation: 1,
+  },
+  name: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#2563EB',
+  },
+  meta: {
+    fontSize: 14,
+    color: '#6B7280',
+    marginBottom: 4,
+  },
+  status: {
+    fontSize: 13,
+    color: '#22C55E',
+  },
+});

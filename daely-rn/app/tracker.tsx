@@ -35,6 +35,9 @@ export default function TrackerScreen() {
             </View>
           ))
         )}
+        <Pressable style={styles.allActivitiesBtn} onPress={() => router.push('/activities')} accessibilityRole="button">
+          <Text style={styles.allActivitiesText}>Alle activiteiten bekijken</Text>
+        </Pressable>
       </View>
 
       <View style={styles.grid}>
@@ -98,6 +101,19 @@ const styles = StyleSheet.create({
   recentMeta: {
     fontSize: 13,
     color: '#6B7280',
+  },
+  allActivitiesBtn: {
+    marginTop: 8,
+    alignSelf: 'flex-end',
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 6,
+    backgroundColor: '#2563EB',
+  },
+  allActivitiesText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 14,
   },
   grid: {
     flexDirection: 'row',
