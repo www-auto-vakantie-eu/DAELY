@@ -107,34 +107,29 @@ export default function CreatorCommerceScreen() {
     );
   }
 
+  const selectedCreator = creator;
+
   // --- Helper: Voeg bundel toe aan winkelwagen ---
   function addBundleToCart(bundle: any) {
     bundle.products.forEach((p: any) => {
       cart.addItem({
         id: p.id,
-        name: p.name,
-        price: p.price,
-        creatorId: creator.id,
-        creatorName: creator.name,
-        bundleId: bundle.id,
-        bundleName: bundle.name,
-        discount: bundle.price < bundle.products.reduce((sum: number, x: any) => sum + x.price, 0) ? (bundle.products.reduce((sum: number, x: any) => sum + x.price, 0) - bundle.price) : 0,
+        title: p.name,
+        subtitle: `${selectedCreator.name} • ${bundle.name}`,
       });
     });
-    Alert.alert('Toegevoegd', `Toegevoegd aan je winkelwagen via ${creator.name}'s actie.`);
+    Alert.alert('Toegevoegd', `Toegevoegd aan je winkelwagen via ${selectedCreator.name}'s actie.`);
   }
 
   // --- Helper: Voeg los product toe ---
   function addProductToCart(product: any) {
     cart.addItem({
       id: product.id,
-      name: product.name,
-      price: product.salePrice || product.price,
-      creatorId: creator.id,
-      creatorName: creator.name,
-      discount: (product.price - (product.salePrice || product.price)),
+      title: product.name,
+      subtitle: `${selectedCreator.name} • ${product.brand || 'Creator pick'}`,
+      image: product.image,
     });
-    Alert.alert('Toegevoegd', `Toegevoegd aan je winkelwagen via ${creator.name}'s actie.`);
+    Alert.alert('Toegevoegd', `Toegevoegd aan je winkelwagen via ${selectedCreator.name}'s actie.`);
   }
 
   // --- Filteren/sorteren ---

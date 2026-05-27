@@ -54,7 +54,7 @@ export default function DataLinkScreen() {
       const redirectUri =
         Platform.OS === 'web'
           ? `${window.location.origin}/whoop-callback`
-          : AuthSession.makeRedirectUri({ path: 'whoop-callback', useProxy: false });
+          : AuthSession.makeRedirectUri({ path: 'whoop-callback' });
       const state = `whoop-${Date.now()}`;
 
       const authUrlResponse = await fetch(

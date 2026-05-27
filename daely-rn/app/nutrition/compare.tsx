@@ -6,13 +6,9 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/use-theme';
 import { NUTRITION_MEALS } from '@/constants/nutrition-meals';
 
-type Meal = (typeof NUTRITION_MEALS)[number];
-
 const compareRows = [
   { label: 'Calorieen', key: 'kcal' as const, unit: 'kcal' },
   { label: 'Eiwit', key: 'protein' as const, unit: 'g' },
-  { label: 'Koolhydraten', key: 'carbs' as const, unit: 'g' },
-  { label: 'Vetten', key: 'fats' as const, unit: 'g' },
 ] as const;
 
 export default function NutritionCompareScreen() {
@@ -58,7 +54,7 @@ export default function NutritionCompareScreen() {
           <Text style={[styles.selectionLabel, { color: theme.subtitleColor }]}>OPTIE A</Text>
           <Picker selectedValue={leftMealId} onValueChange={(value) => setLeftMealId(String(value))}>
             {NUTRITION_MEALS.map((meal) => (
-              <Picker.Item key={`left-${meal.id}`} label={meal.name} value={meal.id} />
+              <Picker.Item key={`left-${meal.id}`} label={meal.title} value={meal.id} />
             ))}
           </Picker>
         </View>
@@ -66,7 +62,7 @@ export default function NutritionCompareScreen() {
           <Text style={[styles.selectionLabel, { color: theme.subtitleColor }]}>OPTIE B</Text>
           <Picker selectedValue={rightMealId} onValueChange={(value) => setRightMealId(String(value))}>
             {NUTRITION_MEALS.map((meal) => (
-              <Picker.Item key={`right-${meal.id}`} label={meal.name} value={meal.id} />
+              <Picker.Item key={`right-${meal.id}`} label={meal.title} value={meal.id} />
             ))}
           </Picker>
         </View>
@@ -74,13 +70,13 @@ export default function NutritionCompareScreen() {
 
       <View style={[styles.summaryRow, { backgroundColor: theme.card, borderColor: theme.border }]}>
         <View style={styles.summaryCol}>
-          <Text style={[styles.summaryName, { color: theme.titleColor }]}>{leftMeal.name}</Text>
-          <Text style={[styles.summaryBrand, { color: theme.subtitleColor }]}>{leftMeal.brand}</Text>
+          <Text style={[styles.summaryName, { color: theme.titleColor }]}>{leftMeal.title}</Text>
+          <Text style={[styles.summaryBrand, { color: theme.subtitleColor }]}>{leftMeal.mealType}</Text>
         </View>
         <MaterialCommunityIcons name="compare-horizontal" size={20} color={theme.subtitleColor} />
         <View style={styles.summaryCol}>
-          <Text style={[styles.summaryName, { color: theme.titleColor }]}>{rightMeal.name}</Text>
-          <Text style={[styles.summaryBrand, { color: theme.subtitleColor }]}>{rightMeal.brand}</Text>
+          <Text style={[styles.summaryName, { color: theme.titleColor }]}>{rightMeal.title}</Text>
+          <Text style={[styles.summaryBrand, { color: theme.subtitleColor }]}>{rightMeal.mealType}</Text>
         </View>
       </View>
 

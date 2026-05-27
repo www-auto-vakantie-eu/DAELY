@@ -24,6 +24,10 @@ const FILTER_CATEGORIES = [
   { key: 'exclusions', label: 'Uitsluiten', options: ['Geen noten', 'Geen Zuivel', 'Geen Gluten', 'Geen Soja', 'Zout Arm'] },
 ];
 
+type FilterCategory = (typeof FILTER_CATEGORIES)[number];
+type FilterKey = FilterCategory['key'];
+type FilterChip = { key: FilterKey; value: string };
+
 const NUTRITION_ACTIONS = [
   {
     key: 'scan',
@@ -125,22 +129,23 @@ export default function NutritionScreen() {
   };
   const theme = useTheme();
   const router = useRouter();
-  const [activeFilterCategory, setActiveFilterCategory] = useState(null);
-  const [activeFilterChips, setActiveFilterChips] = useState([]);
+  const [activeFilterCategory, setActiveFilterCategory] = useState<FilterKey | null>(null);
+  const [activeFilterChips, setActiveFilterChips] = useState<FilterChip[]>([]);
 
   // Filtered meals
   const filteredMeals = useMemo(() => {
     if (activeFilterChips.length === 0) return NUTRITION_MEALS;
     return NUTRITION_MEALS.filter(meal =>
       activeFilterChips.every(chip => {
+        const mealValue = (meal as unknown as Record<string, unknown>)[chip.key];
         if (chip.key === 'budget') return meal.budget === chip.value;
-        if (Array.isArray(meal[chip.key])) return meal[chip.key].includes(chip.value);
-        return meal[chip.key] === chip.value;
+        if (Array.isArray(mealValue)) return mealValue.includes(chip.value);
+        return mealValue === chip.value;
       })
     );
   }, [activeFilterChips]);
 
-  const handleFilterPress = (categoryKey, value) => {
+  const handleFilterPress = (categoryKey: FilterKey, value: string) => {
     const exists = activeFilterChips.find(chip => chip.key === categoryKey && chip.value === value);
     if (exists) {
       setActiveFilterChips(chips => chips.filter(chip => !(chip.key === categoryKey && chip.value === value)));
@@ -150,6 +155,9 @@ export default function NutritionScreen() {
   };
 
   const clearAllFilters = () => setActiveFilterChips([]);
+  const activeCategory = activeFilterCategory
+    ? FILTER_CATEGORIES.find(cat => cat.key === activeFilterCategory) ?? null
+    : null;
 
   return (
     <ScrollView style={[styles.container, { backgroundColor: theme.background }]}
@@ -225,7 +233,7 @@ export default function NutritionScreen() {
       </ScrollView>
 
       {/* Subfilters */}
-      {activeFilterCategory && (
+      {activeCategory && (
         <View style={[styles.subFilterPanel, { borderColor: theme.border, backgroundColor: theme.card }]}> 
           <View style={styles.subFilterHeader}>
             <Text style={[styles.subFilterTitle, { color: theme.titleColor }]}>Subfilters</Text>
@@ -236,13 +244,13 @@ export default function NutritionScreen() {
             )}
           </View>
           <View style={styles.chipRow}>
-            {FILTER_CATEGORIES.find(cat => cat.key === activeFilterCategory).options.map(option => {
-              const selected = activeFilterChips.some(chip => chip.key === activeFilterCategory && chip.value === option);
+            {activeCategory.options.map(option => {
+              const selected = activeFilterChips.some(chip => chip.key === activeCategory.key && chip.value === option);
               return (
                 <Pressable
                   key={option}
                   style={[styles.chip, { borderColor: selected ? theme.tabBarActive : theme.border, backgroundColor: selected ? theme.tabBarActive + '1A' : theme.card }]}
-                  onPress={() => handleFilterPress(activeFilterCategory, option)}
+                  onPress={() => handleFilterPress(activeCategory.key, option)}
                 >
                   <Text style={[styles.chipText, { color: selected ? theme.tabBarActive : theme.subtitleColor }]}>{option}</Text>
                 </Pressable>

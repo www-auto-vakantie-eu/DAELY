@@ -13,7 +13,25 @@ const steps = [
 export default function ProfileWizardScreen() {
   const theme = useTheme();
   const [step, setStep] = useState(0);
-  const [form, setForm] = useState({
+  type ProfileWizardForm = {
+    name: string;
+    email: string;
+    password: string;
+    country: string;
+    language: string;
+    birthdate: string;
+    gender: string;
+    avatar: string;
+    username: string;
+    region: string;
+    functions: string;
+    disciplines: string[];
+    contentPrefs: string[];
+    community: { prefs?: string };
+    payment: string;
+  };
+
+  const [form, setForm] = useState<ProfileWizardForm>({
     name: '',
     email: '',
     password: '',
@@ -24,6 +42,7 @@ export default function ProfileWizardScreen() {
     avatar: '',
     username: '',
     region: '',
+    functions: '',
     disciplines: [],
     contentPrefs: [],
     community: {},

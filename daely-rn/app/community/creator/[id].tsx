@@ -5,7 +5,6 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { useTheme } from '@/hooks/use-theme';
 import { getCreatorProfile, type CreatorProfile } from '@/services/creator-profiles';
-import { BADGE_COLORS } from '@/constants/community-creators';
 
 export default function CreatorProfileScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -47,8 +46,12 @@ export default function CreatorProfileScreen() {
     );
   }
 
-  const badgeStyle = BADGE_COLORS[profile.badge];
-  const socials = profile.socials;
+  const socials = profile.socials ?? {};
+  const instagram = socials.instagram;
+  const facebook = socials.facebook;
+  const tiktok = socials.tiktok;
+  const youtube = socials.youtube;
+  const website = socials.website;
 
   return (
     <ScrollView
@@ -81,28 +84,28 @@ export default function CreatorProfileScreen() {
             {/* Socials */}
             {profile.socials && (
               <View style={{ flexDirection: 'row', gap: 12, marginTop: 8, marginBottom: 4 }}>
-                {profile.socials.instagram ? (
-                  <Pressable onPress={() => Linking.openURL(profile.socials.instagram)}>
+                {instagram ? (
+                  <Pressable onPress={() => Linking.openURL(instagram)}>
                     <MaterialCommunityIcons name="instagram" size={22} color="#C13584" />
                   </Pressable>
                 ) : null}
-                {profile.socials.facebook ? (
-                  <Pressable onPress={() => Linking.openURL(profile.socials.facebook)}>
+                {facebook ? (
+                  <Pressable onPress={() => Linking.openURL(facebook)}>
                     <MaterialCommunityIcons name="facebook" size={22} color="#1877F3" />
                   </Pressable>
                 ) : null}
-                {profile.socials.tiktok ? (
-                  <Pressable onPress={() => Linking.openURL(profile.socials.tiktok)}>
+                {tiktok ? (
+                  <Pressable onPress={() => Linking.openURL(tiktok)}>
                     <MaterialCommunityIcons name="music" size={22} color="#000" />
                   </Pressable>
                 ) : null}
-                {profile.socials.youtube ? (
-                  <Pressable onPress={() => Linking.openURL(profile.socials.youtube)}>
+                {youtube ? (
+                  <Pressable onPress={() => Linking.openURL(youtube)}>
                     <MaterialCommunityIcons name="youtube" size={22} color="#FF0000" />
                   </Pressable>
                 ) : null}
-                {profile.socials.website ? (
-                  <Pressable onPress={() => Linking.openURL(profile.socials.website)}>
+                {website ? (
+                  <Pressable onPress={() => Linking.openURL(website)}>
                     <MaterialCommunityIcons name="web" size={22} color={theme.titleColor} />
                   </Pressable>
                 ) : null}
@@ -117,7 +120,7 @@ export default function CreatorProfileScreen() {
       {/* CTA Buttons */}
       <View style={styles.ctaRow}>
         <Pressable
-          style={[styles.followButton, { backgroundColor: theme.primary || '#2563EB' }]}
+          style={[styles.followButton, { backgroundColor: theme.tabBarActive || '#2563EB' }]}
           onPress={() => setIsFollowing(!isFollowing)}
         >
           <MaterialCommunityIcons
@@ -127,12 +130,12 @@ export default function CreatorProfileScreen() {
           />
           <Text style={[styles.followButtonText, { color: '#FFFFFF' }]}>Volgen</Text>
         </Pressable>
-        <Pressable style={[styles.messageButton, { backgroundColor: theme.primary || '#2563EB' }]}> 
+        <Pressable style={[styles.messageButton, { backgroundColor: theme.tabBarActive || '#2563EB' }]}> 
           <MaterialCommunityIcons name="message-outline" size={16} color="#FFFFFF" />
           <Text style={[styles.messageButtonText, { color: '#FFFFFF' }]}>Bericht</Text>
         </Pressable>
         <Pressable
-          style={[styles.messageButton, { backgroundColor: theme.primary || '#2563EB' }]}
+          style={[styles.messageButton, { backgroundColor: theme.tabBarActive || '#2563EB' }]}
           onPress={() => router.push(`/community/creator/${id}-partners`)}
         >
           <MaterialCommunityIcons name="gift-outline" size={16} color="#FFFFFF" />
@@ -288,23 +291,23 @@ export default function CreatorProfileScreen() {
       <View style={{ marginTop: 32, marginBottom: 32 }}>
         <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>SOCIAL MEDIA</Text>
         <View style={{ flexDirection: 'row', gap: 18, marginTop: 8 }}>
-          {socials?.instagram && (
-            <Pressable onPress={() => Linking.openURL(socials.instagram!)}>
+          {instagram && (
+            <Pressable onPress={() => Linking.openURL(instagram)}>
               <MaterialCommunityIcons name="instagram" size={28} color="#E1306C" />
             </Pressable>
           )}
-          {socials?.youtube && (
-            <Pressable onPress={() => Linking.openURL(socials.youtube!)}>
+          {youtube && (
+            <Pressable onPress={() => Linking.openURL(youtube)}>
               <MaterialCommunityIcons name="youtube" size={28} color="#FF0000" />
             </Pressable>
           )}
-          {socials?.tiktok && (
-            <Pressable onPress={() => Linking.openURL(socials.tiktok!)}>
+          {tiktok && (
+            <Pressable onPress={() => Linking.openURL(tiktok)}>
               <MaterialCommunityIcons name="music" size={28} color="#000" />
             </Pressable>
           )}
-          {socials?.website && (
-            <Pressable onPress={() => Linking.openURL(socials.website!)}>
+          {website && (
+            <Pressable onPress={() => Linking.openURL(website)}>
               <MaterialCommunityIcons name="web" size={28} color={theme.titleColor} />
             </Pressable>
           )}

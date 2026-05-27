@@ -16,6 +16,14 @@ export interface CommunityCreator {
   posts: number;
   bio: string;
   country: CountryCode;
+  socials?: {
+    instagram?: string;
+    facebook?: string;
+    tiktok?: string;
+    snapchat?: string;
+    youtube?: string;
+    website?: string;
+  };
 }
 
 export interface PartnerBrand {
@@ -147,12 +155,13 @@ const fallbackCreatorsForCountry = (country: CountryCode): CommunityCreator[] =>
       id: creator.id, // Gebruik alleen de creator.id zonder landprefix
       name: creator.name,
       specialty: creator.specialty,
-      badge: creator.badge,
+      badge: creator.badge ?? 'COACH',
       image: creator.image,
       followers: creator.followers + followerBoost,
       posts: creator.posts,
       bio: creator.bio,
       country,
+      socials: creator.socials,
     };
   }).slice(0, 10);
 };
@@ -196,7 +205,7 @@ const fallbackEventsForCountry = (country: CountryCode): CommunityEvent[] => {
   });
 };
 
-export const fetchCommunityCreators = async (country: CountryCode): Promise<CommunityCreator[]> => {
+export const fetchCommunityCreators = async (country: CountryOrAll): Promise<CommunityCreator[]> => {
   try {
     if (country === 'ALL') {
       // Haal alle landen op (voorbeeld: combineer alle landen lokaal)
@@ -208,7 +217,7 @@ export const fetchCommunityCreators = async (country: CountryCode): Promise<Comm
       }
       return allCreators;
     }
-    const data = await fetchJson<any[]>('/api/content/creators', country);
+    const data = await fetchJson<any[]>('/api/content/creators', country as CountryCode);
     return data.map((creator) => ({
       id: String(creator.id),
       name: String(creator.name || ''),
@@ -226,7 +235,7 @@ export const fetchCommunityCreators = async (country: CountryCode): Promise<Comm
   }
 };
 
-export const fetchCommunityPartners = async (country: CountryCode): Promise<PartnerBrand[]> => {
+export const fetchCommunityPartners = async (country: CountryOrAll): Promise<PartnerBrand[]> => {
   try {
     if (country === 'ALL') {
       const allCountries: CountryCode[] = ['NL', 'FR', 'BE', 'DE', 'ES', 'GB', 'US'];
@@ -237,7 +246,7 @@ export const fetchCommunityPartners = async (country: CountryCode): Promise<Part
       }
       return allPartners;
     }
-    const data = await fetchJson<any[]>('/api/content/partners', country);
+    const data = await fetchJson<any[]>('/api/content/partners', country as CountryCode);
     return data.map((partner) => ({
       id: String(partner.id),
       name: String(partner.name || ''),
@@ -255,7 +264,7 @@ export const fetchCommunityPartners = async (country: CountryCode): Promise<Part
   }
 };
 
-export const fetchCommunityEvents = async (country: CountryCode): Promise<CommunityEvent[]> => {
+export const fetchCommunityEvents = async (country: CountryOrAll): Promise<CommunityEvent[]> => {
   try {
     if (country === 'ALL') {
       const allCountries: CountryCode[] = ['NL', 'FR', 'BE', 'DE', 'ES', 'GB', 'US'];
@@ -266,7 +275,7 @@ export const fetchCommunityEvents = async (country: CountryCode): Promise<Commun
       }
       return allEvents;
     }
-    const data = await fetchJson<any[]>('/api/content/events', country);
+    const data = await fetchJson<any[]>('/api/content/events', country as CountryCode);
     return data.map((event) => {
       const type = mapEventType(event.type);
       return {

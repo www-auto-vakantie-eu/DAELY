@@ -11,7 +11,7 @@ export default function CartScreen() {
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16 }}>
         <Text style={{ fontSize: 32, fontWeight: '900', color: theme.titleColor }}>Winkelwagen</Text>
         <Pressable onPress={clearCart} style={{ padding: 8 }}>
-          <Text style={{ color: theme.error || '#EF4444', fontWeight: 'bold' }}>Leeg</Text>
+          <Text style={{ color: '#EF4444', fontWeight: 'bold' }}>Leeg</Text>
         </Pressable>
       </View>
       <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 16 }}>

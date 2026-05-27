@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Stack } from 'expo-router';
-import OnboardingModal from './components/OnboardingModal';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+type OnboardingModalProps = {
+  visible: boolean;
+  onClose: () => Promise<void>;
+};
+
+const OnboardingModal: React.FC<OnboardingModalProps> = () => null;
 
 export default function App() {
   const [showOnboarding, setShowOnboarding] = useState(false);

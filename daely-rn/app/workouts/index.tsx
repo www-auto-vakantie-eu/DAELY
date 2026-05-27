@@ -12,7 +12,7 @@ import {
   PERSONAL_RECORDS,
   HEATMAP,
 } from '@/constants/workout-activities';
-import { getCreatorWorkoutEntries } from '@/services/creator-content';
+import { getCreatorWorkoutEntries, type CreatorWorkoutEntry } from '@/services/creator-content';
 
 type Filter = 'Alles' | 'Running' | 'Kracht' | 'HYROX' | 'Herstel';
 const FILTERS: Filter[] = ['Alles', 'Running', 'Kracht', 'HYROX', 'Herstel'];
@@ -38,7 +38,7 @@ export default function WorkoutsOverviewScreen() {
         if (activeFilter === 'Herstel') return a.type === 'herstel' || a.type === 'mobility';
         return true;
       });
-  const [createdWorkouts, setCreatedWorkouts] = useState([]);
+  const [createdWorkouts, setCreatedWorkouts] = useState<CreatorWorkoutEntry[]>([]);
   const hexBg = theme.background.replace('#', '');
   const r = parseInt(hexBg.slice(0, 2), 16);
   const isDark = r < 100;
@@ -545,6 +545,25 @@ const styles = StyleSheet.create({
     borderRadius: 28,
     padding: 16,
     marginBottom: 12,
+  },
+  activityCardLeft: {
+    width: 44,
+    height: 44,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  activityCardBody: {
+    flex: 1,
+  },
+  activityMeta: {
+    marginTop: 4,
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  chevron: {
+    marginLeft: 10,
   },
   activityTopRow: {
     flexDirection: 'row',

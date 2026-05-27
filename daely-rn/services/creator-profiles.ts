@@ -99,6 +99,7 @@ export interface CreatorProfile {
   }>;
   socials?: {
     instagram?: string;
+    facebook?: string;
     youtube?: string;
     tiktok?: string;
     website?: string;
@@ -232,6 +233,7 @@ export async function getCreatorProfile(creatorId: string): Promise<CreatorProfi
 
   return {
     ...creator,
+    badge: creator.badge ?? 'COACH',
     headerImage: headerImageStore[creatorId],
     stats,
     achievements,

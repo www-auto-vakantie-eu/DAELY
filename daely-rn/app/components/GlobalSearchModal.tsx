@@ -53,7 +53,7 @@ export default function GlobalSearchModal({ visible, onClose, onSearch, results 
     outputRange: [0, 1],
   });
 
-  if (!visible && slideAnim.__getValue() === 0) return null;
+  if (!visible) return null;
 
   return (
     <View style={styles.animatedOverlay} pointerEvents={visible ? 'auto' : 'none'}>

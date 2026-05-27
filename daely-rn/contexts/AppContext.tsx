@@ -78,6 +78,7 @@ export type AppSettings = {
   feedbackSubmittedCount: number;
   referralYearSubscriptions: number;
   tabVisibility: TabVisibilitySettings;
+  disciplineVisibility: Record<string, boolean>;
 };
 
 const DEFAULT_TAB_VISIBILITY: TabVisibilitySettings = {
@@ -112,11 +113,20 @@ function sanitizeTabVisibility(raw: unknown): TabVisibilitySettings {
 
 function sanitizeAppSettings(raw: unknown): AppSettings {
   const source = raw && typeof raw === 'object' ? (raw as Partial<AppSettings>) : {};
+  const disciplineVisibilitySource =
+    source.disciplineVisibility && typeof source.disciplineVisibility === 'object'
+      ? (source.disciplineVisibility as Record<string, unknown>)
+      : {};
+
+  const disciplineVisibility = Object.fromEntries(
+    Object.entries(disciplineVisibilitySource).filter(([, value]) => typeof value === 'boolean')
+  ) as Record<string, boolean>;
 
   return {
     ...DEFAULT_APP_SETTINGS,
     ...source,
     tabVisibility: sanitizeTabVisibility(source.tabVisibility),
+    disciplineVisibility,
   };
 }
 

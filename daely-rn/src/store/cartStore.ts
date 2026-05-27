@@ -1,4 +1,4 @@
-import create from 'zustand';
+import { create } from 'zustand';
 
 export type CartItemType = 'challenge' | 'clothing' | 'supplement' | 'dish';
 
@@ -23,8 +23,8 @@ interface CartState {
 
 export const useCartStore = create<CartState>((set, get) => ({
   items: [],
-  addItem: (item) => {
-    set((state) => {
+  addItem: (item: CartItem) => {
+    set((state: CartState) => {
       const exists = state.items.find((i) => i.id === item.id && i.type === item.type);
       if (exists) {
         return {
@@ -38,10 +38,10 @@ export const useCartStore = create<CartState>((set, get) => ({
       return { items: [...state.items, item] };
     });
   },
-  removeItem: (id) => set((state) => ({ items: state.items.filter((i) => i.id !== id) })),
+  removeItem: (id: string) => set((state: CartState) => ({ items: state.items.filter((i) => i.id !== id) })),
   clearCart: () => set({ items: [] }),
-  updateQuantity: (id, quantity) =>
-    set((state) => ({
+  updateQuantity: (id: string, quantity: number) =>
+    set((state: CartState) => ({
       items: state.items.map((i) => (i.id === id ? { ...i, quantity } : i)),
     })),
   total: () => get().items.reduce((sum, i) => sum + i.price * i.quantity, 0),

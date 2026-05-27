@@ -27,19 +27,19 @@ export default function PartnerInfoScreen() {
           resizeMode="contain"
         />
         <Text style={styles.title}>{partner.name}</Text>
-        <Text style={styles.intro}>{partner.introductie || 'Geen introductie beschikbaar.'}</Text>
+        <Text style={styles.intro}>{partner.summary || 'Geen introductie beschikbaar.'}</Text>
       </View>
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Producten</Text>
-        <Text>{partner.producten || 'Geen informatie.'}</Text>
+        <Text>{partner.category || 'Geen informatie.'}</Text>
       </View>
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Samenwerking met Creators</Text>
-        <Text>{partner.creators || 'Geen informatie.'}</Text>
+        <Text>{partner.discountLabel || 'Geen informatie.'}</Text>
       </View>
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Focus</Text>
-        <Text>{partner.focus || 'Geen informatie.'}</Text>
+        <Text>{partner.group || 'Geen informatie.'}</Text>
       </View>
     </ScrollView>
   );

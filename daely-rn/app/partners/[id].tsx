@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, ScrollView, StyleSheet, Image, Pressable } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, Image, Pressable, Linking } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { PARTNERS } from '@/constants/partners';
 import { PARTNER_LOGO_ASSETS } from '@/constants/partner-logo-assets';
@@ -47,8 +47,12 @@ export default function PartnerDetailScreen() {
       </View>
 
       <Pressable
-        style={[styles.ctaButton, { backgroundColor: theme.card, borderColor: theme.primary || '#2D67E7' }]}
-        onPress={() => router.push({ pathname: partner.offerUrl })}
+        style={[styles.ctaButton, { backgroundColor: theme.card, borderColor: theme.tabBarActive || '#2D67E7' }]}
+        onPress={() => {
+          if (partner.offerUrl) {
+            Linking.openURL(partner.offerUrl);
+          }
+        }}
       >
         <Text style={[styles.ctaButtonText, { color: theme.titleColor }]}>Bekijk deal / website</Text>
         <MaterialCommunityIcons name="open-in-new" size={18} color={theme.titleColor} style={{ marginLeft: 8 }} />

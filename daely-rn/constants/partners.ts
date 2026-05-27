@@ -9,6 +9,12 @@ export interface PartnerBrand {
   discountLabel: string;
   discountCode: string;
   offerUrl: string;
+  socials?: {
+    instagram?: string;
+    facebook?: string;
+    youtube?: string;
+    website?: string;
+  };
 }
 
 export const PARTNERS: PartnerBrand[] = [

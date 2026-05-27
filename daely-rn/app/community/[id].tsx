@@ -1,15 +1,20 @@
 import { useEffect, useState } from 'react';
-import { StyleSheet, ScrollView, View, Text, Pressable, Image } from 'react-native';
+import { StyleSheet, ScrollView, View, Text, Pressable, Image, Linking } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/use-theme';
 import { useAppContext } from '@/contexts/AppContext';
-import { BADGE_COLORS } from '@/constants/community-creators';
 import { fetchCommunityCreators, type CommunityCreator, type CountryCode } from '@/services/content-api';
 
 function formatFollowers(n: number): string {
   if (n >= 1000) return `${(n / 1000).toFixed(n % 1000 === 0 ? 0 : 1)}K`;
   return String(n);
+}
+
+function openExternal(url?: string) {
+  if (url) {
+    Linking.openURL(url);
+  }
 }
 
 export default function CommunityCreatorScreen() {
@@ -75,7 +80,11 @@ export default function CommunityCreatorScreen() {
     );
   }
 
-  const badgeStyle = BADGE_COLORS[creator.badge];
+  const socials = creator.socials ?? {};
+  const instagram = socials.instagram;
+  const facebook = socials.facebook;
+  const tiktok = socials.tiktok;
+  const youtube = socials.youtube;
 
   return (
     <ScrollView style={[styles.container, { backgroundColor: theme.background }]} showsVerticalScrollIndicator={false}>
@@ -95,28 +104,23 @@ export default function CommunityCreatorScreen() {
           {/* Socials */}
           {creator.socials && (
             <View style={{ flexDirection: 'row', gap: 12, marginTop: 8, marginBottom: 4, alignSelf: 'center' }}>
-              {creator.socials.instagram ? (
-                <Pressable onPress={() => Linking.openURL(creator.socials.instagram)}>
+              {instagram ? (
+                <Pressable onPress={() => openExternal(instagram)}>
                   <MaterialCommunityIcons name="instagram" size={22} color="#C13584" />
                 </Pressable>
               ) : null}
-              {creator.socials.facebook ? (
-                <Pressable onPress={() => Linking.openURL(creator.socials.facebook)}>
+              {facebook ? (
+                <Pressable onPress={() => openExternal(facebook)}>
                   <MaterialCommunityIcons name="facebook" size={22} color="#1877F3" />
                 </Pressable>
               ) : null}
-              {creator.socials.tiktok ? (
-                <Pressable onPress={() => Linking.openURL(creator.socials.tiktok)}>
+              {tiktok ? (
+                <Pressable onPress={() => openExternal(tiktok)}>
                   <MaterialCommunityIcons name="music" size={22} color="#000" />
                 </Pressable>
               ) : null}
-              {creator.socials.snapchat ? (
-                <Pressable onPress={() => Linking.openURL(creator.socials.snapchat)}>
-                  <MaterialCommunityIcons name="snapchat" size={22} color="#FFFC00" />
-                </Pressable>
-              ) : null}
-              {creator.socials.youtube ? (
-                <Pressable onPress={() => Linking.openURL(creator.socials.youtube)}>
+              {youtube ? (
+                <Pressable onPress={() => openExternal(youtube)}>
                   <MaterialCommunityIcons name="youtube" size={22} color="#FF0000" />
                 </Pressable>
               ) : null}

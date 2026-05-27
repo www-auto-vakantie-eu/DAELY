@@ -121,7 +121,6 @@ export const COMMUNITY_CREATORS: CommunityCreator[] = [
     posts: 0,
     bio: '',
     headerImage: '',
-    specialty: '',
   },
   {
     id: 'donny-roelvink',
@@ -133,7 +132,6 @@ export const COMMUNITY_CREATORS: CommunityCreator[] = [
     posts: 0,
     bio: '',
     headerImage: '',
-    specialty: '',
   },
   {
     id: 'marijn-kuipers',
@@ -145,7 +143,6 @@ export const COMMUNITY_CREATORS: CommunityCreator[] = [
     posts: 0,
     bio: '',
     headerImage: '',
-    specialty: '',
   },
   {
     id: 'elise-janssen',
@@ -157,7 +154,6 @@ export const COMMUNITY_CREATORS: CommunityCreator[] = [
     posts: 0,
     bio: '',
     headerImage: '',
-    specialty: '',
   },
   {
     id: 'broodje-dunner',
@@ -169,7 +165,6 @@ export const COMMUNITY_CREATORS: CommunityCreator[] = [
     posts: 0,
     bio: '',
     headerImage: '',
-    specialty: '',
   },
   {
     id: 'sanne-van-lierop',
@@ -181,7 +176,6 @@ export const COMMUNITY_CREATORS: CommunityCreator[] = [
     posts: 0,
     bio: '',
     headerImage: '',
-    specialty: '',
   },
   {
     id: 'fajah-lourens',
@@ -193,7 +187,6 @@ export const COMMUNITY_CREATORS: CommunityCreator[] = [
     posts: 0,
     bio: '',
     headerImage: '',
-    specialty: '',
   },
   {
     id: 'mike-vereset',
@@ -205,7 +198,6 @@ export const COMMUNITY_CREATORS: CommunityCreator[] = [
     posts: 0,
     bio: '',
     headerImage: '',
-    specialty: '',
   },
   // Toegevoegd op verzoek
   {
@@ -218,7 +210,6 @@ export const COMMUNITY_CREATORS: CommunityCreator[] = [
     posts: 0,
     bio: '',
     headerImage: '',
-    specialty: '',
   },
   {
     id: 'sandra-ysbrandy',
@@ -230,7 +221,6 @@ export const COMMUNITY_CREATORS: CommunityCreator[] = [
     posts: 0,
     bio: '',
     headerImage: '',
-    specialty: '',
   },
   {
     id: 'jani-van-loghem',
@@ -242,7 +232,6 @@ export const COMMUNITY_CREATORS: CommunityCreator[] = [
     posts: 0,
     bio: '',
     headerImage: '',
-    specialty: '',
   },
   {
     id: 'iris-de-goede',
@@ -254,7 +243,6 @@ export const COMMUNITY_CREATORS: CommunityCreator[] = [
     posts: 0,
     bio: '',
     headerImage: '',
-    specialty: '',
   },
   {
     id: 'virgil-en-gia',
@@ -266,7 +254,6 @@ export const COMMUNITY_CREATORS: CommunityCreator[] = [
     posts: 0,
     bio: '',
     headerImage: '',
-    specialty: '',
   },
   {
     id: 'thomas-van-doorn',
@@ -278,7 +265,6 @@ export const COMMUNITY_CREATORS: CommunityCreator[] = [
     posts: 0,
     bio: '',
     headerImage: '',
-    specialty: '',
   },
   {
     id: 'renee-jolet-joosten',
@@ -290,7 +276,6 @@ export const COMMUNITY_CREATORS: CommunityCreator[] = [
     posts: 0,
     bio: '',
     headerImage: '',
-    specialty: '',
   },
   {
     id: 'merel-lindenburg',
@@ -302,7 +287,6 @@ export const COMMUNITY_CREATORS: CommunityCreator[] = [
     posts: 0,
     bio: '',
     headerImage: '',
-    specialty: '',
   },
   {
     id: 'jojanneke-kant',
@@ -314,7 +298,6 @@ export const COMMUNITY_CREATORS: CommunityCreator[] = [
     posts: 0,
     bio: '',
     headerImage: '',
-    specialty: '',
   },
   {
     id: 'dr-ludidi',
@@ -326,7 +309,6 @@ export const COMMUNITY_CREATORS: CommunityCreator[] = [
     posts: 0,
     bio: '',
     headerImage: '',
-    specialty: '',
   },
 ];
 

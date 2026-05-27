@@ -92,6 +92,21 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginTop: 2,
   },
+  detailsBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+    backgroundColor: '#DBEAFE',
+    marginLeft: 12,
+  },
+  detailsText: {
+    color: '#2563EB',
+    fontWeight: 'bold',
+    marginLeft: 4,
+    fontSize: 14,
+  },
   unlinkBtn: {
     flexDirection: 'row',
     alignItems: 'center',

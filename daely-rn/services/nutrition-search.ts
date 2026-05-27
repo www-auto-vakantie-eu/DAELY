@@ -52,6 +52,12 @@ function sanitizeSource(value: unknown): NutritionSearchSource {
   return value === 'open_food_facts' || value === 'usda' ? value : 'daely';
 }
 
+function sanitizeOriginSource(value: unknown): NutritionSearchResult['originSource'] {
+  return value === 'user' || value === 'open_food_facts' || value === 'usda' || value === 'brand' || value === 'admin'
+    ? value
+    : undefined;
+}
+
 export async function searchNutrition(query: string): Promise<NutritionSearchResult[]> {
   const normalized = query.trim();
   if (normalized.length < 3) {
@@ -82,13 +88,7 @@ export async function searchNutrition(query: string): Promise<NutritionSearchRes
     .map((item) => ({
       externalId: toStringOptional(item.externalId) || `result-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
       source: sanitizeSource(item.source),
-      originSource: (() => {
-        const raw = toStringOptional(item.originSource);
-        if (raw === 'user' || raw === 'open_food_facts' || raw === 'usda' || raw === 'brand' || raw === 'admin') {
-          return raw;
-        }
-        return undefined;
-      })(),
+      originSource: sanitizeOriginSource(toStringOptional(item.originSource)),
       name: toStringOptional(item.name) || 'Onbekend product',
       brand: toStringOptional(item.brand),
       barcode: toStringOptional(item.barcode),
