@@ -320,9 +320,9 @@ export default function InstellingenScreen() {
           ) : null}
         </View>
           {/* Optionele profielvelden */}
-// ...styles
-// Plaats dit blok binnen de return van de function component, vóór de uitlogknop:
-// ...andere content...
+          {/* ...styles */}
+          {/* Plaats dit blok binnen de return van de function component, voor de uitlogknop: */}
+          {/* ...andere content... */}
 <Text style={styles.sectionLabel}>OPTIONELE PROFIELVELDEN</Text>
 <View style={styles.section}>
   <Pressable style={styles.settingRow} onPress={() => router.push('/(tabs)/goals')}>

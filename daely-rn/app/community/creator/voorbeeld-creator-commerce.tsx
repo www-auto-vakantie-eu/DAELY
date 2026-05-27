@@ -147,7 +147,7 @@ export default function VoorbeeldCreatorCommerce() {
           Deze producten gebruikt Tim tijdens trainingen, wedstrijden en herstelmomenten. De selectie is gebaseerd op comfort, kwaliteit en toepasbaarheid voor sporters binnen deze community.
         </Text>
         <Text style={{ fontSize: 14, color: '#6B7280' }}>
-          "Waarom werkt Tim samen met deze merken? Omdat ze bijdragen aan zijn prestaties én herstel."
+          &quot;Waarom werkt Tim samen met deze merken? Omdat ze bijdragen aan zijn prestaties én herstel.&quot;
         </Text>
       </View>
       {/* Video/quote/review van Tim */}

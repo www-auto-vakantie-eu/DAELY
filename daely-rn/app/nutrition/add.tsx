@@ -535,7 +535,7 @@ export default function AddNutritionScreen() {
       </View>
 
       <View style={[styles.block, { borderColor: theme.border, backgroundColor: theme.card }]}>
-        <Text style={[styles.label, { color: theme.subtitleColor }]}>Macro's</Text>
+        <Text style={[styles.label, { color: theme.subtitleColor }]}>Macro&apos;s</Text>
         <View style={styles.macroGrid}>
           <TextInput value={kcal} onChangeText={setKcal} placeholder="kcal" keyboardType="decimal-pad" placeholderTextColor="#9CA3AF" style={[styles.input, styles.macroInput, { borderColor: theme.border, color: theme.titleColor, backgroundColor: theme.card }]} />
           <TextInput value={protein} onChangeText={setProtein} placeholder="eiwit" keyboardType="decimal-pad" placeholderTextColor="#9CA3AF" style={[styles.input, styles.macroInput, { borderColor: theme.border, color: theme.titleColor, backgroundColor: theme.card }]} />

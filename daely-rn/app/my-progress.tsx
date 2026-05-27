@@ -312,7 +312,7 @@ function MyProgressScreen() {
       {/* 6. Motivatie */}
       <View style={styles.motivation}>
         <Text style={styles.motivationText}>
-          "Progressie is het resultaat van kleine stappen, elke dag weer."
+          &quot;Progressie is het resultaat van kleine stappen, elke dag weer.&quot;
         </Text>
       </View>
       {/* 7. CTA */}

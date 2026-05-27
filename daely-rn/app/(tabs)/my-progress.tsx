@@ -53,7 +53,7 @@ export default function MyProgressScreen() {
           {/* 5. Persoonlijke records */}
           <View style={styles.card}>
             <Text style={styles.sectionTitle}>Persoonlijke records</Text>
-            <Text style={styles.sectionText}>Nog geen PR's</Text>
+            <Text style={styles.sectionText}>Nog geen PR&apos;s</Text>
           </View>
         </View>
       )}

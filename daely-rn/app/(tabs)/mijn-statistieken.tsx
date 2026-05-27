@@ -99,14 +99,14 @@ export default function MijnStatistiekenScreen() {
 
       {/* Progress Photos Section */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Voortgang foto's</Text>
-        <View style={styles.emptyState}><Text style={styles.emptyText}>Nog geen foto's. Voeg je eerste foto toe!</Text></View>
+        <Text style={styles.sectionTitle}>Voortgang foto&apos;s</Text>
+        <View style={styles.emptyState}><Text style={styles.emptyText}>Nog geen foto&apos;s. Voeg je eerste foto toe!</Text></View>
         <TouchableOpacity style={styles.ctaBtn}><Text style={styles.ctaBtnText}>Foto toevoegen</Text></TouchableOpacity>
       </View>
 
       {/* Persoonlijke Records Section */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Persoonlijke Records (PR's)</Text>
+        <Text style={styles.sectionTitle}>Persoonlijke Records (PR&apos;s)</Text>
         <View style={styles.emptyState}><Text style={styles.emptyText}>Nog geen records. Log je eerste workout om te beginnen.</Text></View>
       </View>
 
@@ -141,8 +141,8 @@ export default function MijnStatistiekenScreen() {
             <View style={styles.modalRow}><Text>Pagina vergrendelen</Text><Switch value={privacy.lock} onValueChange={v => setPrivacy(p => ({ ...p, lock: v }))} /></View>
             <View style={styles.modalRow}><Text>Toon gewicht</Text><Switch value={privacy.showWeight} onValueChange={v => setPrivacy(p => ({ ...p, showWeight: v }))} /></View>
             <View style={styles.modalRow}><Text>Toon calorieën</Text><Switch value={privacy.showCalories} onValueChange={v => setPrivacy(p => ({ ...p, showCalories: v }))} /></View>
-            <View style={styles.modalRow}><Text>Toon voortgang foto's</Text><Switch value={privacy.showPhotos} onValueChange={v => setPrivacy(p => ({ ...p, showPhotos: v }))} /></View>
-            <View style={styles.modalRow}><Text>Toon PR's</Text><Switch value={privacy.showPRs} onValueChange={v => setPrivacy(p => ({ ...p, showPRs: v }))} /></View>
+            <View style={styles.modalRow}><Text>Toon voortgang foto&apos;s</Text><Switch value={privacy.showPhotos} onValueChange={v => setPrivacy(p => ({ ...p, showPhotos: v }))} /></View>
+            <View style={styles.modalRow}><Text>Toon PR&apos;s</Text><Switch value={privacy.showPRs} onValueChange={v => setPrivacy(p => ({ ...p, showPRs: v }))} /></View>
             <View style={styles.modalRow}><Text>Toon achievements</Text><Switch value={privacy.showAchievements} onValueChange={v => setPrivacy(p => ({ ...p, showAchievements: v }))} /></View>
             <TouchableOpacity style={styles.ctaBtnOutline}><Text style={styles.ctaBtnOutlineText}>Exporteer data</Text></TouchableOpacity>
             <TouchableOpacity style={styles.ctaBtnOutline}><Text style={[styles.ctaBtnOutlineText, { color: '#EF4444' }]}>Verwijder alle data</Text></TouchableOpacity>
