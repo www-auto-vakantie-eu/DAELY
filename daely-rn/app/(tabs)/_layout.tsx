@@ -55,7 +55,7 @@ export default function TabLayout() {
           }}
         />
         <Tabs.Screen
-          name="index"
+          name="mijn"
           options={{
             title: 'Mijn',
             tabBarIcon: ({ color }: any) => <MaterialCommunityIcons size={26} name="account" color={color} />,

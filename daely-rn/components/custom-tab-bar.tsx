@@ -4,11 +4,11 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import type { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { useTheme } from '@/hooks/use-theme';
 
-const TAB_ORDER = ['today', 'index', 'disciplines', 'nutrition', 'mind', 'community'] as const;
+const TAB_ORDER = ['today', 'mijn', 'disciplines', 'nutrition', 'mind', 'community'] as const;
 
 const TAB_META: Record<string, { label: string; icon: string }> = {
   today: { label: 'Vandaag', icon: 'calendar-today' },
-  index: { label: 'Mijn', icon: 'account' },
+  mijn: { label: 'Mijn', icon: 'account' },
   disciplines: { label: 'Bibliotheek', icon: 'dumbbell' },
   nutrition: { label: 'Voeding', icon: 'silverware-fork-knife' },
   mind: { label: 'Mind', icon: 'meditation' },
