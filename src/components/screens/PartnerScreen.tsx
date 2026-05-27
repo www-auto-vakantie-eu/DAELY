@@ -2,15 +2,51 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useAppContext } from '../../context/AppContext';
 import { Card, SectionHeader, Button } from '../ui/SharedUI';
-import { BASE_ICONS } from '../ui/Icons';
+import { ICONS } from '../ui/Icons';
+import { fetchPartners, getPreferredCountry, type PartnerItem } from '../../services/contentApi';
 
 const PartnerScreen: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { t } = useTranslation();
-  const { partners } = useAppContext();
-  const partner = partners.find((p) => p.id === id);
+  const [partner, setPartner] = React.useState<PartnerItem | null>(null);
+  const [isLoading, setIsLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    let isMounted = true;
+
+    const loadPartner = async () => {
+      try {
+        const country = getPreferredCountry();
+        const partners = await fetchPartners(country);
+        if (isMounted) {
+          setPartner(partners.find((p) => p.id === id) ?? null);
+        }
+      } catch (error) {
+        if (isMounted) {
+          setPartner(null);
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    loadPartner();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [id]);
+
+  if (isLoading) {
+    return (
+      <div className="p-8">
+        <Card className="p-8 text-center text-zinc-500 font-bold">{t('common.loading', 'Laden...')}</Card>
+      </div>
+    );
+  }
 
   if (!partner) {
     return (
@@ -48,7 +84,7 @@ const PartnerScreen: React.FC = () => {
       </div>
 
       <Button variant="primary" className="w-full py-4 text-base font-bold flex items-center justify-center gap-2">
-        <BASE_ICONS.Users className="w-5 h-5" />
+        <ICONS.Users className="w-5 h-5" />
         Influencer samenwerkingen
       </Button>
     </div>

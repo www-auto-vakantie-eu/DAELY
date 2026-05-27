@@ -128,9 +128,21 @@ export const CreateAccountScreen: React.FC = () => {
   const { setIsCreatingAccount, setIsLoggedIn } = useAppContext();
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formData, setFormData] = useState({ email: '', password: '', role: 'user' as UserRole, code: '' });
+  type CreateAccountFormData = {
+    email: string;
+    password: string;
+    role: UserRole;
+    code: string;
+  };
 
-  const handleFormChange = (field: 'email' | 'password' | 'role' | 'code', value: string) => {
+  const [formData, setFormData] = useState<CreateAccountFormData>({
+    email: '',
+    password: '',
+    role: 'user',
+    code: '',
+  });
+
+  const handleFormChange = <K extends keyof CreateAccountFormData>(field: K, value: CreateAccountFormData[K]) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -308,7 +320,7 @@ export const CreateAccountScreen: React.FC = () => {
                 value={formData.code}
                 onChange={e => handleFormChange('code', e.target.value)}
                 className="w-full bg-zinc-50 border border-zinc-200 rounded-2xl px-5 py-4 text-zinc-900 font-bold text-sm focus:outline-none focus:border-blue-500 focus:bg-white transition-all placeholder:text-zinc-400"
-                required={formData.role !== 'user'}
+                required
               />
             </div>
           )}
