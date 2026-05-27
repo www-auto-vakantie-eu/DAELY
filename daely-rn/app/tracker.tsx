@@ -1,10 +1,13 @@
 
+
 import React from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View, Pressable } from 'react-native';
+import { useRouter } from 'expo-router';
 import PageHeader from './components/PageHeader';
 import { SPORT_DISCIPLINES } from './constants/sport-disciplines';
 
 export default function TrackerScreen() {
+  const router = useRouter();
   return (
     <ScrollView style={styles.container}>
       <PageHeader title="DAELY Tracker" />
@@ -13,11 +16,16 @@ export default function TrackerScreen() {
       </Text>
       <View style={styles.grid}>
         {SPORT_DISCIPLINES.map((discipline) => (
-          <View key={discipline.id} style={styles.card}>
+          <Pressable
+            key={discipline.id}
+            style={styles.card}
+            onPress={() => router.push({ pathname: '/tracker/[disciplineId]', params: { disciplineId: discipline.id } })}
+            android_ripple={{ color: '#E5E7EB' }}
+          >
             <Text style={styles.cardTitle}>{discipline.name}</Text>
             <Text style={styles.cardSubtitle}>{discipline.category}</Text>
             <Text style={styles.cardSubtitle}>{discipline.trackingType}</Text>
-          </View>
+          </Pressable>
         ))}
       </View>
     </ScrollView>
