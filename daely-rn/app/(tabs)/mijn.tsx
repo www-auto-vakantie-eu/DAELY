@@ -22,7 +22,18 @@ const { height: screenHeight } = Dimensions.get('window');
 const isSmallScreen = screenHeight < 667;
 const CARD_HEIGHT = isSmallScreen ? 92 : 112;
 
-const MY_DOMAIN_CARDS = [
+type MyDomainCard = {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+  accent: string;
+  image: string;
+  route?: string;
+  disabled?: boolean;
+};
+
+const MY_DOMAIN_CARDS: MyDomainCard[] = [
   {
     id: 'progress',
     title: 'Progressie',
@@ -53,20 +64,29 @@ const MY_DOMAIN_CARDS = [
   {
     id: 'mind',
     title: 'Mind',
-    description: 'Focus-sessies, routines en mentale consistentie.',
+    description: 'Binnenkort beschikbaar op jouw Mijn-pagina.',
     category: 'MINDSET',
     accent: '#8B5CF6',
     image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=1200&q=80',
-    route: '/(tabs)/mind',
+    disabled: true,
   },
   {
     id: 'stats',
     title: 'Data',
-    description: 'Overzicht van al je statistieken op +®+®n plek.',
+    description: 'Overzicht van al je statistieken op een plek.',
     category: 'DATA',
     accent: '#10B981',
     image: 'https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=1200&q=80',
     route: '/my-stats',
+  },
+  {
+    id: 'orders',
+    title: 'My Orders',
+    description: 'Bekijk je bestellingen, pakketten en aankopen.',
+    category: 'ORDERS',
+    accent: '#22C55E',
+    image: 'https://images.unsplash.com/photo-1556742393-d75f468bfcb0?auto=format&fit=crop&w=1200&q=80',
+    route: '/my-orders',
   },
 ];
 
@@ -249,8 +269,18 @@ export default function HomeScreen() {
           {MY_DOMAIN_CARDS.map((card) => (
             <Pressable
               key={card.id}
-              style={({ pressed }) => [styles.verticalCard, pressed ? styles.slideCardPressed : null]}
-              onPress={() => handleCardPress(card.route)}
+              style={({ pressed }) => [
+                styles.verticalCard,
+                card.disabled ? { opacity: 0.74 } : null,
+                pressed && !card.disabled ? styles.slideCardPressed : null,
+              ]}
+              disabled={card.disabled}
+              onPress={() => {
+                if (!card.route || card.disabled) {
+                  return;
+                }
+                handleCardPress(card.route);
+              }}
             >
               <ImageBackground
                 source={{ uri: card.image }}
@@ -264,16 +294,15 @@ export default function HomeScreen() {
                   style={styles.heroOverlay}
                 >
                   <View style={styles.heroTextBlock}>
-                    {!(card.id === 'progress' || card.id === 'workouts' || card.id === 'nutrition' || card.id === 'mind' || card.id === 'stats') && (
-                      <Text style={[styles.heroCategory, { color: card.accent }]}>{card.category}</Text>
-                    )}
+                    {card.disabled ? <Text style={[styles.heroCategory, { color: card.accent }]}>Binnenkort</Text> : null}
                     <Text style={[
                       styles.heroTitle,
                       card.id === 'progress' && { color: card.accent },
                       card.id === 'workouts' && { color: '#2563EB' },
                       card.id === 'nutrition' && { color: '#EF4444' },
                       card.id === 'mind' && { color: '#8B5CF6' },
-                      card.id === 'stats' && { color: '#10B981' }
+                      card.id === 'stats' && { color: '#10B981' },
+                      card.id === 'orders' && { color: '#22C55E' },
                     ]}>{card.title}</Text>
                     <Text style={styles.domainSubtitleOnImage}>{card.description}</Text>
                   </View>
@@ -284,7 +313,7 @@ export default function HomeScreen() {
                     ]}
                   >
                     <MaterialCommunityIcons
-                      name="arrow-right"
+                      name={card.disabled ? 'clock-outline' : 'arrow-right'}
                       size={isSmallScreen ? 18 : 20}
                       color={appSettings.highContrast ? '#0F172A' : '#FFFFFF'}
                     />
@@ -307,15 +336,6 @@ export default function HomeScreen() {
 
         <Text style={[styles.sectionLabel, { color: theme.subtitleColor }]}>SNELLE TOEGANG</Text>
         <View style={styles.quickActionWrap}>
-          <Pressable
-            style={({ pressed }) => [styles.quickActionButton, pressed ? styles.quickActionButtonPressed : null]}
-            onPress={() => handleCardPress('/(tabs)/explore')}
-          >
-            <MaterialCommunityIcons name="compass-outline" size={18} color="#FFFFFF" />
-            <Text style={styles.quickActionText}>Open Verkennen</Text>
-            <MaterialCommunityIcons name="arrow-right" size={18} color="#FFFFFF" />
-          </Pressable>
-
           {canShowFeedbackButton ? (
             <Pressable
               style={({ pressed }) => [
