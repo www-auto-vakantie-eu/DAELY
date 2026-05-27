@@ -4,7 +4,7 @@ function getConfiguredInviteCodes(): string[] {
   const raw = process.env.EXPO_PUBLIC_INFLUENCER_INVITE_CODES ?? '';
   const fromEnv = raw
     .split(',')
-    .map((item) => item.trim().toUpperCase())
+    .map((item: string) => item.trim().toUpperCase())
     .filter(Boolean);
 
   if (fromEnv.length > 0) {

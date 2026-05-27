@@ -17,7 +17,7 @@ function resolveRoleFromEmail(email: string): 'standard' | 'admin' {
   const raw = process.env.EXPO_PUBLIC_ADMIN_EMAILS ?? '';
   const adminEmails = raw
     .split(',')
-    .map((item) => item.trim().toLowerCase())
+    .map((item: string) => item.trim().toLowerCase())
     .filter(Boolean);
 
   if (normalized && adminEmails.includes(normalized)) {
@@ -468,7 +468,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F9F9F9',
     borderRadius: 20,
     padding: 24,
-    backdropFilter: 'blur(10px)',
+    // Removed invalid backdropFilter property for React Native
     borderWidth: 1,
     borderColor: '#E0E0E0',
   },
