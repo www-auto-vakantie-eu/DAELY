@@ -28,8 +28,12 @@ export default function DisciplineDetail() {
         {discipline.trackingType ? ` · ${discipline.trackingType}` : ''}
       </Text>
       <Text style={styles.placeholder}>Activiteit tracking komt hier</Text>
-      <TouchableOpacity style={styles.button} disabled>
-        <Text style={styles.buttonText}>Start activiteit (binnenkort)</Text>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => router.push({ pathname: '/tracker/[disciplineId]/start', params: { disciplineId } })}
+        accessibilityRole="button"
+      >
+        <Text style={styles.buttonText}>Start activiteit</Text>
       </TouchableOpacity>
     </View>
   );
