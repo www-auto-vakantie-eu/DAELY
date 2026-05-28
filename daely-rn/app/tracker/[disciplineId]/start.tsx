@@ -20,7 +20,7 @@ import {
 } from 'services/activity-storage';
 
 const SESSION_STATUS = {
-  NOT_STARTED: 'Nog niet gestart',
+  NOT_STARTED: 'Klaar',
   ACTIVE: 'Actief',
   PAUSED: 'Gepauzeerd',
   FINISHED: 'Afgerond',
@@ -321,6 +321,13 @@ export default function StartActivityScreen() {
     return `${min}:${sec}`;
   };
 
+  const getStatusSubtitle = (value: SessionStatus) => {
+    if (value === 'NOT_STARTED') return 'Klaar om je sessie te starten.';
+    if (value === 'ACTIVE') return 'Sessie loopt. Blijf gefocust.';
+    if (value === 'PAUSED') return 'Sessie gepauzeerd. Hervat wanneer je klaar bent.';
+    return 'Sessie gestopt. Werk details af en sla op.';
+  };
+
   if (!discipline) {
     return (
       <View style={styles.container}>
@@ -329,6 +336,10 @@ export default function StartActivityScreen() {
       </View>
     );
   }
+
+  const workoutExercisesPreview = isWorkoutDiscipline ? buildWorkoutExercises() : null;
+  const workoutVolumePreview = workoutExercisesPreview ? calculateTotalVolumeKg(workoutExercisesPreview) : undefined;
+  const canSaveWorkout = !isWorkoutDiscipline || workoutExercisesPreview !== null;
 
   const handleSave = async () => {
     if (saving || saved || status !== 'FINISHED') return;
@@ -479,35 +490,44 @@ export default function StartActivityScreen() {
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
       <PageHeader title={`Start ${discipline.name}`} />
-      <Text style={styles.meta}>{discipline.category} · {discipline.trackingType}</Text>
-      <Text style={styles.status}>Status: {SESSION_STATUS[status]}</Text>
-      <Text style={styles.timer}>{formatTime(seconds)}</Text>
-      <View style={styles.buttonRow}>
-        {status === 'NOT_STARTED' && (
-          <TouchableOpacity style={styles.button} onPress={handleStart}>
-            <Text style={styles.buttonText}>Start</Text>
-          </TouchableOpacity>
-        )}
-        {status === 'ACTIVE' && (
-          <TouchableOpacity style={styles.button} onPress={handlePause}>
-            <Text style={styles.buttonText}>Pauze</Text>
-          </TouchableOpacity>
-        )}
-        {status === 'PAUSED' && (
-          <TouchableOpacity style={styles.button} onPress={handleResume}>
-            <Text style={styles.buttonText}>Hervatten</Text>
-          </TouchableOpacity>
-        )}
-        {(status === 'ACTIVE' || status === 'PAUSED') && (
-          <TouchableOpacity style={styles.button} onPress={handleStop}>
-            <Text style={styles.buttonText}>Stop</Text>
-          </TouchableOpacity>
-        )}
+
+      <View style={styles.sessionHeaderCard}>
+        <Text style={styles.sessionTitle}>{discipline.name}</Text>
+        <Text style={styles.meta}>{discipline.category} · {discipline.trackingType}</Text>
+        <View style={styles.statusPillWrap}>
+          <Text style={styles.statusPill}>Status: {SESSION_STATUS[status]}</Text>
+        </View>
+        <Text style={styles.statusSubtitle}>{getStatusSubtitle(status)}</Text>
+        <Text style={styles.timer}>{formatTime(seconds)}</Text>
       </View>
 
-      {isWorkoutDiscipline && (
+      <View style={styles.buttonRow}>
+        {status === 'NOT_STARTED' ? (
+          <TouchableOpacity style={[styles.button, styles.primaryActionButton]} onPress={handleStart}>
+            <Text style={styles.buttonText}>Start</Text>
+          </TouchableOpacity>
+        ) : null}
+
+        {(status === 'ACTIVE' || status === 'PAUSED') ? (
+          <>
+            <TouchableOpacity
+              style={[styles.button, styles.secondaryActionButton]}
+              onPress={status === 'ACTIVE' ? handlePause : handleResume}
+            >
+              <Text style={styles.buttonText}>{status === 'ACTIVE' ? 'Pauze' : 'Hervatten'}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.button, styles.stopButton]} onPress={handleStop}>
+              <Text style={styles.buttonText}>Stop</Text>
+            </TouchableOpacity>
+          </>
+        ) : null}
+      </View>
+
+      {isWorkoutDiscipline && status === 'FINISHED' && (
         <View style={styles.metricsBlock}>
-          <Text style={styles.metricsTitle}>Workout metrics</Text>
+          <Text style={styles.metricsTitle}>Workout details</Text>
+          <Text style={styles.sectionSubtitle}>Voeg je oefeningen toe voor een volledige workout-opslag.</Text>
+
           {exerciseDrafts.map((exercise, index) => (
             <View key={exercise.id} style={styles.exerciseCard}>
               <Text style={styles.exerciseTitle}>Oefening {index + 1}</Text>
@@ -549,9 +569,19 @@ export default function StartActivityScreen() {
               />
             </View>
           ))}
+
           <TouchableOpacity style={styles.secondaryButton} onPress={handleAddExercise} accessibilityRole="button">
             <Text style={styles.secondaryButtonText}>+ Oefening toevoegen</Text>
           </TouchableOpacity>
+
+          {workoutVolumePreview !== undefined ? (
+            <Text style={styles.previewNote}>Totaal volume preview: {Math.round(workoutVolumePreview)} kg</Text>
+          ) : null}
+
+          {!canSaveWorkout ? (
+            <Text style={styles.validationNote}>Nog geen geldige oefening. Vul minimaal naam, sets en reps in.</Text>
+          ) : null}
+
           <TextInput
             style={[styles.input, styles.notesInput]}
             placeholder="Algemene workout-notities optioneel"
@@ -941,16 +971,18 @@ export default function StartActivityScreen() {
         </View>
       )}
 
-      <TouchableOpacity
-        style={[styles.button, styles.disabledButton, saved && styles.savedButton]}
-        onPress={handleSave}
-        disabled={saving || saved || status !== 'FINISHED'}
-        accessibilityRole="button"
-      >
-        <Text style={styles.buttonText}>
-          {saved ? 'Opgeslagen!' : saving ? 'Opslaan...' : 'Activiteit opslaan'}
-        </Text>
-      </TouchableOpacity>
+      {status === 'FINISHED' ? (
+        <TouchableOpacity
+          style={[styles.button, styles.saveButton, (!canSaveWorkout || saved) ? styles.disabledButton : null, saved ? styles.savedButton : null]}
+          onPress={handleSave}
+          disabled={saving || saved || !canSaveWorkout}
+          accessibilityRole="button"
+        >
+          <Text style={styles.buttonText}>
+            {saved ? 'Opgeslagen!' : saving ? 'Opslaan...' : 'Activiteit opslaan'}
+          </Text>
+        </TouchableOpacity>
+      ) : null}
       {saved && <Text style={styles.successText}>Activiteit opgeslagen.</Text>}
     </ScrollView>
   );
@@ -974,25 +1006,52 @@ const styles = StyleSheet.create({
   meta: {
     fontSize: 14,
     color: '#6B7280',
+    marginBottom: 6,
+    textTransform: 'capitalize',
+  },
+  sessionHeaderCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 14,
     marginBottom: 16,
   },
-  status: {
-    fontSize: 16,
-    color: '#374151',
+  sessionTitle: {
+    fontSize: 26,
+    color: '#0F172A',
+    fontWeight: '800',
+    marginBottom: 2,
+  },
+  statusPillWrap: {
     marginBottom: 8,
   },
+  statusPill: {
+    alignSelf: 'flex-start',
+    backgroundColor: '#DBEAFE',
+    color: '#1D4ED8',
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    overflow: 'hidden',
+    fontSize: 12,
+    fontWeight: '800',
+  },
+  statusSubtitle: {
+    fontSize: 14,
+    color: '#475569',
+    marginBottom: 10,
+  },
   timer: {
-    fontSize: 36,
-    fontWeight: 'bold',
-    color: '#1F2937',
-    marginBottom: 24,
+    fontSize: 48,
+    fontWeight: '800',
+    color: '#0F172A',
+    marginBottom: 6,
     textAlign: 'center',
   },
   buttonRow: {
     flexDirection: 'row',
     gap: 12,
-    marginBottom: 24,
-    justifyContent: 'center',
+    marginBottom: 16,
+    justifyContent: 'flex-start',
   },
   metricsBlock: {
     backgroundColor: '#FFFFFF',
@@ -1001,10 +1060,15 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   metricsTitle: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '700',
     color: '#1F2937',
-    marginBottom: 8,
+    marginBottom: 4,
+  },
+  sectionSubtitle: {
+    fontSize: 13,
+    color: '#64748B',
+    marginBottom: 10,
   },
   exerciseCard: {
     borderWidth: 1,
@@ -1057,6 +1121,16 @@ const styles = StyleSheet.create({
     color: '#6B7280',
     marginBottom: 8,
   },
+  previewNote: {
+    fontSize: 13,
+    color: '#1D4ED8',
+    marginBottom: 10,
+  },
+  validationNote: {
+    fontSize: 13,
+    color: '#B91C1C',
+    marginBottom: 10,
+  },
   fieldLabel: {
     fontSize: 13,
     fontWeight: '600',
@@ -1092,19 +1166,32 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: '#2563EB',
     paddingVertical: 14,
-    paddingHorizontal: 24,
+    paddingHorizontal: 18,
     borderRadius: 8,
     alignItems: 'center',
-    marginHorizontal: 4,
+    marginHorizontal: 0,
+    flex: 1,
   },
   buttonText: {
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: 'bold',
   },
+  primaryActionButton: {
+    backgroundColor: '#2563EB',
+  },
+  secondaryActionButton: {
+    backgroundColor: '#334155',
+  },
+  stopButton: {
+    backgroundColor: '#EF4444',
+  },
+  saveButton: {
+    backgroundColor: '#2563EB',
+    marginTop: 4,
+  },
   disabledButton: {
     backgroundColor: '#D1D5DB',
-    marginTop: 12,
   },
   savedButton: {
     backgroundColor: '#22C55E',
