@@ -4,7 +4,12 @@ import { View, Text, StyleSheet, TouchableOpacity, Alert, TextInput, ScrollView 
 import { useLocalSearchParams } from 'expo-router';
 import PageHeader from '../../components/PageHeader';
 import { SPORT_DISCIPLINES } from '../../constants/sport-disciplines';
-import { saveActivity, type WorkoutExercise } from 'services/activity-storage';
+import {
+  saveActivity,
+  type WorkoutExercise,
+  type SessionIntensity,
+  type SessionFeeling,
+} from 'services/activity-storage';
 
 const SESSION_STATUS = {
   NOT_STARTED: 'Nog niet gestart',
@@ -14,6 +19,9 @@ const SESSION_STATUS = {
 } as const;
 
 type SessionStatus = keyof typeof SESSION_STATUS;
+
+const SESSION_INTENSITY_OPTIONS: SessionIntensity[] = ['laag', 'gemiddeld', 'hoog'];
+const SESSION_FEELING_OPTIONS: SessionFeeling[] = ['laag', 'neutraal', 'goed', 'sterk'];
 
 type ExerciseDraft = {
   id: string;
@@ -80,12 +88,18 @@ export default function StartActivityScreen() {
   const { disciplineId } = useLocalSearchParams<{ disciplineId: string }>();
   const discipline = SPORT_DISCIPLINES.find((d) => d.id === disciplineId);
   const isWorkoutDiscipline = discipline?.trackingType === 'workout';
+  const isSessionDiscipline = discipline?.trackingType === 'session';
 
   const [status, setStatus] = useState<SessionStatus>('NOT_STARTED');
   const [seconds, setSeconds] = useState(0);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [workoutNotes, setWorkoutNotes] = useState('');
+  const [sessionIntensity, setSessionIntensity] = useState<SessionIntensity | undefined>(undefined);
+  const [sessionFocusAreasInput, setSessionFocusAreasInput] = useState('');
+  const [sessionFeelingBefore, setSessionFeelingBefore] = useState<SessionFeeling | undefined>(undefined);
+  const [sessionFeelingAfter, setSessionFeelingAfter] = useState<SessionFeeling | undefined>(undefined);
+  const [sessionNotes, setSessionNotes] = useState('');
   const [exerciseDrafts, setExerciseDrafts] = useState<ExerciseDraft[]>([createExerciseDraft()]);
   const timerRef = useRef<number | null>(null);
 
@@ -142,6 +156,14 @@ export default function StartActivityScreen() {
     return parsed;
   };
 
+  const buildSessionFocusAreas = (): string[] | undefined => {
+    const areas = sessionFocusAreasInput
+      .split(',')
+      .map((item) => item.trim())
+      .filter((item) => item.length > 0);
+    return areas.length > 0 ? areas : undefined;
+  };
+
   React.useEffect(() => {
     return () => stopTimer();
   }, []);
@@ -170,6 +192,8 @@ export default function StartActivityScreen() {
       return;
     }
 
+    const sessionFocusAreas = isSessionDiscipline ? buildSessionFocusAreas() : undefined;
+
     setSaving(true);
     try {
       const now = new Date();
@@ -185,13 +209,25 @@ export default function StartActivityScreen() {
         durationSeconds: seconds,
         status: 'completed',
         metrics:
-          isWorkoutDiscipline && workoutExercises
+          isWorkoutDiscipline || isSessionDiscipline
             ? {
-                workout: {
-                  exercises: workoutExercises,
-                  totalVolumeKg,
-                  notes: workoutNotes.trim().length > 0 ? workoutNotes.trim() : undefined,
-                },
+                workout:
+                  isWorkoutDiscipline && workoutExercises
+                    ? {
+                        exercises: workoutExercises,
+                        totalVolumeKg,
+                        notes: workoutNotes.trim().length > 0 ? workoutNotes.trim() : undefined,
+                      }
+                    : undefined,
+                session: isSessionDiscipline
+                  ? {
+                      intensity: sessionIntensity,
+                      focusAreas: sessionFocusAreas,
+                      feelingBefore: sessionFeelingBefore,
+                      feelingAfter: sessionFeelingAfter,
+                      notes: sessionNotes.trim().length > 0 ? sessionNotes.trim() : undefined,
+                    }
+                  : undefined,
               }
             : undefined,
         createdAt: now.toISOString(),
@@ -285,6 +321,80 @@ export default function StartActivityScreen() {
             placeholder="Algemene workout-notities optioneel"
             value={workoutNotes}
             onChangeText={setWorkoutNotes}
+            multiline
+          />
+        </View>
+      )}
+
+      {isSessionDiscipline && status === 'FINISHED' && (
+        <View style={styles.metricsBlock}>
+          <Text style={styles.metricsTitle}>Session metrics</Text>
+          {discipline.privacyDefault === 'private' ? (
+            <Text style={styles.privacyNote}>Deze activiteit staat standaard prive.</Text>
+          ) : null}
+
+          <Text style={styles.fieldLabel}>Intensiteit</Text>
+          <View style={styles.optionRow}>
+            {SESSION_INTENSITY_OPTIONS.map((option) => (
+              <TouchableOpacity
+                key={option}
+                style={[styles.optionChip, sessionIntensity === option ? styles.optionChipActive : null]}
+                onPress={() => setSessionIntensity(option)}
+                accessibilityRole="button"
+              >
+                <Text style={[styles.optionChipText, sessionIntensity === option ? styles.optionChipTextActive : null]}>
+                  {option}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          <Text style={styles.fieldLabel}>Focusgebieden</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Bijv. ademhaling, core, herstel"
+            value={sessionFocusAreasInput}
+            onChangeText={setSessionFocusAreasInput}
+          />
+
+          <Text style={styles.fieldLabel}>Gevoel voor</Text>
+          <View style={styles.optionRow}>
+            {SESSION_FEELING_OPTIONS.map((option) => (
+              <TouchableOpacity
+                key={`before-${option}`}
+                style={[styles.optionChip, sessionFeelingBefore === option ? styles.optionChipActive : null]}
+                onPress={() => setSessionFeelingBefore(option)}
+                accessibilityRole="button"
+              >
+                <Text style={[styles.optionChipText, sessionFeelingBefore === option ? styles.optionChipTextActive : null]}>
+                  {option}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          <Text style={styles.fieldLabel}>Gevoel na</Text>
+          <View style={styles.optionRow}>
+            {SESSION_FEELING_OPTIONS.map((option) => (
+              <TouchableOpacity
+                key={`after-${option}`}
+                style={[styles.optionChip, sessionFeelingAfter === option ? styles.optionChipActive : null]}
+                onPress={() => setSessionFeelingAfter(option)}
+                accessibilityRole="button"
+              >
+                <Text style={[styles.optionChipText, sessionFeelingAfter === option ? styles.optionChipTextActive : null]}>
+                  {option}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          <Text style={styles.fieldLabel}>Notities</Text>
+          <TextInput
+            style={[styles.input, styles.notesInput]}
+            placeholder="Notities optioneel"
+            value={sessionNotes}
+            onChangeText={setSessionNotes}
             multiline
           />
         </View>
@@ -400,6 +510,43 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '700',
     color: '#1F2937',
+  },
+  privacyNote: {
+    fontSize: 13,
+    color: '#6B7280',
+    marginBottom: 8,
+  },
+  fieldLabel: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#374151',
+    marginBottom: 6,
+  },
+  optionRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginBottom: 8,
+  },
+  optionChip: {
+    borderWidth: 1,
+    borderColor: '#D1D5DB',
+    borderRadius: 999,
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    backgroundColor: '#F9FAFB',
+  },
+  optionChipActive: {
+    borderColor: '#2563EB',
+    backgroundColor: '#DBEAFE',
+  },
+  optionChipText: {
+    fontSize: 13,
+    color: '#374151',
+  },
+  optionChipTextActive: {
+    color: '#1D4ED8',
+    fontWeight: '700',
   },
   button: {
     backgroundColor: '#2563EB',

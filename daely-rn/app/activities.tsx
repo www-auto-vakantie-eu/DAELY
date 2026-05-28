@@ -37,6 +37,14 @@ export default function ActivitiesScreen() {
                 {a.metrics.workout.totalVolumeKg !== undefined ? ` · Volume ${Math.round(a.metrics.workout.totalVolumeKg)} kg` : ''}
               </Text>
             )}
+            {a.metrics?.session && (
+              <Text style={styles.sessionMeta}>
+                {a.metrics.session.intensity ? `Intensiteit ${a.metrics.session.intensity}` : 'Session'}
+                {a.metrics.session.focusAreas && a.metrics.session.focusAreas.length > 0
+                  ? ` · ${a.metrics.session.focusAreas.join(', ')}`
+                  : ''}
+              </Text>
+            )}
             <Text style={styles.status}>{a.status}</Text>
           </Pressable>
         ))
@@ -93,6 +101,11 @@ const styles = StyleSheet.create({
     color: '#22C55E',
   },
   workoutMeta: {
+    fontSize: 13,
+    color: '#374151',
+    marginBottom: 4,
+  },
+  sessionMeta: {
     fontSize: 13,
     color: '#374151',
     marginBottom: 4,

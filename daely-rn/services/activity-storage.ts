@@ -11,6 +11,17 @@ export interface WorkoutExercise {
   notes?: string;
 }
 
+export type SessionIntensity = 'laag' | 'gemiddeld' | 'hoog';
+export type SessionFeeling = 'laag' | 'neutraal' | 'goed' | 'sterk';
+
+export interface SessionMetrics {
+  intensity?: SessionIntensity;
+  focusAreas?: string[];
+  feelingBefore?: SessionFeeling;
+  feelingAfter?: SessionFeeling;
+  notes?: string;
+}
+
 export interface ActivityMetrics {
   workout?: {
     exercises?: WorkoutExercise[];
@@ -18,6 +29,7 @@ export interface ActivityMetrics {
     totalVolumeKg?: number;
     notes?: string;
   };
+  session?: SessionMetrics;
 }
 
 export interface Activity {
@@ -47,6 +59,25 @@ function toOptionalNumber(value: unknown): number | undefined {
   return value;
 }
 
+function toOptionalSessionIntensity(value: unknown): SessionIntensity | undefined {
+  if (value === 'laag' || value === 'gemiddeld' || value === 'hoog') return value;
+  return undefined;
+}
+
+function toOptionalSessionFeeling(value: unknown): SessionFeeling | undefined {
+  if (value === 'laag' || value === 'neutraal' || value === 'goed' || value === 'sterk') return value;
+  return undefined;
+}
+
+function normalizeFocusAreas(value: unknown): string[] | undefined {
+  if (!Array.isArray(value)) return undefined;
+  const cleaned = value
+    .filter((item): item is string => typeof item === 'string')
+    .map((item) => item.trim())
+    .filter((item) => item.length > 0);
+  return cleaned.length > 0 ? cleaned : undefined;
+}
+
 function normalizeWorkoutExercise(value: unknown): WorkoutExercise | null {
   if (!value || typeof value !== 'object') return null;
   const raw = value as Record<string, unknown>;
@@ -68,28 +99,55 @@ function normalizeWorkoutExercise(value: unknown): WorkoutExercise | null {
 function normalizeMetrics(value: unknown): ActivityMetrics | undefined {
   if (!value || typeof value !== 'object') return undefined;
   const raw = value as Record<string, unknown>;
+
   const workoutRaw = raw.workout;
-  if (!workoutRaw || typeof workoutRaw !== 'object') return undefined;
+  const sessionRaw = raw.session;
 
-  const workoutRecord = workoutRaw as Record<string, unknown>;
-  const exercises = Array.isArray(workoutRecord.exercises)
-    ? workoutRecord.exercises
-        .map((item) => normalizeWorkoutExercise(item))
-        .filter((item): item is WorkoutExercise => item !== null)
-    : undefined;
+  let workout: ActivityMetrics['workout'];
+  if (workoutRaw && typeof workoutRaw === 'object') {
+    const workoutRecord = workoutRaw as Record<string, unknown>;
+    const exercises = Array.isArray(workoutRecord.exercises)
+      ? workoutRecord.exercises
+          .map((item) => normalizeWorkoutExercise(item))
+          .filter((item): item is WorkoutExercise => item !== null)
+      : undefined;
 
-  const workout = {
-    exercises,
-    rounds: toOptionalNumber(workoutRecord.rounds),
-    totalVolumeKg: toOptionalNumber(workoutRecord.totalVolumeKg),
-    notes: toOptionalString(workoutRecord.notes),
-  };
+    const normalizedWorkout = {
+      exercises,
+      rounds: toOptionalNumber(workoutRecord.rounds),
+      totalVolumeKg: toOptionalNumber(workoutRecord.totalVolumeKg),
+      notes: toOptionalString(workoutRecord.notes),
+    };
 
-  if (!workout.exercises && workout.rounds === undefined && workout.totalVolumeKg === undefined && !workout.notes) {
-    return undefined;
+    if (normalizedWorkout.exercises || normalizedWorkout.rounds !== undefined || normalizedWorkout.totalVolumeKg !== undefined || normalizedWorkout.notes) {
+      workout = normalizedWorkout;
+    }
   }
 
-  return { workout };
+  let session: SessionMetrics | undefined;
+  if (sessionRaw && typeof sessionRaw === 'object') {
+    const sessionRecord = sessionRaw as Record<string, unknown>;
+    const normalizedSession: SessionMetrics = {
+      intensity: toOptionalSessionIntensity(sessionRecord.intensity),
+      focusAreas: normalizeFocusAreas(sessionRecord.focusAreas),
+      feelingBefore: toOptionalSessionFeeling(sessionRecord.feelingBefore),
+      feelingAfter: toOptionalSessionFeeling(sessionRecord.feelingAfter),
+      notes: toOptionalString(sessionRecord.notes),
+    };
+
+    if (
+      normalizedSession.intensity !== undefined ||
+      normalizedSession.focusAreas !== undefined ||
+      normalizedSession.feelingBefore !== undefined ||
+      normalizedSession.feelingAfter !== undefined ||
+      normalizedSession.notes !== undefined
+    ) {
+      session = normalizedSession;
+    }
+  }
+
+  if (!workout && !session) return undefined;
+  return { workout, session };
 }
 
 function normalizeActivities(value: unknown): Activity[] {

@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import PageHeader from '../components/PageHeader';
 import { getActivities, Activity } from 'services/activity-storage';
+import { SPORT_DISCIPLINES } from '../constants/sport-disciplines';
 
 export default function ActivityDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -22,6 +23,9 @@ export default function ActivityDetailScreen() {
       </View>
     );
   }
+
+  const discipline = SPORT_DISCIPLINES.find((item) => item.id === activity.disciplineId);
+  const isPrivateDefault = discipline?.privacyDefault === 'private';
 
   return (
     <ScrollView style={styles.container}>
@@ -53,11 +57,33 @@ export default function ActivityDetailScreen() {
             <Text style={styles.notes}>Workout notities: {activity.metrics.workout.notes}</Text>
           ) : null}
         </View>
-      ) : (
+      ) : null}
+      {activity.metrics?.session ? (
+        <View style={styles.metricsBox}>
+          <Text style={styles.metricsTitle}>Session metrics</Text>
+          {activity.metrics.session.intensity ? (
+            <Text style={styles.meta}>Intensiteit: {activity.metrics.session.intensity}</Text>
+          ) : null}
+          {activity.metrics.session.focusAreas && activity.metrics.session.focusAreas.length > 0 ? (
+            <Text style={styles.meta}>Focusgebieden: {activity.metrics.session.focusAreas.join(', ')}</Text>
+          ) : null}
+          {activity.metrics.session.feelingBefore ? (
+            <Text style={styles.meta}>Gevoel voor: {activity.metrics.session.feelingBefore}</Text>
+          ) : null}
+          {activity.metrics.session.feelingAfter ? (
+            <Text style={styles.meta}>Gevoel na: {activity.metrics.session.feelingAfter}</Text>
+          ) : null}
+          {activity.metrics.session.notes ? (
+            <Text style={styles.notes}>Session notities: {activity.metrics.session.notes}</Text>
+          ) : null}
+          {isPrivateDefault ? <Text style={styles.privacyNote}>Deze activiteit staat standaard prive.</Text> : null}
+        </View>
+      ) : null}
+      {!activity.metrics?.workout && !activity.metrics?.session ? (
         <View style={styles.placeholderBox}>
           <Text style={styles.placeholder}>Metrics komen binnenkort voor deze discipline.</Text>
         </View>
-      )}
+      ) : null}
     </ScrollView>
   );
 }
@@ -128,6 +154,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '700',
     color: '#1F2937',
+    marginTop: 4,
+  },
+  privacyNote: {
+    fontSize: 13,
+    color: '#6B7280',
     marginTop: 4,
   },
   placeholderBox: {
