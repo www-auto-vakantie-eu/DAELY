@@ -1,37 +1,51 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, Pressable, StyleSheet, ScrollView, Image, Alert, ActivityIndicator, Platform } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import React, { useEffect, useMemo, useState } from 'react';
+import { View, Text, Pressable, StyleSheet, ScrollView, Alert, ActivityIndicator, Platform } from 'react-native';
+import { useRouter } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
 import * as WebBrowser from 'expo-web-browser';
 import * as AuthSession from 'expo-auth-session';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import PageHeader from '../components/PageHeader';
+import {
+  CONNECTED_DEVICES,
+  CONNECTED_DEVICE_STATUS_LABELS,
+  type ConnectedDevice,
+  type ConnectedDeviceStatus,
+  WHOOP_TOKEN_STORAGE_KEY,
+} from '../constants/connected-devices';
 
 WebBrowser.maybeCompleteAuthSession();
 
 const API_BASE_URL = (process.env.EXPO_PUBLIC_API_BASE_URL ?? 'http://localhost:8085').replace(/\/$/, '');
-const WHOOP_TOKEN_STORAGE_KEY = 'whoop_oauth_token';
 
-const DEVICES = [
-  { name: 'Garmin', icon: 'watch-variant', logo: 'https://1000logos.net/wp-content/uploads/2021/05/Garmin-logo.png' },
-  { name: 'Fitbit', icon: 'watch-variant', logo: 'https://upload.wikimedia.org/wikipedia/commons/6/6e/Fitbit_logo.png' },
-  { name: 'Polar', icon: 'watch-variant' },
-  { name: 'Suunto', icon: 'watch-variant' },
-  { name: 'Apple Watch', icon: 'apple-watch' },
-  { name: 'Google Fit', icon: 'google-fit' },
-  { name: 'Oura', icon: 'ring' },
-  { name: 'Withings', icon: 'watch-variant' },
-  { name: 'Xiaomi / Amazfit / Zepp', icon: 'watch-variant' },
-  { name: 'Wahoo Fitness', icon: 'watch-variant' },
-  { name: 'Whoop', icon: 'watch-variant' },
-  { name: 'Samsung Health', icon: 'cellphone' },
-  { name: 'Coros', icon: 'watch-variant' },
-];
+const SECTION_ORDER: ConnectedDeviceStatus[] = ['available', 'soon', 'optional_later'];
+
+const SECTION_TITLE: Record<ConnectedDeviceStatus, string> = {
+  available: 'Beschikbaar',
+  soon: 'Binnenkort',
+  optional_later: 'Later optioneel',
+};
+
+const BUTTON_LABEL: Record<ConnectedDeviceStatus, string> = {
+  available: 'Koppelen',
+  soon: 'Binnenkort',
+  optional_later: 'Later',
+};
+
+function getErrorMessage(error: unknown): string {
+  if (error instanceof Error && error.message) {
+    return error.message;
+  }
+
+  return 'Onbekende fout';
+}
 
 export default function DataLinkScreen() {
   const theme = useTheme();
+  const router = useRouter();
   const [isConnectingWhoop, setIsConnectingWhoop] = useState(false);
   const [isWhoopConnected, setIsWhoopConnected] = useState(false);
-  const [statusMessage, setStatusMessage] = useState<string>('');
+  const [statusMessage, setStatusMessage] = useState('');
 
   useEffect(() => {
     const restoreWhoopState = async () => {
@@ -137,106 +151,237 @@ export default function DataLinkScreen() {
       setIsWhoopConnected(true);
       setStatusMessage('WHOOP succesvol verbonden.');
       Alert.alert('WHOOP gekoppeld', 'Je WHOOP apparaat is succesvol verbonden.');
-    } catch (error: any) {
-      setStatusMessage(`WHOOP koppelen mislukt: ${error?.message || 'Onbekende fout'}`);
-      Alert.alert('WHOOP koppelen mislukt', error?.message || 'Onbekende fout');
+    } catch (error: unknown) {
+      const message = getErrorMessage(error);
+      setStatusMessage(`WHOOP koppelen mislukt: ${message}`);
+      Alert.alert('WHOOP koppelen mislukt', message);
     } finally {
       setIsConnectingWhoop(false);
     }
   };
 
-  const onPressDevice = async (deviceName: string) => {
-    if (deviceName.toLowerCase() === 'whoop') {
+  const handleConnect = async (device: ConnectedDevice) => {
+    if (device.id === 'whoop') {
       await connectWhoop();
       return;
     }
 
-    Alert.alert('Nog niet beschikbaar', `${deviceName} koppeling volgt binnenkort.`);
+    if (device.id === 'fitbit') {
+      setStatusMessage('Koppeling voorbereiden...');
+      Alert.alert('Fitbit', 'Koppeling voorbereiden...');
+    }
   };
 
+  const groupedDevices = useMemo(() => {
+    const grouped: Record<ConnectedDeviceStatus, ConnectedDevice[]> = {
+      available: [],
+      soon: [],
+      optional_later: [],
+    };
+
+    for (const device of CONNECTED_DEVICES) {
+      grouped[device.status].push(device);
+    }
+
+    return grouped;
+  }, []);
+
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: theme.background }} contentContainerStyle={styles.container}>
-      <Text style={[styles.title, { color: theme.titleColor }]}>Koppel je apparaat</Text>
-      <Text style={[styles.subtitle, { color: theme.subtitleColor }]}>Selecteer een apparaat om te koppelen.</Text>
-      {statusMessage ? <Text style={[styles.feedbackText, { color: theme.subtitleColor }]}>{statusMessage}</Text> : null}
-      <View style={styles.deviceList}>
-        {DEVICES.map((device) => (
-          <Pressable key={device.name} style={styles.deviceButton} onPress={() => onPressDevice(device.name)}>
-            {device.logo ? (
-              <Image source={{ uri: device.logo }} style={styles.deviceLogo} resizeMode="contain" />
-            ) : (
-              <MaterialCommunityIcons name={device.icon as any} size={28} color={theme.titleColor} style={{ marginRight: 16 }} />
-            )}
-            <Text style={[styles.deviceLabel, { color: theme.titleColor }]}>{device.name}</Text>
-            {device.name.toLowerCase() === 'whoop' ? (
-              <View style={styles.statusPill}>
-                {isConnectingWhoop ? (
-                  <ActivityIndicator size="small" color="#2563EB" />
-                ) : (
-                  <Text style={[styles.statusText, { color: isWhoopConnected ? '#059669' : '#2563EB' }]}>
-                    {isWhoopConnected ? 'Verbonden' : 'Koppelen'}
-                  </Text>
-                )}
-              </View>
-            ) : null}
+    <View style={[styles.screen, { backgroundColor: theme.background }]}>
+      <PageHeader
+        title="Data koppelen"
+        showSettings={false}
+        showSearch={false}
+        showCart={false}
+      />
+
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.contentContainer} showsVerticalScrollIndicator={false}>
+        <View style={[styles.introCard, { backgroundColor: theme.card, borderColor: theme.border }]}> 
+          <Text style={[styles.introTitle, { color: theme.titleColor }]}>Automatische data verrijking</Text>
+          <Text style={[styles.introText, { color: theme.subtitleColor }]}>
+            Koppel je wearables en apps om je activiteiten, herstel en dagelijkse data automatisch te verrijken.
+          </Text>
+          <Text style={[styles.introHint, { color: theme.subtitleColor }]}>Na koppeling verschijnt je data op Vandaag en Data.</Text>
+          <Pressable style={styles.linkedDevicesButton} onPress={() => router.push('/(tabs)/connected-devices')}>
+            <Text style={styles.linkedDevicesButtonText}>Bekijk gekoppelde apparaten</Text>
           </Pressable>
+        </View>
+
+        {statusMessage ? <Text style={[styles.feedbackText, { color: theme.subtitleColor }]}>{statusMessage}</Text> : null}
+
+        {SECTION_ORDER.map((status) => (
+          <View key={status} style={styles.section}>
+            <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>{SECTION_TITLE[status]}</Text>
+            <View style={styles.cardList}>
+              {groupedDevices[status].map((device) => {
+                const isAvailable = device.status === 'available';
+                const isWhoop = device.id === 'whoop';
+                const isBusy = isWhoop && isConnectingWhoop;
+                const isConnected = isWhoop && isWhoopConnected;
+
+                return (
+                  <View key={device.id} style={[styles.deviceCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+                    <View style={styles.deviceHeaderRow}>
+                      <Text style={[styles.deviceName, { color: theme.titleColor }]}>{device.name}</Text>
+                      <View style={[styles.statusBadge, isAvailable ? styles.statusAvailable : styles.statusUpcoming]}>
+                        <Text style={styles.statusBadgeText}>{CONNECTED_DEVICE_STATUS_LABELS[device.status]}</Text>
+                      </View>
+                    </View>
+                    <Text style={[styles.deviceDataText, { color: theme.subtitleColor }]}>Data: {device.dataPoints.join(', ')}</Text>
+                    {isWhoop ? (
+                      <Text style={[styles.connectionHint, { color: theme.subtitleColor }]}>
+                        Status: {isConnected ? 'Verbonden' : 'Nog niet gekoppeld'}
+                      </Text>
+                    ) : null}
+
+                    <Pressable
+                      style={[
+                        styles.actionButton,
+                        isAvailable ? styles.actionButtonPrimary : styles.actionButtonDisabled,
+                        isBusy ? styles.actionButtonBusy : null,
+                      ]}
+                      onPress={isAvailable ? () => void handleConnect(device) : undefined}
+                      disabled={!isAvailable || isBusy}
+                    >
+                      {isBusy ? (
+                        <ActivityIndicator size="small" color="#FFFFFF" />
+                      ) : (
+                        <Text style={styles.actionButtonText}>{BUTTON_LABEL[device.status]}</Text>
+                      )}
+                    </Pressable>
+                  </View>
+                );
+              })}
+            </View>
+          </View>
         ))}
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 24,
-    alignItems: 'center',
+  screen: {
+    flex: 1,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 8,
+  scroll: {
+    flex: 1,
   },
-  subtitle: {
-    fontSize: 16,
-    marginBottom: 24,
-    textAlign: 'center',
+  contentContainer: {
+    paddingHorizontal: 16,
+    paddingBottom: 28,
   },
-  feedbackText: {
-    fontSize: 14,
-    marginBottom: 14,
-    textAlign: 'center',
-  },
-  deviceList: {
-    width: '100%',
-  },
-  deviceButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#F3F4F6',
-    borderRadius: 12,
+  introCard: {
+    borderWidth: 1,
+    borderRadius: 14,
     padding: 16,
     marginBottom: 12,
   },
-  deviceLabel: {
+  introTitle: {
     fontSize: 18,
-    flex: 1,
+    fontWeight: '800',
+    marginBottom: 6,
   },
-  deviceLogo: {
-    width: 32,
-    height: 32,
-    marginRight: 16,
+  introText: {
+    fontSize: 14,
+    lineHeight: 20,
   },
-  statusPill: {
-    minWidth: 84,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 6,
-    paddingHorizontal: 10,
+  introHint: {
+    marginTop: 10,
+    fontSize: 13,
+    lineHeight: 18,
+    fontWeight: '600',
+  },
+  linkedDevicesButton: {
+    marginTop: 14,
+    alignSelf: 'flex-start',
     borderRadius: 999,
-    backgroundColor: '#E0F2FE',
+    backgroundColor: '#E0E7FF',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
   },
-  statusText: {
+  linkedDevicesButtonText: {
     fontSize: 12,
     fontWeight: '700',
+    color: '#1D4ED8',
+  },
+  feedbackText: {
+    fontSize: 13,
+    marginTop: 4,
+    marginBottom: 10,
+  },
+  section: {
+    marginTop: 12,
+  },
+  sectionTitle: {
+    fontSize: 19,
+    fontWeight: '800',
+    marginBottom: 10,
+  },
+  cardList: {
+    gap: 10,
+  },
+  deviceCard: {
+    borderWidth: 1,
+    borderRadius: 14,
+    padding: 14,
+  },
+  deviceHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: 8,
+  },
+  deviceName: {
+    fontSize: 16,
+    fontWeight: '800',
+    flex: 1,
+  },
+  statusBadge: {
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+  },
+  statusAvailable: {
+    backgroundColor: '#DBEAFE',
+  },
+  statusUpcoming: {
+    backgroundColor: '#E5E7EB',
+  },
+  statusBadgeText: {
+    fontSize: 11,
+    color: '#1F2937',
+    fontWeight: '700',
+  },
+  deviceDataText: {
+    marginTop: 8,
+    fontSize: 13,
+    lineHeight: 19,
+  },
+  connectionHint: {
+    marginTop: 4,
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  actionButton: {
+    marginTop: 12,
+    borderRadius: 10,
+    minHeight: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  actionButtonPrimary: {
+    backgroundColor: '#1D4ED8',
+  },
+  actionButtonDisabled: {
+    backgroundColor: '#9CA3AF',
+  },
+  actionButtonBusy: {
+    opacity: 0.9,
+  },
+  actionButtonText: {
+    color: '#FFFFFF',
+    fontWeight: '700',
+    fontSize: 14,
   },
 });

@@ -1,125 +1,139 @@
-import React from 'react';
-import { Alert, View, Text, StyleSheet, ScrollView, Pressable, Image } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import React, { useEffect, useMemo, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useRouter } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
-
-// Dummy data, later vervangen door echte gekoppelde apparaten uit de backend
-const CONNECTED_DEVICES = [
-  {
-    name: 'Garmin',
-    logo: 'https://1000logos.net/wp-content/uploads/2021/05/Garmin-logo.png',
-    status: 'Verbonden',
-  },
-  {
-    name: 'Fitbit',
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/6/6e/Fitbit_logo.png',
-    status: 'Verbonden',
-  },
-  // Voeg meer dummy devices toe indien gewenst
-];
+import PageHeader from '../components/PageHeader';
+import { CONNECTED_DEVICES, WHOOP_TOKEN_STORAGE_KEY } from '../constants/connected-devices';
 
 export default function ConnectedDevicesScreen() {
   const theme = useTheme();
+  const router = useRouter();
+  const [isWhoopConnected, setIsWhoopConnected] = useState(false);
 
-  const showDetailsFallback = (deviceName: string) => {
-    Alert.alert('Binnenkort beschikbaar', `Details voor ${deviceName} volgen binnenkort.`);
-  };
+  useEffect(() => {
+    const restoreWhoopState = async () => {
+      try {
+        const tokenRaw = await AsyncStorage.getItem(WHOOP_TOKEN_STORAGE_KEY);
+        setIsWhoopConnected(!!tokenRaw);
+      } catch {
+        setIsWhoopConnected(false);
+      }
+    };
 
-  const showUnlinkFallback = (deviceName: string) => {
-    Alert.alert('Binnenkort beschikbaar', `${deviceName} ontkoppelen volgt binnenkort.`);
-  };
+    void restoreWhoopState();
+  }, []);
+
+  const connectableDevices = useMemo(
+    () => CONNECTED_DEVICES.filter((device) => device.status === 'available'),
+    []
+  );
 
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: theme.background }} contentContainerStyle={styles.container}>
-      <Text style={[styles.title, { color: theme.titleColor }]}>Gekoppelde apparaten</Text>
-      {CONNECTED_DEVICES.length === 0 ? (
-        <Text style={[styles.empty, { color: theme.subtitleColor }]}>Je hebt nog geen apparaten gekoppeld.</Text>
-      ) : (
-        CONNECTED_DEVICES.map((device) => (
-          <View key={device.name} style={styles.deviceRow}>
-            <Image source={{ uri: device.logo }} style={styles.deviceLogo} resizeMode="contain" />
-            <View style={{ flex: 1 }}>
+    <View style={[styles.screen, { backgroundColor: theme.background }]}> 
+      <PageHeader
+        title="Gekoppelde apparaten"
+        showSettings={false}
+        showSearch={false}
+        showCart={false}
+      />
+
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.contentContainer} showsVerticalScrollIndicator={false}>
+        <View style={[styles.infoCard, { backgroundColor: theme.card, borderColor: theme.border }]}> 
+          <Text style={[styles.infoTitle, { color: theme.titleColor }]}>Automatische data</Text>
+          <Text style={[styles.infoText, { color: theme.subtitleColor }]}>Koppel een apparaat via Data koppelen om je statistieken automatisch te verrijken.</Text>
+          <Pressable style={styles.openLinkButton} onPress={() => router.push('/(tabs)/data-link')}>
+            <Text style={styles.openLinkButtonText}>Naar Data koppelen</Text>
+          </Pressable>
+        </View>
+
+        {connectableDevices.map((device) => {
+          const isConnected = device.id === 'whoop' ? isWhoopConnected : false;
+
+          return (
+            <View key={device.id} style={[styles.deviceCard, { backgroundColor: theme.card, borderColor: theme.border }]}> 
               <Text style={[styles.deviceName, { color: theme.titleColor }]}>{device.name}</Text>
-              <Text style={[styles.deviceStatus, { color: theme.subtitleColor }]}>{device.status}</Text>
+              <Text style={[styles.deviceData, { color: theme.subtitleColor }]}>Data: {device.dataPoints.join(', ')}</Text>
+              <View style={[styles.statePill, isConnected ? styles.statePillConnected : styles.statePillDisconnected]}>
+                <Text style={styles.statePillText}>{isConnected ? 'Verbonden' : 'Nog niet gekoppeld'}</Text>
+              </View>
             </View>
-            <Pressable style={styles.detailsBtn} onPress={() => showDetailsFallback(device.name)}>
-              <MaterialCommunityIcons name="information-outline" size={22} color="#2563EB" />
-              <Text style={styles.detailsText}>Details</Text>
-            </Pressable>
-            <Pressable style={styles.unlinkBtn} onPress={() => showUnlinkFallback(device.name)}>
-              <MaterialCommunityIcons name="link-off" size={22} color="#EF4444" />
-              <Text style={styles.unlinkText}>Ontkoppelen</Text>
-            </Pressable>
-          </View>
-        ))
-      )}
-    </ScrollView>
+          );
+        })}
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 24,
+  screen: {
+    flex: 1,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 24,
+  scroll: {
+    flex: 1,
   },
-  empty: {
-    fontSize: 16,
-    textAlign: 'center',
-    marginTop: 32,
+  contentContainer: {
+    paddingHorizontal: 16,
+    paddingBottom: 28,
+    gap: 12,
   },
-  deviceRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#F3F4F6',
-    borderRadius: 12,
+  infoCard: {
+    borderWidth: 1,
+    borderRadius: 14,
     padding: 16,
-    marginBottom: 16,
   },
-  deviceLogo: {
-    width: 40,
-    height: 40,
-    marginRight: 16,
+  infoTitle: {
+    fontSize: 18,
+    fontWeight: '800',
+    marginBottom: 6,
+  },
+  infoText: {
+    fontSize: 14,
+    lineHeight: 20,
+  },
+  openLinkButton: {
+    marginTop: 12,
+    alignSelf: 'flex-start',
+    borderRadius: 999,
+    backgroundColor: '#DBEAFE',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+  },
+  openLinkButtonText: {
+    color: '#1D4ED8',
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  deviceCard: {
+    borderWidth: 1,
+    borderRadius: 14,
+    padding: 14,
   },
   deviceName: {
-    fontSize: 18,
-    fontWeight: '600',
+    fontSize: 17,
+    fontWeight: '800',
   },
-  deviceStatus: {
-    fontSize: 14,
-    marginTop: 2,
+  deviceData: {
+    marginTop: 6,
+    fontSize: 13,
+    lineHeight: 18,
   },
-  detailsBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 8,
-    backgroundColor: '#DBEAFE',
-    marginLeft: 12,
+  statePill: {
+    marginTop: 10,
+    alignSelf: 'flex-start',
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
   },
-  detailsText: {
-    color: '#2563EB',
-    fontWeight: 'bold',
-    marginLeft: 4,
-    fontSize: 14,
+  statePillConnected: {
+    backgroundColor: '#DCFCE7',
   },
-  unlinkBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 8,
-    backgroundColor: '#FEE2E2',
-    marginLeft: 12,
+  statePillDisconnected: {
+    backgroundColor: '#E5E7EB',
   },
-  unlinkText: {
-    color: '#EF4444',
-    fontWeight: 'bold',
-    marginLeft: 4,
-    fontSize: 14,
+  statePillText: {
+    fontSize: 12,
+    color: '#1F2937',
+    fontWeight: '700',
   },
 });
