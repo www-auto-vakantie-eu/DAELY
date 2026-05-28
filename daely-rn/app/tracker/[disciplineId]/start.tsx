@@ -11,6 +11,8 @@ import {
   type SessionFeeling,
   type MatchType,
   type MatchPersonalStats,
+  type ScoreResult,
+  type ScoreType,
 } from 'services/activity-storage';
 
 const SESSION_STATUS = {
@@ -25,6 +27,7 @@ type SessionStatus = keyof typeof SESSION_STATUS;
 const SESSION_INTENSITY_OPTIONS: SessionIntensity[] = ['laag', 'gemiddeld', 'hoog'];
 const SESSION_FEELING_OPTIONS: SessionFeeling[] = ['laag', 'neutraal', 'goed', 'sterk'];
 const MATCH_TYPE_OPTIONS: MatchType[] = ['training', 'wedstrijd'];
+const SCORE_RESULT_OPTIONS: ScoreResult[] = ['gewonnen', 'verloren', 'gelijkspel', 'n.v.t.'];
 
 type ExerciseDraft = {
   id: string;
@@ -101,6 +104,8 @@ export default function StartActivityScreen() {
   const isWorkoutDiscipline = discipline?.trackingType === 'workout';
   const isSessionDiscipline = discipline?.trackingType === 'session';
   const isMatchDiscipline = discipline?.trackingType === 'match';
+  const isScoreDiscipline = discipline?.trackingType === 'score';
+  const scoreType: ScoreType | undefined = discipline?.id === 'golf' ? 'golf' : discipline?.id === 'racketsporten' ? 'racket' : isScoreDiscipline ? 'other' : undefined;
 
   const [status, setStatus] = useState<SessionStatus>('NOT_STARTED');
   const [seconds, setSeconds] = useState(0);
@@ -126,6 +131,18 @@ export default function StartActivityScreen() {
   const [matchTackles, setMatchTackles] = useState('');
   const [matchIntensity, setMatchIntensity] = useState<SessionIntensity | undefined>(undefined);
   const [matchNotes, setMatchNotes] = useState('');
+  const [scoreOpponent, setScoreOpponent] = useState('');
+  const [scoreResult, setScoreResult] = useState<ScoreResult | undefined>(undefined);
+  const [scoreSetsFor, setScoreSetsFor] = useState('');
+  const [scoreSetsAgainst, setScoreSetsAgainst] = useState('');
+  const [scorePointsFor, setScorePointsFor] = useState('');
+  const [scorePointsAgainst, setScorePointsAgainst] = useState('');
+  const [scoreHolesPlayed, setScoreHolesPlayed] = useState('');
+  const [scoreStrokes, setScoreStrokes] = useState('');
+  const [scorePar, setScorePar] = useState('');
+  const [scoreHandicap, setScoreHandicap] = useState('');
+  const [scoreIntensity, setScoreIntensity] = useState<SessionIntensity | undefined>(undefined);
+  const [scoreNotes, setScoreNotes] = useState('');
   const [exerciseDrafts, setExerciseDrafts] = useState<ExerciseDraft[]>([createExerciseDraft()]);
   const timerRef = useRef<number | null>(null);
 
@@ -260,7 +277,7 @@ export default function StartActivityScreen() {
         durationSeconds: seconds,
         status: 'completed',
         metrics:
-          isWorkoutDiscipline || isSessionDiscipline || isMatchDiscipline
+          isWorkoutDiscipline || isSessionDiscipline || isMatchDiscipline || isScoreDiscipline
             ? {
                 workout:
                   isWorkoutDiscipline && workoutExercises
@@ -290,6 +307,23 @@ export default function StartActivityScreen() {
                       personalStats: matchPersonalStats,
                       intensity: matchIntensity,
                       notes: matchNotes.trim().length > 0 ? matchNotes.trim() : undefined,
+                    }
+                  : undefined,
+                score: isScoreDiscipline
+                  ? {
+                      scoreType,
+                      opponent: scoreOpponent.trim().length > 0 ? scoreOpponent.trim() : undefined,
+                      result: scoreResult,
+                      setsFor: toOptionalNonNegativeNumber(scoreSetsFor),
+                      setsAgainst: toOptionalNonNegativeNumber(scoreSetsAgainst),
+                      pointsFor: toOptionalNonNegativeNumber(scorePointsFor),
+                      pointsAgainst: toOptionalNonNegativeNumber(scorePointsAgainst),
+                      holesPlayed: toOptionalNonNegativeNumber(scoreHolesPlayed),
+                      strokes: toOptionalNonNegativeNumber(scoreStrokes),
+                      par: toOptionalNonNegativeNumber(scorePar),
+                      handicap: toOptionalNonNegativeNumber(scoreHandicap),
+                      intensity: scoreIntensity,
+                      notes: scoreNotes.trim().length > 0 ? scoreNotes.trim() : undefined,
                     }
                   : undefined,
               }
@@ -549,6 +583,82 @@ export default function StartActivityScreen() {
             onChangeText={setMatchNotes}
             multiline
           />
+        </View>
+      )}
+
+      {isScoreDiscipline && status === 'FINISHED' && (
+        <View style={styles.metricsBlock}>
+          <Text style={styles.metricsTitle}>Score metrics</Text>
+
+          {scoreType === 'racket' ? (
+            <>
+              <Text style={styles.fieldLabel}>Tegenstander</Text>
+              <TextInput style={styles.input} placeholder="Tegenstander" value={scoreOpponent} onChangeText={setScoreOpponent} />
+
+              <Text style={styles.fieldLabel}>Resultaat</Text>
+              <View style={styles.optionRow}>
+                {SCORE_RESULT_OPTIONS.map((option) => (
+                  <TouchableOpacity
+                    key={option}
+                    style={[styles.optionChip, scoreResult === option ? styles.optionChipActive : null]}
+                    onPress={() => setScoreResult(option)}
+                    accessibilityRole="button"
+                  >
+                    <Text style={[styles.optionChipText, scoreResult === option ? styles.optionChipTextActive : null]}>
+                      {option}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+
+              <Text style={styles.fieldLabel}>Sets</Text>
+              <View style={styles.rowInputs}>
+                <TextInput style={[styles.input, styles.halfInput]} placeholder="Voor" keyboardType="numeric" value={scoreSetsFor} onChangeText={setScoreSetsFor} />
+                <TextInput style={[styles.input, styles.halfInput]} placeholder="Tegen" keyboardType="numeric" value={scoreSetsAgainst} onChangeText={setScoreSetsAgainst} />
+              </View>
+
+              <Text style={styles.fieldLabel}>Punten</Text>
+              <View style={styles.rowInputs}>
+                <TextInput style={[styles.input, styles.halfInput]} placeholder="Voor" keyboardType="numeric" value={scorePointsFor} onChangeText={setScorePointsFor} />
+                <TextInput style={[styles.input, styles.halfInput]} placeholder="Tegen" keyboardType="numeric" value={scorePointsAgainst} onChangeText={setScorePointsAgainst} />
+              </View>
+            </>
+          ) : null}
+
+          {scoreType === 'golf' ? (
+            <>
+              <Text style={styles.fieldLabel}>Holes gespeeld</Text>
+              <TextInput style={styles.input} placeholder="Holes" keyboardType="numeric" value={scoreHolesPlayed} onChangeText={setScoreHolesPlayed} />
+
+              <Text style={styles.fieldLabel}>Slagen</Text>
+              <TextInput style={styles.input} placeholder="Slagen" keyboardType="numeric" value={scoreStrokes} onChangeText={setScoreStrokes} />
+
+              <Text style={styles.fieldLabel}>Par</Text>
+              <TextInput style={styles.input} placeholder="Par" keyboardType="numeric" value={scorePar} onChangeText={setScorePar} />
+
+              <Text style={styles.fieldLabel}>Handicap</Text>
+              <TextInput style={styles.input} placeholder="Handicap optioneel" keyboardType="numeric" value={scoreHandicap} onChangeText={setScoreHandicap} />
+            </>
+          ) : null}
+
+          <Text style={styles.fieldLabel}>Intensiteit</Text>
+          <View style={styles.optionRow}>
+            {SESSION_INTENSITY_OPTIONS.map((option) => (
+              <TouchableOpacity
+                key={`score-intensity-${option}`}
+                style={[styles.optionChip, scoreIntensity === option ? styles.optionChipActive : null]}
+                onPress={() => setScoreIntensity(option)}
+                accessibilityRole="button"
+              >
+                <Text style={[styles.optionChipText, scoreIntensity === option ? styles.optionChipTextActive : null]}>
+                  {option}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          <Text style={styles.fieldLabel}>Notities</Text>
+          <TextInput style={[styles.input, styles.notesInput]} placeholder="Notities optioneel" value={scoreNotes} onChangeText={setScoreNotes} multiline />
         </View>
       )}
 

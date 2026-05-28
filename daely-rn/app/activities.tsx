@@ -54,6 +54,15 @@ export default function ActivitiesScreen() {
                 {a.metrics.match.opponent ? ` · vs ${a.metrics.match.opponent}` : ''}
               </Text>
             )}
+            {a.metrics?.score && (
+              <Text style={styles.scoreMeta}>
+                {a.metrics.score.scoreType === 'racket'
+                  ? `${a.metrics.score.result ?? 'score'}${a.metrics.score.opponent ? ` · vs ${a.metrics.score.opponent}` : ''}${a.metrics.score.setsFor !== undefined && a.metrics.score.setsAgainst !== undefined ? ` · ${a.metrics.score.setsFor}-${a.metrics.score.setsAgainst}` : ''}`
+                  : a.metrics.score.scoreType === 'golf'
+                    ? `Golf${a.metrics.score.holesPlayed !== undefined ? ` · ${a.metrics.score.holesPlayed} holes` : ''}${a.metrics.score.strokes !== undefined ? ` · ${a.metrics.score.strokes} slagen` : ''}`
+                    : 'Score'}
+              </Text>
+            )}
             <Text style={styles.status}>{a.status}</Text>
           </Pressable>
         ))
@@ -120,6 +129,11 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   matchMeta: {
+    fontSize: 13,
+    color: '#374151',
+    marginBottom: 4,
+  },
+  scoreMeta: {
     fontSize: 13,
     color: '#374151',
     marginBottom: 4,

@@ -14,6 +14,8 @@ export interface WorkoutExercise {
 export type SessionIntensity = 'laag' | 'gemiddeld' | 'hoog';
 export type SessionFeeling = 'laag' | 'neutraal' | 'goed' | 'sterk';
 export type MatchType = 'training' | 'wedstrijd';
+export type ScoreType = 'racket' | 'golf' | 'other';
+export type ScoreResult = 'gewonnen' | 'verloren' | 'gelijkspel' | 'n.v.t.';
 
 export interface MatchPersonalStats {
   goals?: number;
@@ -36,6 +38,22 @@ export interface MatchMetrics {
   notes?: string;
 }
 
+export interface ScoreMetrics {
+  scoreType?: ScoreType;
+  opponent?: string;
+  result?: ScoreResult;
+  setsFor?: number;
+  setsAgainst?: number;
+  pointsFor?: number;
+  pointsAgainst?: number;
+  holesPlayed?: number;
+  strokes?: number;
+  par?: number;
+  handicap?: number;
+  intensity?: SessionIntensity;
+  notes?: string;
+}
+
 export interface SessionMetrics {
   intensity?: SessionIntensity;
   focusAreas?: string[];
@@ -53,6 +71,7 @@ export interface ActivityMetrics {
   };
   session?: SessionMetrics;
   match?: MatchMetrics;
+  score?: ScoreMetrics;
 }
 
 export interface Activity {
@@ -97,6 +116,16 @@ function toOptionalMatchType(value: unknown): MatchType | undefined {
   return undefined;
 }
 
+function toOptionalScoreType(value: unknown): ScoreType | undefined {
+  if (value === 'racket' || value === 'golf' || value === 'other') return value;
+  return undefined;
+}
+
+function toOptionalScoreResult(value: unknown): ScoreResult | undefined {
+  if (value === 'gewonnen' || value === 'verloren' || value === 'gelijkspel' || value === 'n.v.t.') return value;
+  return undefined;
+}
+
 function toOptionalNonNegativeNumber(value: unknown): number | undefined {
   if (typeof value !== 'number' || Number.isNaN(value) || !Number.isFinite(value) || value < 0) return undefined;
   return value;
@@ -136,6 +165,7 @@ function normalizeMetrics(value: unknown): ActivityMetrics | undefined {
   const workoutRaw = raw.workout;
   const sessionRaw = raw.session;
   const matchRaw = raw.match;
+  const scoreRaw = raw.score;
 
   let workout: ActivityMetrics['workout'];
   if (workoutRaw && typeof workoutRaw === 'object') {
@@ -235,8 +265,46 @@ function normalizeMetrics(value: unknown): ActivityMetrics | undefined {
     }
   }
 
-  if (!workout && !session && !match) return undefined;
-  return { workout, session, match };
+  let score: ScoreMetrics | undefined;
+  if (scoreRaw && typeof scoreRaw === 'object') {
+    const scoreRecord = scoreRaw as Record<string, unknown>;
+    const normalizedScore: ScoreMetrics = {
+      scoreType: toOptionalScoreType(scoreRecord.scoreType),
+      opponent: toOptionalString(scoreRecord.opponent),
+      result: toOptionalScoreResult(scoreRecord.result),
+      setsFor: toOptionalNonNegativeNumber(scoreRecord.setsFor),
+      setsAgainst: toOptionalNonNegativeNumber(scoreRecord.setsAgainst),
+      pointsFor: toOptionalNonNegativeNumber(scoreRecord.pointsFor),
+      pointsAgainst: toOptionalNonNegativeNumber(scoreRecord.pointsAgainst),
+      holesPlayed: toOptionalNonNegativeNumber(scoreRecord.holesPlayed),
+      strokes: toOptionalNonNegativeNumber(scoreRecord.strokes),
+      par: toOptionalNonNegativeNumber(scoreRecord.par),
+      handicap: toOptionalNumber(scoreRecord.handicap),
+      intensity: toOptionalSessionIntensity(scoreRecord.intensity),
+      notes: toOptionalString(scoreRecord.notes),
+    };
+
+    if (
+      normalizedScore.scoreType !== undefined ||
+      normalizedScore.opponent !== undefined ||
+      normalizedScore.result !== undefined ||
+      normalizedScore.setsFor !== undefined ||
+      normalizedScore.setsAgainst !== undefined ||
+      normalizedScore.pointsFor !== undefined ||
+      normalizedScore.pointsAgainst !== undefined ||
+      normalizedScore.holesPlayed !== undefined ||
+      normalizedScore.strokes !== undefined ||
+      normalizedScore.par !== undefined ||
+      normalizedScore.handicap !== undefined ||
+      normalizedScore.intensity !== undefined ||
+      normalizedScore.notes !== undefined
+    ) {
+      score = normalizedScore;
+    }
+  }
+
+  if (!workout && !session && !match && !score) return undefined;
+  return { workout, session, match, score };
 }
 
 function normalizeActivities(value: unknown): Activity[] {

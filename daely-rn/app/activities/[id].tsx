@@ -106,7 +106,38 @@ export default function ActivityDetailScreen() {
           {activity.metrics.match.notes ? <Text style={styles.notes}>Match notities: {activity.metrics.match.notes}</Text> : null}
         </View>
       ) : null}
-      {!activity.metrics?.workout && !activity.metrics?.session && !activity.metrics?.match ? (
+      {activity.metrics?.score ? (
+        <View style={styles.metricsBox}>
+          <Text style={styles.metricsTitle}>Score metrics</Text>
+          {activity.metrics.score.scoreType ? <Text style={styles.meta}>Type: {activity.metrics.score.scoreType}</Text> : null}
+
+          {activity.metrics.score.scoreType === 'racket' ? (
+            <>
+              {activity.metrics.score.opponent ? <Text style={styles.meta}>Tegenstander: {activity.metrics.score.opponent}</Text> : null}
+              {activity.metrics.score.result ? <Text style={styles.meta}>Resultaat: {activity.metrics.score.result}</Text> : null}
+              {activity.metrics.score.setsFor !== undefined || activity.metrics.score.setsAgainst !== undefined ? (
+                <Text style={styles.meta}>Sets: {activity.metrics.score.setsFor ?? '-'} - {activity.metrics.score.setsAgainst ?? '-'}</Text>
+              ) : null}
+              {activity.metrics.score.pointsFor !== undefined || activity.metrics.score.pointsAgainst !== undefined ? (
+                <Text style={styles.meta}>Punten: {activity.metrics.score.pointsFor ?? '-'} - {activity.metrics.score.pointsAgainst ?? '-'}</Text>
+              ) : null}
+            </>
+          ) : null}
+
+          {activity.metrics.score.scoreType === 'golf' ? (
+            <>
+              {activity.metrics.score.holesPlayed !== undefined ? <Text style={styles.meta}>Holes: {activity.metrics.score.holesPlayed}</Text> : null}
+              {activity.metrics.score.strokes !== undefined ? <Text style={styles.meta}>Slagen: {activity.metrics.score.strokes}</Text> : null}
+              {activity.metrics.score.par !== undefined ? <Text style={styles.meta}>Par: {activity.metrics.score.par}</Text> : null}
+              {activity.metrics.score.handicap !== undefined ? <Text style={styles.meta}>Handicap: {activity.metrics.score.handicap}</Text> : null}
+            </>
+          ) : null}
+
+          {activity.metrics.score.intensity ? <Text style={styles.meta}>Intensiteit: {activity.metrics.score.intensity}</Text> : null}
+          {activity.metrics.score.notes ? <Text style={styles.notes}>Score notities: {activity.metrics.score.notes}</Text> : null}
+        </View>
+      ) : null}
+      {!activity.metrics?.workout && !activity.metrics?.session && !activity.metrics?.match && !activity.metrics?.score ? (
         <View style={styles.placeholderBox}>
           <Text style={styles.placeholder}>Metrics komen binnenkort voor deze discipline.</Text>
         </View>
