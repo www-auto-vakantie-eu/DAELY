@@ -216,8 +216,11 @@ export default function ActivityDetailScreen() {
         <TouchableOpacity style={styles.deleteBtn} onPress={handleDelete}>
           <Text style={styles.deleteBtnText}>Activiteit verwijderen</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.editBtn} disabled>
-          <Text style={styles.editBtnText}>Activiteit bewerken (binnenkort)</Text>
+        <TouchableOpacity
+          style={styles.editBtn}
+          onPress={() => router.push({ pathname: '/activities/[id]/edit', params: { id: activity.id } })}
+        >
+          <Text style={styles.editBtnText}>Activiteit bewerken</Text>
         </TouchableOpacity>
       </View>
 

@@ -130,6 +130,7 @@ export interface Activity {
   notes?: string;
   metrics?: ActivityMetrics;
   createdAt: string;
+  updatedAt?: string;
 }
 
 const STORAGE_KEY = 'daely.tracker.activities.v1';
@@ -506,9 +507,14 @@ function normalizeActivities(value: unknown): Activity[] {
         notes: toOptionalString(raw.notes),
         metrics: normalizeMetrics(raw.metrics),
         createdAt: raw.createdAt,
+        updatedAt: toOptionalString(raw.updatedAt),
       };
     })
     .filter((item): item is Activity => item !== null);
+}
+
+export interface UpdateActivityInput {
+  notes?: string;
 }
 
 export async function getActivities(): Promise<Activity[]> {
@@ -533,4 +539,19 @@ export async function deleteActivity(id: string): Promise<void> {
   const activities = await getActivities();
   const filtered = activities.filter(a => a.id !== id);
   await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
+}
+
+export async function updateActivity(activityId: string, updates: UpdateActivityInput): Promise<void> {
+  const activities = await getActivities();
+  const next = activities.map((activity) => {
+    if (activity.id !== activityId) return activity;
+
+    return {
+      ...activity,
+      notes: updates.notes,
+      updatedAt: new Date().toISOString(),
+    };
+  });
+
+  await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(next));
 }
