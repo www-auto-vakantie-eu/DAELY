@@ -1,13 +1,12 @@
-import React, { useMemo, useState } from 'react';
-import { ScrollView, StyleSheet, Text, View, Pressable, ImageBackground, useWindowDimensions, NativeScrollEvent, NativeSyntheticEvent } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import React, { useEffect, useMemo, useState } from 'react';
+import { ScrollView, StyleSheet, Text, View, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/use-theme';
-import { useAppContext } from '@/contexts/AppContext';
-import { ACTIVITY_TYPE_LABELS } from '@/constants/workout-activities';
 import PageHeader from '../components/PageHeader';
+import { Activity, getActivities } from 'services/activity-storage';
 
-function formatTodayLabel(): string {
+function formatTodayLabel() {
   const now = new Date();
   return now.toLocaleDateString('nl-NL', {
     weekday: 'long',
@@ -16,70 +15,73 @@ function formatTodayLabel(): string {
   });
 }
 
-const WEEK_TREND = [58, 72, 64, 81, 75, 88, 70];
+function formatDuration(seconds: number) {
+  const min = Math.floor(seconds / 60);
+  const sec = seconds % 60;
+  return `${min}m ${sec}s`;
+}
 
-const MACRO_DISTRIBUTION = [
-  { label: 'Eiwit', value: 72, color: '#3B82F6' },
-  { label: 'Koolhydraten', value: 64, color: '#10B981' },
-  { label: 'Vetten', value: 51, color: '#F59E0B' },
-];
+function formatDateTime(value: string) {
+  return new Date(value).toLocaleString('nl-NL');
+}
 
-const TODAY_SWIPES = [
-  {
-    title: 'Welkom terug ...',
-    subtitle: 'Vandaag ligt er weer een sterke sessie voor je klaar.',
-    badge: 'DAELY TODAY',
-    image:
-      'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=1200&auto=format&fit=crop',
-  },
-  {
-    title: 'Hydrateer slim',
-    subtitle: 'Je hydratatie staat op 71%. Nog 2 glazen tot je dagdoel.',
-    badge: 'FOCUS',
-    image:
-      'https://images.unsplash.com/photo-1532634896-26909d0d4b6b?q=80&w=1200&auto=format&fit=crop',
-  },
-  {
-    title: 'Mindset momentum',
-    subtitle: 'Pak 8 minuten ademhaling voor maximale focus.',
-    badge: 'MIND',
-    image:
-      'https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=1200&auto=format&fit=crop',
-  },
-];
+function getMetricsSummary(activity: Activity) {
+  if (activity.metrics?.workout) {
+    return `${activity.metrics.workout.exercises?.length ?? 0} oefeningen${activity.metrics.workout.totalVolumeKg !== undefined ? ` · ${Math.round(activity.metrics.workout.totalVolumeKg)} kg volume` : ''}`;
+  }
+  if (activity.metrics?.session) {
+    return `${activity.metrics.session.intensity ? `Intensiteit ${activity.metrics.session.intensity}` : 'Session'}${activity.metrics.session.focusAreas && activity.metrics.session.focusAreas.length > 0 ? ` · ${activity.metrics.session.focusAreas.join(', ')}` : ''}`;
+  }
+  if (activity.metrics?.match) {
+    return `${activity.metrics.match.matchType ?? 'match'}${activity.metrics.match.scoreFor !== undefined && activity.metrics.match.scoreAgainst !== undefined ? ` · ${activity.metrics.match.scoreFor}-${activity.metrics.match.scoreAgainst}` : ''}`;
+  }
+  if (activity.metrics?.score) {
+    if (activity.metrics.score.scoreType === 'racket') {
+      return `${activity.metrics.score.result ?? 'score'}${activity.metrics.score.setsFor !== undefined && activity.metrics.score.setsAgainst !== undefined ? ` · ${activity.metrics.score.setsFor}-${activity.metrics.score.setsAgainst}` : ''}`;
+    }
+    if (activity.metrics.score.scoreType === 'golf') {
+      return `Golf${activity.metrics.score.holesPlayed !== undefined ? ` · ${activity.metrics.score.holesPlayed} holes` : ''}${activity.metrics.score.strokes !== undefined ? ` · ${activity.metrics.score.strokes} slagen` : ''}`;
+    }
+    return 'Score activiteit';
+  }
+  if (activity.metrics?.skill) {
+    return `${activity.metrics.skill.techniques && activity.metrics.skill.techniques.length > 0 ? activity.metrics.skill.techniques.join(', ') : 'Skill'}${activity.metrics.skill.grade ? ` · ${activity.metrics.skill.grade}` : ''}`;
+  }
+  if (activity.metrics?.laps) {
+    return `${activity.metrics.laps.distanceMeters !== undefined ? `${Math.round(activity.metrics.laps.distanceMeters)} m` : 'Laps'}${activity.metrics.laps.laps !== undefined ? ` · ${Math.round(activity.metrics.laps.laps)} banen` : ''}`;
+  }
+  if (activity.metrics?.gps) {
+    return `${activity.metrics.gps.distanceMeters !== undefined ? `${Math.round(activity.metrics.gps.distanceMeters)} m` : 'GPS activiteit'}${activity.metrics.gps.averageSpeedKmh !== undefined ? ` · ${activity.metrics.gps.averageSpeedKmh.toFixed(1)} km/u` : ''}`;
+  }
+  return 'Geen metrics beschikbaar';
+}
 
 export default function TodayScreen() {
   const router = useRouter();
   const theme = useTheme();
-  const { width } = useWindowDimensions();
-  const [activeHeroSlide, setActiveHeroSlide] = useState(0);
-  const todayLabel = formatTodayLabel();
-  const { workoutActivities, isAppHydrated } = useAppContext();
-  const heroSlideWidth = Math.max(width - 32, 280);
-  const todayIsoDate = useMemo(() => {
-    const d = new Date();
-    const y = d.getFullYear();
-    const mo = `${d.getMonth() + 1}`.padStart(2, '0');
-    const day = `${d.getDate()}`.padStart(2, '0');
-    return `${y}-${mo}-${day}`;
+  const [activities, setActivities] = useState<Activity[]>([]);
+
+  useEffect(() => {
+    getActivities().then((items) => {
+      const sorted = [...items].sort((a, b) => new Date(b.endedAt).getTime() - new Date(a.endedAt).getTime());
+      setActivities(sorted);
+    });
   }, []);
-  const todayWorkouts = useMemo(
-    () => workoutActivities.filter((a) => a.dateIso.startsWith(todayIsoDate)),
-    [workoutActivities, todayIsoDate],
+
+  const todayLabel = useMemo(() => formatTodayLabel(), []);
+  const todayKey = useMemo(() => {
+    const now = new Date();
+    const y = now.getFullYear();
+    const m = `${now.getMonth() + 1}`.padStart(2, '0');
+    const d = `${now.getDate()}`.padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  }, []);
+
+  const todayActivities = useMemo(
+    () => activities.filter((activity) => activity.endedAt.startsWith(todayKey)),
+    [activities, todayKey]
   );
-
-  const handleStartWorkout = () => {
-    if (todayWorkouts.length > 0) {
-      router.push(`/workouts/${todayWorkouts[0].id}` as any);
-    } else {
-      router.push('/workouts');
-    }
-  };
-
-  const handleHeroScrollEnd = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const nextIndex = Math.round(event.nativeEvent.contentOffset.x / heroSlideWidth);
-    setActiveHeroSlide(Math.min(Math.max(nextIndex, 0), TODAY_SWIPES.length - 1));
-  };
+  const mostRecentTodayActivity = todayActivities[0];
 
   return (
     <ScrollView style={[styles.screen, { backgroundColor: theme.background }]} contentContainerStyle={styles.content}>
@@ -89,261 +91,115 @@ export default function TodayScreen() {
         onSearchPress={() => router.push('/nutrition/search')}
         onCartPress={() => router.push('/(tabs)/cart')}
       />
-      <View style={styles.headerRow}>
-        <Text style={[styles.subtitle, { color: theme.subtitleColor }]}>{todayLabel.toUpperCase()}</Text>
-        <Pressable
-          style={({ pressed }) => [
-            styles.settingsPill,
-            { backgroundColor: theme.card, borderColor: theme.border },
-            pressed ? styles.settingsPillPressed : null,
-          ]}
-          onPress={() => router.push('/workouts/calendar')}
-        >
-          <MaterialCommunityIcons name="calendar-month-outline" size={20} color={theme.titleColor} />
-        </Pressable>
+
+      <Text style={[styles.dateLabel, { color: theme.subtitleColor }]}>{todayLabel}</Text>
+
+      <View style={[styles.welcomeCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+        <Text style={[styles.welcomeTitle, { color: theme.titleColor }]}>Welkom terug</Text>
+        <Text style={[styles.welcomeSubtitle, { color: theme.subtitleColor }]}>Alles wat je vandaag nodig hebt, staat hier klaar.</Text>
       </View>
 
-      <View style={styles.heroCarouselWrap}>
-        <ScrollView
-          horizontal
-          pagingEnabled
-          decelerationRate="fast"
-          showsHorizontalScrollIndicator={false}
-          snapToInterval={heroSlideWidth}
-          snapToAlignment="start"
-          onMomentumScrollEnd={handleHeroScrollEnd}
-          contentContainerStyle={styles.heroCarouselContent}
-        >
-          {TODAY_SWIPES.map((slide) => (
-            <ImageBackground
-              key={slide.title}
-              source={{ uri: slide.image }}
-              imageStyle={styles.heroSlideImage}
-              style={[styles.heroSlideCard, { width: heroSlideWidth }]}
-            >
-              <View style={styles.heroSlideOverlay}>
-                <Text style={styles.heroSlideBadge}>{slide.badge}</Text>
-                <Text style={styles.heroSlideTitle}>{slide.title}</Text>
-                <Text style={styles.heroSlideSubtitle}>{slide.subtitle}</Text>
-              </View>
-            </ImageBackground>
-          ))}
-        </ScrollView>
-        <View style={styles.heroDotsRow}>
-          {TODAY_SWIPES.map((slide, index) => (
-            <View
-              key={`${slide.title}-dot`}
-              style={[styles.heroDot, index === activeHeroSlide ? styles.heroDotActive : null]}
-            />
-          ))}
+      <Pressable style={styles.primaryCard} onPress={() => router.push('/tracker')}>
+        <View style={styles.primaryIconWrap}>
+          <MaterialCommunityIcons name="run-fast" size={22} color="#FFFFFF" />
         </View>
-      </View>
-
-      <View style={styles.heroButtonWrap}>
-        <Pressable
-          style={styles.heroButton}
-          onPress={handleStartWorkout}
-        >
-          <MaterialCommunityIcons name="play-circle-outline" size={22} color="#fff" />
-          <Text style={styles.heroButtonText}>
-            Start Workout{todayWorkouts.length > 0 ? ' (gepland)' : ''}
-          </Text>
-        </Pressable>
-      </View>
-
-      <View style={styles.quickKeysWrap}>
-        <Pressable style={[styles.quickKeyButton, { backgroundColor: '#0EA5E9' }]} onPress={() => router.push('/nutrition/scan')}>
-          <MaterialCommunityIcons name="barcode-scan" size={16} color="#FFFFFF" />
-          <Text style={styles.quickKeyText}>Barcode Scannen</Text>
-        </Pressable>
-        <Pressable style={[styles.quickKeyButton, { backgroundColor: '#16A34A' }]} onPress={() => router.push('/nutrition/add')}>
-          <MaterialCommunityIcons name="plus-circle-outline" size={16} color="#FFFFFF" />
-          <Text style={styles.quickKeyText}>Snel Toevoegen</Text>
-        </Pressable>
-        <Pressable style={[styles.quickKeyButton, { backgroundColor: '#2563EB' }]} onPress={() => router.push('/nutrition/compare')}>
-          <MaterialCommunityIcons name="scale-balance" size={16} color="#FFFFFF" />
-          <Text style={styles.quickKeyText}>Vergelijk Eten</Text>
-        </Pressable>
-        <Pressable style={[styles.quickKeyButton, { backgroundColor: '#F59E0B' }]} onPress={() => router.push('/my-nutrition')}>
-          <MaterialCommunityIcons name="notebook-outline" size={16} color="#FFFFFF" />
-          <Text style={styles.quickKeyText}>Mijn Voeding</Text>
-        </Pressable>
-        <Pressable style={[styles.quickKeyButton, { backgroundColor: '#4B5563' }]} onPress={() => router.push('/(tabs)/nutrition')}>
-          <MaterialCommunityIcons name="food-apple-outline" size={16} color="#FFFFFF" />
-          <Text style={styles.quickKeyText}>Voeding Overzicht</Text>
-        </Pressable>
-      </View>
-
-      <View style={[styles.progressCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-        <Text style={[styles.progressLabel, { color: theme.subtitleColor }]}>DAGVOORTGANG</Text>
-        <Text style={[styles.progressValue, { color: theme.titleColor }]}>2 / 5 taken voltooid</Text>
-        <View style={styles.progressBarTrack}>
-          <View style={styles.progressBarFill} />
+        <View style={styles.primaryTextWrap}>
+          <Text style={styles.primaryTitle}>Start activiteit</Text>
+          <Text style={styles.primarySubtitle}>Track je training, wedstrijd of sessie.</Text>
         </View>
-      </View>
-
-      <Text style={[styles.sectionLabel, { color: theme.subtitleColor }]}>STATISTIEKEN VANDAAG</Text>
-      <View style={styles.statsGrid}>
-        <View style={[styles.statCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <Text style={[styles.statValue, { color: theme.titleColor }]}>8.4k</Text>
-          <Text style={[styles.statLabel, { color: theme.subtitleColor }]}>Stappen</Text>
-        </View>
-        <View style={[styles.statCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <Text style={[styles.statValue, { color: theme.titleColor }]}>612</Text>
-          <Text style={[styles.statLabel, { color: theme.subtitleColor }]}>Actieve kcal</Text>
-        </View>
-        <View style={[styles.statCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <Text style={[styles.statValue, { color: theme.titleColor }]}>71%</Text>
-          <Text style={[styles.statLabel, { color: theme.subtitleColor }]}>Hydratatie</Text>
-        </View>
-        <View style={[styles.statCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <Text style={[styles.statValue, { color: theme.titleColor }]}>7u 24m</Text>
-          <Text style={[styles.statLabel, { color: theme.subtitleColor }]}>Slaap</Text>
-        </View>
-      </View>
-
-      <View style={[styles.chartCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-        <View style={styles.chartHeader}>
-          <Text style={[styles.chartTitle, { color: theme.titleColor }]}>Weektrend Belastbaarheid</Text>
-          <Text style={[styles.chartMeta, { color: theme.subtitleColor }]}>Laatste 7 dagen</Text>
-        </View>
-        <View style={styles.trendBarsRow}>
-          {WEEK_TREND.map((value, index) => (
-            <View key={`trend-${index}`} style={styles.trendBarColumn}>
-              <View style={styles.trendBarTrack}>
-                <View style={[styles.trendBarFill, { height: `${value}%` }]} />
-              </View>
-              <Text style={[styles.trendDayLabel, { color: theme.subtitleColor }]}>
-                {['M', 'D', 'W', 'D', 'V', 'Z', 'Z'][index]}
-              </Text>
-            </View>
-          ))}
-        </View>
-      </View>
-
-      <View style={[styles.chartCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-        <View style={styles.chartHeader}>
-          <Text style={[styles.chartTitle, { color: theme.titleColor }]}>Macro en Herstel</Text>
-          <Text style={[styles.chartMeta, { color: theme.subtitleColor }]}>Dagdoelen</Text>
-        </View>
-        {MACRO_DISTRIBUTION.map((macro) => (
-          <View key={macro.label} style={styles.macroRow}>
-            <View style={styles.macroLabelWrap}>
-              <View style={[styles.macroDot, { backgroundColor: macro.color }]} />
-              <Text style={[styles.macroLabel, { color: theme.titleColor }]}>{macro.label}</Text>
-            </View>
-            <Text style={[styles.macroPercent, { color: theme.subtitleColor }]}>{macro.value}%</Text>
-            <View style={styles.macroTrack}>
-              <View style={[styles.macroFill, { width: `${macro.value}%`, backgroundColor: macro.color }]} />
-            </View>
-          </View>
-        ))}
-
-        <View style={[styles.recoveryCard, { borderColor: theme.border }]}>
-          <View>
-            <Text style={[styles.recoveryLabel, { color: theme.subtitleColor }]}>Recovery Score</Text>
-            <Text style={[styles.recoveryValue, { color: theme.titleColor }]}>78 / 100</Text>
-          </View>
-          <MaterialCommunityIcons name="heart-pulse" size={22} color="#EF4444" />
-        </View>
-      </View>
-
-      <View style={styles.sectionHeaderRow}>
-        <Text style={[styles.sectionLabel, { color: theme.subtitleColor }]}>WORKOUTS VANDAAG</Text>
-        <Pressable style={styles.addButton} onPress={() => router.push('/workouts/add')}>
-          <MaterialCommunityIcons name="plus" size={14} color="#2563EB" />
-          <Text style={styles.addButtonText}>Workout Toevoegen</Text>
-        </Pressable>
-      </View>
-      {!isAppHydrated ? (
-        <View style={[styles.rowCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <View style={styles.rowLeft}>
-            <MaterialCommunityIcons name="progress-clock" size={20} color={theme.subtitleColor} />
-            <View>
-              <Text style={[styles.rowTitle, { color: theme.subtitleColor }]}>Workouts laden...</Text>
-            </View>
-          </View>
-        </View>
-      ) : todayWorkouts.length > 0 ? (
-        todayWorkouts.map((activity) => (
-          <Pressable
-            key={activity.id}
-            style={[styles.rowCard, { backgroundColor: theme.card, borderColor: theme.border }]}
-            onPress={() => router.push(`/workouts/${activity.id}` as any)}
-          >
-            <View style={styles.rowLeft}>
-              <MaterialCommunityIcons name={activity.icon as any} size={20} color={activity.accentColor} />
-              <View>
-                <Text style={[styles.rowTitle, { color: theme.titleColor }]}>{activity.title}</Text>
-                <Text style={[styles.rowSubtitle, { color: theme.subtitleColor }]}>
-                  {ACTIVITY_TYPE_LABELS[activity.type]} · {activity.date}
-                </Text>
-              </View>
-            </View>
-            <MaterialCommunityIcons name="chevron-right" size={22} color="#9CA3AF" />
-          </Pressable>
-        ))
-      ) : (
-        <Pressable
-          style={[styles.rowCard, { backgroundColor: theme.card, borderColor: theme.border }]}
-          onPress={() => router.push('/workouts/add')}
-        >
-          <View style={styles.rowLeft}>
-            <MaterialCommunityIcons name="dumbbell" size={20} color={theme.subtitleColor} />
-            <View>
-              <Text style={[styles.rowTitle, { color: theme.subtitleColor }]}>Geen training gepland</Text>
-              <Text style={[styles.rowSubtitle, { color: theme.subtitleColor }]}>Tik om een training te loggen</Text>
-            </View>
-          </View>
-          <MaterialCommunityIcons name="plus" size={22} color="#9CA3AF" />
-        </Pressable>
-      )}
-
-      <Text style={[styles.sectionLabel, { color: theme.subtitleColor }]}>VOEDING</Text>
-      <Pressable style={[styles.rowCard, { backgroundColor: theme.card, borderColor: theme.border }]} onPress={() => router.push('/(tabs)/nutrition')}>
-        <View style={styles.rowLeft}>
-          <MaterialCommunityIcons name="silverware-fork-knife" size={20} color="#10B981" />
-          <View>
-            <Text style={[styles.rowTitle, { color: theme.titleColor }]}>Macro check</Text>
-            <Text style={[styles.rowSubtitle, { color: theme.subtitleColor }]}>Je zit op 68% van je dagdoel</Text>
-          </View>
-        </View>
-        <MaterialCommunityIcons name="chevron-right" size={22} color="#9CA3AF" />
+        <MaterialCommunityIcons name="chevron-right" size={24} color="#FFFFFF" />
       </Pressable>
 
-      <Text style={[styles.sectionLabel, { color: theme.subtitleColor }]}>MIND</Text>
-      <Pressable style={[styles.rowCard, { backgroundColor: theme.card, borderColor: theme.border }]} onPress={() => router.push('/(tabs)/mind')}>
-        <View style={styles.rowLeft}>
-          <MaterialCommunityIcons name="meditation" size={20} color="#8B5CF6" />
-          <View>
-            <Text style={[styles.rowTitle, { color: theme.titleColor }]}>Korte reset-sessie</Text>
-            <Text style={[styles.rowSubtitle, { color: theme.subtitleColor }]}>8 min focus-ademhaling</Text>
-          </View>
+      <View style={[styles.sectionCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+        <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Vandaag data</Text>
+        <Text style={[styles.dataFallback, { color: theme.subtitleColor }]}>Nog geen data gekoppeld.</Text>
+        <View style={styles.dataGrid}>
+          <DataTile label="Stappen" value="-" />
+          <DataTile label="Hartslag" value="-" />
+          <DataTile label="Kcal" value="-" />
+          <DataTile label="Actieve minuten" value="-" />
+          <DataTile label="Slaap/herstel" value="-" />
         </View>
-        <MaterialCommunityIcons name="chevron-right" size={22} color="#9CA3AF" />
-      </Pressable>
-
-      <Text style={[styles.sectionLabel, { color: theme.subtitleColor }]}>SNELLE ACTIES</Text>
-      <View style={styles.actionsGrid}>
-        <Pressable style={styles.actionButton} onPress={() => router.push('/workouts')}>
-          <MaterialCommunityIcons name="play-circle-outline" size={18} color="#FFFFFF" />
-          <Text style={styles.actionText}>Start Workout</Text>
-        </Pressable>
-        <Pressable style={[styles.actionButton, styles.actionButtonAlt]} onPress={() => router.push('/(tabs)/community')}>
-          <MaterialCommunityIcons name="account-group-outline" size={18} color="#FFFFFF" />
-          <Text style={styles.actionText}>Open Community</Text>
+        <Pressable style={styles.linkButton} onPress={() => router.push('/data-link')}>
+          <Text style={styles.linkButtonText}>Data koppelen</Text>
         </Pressable>
       </View>
 
-      <Text style={[styles.sectionLabel, { color: theme.subtitleColor }]}>HELP ONS VERBETEREN</Text>
-      <Pressable style={styles.feedbackButton} onPress={() => router.push('/(tabs)')}>
-        <MaterialCommunityIcons name="chat-outline" size={18} color="#FFFFFF" />
-        <Text style={styles.feedbackButtonText}>Geef Feedback</Text>
-        <MaterialCommunityIcons name="arrow-right" size={18} color="#FFFFFF" />
-      </Pressable>
+      <View style={[styles.sectionCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+        <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Snelle acties</Text>
+        <View style={styles.quickGrid}>
+          <QuickActionTile label="Voeding toevoegen" icon="plus-circle-outline" onPress={() => router.push('/nutrition/add')} />
+          <QuickActionTile label="Voeding vergelijken" icon="scale-balance" onPress={() => router.push('/nutrition/compare')} />
+          <QuickActionTile label="Snel informatie vinden" icon="magnify" onPress={() => router.push('/nutrition/search')} />
+          <QuickActionTile label="Habit tracker" icon="calendar-check-outline" disabled />
+          <QuickActionTile label="Geef feedback" icon="chat-outline" onPress={() => router.push('/(tabs)')} />
+        </View>
+      </View>
+
+      <View style={[styles.sectionCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+        <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Vandaag actief</Text>
+        {todayActivities.length > 0 ? (
+          <>
+            <Text style={[styles.activityStatus, { color: theme.subtitleColor }]}>{todayActivities.length} activiteit{todayActivities.length > 1 ? 'en' : ''} vandaag</Text>
+            {mostRecentTodayActivity ? (
+              <Pressable
+                style={styles.recentActivityCard}
+                onPress={() => router.push({ pathname: '/activities/[id]', params: { id: mostRecentTodayActivity.id } })}
+              >
+                <Text style={styles.recentDiscipline}>{mostRecentTodayActivity.disciplineName}</Text>
+                <Text style={styles.recentMeta}>{formatDuration(mostRecentTodayActivity.durationSeconds)} · {formatDateTime(mostRecentTodayActivity.endedAt)}</Text>
+                <Text style={styles.recentSummary}>{getMetricsSummary(mostRecentTodayActivity)}</Text>
+              </Pressable>
+            ) : null}
+          </>
+        ) : (
+          <View>
+            <Text style={[styles.activityStatus, { color: theme.subtitleColor }]}>Nog geen activiteit vandaag.</Text>
+            <Pressable onPress={() => router.push('/tracker')}>
+              <Text style={styles.inlineLink}>Start activiteit</Text>
+            </Pressable>
+          </View>
+        )}
+      </View>
 
       <View style={styles.bottomSpacer} />
     </ScrollView>
+  );
+}
+
+function DataTile({ label, value }: { label: string; value: string }) {
+  return (
+    <View style={styles.dataTile}>
+      <Text style={styles.dataTileLabel}>{label}</Text>
+      <Text style={styles.dataTileValue}>{value}</Text>
+    </View>
+  );
+}
+
+function QuickActionTile({
+  label,
+  icon,
+  onPress,
+  disabled,
+}: {
+  label: string;
+  icon: React.ComponentProps<typeof MaterialCommunityIcons>['name'];
+  onPress?: () => void;
+  disabled?: boolean;
+}) {
+  return (
+    <Pressable
+      style={({ pressed }) => [
+        styles.quickTile,
+        disabled ? styles.quickTileDisabled : null,
+        pressed && !disabled ? styles.quickTilePressed : null,
+      ]}
+      onPress={onPress}
+      disabled={disabled}
+    >
+      <MaterialCommunityIcons name={icon} size={18} color={disabled ? '#94A3B8' : '#2563EB'} />
+      <Text style={[styles.quickTileText, disabled ? styles.quickTileTextDisabled : null]}>{disabled ? `${label} (Binnenkort)` : label}</Text>
+    </Pressable>
   );
 }
 
@@ -355,400 +211,166 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 20,
   },
-  headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
+  dateLabel: {
+    marginTop: 6,
     marginBottom: 10,
+    fontSize: 14,
+    fontWeight: '600',
+    textTransform: 'capitalize',
   },
-  headerActions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  title: {
-    fontSize: 54,
-    lineHeight: 58,
-    fontWeight: '900',
-    letterSpacing: -1.8,
-  },
-  subtitle: {
-    marginTop: 3,
-    marginBottom: 0,
-    fontSize: 11,
-    fontWeight: '700',
-    letterSpacing: 1.5,
-  },
-  settingsPill: {
-    width: 42,
-    height: 42,
-    borderRadius: 21,
+  welcomeCard: {
     borderWidth: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    borderRadius: 14,
+    padding: 14,
+    marginBottom: 12,
   },
-  settingsPillPressed: {
-    transform: [{ scale: 0.96 }],
-    opacity: 0.9,
-  },
-  heroCarouselWrap: {
-    marginBottom: 14,
-  },
-  heroCarouselContent: {
-    alignItems: 'stretch',
-  },
-  heroSlideCard: {
-    height: 162,
-    borderRadius: 18,
-    overflow: 'hidden',
-    marginRight: 10,
-  },
-  heroSlideImage: {
-    borderRadius: 18,
-  },
-  heroSlideOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(8, 14, 28, 0.48)',
-    paddingHorizontal: 14,
-    paddingVertical: 14,
-    justifyContent: 'flex-end',
-  },
-  heroSlideBadge: {
-    alignSelf: 'flex-start',
-    marginBottom: 8,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 999,
-    backgroundColor: 'rgba(255, 255, 255, 0.18)',
-    color: '#FFFFFF',
-    fontSize: 10,
-    fontWeight: '700',
-    letterSpacing: 1,
-  },
-  heroSlideTitle: {
-    color: '#FFFFFF',
+  welcomeTitle: {
     fontSize: 24,
-    lineHeight: 28,
-    fontWeight: '900',
-    letterSpacing: -0.4,
+    fontWeight: '800',
+    marginBottom: 4,
   },
-  heroSlideSubtitle: {
-    marginTop: 4,
-    color: '#E5E7EB',
-    fontSize: 12,
-    lineHeight: 16,
-    fontWeight: '600',
-    maxWidth: '85%',
+  welcomeSubtitle: {
+    fontSize: 14,
+    lineHeight: 20,
   },
-  heroDotsRow: {
-    marginTop: 8,
+  primaryCard: {
+    backgroundColor: '#2563EB',
+    borderRadius: 14,
+    padding: 16,
+    marginBottom: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  primaryIconWrap: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  primaryTextWrap: {
+    flex: 1,
+  },
+  primaryTitle: {
+    color: '#FFFFFF',
+    fontSize: 20,
+    fontWeight: '800',
     marginBottom: 2,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 6,
   },
-  heroDot: {
-    width: 7,
-    height: 7,
-    borderRadius: 4,
-    backgroundColor: '#CBD5E1',
-    opacity: 0.6,
+  primarySubtitle: {
+    color: '#DBEAFE',
+    fontSize: 14,
   },
-  heroDotActive: {
-    width: 20,
-    backgroundColor: '#2563EB',
-    opacity: 1,
-  },
-  heroButtonWrap: {
-    marginBottom: 10,
-  },
-  heroButton: {
-    backgroundColor: '#2563EB',
-    borderRadius: 16,
-    paddingVertical: 14,
-    alignItems: 'center',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: 8,
-  },
-  heroButtonText: {
-    color: '#FFFFFF',
-    fontWeight: '700',
-    fontSize: 16,
-  },
-  quickKeysWrap: {
-    marginBottom: 16,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
-  quickKeyButton: {
-    width: '48.5%',
-    borderRadius: 12,
-    paddingVertical: 10,
-    paddingHorizontal: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 6,
-  },
-  quickKeyText: {
-    color: '#FFFFFF',
-    fontSize: 12,
-    fontWeight: '700',
-  },
-  progressCard: {
-    borderWidth: 1,
-    borderRadius: 16,
-    paddingHorizontal: 14,
-    paddingVertical: 14,
-    marginBottom: 16,
-  },
-  progressLabel: {
-    fontSize: 11,
-    fontWeight: '700',
-    letterSpacing: 1.2,
-  },
-  progressValue: {
-    marginTop: 6,
-    fontSize: 18,
-    fontWeight: '800',
-  },
-  progressBarTrack: {
-    marginTop: 10,
-    height: 8,
-    borderRadius: 999,
-    backgroundColor: '#E5E7EB',
-    overflow: 'hidden',
-  },
-  progressBarFill: {
-    width: '40%',
-    height: '100%',
-    backgroundColor: '#2563EB',
-  },
-  statsGrid: {
-    marginBottom: 12,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 10,
-  },
-  statCard: {
-    width: '48.5%',
+  sectionCard: {
     borderWidth: 1,
     borderRadius: 14,
-    paddingHorizontal: 12,
-    paddingVertical: 12,
-  },
-  statValue: {
-    fontSize: 22,
-    fontWeight: '900',
-    letterSpacing: -0.6,
-  },
-  statLabel: {
-    marginTop: 4,
-    fontSize: 11,
-    fontWeight: '600',
-  },
-  chartCard: {
-    borderWidth: 1,
-    borderRadius: 16,
-    paddingHorizontal: 12,
-    paddingVertical: 12,
+    padding: 14,
     marginBottom: 12,
   },
-  chartHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  chartTitle: {
-    fontSize: 14,
+  sectionTitle: {
+    fontSize: 17,
     fontWeight: '800',
-  },
-  chartMeta: {
-    fontSize: 11,
-    fontWeight: '600',
-  },
-  trendBarsRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-end',
-    gap: 8,
-  },
-  trendBarColumn: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  trendBarTrack: {
-    width: 16,
-    height: 86,
-    borderRadius: 999,
-    backgroundColor: '#E5E7EB',
-    justifyContent: 'flex-end',
-    overflow: 'hidden',
-  },
-  trendBarFill: {
-    width: '100%',
-    borderRadius: 999,
-    backgroundColor: '#2563EB',
-  },
-  trendDayLabel: {
-    marginTop: 6,
-    fontSize: 10,
-    fontWeight: '700',
-  },
-  macroRow: {
     marginBottom: 10,
   },
-  macroLabelWrap: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  macroDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-  },
-  macroLabel: {
-    fontSize: 12,
-    fontWeight: '700',
-  },
-  macroPercent: {
-    position: 'absolute',
-    right: 0,
-    top: 0,
-    fontSize: 11,
-    fontWeight: '700',
-  },
-  macroTrack: {
-    marginTop: 6,
-    width: '100%',
-    height: 8,
-    borderRadius: 999,
-    backgroundColor: '#E5E7EB',
-    overflow: 'hidden',
-  },
-  macroFill: {
-    height: '100%',
-    borderRadius: 999,
-  },
-  recoveryCard: {
-    marginTop: 2,
-    borderWidth: 1,
-    borderRadius: 12,
-    paddingHorizontal: 10,
-    paddingVertical: 10,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  recoveryLabel: {
-    fontSize: 11,
-    fontWeight: '600',
-  },
-  recoveryValue: {
-    marginTop: 3,
-    fontSize: 16,
-    fontWeight: '900',
-  },
-  sectionLabel: {
-    marginTop: 4,
-    marginBottom: 8,
-    marginLeft: 2,
-    fontSize: 11,
-    fontWeight: '700',
-    letterSpacing: 1.3,
-  },
-  rowCard: {
-    borderWidth: 1,
-    borderRadius: 14,
-    paddingHorizontal: 12,
-    paddingVertical: 12,
-    marginBottom: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: 10,
-  },
-  rowLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    flex: 1,
-  },
-  rowTitle: {
-    fontSize: 14,
-    fontWeight: '700',
-  },
-  rowSubtitle: {
-    marginTop: 2,
-    fontSize: 12,
-    fontWeight: '500',
-  },
-  actionsGrid: {
-    flexDirection: 'row',
-    gap: 10,
-  },
-  actionButton: {
-    flex: 1,
-    borderRadius: 12,
-    backgroundColor: '#2563EB',
-    paddingVertical: 12,
-    paddingHorizontal: 12,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 6,
-  },
-  actionButtonAlt: {
-    backgroundColor: '#059669',
-  },
-  feedbackButton: {
-    marginTop: 2,
-    borderRadius: 12,
-    backgroundColor: '#10B981',
-    paddingVertical: 12,
-    paddingHorizontal: 14,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  feedbackButtonText: {
-    color: '#FFFFFF',
-    fontSize: 14,
-    fontWeight: '700',
-  },
-  actionText: {
-    color: '#FFFFFF',
+  dataFallback: {
     fontSize: 13,
+    marginBottom: 10,
+  },
+  dataGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  dataTile: {
+    backgroundColor: '#F8FAFC',
+    borderRadius: 10,
+    padding: 10,
+    width: '48%',
+  },
+  dataTileLabel: {
+    color: '#64748B',
+    fontSize: 12,
+    marginBottom: 4,
+  },
+  dataTileValue: {
+    color: '#0F172A',
+    fontSize: 18,
+    fontWeight: '700',
+  },
+  linkButton: {
+    alignSelf: 'flex-start',
+    marginTop: 10,
+    backgroundColor: '#E2E8F0',
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+  },
+  linkButtonText: {
+    color: '#1E3A8A',
+    fontWeight: '700',
+    fontSize: 13,
+  },
+  quickGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  quickTile: {
+    width: '48%',
+    backgroundColor: '#F8FAFC',
+    borderRadius: 10,
+    padding: 10,
+    minHeight: 68,
+    justifyContent: 'center',
+  },
+  quickTilePressed: {
+    opacity: 0.8,
+  },
+  quickTileDisabled: {
+    backgroundColor: '#E2E8F0',
+  },
+  quickTileText: {
+    marginTop: 6,
+    color: '#1E293B',
+    fontSize: 13,
+    fontWeight: '600',
+  },
+  quickTileTextDisabled: {
+    color: '#64748B',
+  },
+  activityStatus: {
+    fontSize: 14,
+    marginBottom: 10,
+  },
+  recentActivityCard: {
+    backgroundColor: '#F8FAFC',
+    borderRadius: 10,
+    padding: 12,
+  },
+  recentDiscipline: {
+    color: '#2563EB',
+    fontSize: 16,
+    fontWeight: '800',
+    marginBottom: 2,
+  },
+  recentMeta: {
+    color: '#64748B',
+    fontSize: 13,
+    marginBottom: 4,
+  },
+  recentSummary: {
+    color: '#1F2937',
+    fontSize: 13,
+    lineHeight: 18,
+  },
+  inlineLink: {
+    color: '#2563EB',
+    fontSize: 14,
     fontWeight: '700',
   },
   bottomSpacer: {
-    height: 90,
-  },
-  sectionHeaderRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 4,
-    marginBottom: 8,
-    marginLeft: 2,
-  },
-  addButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 999,
-    backgroundColor: '#DBEAFE',
-  },
-  addButtonText: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: '#2563EB',
+    height: 22,
   },
 });
