@@ -501,31 +501,9 @@ export default function StartActivityScreen() {
         <Text style={styles.timer}>{formatTime(seconds)}</Text>
       </View>
 
-      <View style={styles.buttonRow}>
-        {status === 'NOT_STARTED' ? (
-          <TouchableOpacity style={[styles.button, styles.primaryActionButton]} onPress={handleStart}>
-            <Text style={styles.buttonText}>Start</Text>
-          </TouchableOpacity>
-        ) : null}
-
-        {(status === 'ACTIVE' || status === 'PAUSED') ? (
-          <>
-            <TouchableOpacity
-              style={[styles.button, styles.secondaryActionButton]}
-              onPress={status === 'ACTIVE' ? handlePause : handleResume}
-            >
-              <Text style={styles.buttonText}>{status === 'ACTIVE' ? 'Pauze' : 'Hervatten'}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.button, styles.stopButton]} onPress={handleStop}>
-              <Text style={styles.buttonText}>Stop</Text>
-            </TouchableOpacity>
-          </>
-        ) : null}
-      </View>
-
-      {isWorkoutDiscipline && status === 'FINISHED' && (
+      {isWorkoutDiscipline && (
         <View style={styles.metricsBlock}>
-          <Text style={styles.metricsTitle}>Workout details</Text>
+          <Text style={styles.metricsTitle}>Workout tracker</Text>
           <Text style={styles.sectionSubtitle}>Voeg je oefeningen toe voor een volledige workout-opslag.</Text>
 
           {exerciseDrafts.map((exercise, index) => (
@@ -592,9 +570,9 @@ export default function StartActivityScreen() {
         </View>
       )}
 
-      {isSessionDiscipline && status === 'FINISHED' && (
+      {isSessionDiscipline && (
         <View style={styles.metricsBlock}>
-          <Text style={styles.metricsTitle}>Session metrics</Text>
+          <Text style={styles.metricsTitle}>Session tracker</Text>
           {discipline.privacyDefault === 'private' ? (
             <Text style={styles.privacyNote}>Deze activiteit staat standaard prive.</Text>
           ) : null}
@@ -666,9 +644,9 @@ export default function StartActivityScreen() {
         </View>
       )}
 
-      {isMatchDiscipline && status === 'FINISHED' && (
+      {isMatchDiscipline && (
         <View style={styles.metricsBlock}>
-          <Text style={styles.metricsTitle}>Match metrics</Text>
+          <Text style={styles.metricsTitle}>Wedstrijd/training tracker</Text>
 
           <Text style={styles.fieldLabel}>Type</Text>
           <View style={styles.optionRow}>
@@ -754,9 +732,9 @@ export default function StartActivityScreen() {
         </View>
       )}
 
-      {isScoreDiscipline && status === 'FINISHED' && (
+      {isScoreDiscipline && (
         <View style={styles.metricsBlock}>
-          <Text style={styles.metricsTitle}>Score metrics</Text>
+          <Text style={styles.metricsTitle}>Score tracker</Text>
 
           {scoreType === 'racket' ? (
             <>
@@ -830,9 +808,9 @@ export default function StartActivityScreen() {
         </View>
       )}
 
-      {isSkillDiscipline && status === 'FINISHED' && (
+      {isSkillDiscipline && (
         <View style={styles.metricsBlock}>
-          <Text style={styles.metricsTitle}>Skill metrics</Text>
+          <Text style={styles.metricsTitle}>Skill tracker</Text>
 
           <Text style={styles.fieldLabel}>Niveau</Text>
           <TextInput style={styles.input} placeholder="Niveau/level optioneel" value={skillLevel} onChangeText={setSkillLevel} />
@@ -884,9 +862,9 @@ export default function StartActivityScreen() {
         </View>
       )}
 
-      {isLapsDiscipline && status === 'FINISHED' && (
+      {isLapsDiscipline && (
         <View style={styles.metricsBlock}>
-          <Text style={styles.metricsTitle}>Laps metrics</Text>
+          <Text style={styles.metricsTitle}>Zwem tracker</Text>
 
           <Text style={styles.fieldLabel}>Zwembadlengte (meters)</Text>
           <TextInput
@@ -955,9 +933,9 @@ export default function StartActivityScreen() {
         </View>
       )}
 
-      {isGpsDiscipline && status === 'FINISHED' && (
+      {isGpsDiscipline && (
         <View style={styles.metricsBlock}>
-          <Text style={styles.metricsTitle}>GPS metrics</Text>
+          <Text style={styles.metricsTitle}>GPS tracker</Text>
           {!isGpsTrackingAvailable ? (
             <Text style={styles.privacyNote}>GPS tracking komt binnenkort beschikbaar.</Text>
           ) : null}
@@ -971,17 +949,45 @@ export default function StartActivityScreen() {
         </View>
       )}
 
+      <View style={styles.buttonRow}>
+        {status === 'NOT_STARTED' ? (
+          <TouchableOpacity style={[styles.button, styles.primaryActionButton]} onPress={handleStart}>
+            <Text style={styles.buttonText}>Start</Text>
+          </TouchableOpacity>
+        ) : null}
+
+        {(status === 'ACTIVE' || status === 'PAUSED') ? (
+          <>
+            <TouchableOpacity
+              style={[styles.button, styles.secondaryActionButton]}
+              onPress={status === 'ACTIVE' ? handlePause : handleResume}
+            >
+              <Text style={styles.buttonText}>{status === 'ACTIVE' ? 'Pauze' : 'Hervatten'}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.button, styles.stopButton]} onPress={handleStop}>
+              <Text style={styles.buttonText}>Stop</Text>
+            </TouchableOpacity>
+          </>
+        ) : null}
+      </View>
+
       {status === 'FINISHED' ? (
-        <TouchableOpacity
-          style={[styles.button, styles.saveButton, (!canSaveWorkout || saved) ? styles.disabledButton : null, saved ? styles.savedButton : null]}
-          onPress={handleSave}
-          disabled={saving || saved || !canSaveWorkout}
-          accessibilityRole="button"
-        >
-          <Text style={styles.buttonText}>
-            {saved ? 'Opgeslagen!' : saving ? 'Opslaan...' : 'Activiteit opslaan'}
-          </Text>
-        </TouchableOpacity>
+        <>
+          <Text style={styles.reviewText}>Controleer je gegevens en sla je activiteit op.</Text>
+          <TouchableOpacity
+            style={[styles.button, styles.saveButton, (!canSaveWorkout || saved) ? styles.disabledButton : null, saved ? styles.savedButton : null]}
+            onPress={handleSave}
+            disabled={saving || saved || !canSaveWorkout}
+            accessibilityRole="button"
+          >
+            <Text style={styles.buttonText}>
+              {saved ? 'Opgeslagen!' : saving ? 'Opslaan...' : 'Activiteit opslaan'}
+            </Text>
+          </TouchableOpacity>
+          {!canSaveWorkout ? (
+            <Text style={styles.validationNote}>Voeg minimaal een geldige oefening toe voordat je opslaat.</Text>
+          ) : null}
+        </>
       ) : null}
       {saved && <Text style={styles.successText}>Activiteit opgeslagen.</Text>}
     </ScrollView>
@@ -1189,6 +1195,12 @@ const styles = StyleSheet.create({
   saveButton: {
     backgroundColor: '#2563EB',
     marginTop: 4,
+  },
+  reviewText: {
+    fontSize: 14,
+    color: '#475569',
+    marginTop: 6,
+    marginBottom: 10,
   },
   disabledButton: {
     backgroundColor: '#D1D5DB',
