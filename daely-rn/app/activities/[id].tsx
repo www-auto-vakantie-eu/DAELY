@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import PageHeader from '../components/PageHeader';
 import { getActivities, deleteActivity, Activity } from 'services/activity-storage';
 import { SPORT_DISCIPLINES } from '../constants/sport-disciplines';
 
 export default function ActivityDetailScreen() {
+  const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
   const [activity, setActivity] = useState<Activity | null>(null);
 
@@ -29,9 +30,7 @@ export default function ActivityDetailScreen() {
           style: 'destructive',
           onPress: async () => {
             await deleteActivity(activity.id);
-            if (typeof window !== 'undefined' && window.location) {
-              window.location.href = '/activities';
-            }
+            router.replace('/activities');
           },
         },
       ]
