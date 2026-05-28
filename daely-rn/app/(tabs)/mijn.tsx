@@ -355,6 +355,15 @@ export default function HomeScreen() {
             <Text style={styles.quickActionText}>Vind Coach</Text>
             <MaterialCommunityIcons name="arrow-right" size={18} color="#FFFFFF" />
           </Pressable>
+
+          <Pressable
+            style={({ pressed }) => [styles.quickActionButton, pressed ? styles.quickActionButtonPressed : null]}
+            onPress={() => handleCardPress('/activities')}
+          >
+            <MaterialCommunityIcons name="history" size={18} color="#FFFFFF" />
+            <Text style={styles.quickActionText}>Activiteiten</Text>
+            <MaterialCommunityIcons name="arrow-right" size={18} color="#FFFFFF" />
+          </Pressable>
         </View>
 
         <View style={styles.bottomSpacer} />
