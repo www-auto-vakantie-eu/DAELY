@@ -25,7 +25,7 @@ export default function TabLayout() {
     <View style={{ flex: 1 }}>
       <GlobalCartButton />
       <Tabs
-        initialRouteName="today"
+        initialRouteName="index"
         screenOptions={{
           tabBarActiveTintColor: theme.tabBarActive,
           tabBarInactiveTintColor: theme.tabBarInactive,

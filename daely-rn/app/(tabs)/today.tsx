@@ -1,10 +1,32 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { ScrollView, StyleSheet, Text, View, Pressable } from 'react-native';
+import { ScrollView, StyleSheet, Text, View, Pressable, ImageBackground, ImageSourcePropType } from 'react-native';
 import { useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/use-theme';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import PageHeader from '../components/PageHeader';
 import { Activity, getActivities } from 'services/activity-storage';
+import { useAppContext } from '@/contexts/AppContext';
+
+const HERO_BACKGROUND_STORAGE_KEY = 'daely.today.heroBackground.v1';
+
+type HeroBackgroundOptionId = 'ownPhoto' | 'daelyHeader' | 'performance' | 'recovery' | 'community' | 'minimalDark';
+
+type HeroBackgroundOption = {
+  id: HeroBackgroundOptionId;
+  label: string;
+  source?: ImageSourcePropType;
+  disabled?: boolean;
+};
+
+const HERO_BACKGROUND_OPTIONS: HeroBackgroundOption[] = [
+  { id: 'ownPhoto', label: 'Eigen foto (Binnenkort)', disabled: true },
+  { id: 'daelyHeader', label: 'DAELY header', source: require('../../assets/images/theme-classic.png') },
+  { id: 'performance', label: 'Performance', source: require('../../assets/images/theme-pulse.png') },
+  { id: 'recovery', label: 'Recovery', source: require('../../assets/images/theme-zen.ink.png') },
+  { id: 'community', label: 'Community', source: require('../../assets/images/theme-retro-sport.png') },
+  { id: 'minimalDark', label: 'Minimal dark' },
+];
 
 function formatTodayLabel() {
   const now = new Date();
@@ -59,7 +81,10 @@ function getMetricsSummary(activity: Activity) {
 export default function TodayScreen() {
   const router = useRouter();
   const theme = useTheme();
+  const { user } = useAppContext();
   const [activities, setActivities] = useState<Activity[]>([]);
+  const [heroBackground, setHeroBackground] = useState<HeroBackgroundOptionId>('daelyHeader');
+  const [showHeroBackgroundPicker, setShowHeroBackgroundPicker] = useState(false);
 
   useEffect(() => {
     getActivities().then((items) => {
@@ -67,6 +92,24 @@ export default function TodayScreen() {
       setActivities(sorted);
     });
   }, []);
+
+  useEffect(() => {
+    AsyncStorage.getItem(HERO_BACKGROUND_STORAGE_KEY).then((stored) => {
+      if (!stored) return;
+      const exists = HERO_BACKGROUND_OPTIONS.some((option) => option.id === stored);
+      if (exists) {
+        setHeroBackground(stored as HeroBackgroundOptionId);
+      }
+    });
+  }, []);
+
+  const selectedHeroBackground = HERO_BACKGROUND_OPTIONS.find((option) => option.id === heroBackground) ?? HERO_BACKGROUND_OPTIONS[1];
+  const userName = typeof user.name === 'string' && user.name.trim().length > 0
+    ? user.name.trim()
+    : typeof user.username === 'string' && user.username.trim().length > 0
+      ? user.username.trim()
+      : undefined;
+  const heroGreeting = userName ? `Welkom terug, ${userName}` : 'Welkom terug';
 
   const todayLabel = useMemo(() => formatTodayLabel(), []);
   const todayKey = useMemo(() => {
@@ -94,9 +137,60 @@ export default function TodayScreen() {
 
       <Text style={[styles.dateLabel, { color: theme.subtitleColor }]}>{todayLabel}</Text>
 
-      <View style={[styles.welcomeCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-        <Text style={[styles.welcomeTitle, { color: theme.titleColor }]}>Welkom terug</Text>
-        <Text style={[styles.welcomeSubtitle, { color: theme.subtitleColor }]}>Alles wat je vandaag nodig hebt, staat hier klaar.</Text>
+      <View style={styles.heroWrap}>
+        {selectedHeroBackground.source ? (
+          <ImageBackground source={selectedHeroBackground.source} imageStyle={styles.heroImage} style={styles.heroCard}>
+            <View style={styles.heroOverlay}>
+              <View style={styles.heroTopRow}>
+                <Pressable
+                  style={styles.heroSettingsButton}
+                  onPress={() => setShowHeroBackgroundPicker((v) => !v)}
+                >
+                  <MaterialCommunityIcons name="image-edit-outline" size={16} color="#FFFFFF" />
+                  <Text style={styles.heroSettingsButtonText}>Achtergrond wijzigen</Text>
+                </Pressable>
+              </View>
+              <Text style={styles.welcomeTitle}>{heroGreeting}</Text>
+              <Text style={styles.welcomeSubtitle}>Alles wat je vandaag nodig hebt, staat hier klaar.</Text>
+            </View>
+          </ImageBackground>
+        ) : (
+          <View style={[styles.heroCard, styles.heroCardFallback]}>
+            <View style={styles.heroOverlay}>
+              <View style={styles.heroTopRow}>
+                <Pressable
+                  style={styles.heroSettingsButton}
+                  onPress={() => setShowHeroBackgroundPicker((v) => !v)}
+                >
+                  <MaterialCommunityIcons name="image-edit-outline" size={16} color="#FFFFFF" />
+                  <Text style={styles.heroSettingsButtonText}>Achtergrond wijzigen</Text>
+                </Pressable>
+              </View>
+              <Text style={styles.welcomeTitle}>{heroGreeting}</Text>
+              <Text style={styles.welcomeSubtitle}>Alles wat je vandaag nodig hebt, staat hier klaar.</Text>
+            </View>
+          </View>
+        )}
+
+        {showHeroBackgroundPicker ? (
+          <View style={styles.heroPickerCard}>
+            {HERO_BACKGROUND_OPTIONS.map((option) => (
+              <Pressable
+                key={option.id}
+                style={[styles.heroPickerItem, option.id === heroBackground ? styles.heroPickerItemActive : null, option.disabled ? styles.heroPickerItemDisabled : null]}
+                disabled={option.disabled}
+                onPress={() => {
+                  if (option.disabled) return;
+                  setHeroBackground(option.id);
+                  setShowHeroBackgroundPicker(false);
+                  AsyncStorage.setItem(HERO_BACKGROUND_STORAGE_KEY, option.id);
+                }}
+              >
+                <Text style={[styles.heroPickerText, option.disabled ? styles.heroPickerTextDisabled : null]}>{option.label}</Text>
+              </Pressable>
+            ))}
+          </View>
+        ) : null}
       </View>
 
       <Pressable style={styles.primaryCard} onPress={() => router.push('/tracker')}>
@@ -218,19 +312,83 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textTransform: 'capitalize',
   },
-  welcomeCard: {
-    borderWidth: 1,
-    borderRadius: 14,
-    padding: 14,
+  heroWrap: {
     marginBottom: 12,
+  },
+  heroCard: {
+    minHeight: 210,
+    borderRadius: 16,
+    overflow: 'hidden',
+    backgroundColor: '#0F172A',
+  },
+  heroCardFallback: {
+    backgroundColor: '#111827',
+  },
+  heroImage: {
+    borderRadius: 16,
+  },
+  heroOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(2,6,23,0.55)',
+    padding: 16,
+    justifyContent: 'space-between',
+  },
+  heroTopRow: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+  },
+  heroSettingsButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(15,23,42,0.55)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.35)',
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+  },
+  heroSettingsButtonText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '700',
+    marginLeft: 6,
+  },
+  heroPickerCard: {
+    marginTop: 8,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    padding: 8,
+  },
+  heroPickerItem: {
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+  },
+  heroPickerItemActive: {
+    backgroundColor: '#DBEAFE',
+  },
+  heroPickerItemDisabled: {
+    opacity: 0.6,
+  },
+  heroPickerText: {
+    color: '#1E293B',
+    fontSize: 13,
+    fontWeight: '600',
+  },
+  heroPickerTextDisabled: {
+    color: '#64748B',
   },
   welcomeTitle: {
     fontSize: 24,
     fontWeight: '800',
+    color: '#FFFFFF',
     marginBottom: 4,
   },
   welcomeSubtitle: {
     fontSize: 14,
+    color: '#E2E8F0',
     lineHeight: 20,
   },
   primaryCard: {
