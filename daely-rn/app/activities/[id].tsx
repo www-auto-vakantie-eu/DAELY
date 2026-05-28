@@ -156,7 +156,21 @@ export default function ActivityDetailScreen() {
           {activity.metrics.skill.notes ? <Text style={styles.notes}>Skill notities: {activity.metrics.skill.notes}</Text> : null}
         </View>
       ) : null}
-      {!activity.metrics?.workout && !activity.metrics?.session && !activity.metrics?.match && !activity.metrics?.score && !activity.metrics?.skill ? (
+      {activity.metrics?.laps ? (
+        <View style={styles.metricsBox}>
+          <Text style={styles.metricsTitle}>Laps metrics</Text>
+          {activity.metrics.laps.poolLengthMeters !== undefined ? <Text style={styles.meta}>Zwembadlengte: {activity.metrics.laps.poolLengthMeters} m</Text> : null}
+          {activity.metrics.laps.laps !== undefined ? <Text style={styles.meta}>Banen: {activity.metrics.laps.laps}</Text> : null}
+          {activity.metrics.laps.distanceMeters !== undefined ? <Text style={styles.meta}>Afstand: {activity.metrics.laps.distanceMeters} m</Text> : null}
+          {activity.metrics.laps.strokeType ? <Text style={styles.meta}>Slagtype: {activity.metrics.laps.strokeType}</Text> : null}
+          {activity.metrics.laps.pacePer100mSeconds !== undefined ? (
+            <Text style={styles.meta}>Tempo per 100m: {formatPacePer100m(activity.metrics.laps.pacePer100mSeconds)}</Text>
+          ) : null}
+          {activity.metrics.laps.intensity ? <Text style={styles.meta}>Intensiteit: {activity.metrics.laps.intensity}</Text> : null}
+          {activity.metrics.laps.notes ? <Text style={styles.notes}>Laps notities: {activity.metrics.laps.notes}</Text> : null}
+        </View>
+      ) : null}
+      {!activity.metrics?.workout && !activity.metrics?.session && !activity.metrics?.match && !activity.metrics?.score && !activity.metrics?.skill && !activity.metrics?.laps ? (
         <View style={styles.placeholderBox}>
           <Text style={styles.placeholder}>Metrics komen binnenkort voor deze discipline.</Text>
         </View>
@@ -174,6 +188,15 @@ function formatDuration(seconds: number) {
 function formatDate(dateStr: string) {
   const d = new Date(dateStr);
   return d.toLocaleString();
+}
+
+function formatPacePer100m(seconds: number) {
+  const rounded = Math.max(0, Math.round(seconds));
+  const min = Math.floor(rounded / 60)
+    .toString()
+    .padStart(2, '0');
+  const sec = (rounded % 60).toString().padStart(2, '0');
+  return `${min}:${sec}`;
 }
 
 const styles = StyleSheet.create({

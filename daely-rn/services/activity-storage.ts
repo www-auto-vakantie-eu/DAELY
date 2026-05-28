@@ -17,6 +17,7 @@ export type MatchType = 'training' | 'wedstrijd';
 export type ScoreType = 'racket' | 'golf' | 'other';
 export type ScoreResult = 'gewonnen' | 'verloren' | 'gelijkspel' | 'n.v.t.';
 export type SkillType = 'combat' | 'gymnastics' | 'parkour' | 'climbing' | 'other';
+export type LapsStrokeType = 'vrije slag' | 'schoolslag' | 'rugslag' | 'vlinderslag' | 'wisselslag' | 'gemengd';
 
 export interface MatchPersonalStats {
   goals?: number;
@@ -67,6 +68,16 @@ export interface SkillMetrics {
   notes?: string;
 }
 
+export interface LapsMetrics {
+  poolLengthMeters?: number;
+  laps?: number;
+  distanceMeters?: number;
+  strokeType?: LapsStrokeType;
+  pacePer100mSeconds?: number;
+  intensity?: SessionIntensity;
+  notes?: string;
+}
+
 export interface SessionMetrics {
   intensity?: SessionIntensity;
   focusAreas?: string[];
@@ -86,6 +97,7 @@ export interface ActivityMetrics {
   match?: MatchMetrics;
   score?: ScoreMetrics;
   skill?: SkillMetrics;
+  laps?: LapsMetrics;
 }
 
 export interface Activity {
@@ -145,6 +157,13 @@ function toOptionalSkillType(value: unknown): SkillType | undefined {
   return undefined;
 }
 
+function toOptionalLapsStrokeType(value: unknown): LapsStrokeType | undefined {
+  if (value === 'vrije slag' || value === 'schoolslag' || value === 'rugslag' || value === 'vlinderslag' || value === 'wisselslag' || value === 'gemengd') {
+    return value;
+  }
+  return undefined;
+}
+
 function toOptionalNonNegativeNumber(value: unknown): number | undefined {
   if (typeof value !== 'number' || Number.isNaN(value) || !Number.isFinite(value) || value < 0) return undefined;
   return value;
@@ -186,6 +205,7 @@ function normalizeMetrics(value: unknown): ActivityMetrics | undefined {
   const matchRaw = raw.match;
   const scoreRaw = raw.score;
   const skillRaw = raw.skill;
+  const lapsRaw = raw.laps;
 
   let workout: ActivityMetrics['workout'];
   if (workoutRaw && typeof workoutRaw === 'object') {
@@ -353,8 +373,34 @@ function normalizeMetrics(value: unknown): ActivityMetrics | undefined {
     }
   }
 
-  if (!workout && !session && !match && !score && !skill) return undefined;
-  return { workout, session, match, score, skill };
+  let laps: LapsMetrics | undefined;
+  if (lapsRaw && typeof lapsRaw === 'object') {
+    const lapsRecord = lapsRaw as Record<string, unknown>;
+    const normalizedLaps: LapsMetrics = {
+      poolLengthMeters: toOptionalNonNegativeNumber(lapsRecord.poolLengthMeters),
+      laps: toOptionalNonNegativeNumber(lapsRecord.laps),
+      distanceMeters: toOptionalNonNegativeNumber(lapsRecord.distanceMeters),
+      strokeType: toOptionalLapsStrokeType(lapsRecord.strokeType),
+      pacePer100mSeconds: toOptionalNonNegativeNumber(lapsRecord.pacePer100mSeconds),
+      intensity: toOptionalSessionIntensity(lapsRecord.intensity),
+      notes: toOptionalString(lapsRecord.notes),
+    };
+
+    if (
+      normalizedLaps.poolLengthMeters !== undefined ||
+      normalizedLaps.laps !== undefined ||
+      normalizedLaps.distanceMeters !== undefined ||
+      normalizedLaps.strokeType !== undefined ||
+      normalizedLaps.pacePer100mSeconds !== undefined ||
+      normalizedLaps.intensity !== undefined ||
+      normalizedLaps.notes !== undefined
+    ) {
+      laps = normalizedLaps;
+    }
+  }
+
+  if (!workout && !session && !match && !score && !skill && !laps) return undefined;
+  return { workout, session, match, score, skill, laps };
 }
 
 function normalizeActivities(value: unknown): Activity[] {

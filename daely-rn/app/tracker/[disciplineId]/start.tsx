@@ -14,6 +14,7 @@ import {
   type ScoreResult,
   type ScoreType,
   type SkillType,
+  type LapsStrokeType,
 } from 'services/activity-storage';
 
 const SESSION_STATUS = {
@@ -29,6 +30,7 @@ const SESSION_INTENSITY_OPTIONS: SessionIntensity[] = ['laag', 'gemiddeld', 'hoo
 const SESSION_FEELING_OPTIONS: SessionFeeling[] = ['laag', 'neutraal', 'goed', 'sterk'];
 const MATCH_TYPE_OPTIONS: MatchType[] = ['training', 'wedstrijd'];
 const SCORE_RESULT_OPTIONS: ScoreResult[] = ['gewonnen', 'verloren', 'gelijkspel', 'n.v.t.'];
+const LAPS_STROKE_OPTIONS: LapsStrokeType[] = ['vrije slag', 'schoolslag', 'rugslag', 'vlinderslag', 'wisselslag', 'gemengd'];
 
 type ExerciseDraft = {
   id: string;
@@ -107,6 +109,7 @@ export default function StartActivityScreen() {
   const isMatchDiscipline = discipline?.trackingType === 'match';
   const isScoreDiscipline = discipline?.trackingType === 'score';
   const isSkillDiscipline = discipline?.trackingType === 'skill';
+  const isLapsDiscipline = discipline?.trackingType === 'laps';
   const scoreType: ScoreType | undefined = discipline?.id === 'golf' ? 'golf' : discipline?.id === 'racketsporten' ? 'racket' : isScoreDiscipline ? 'other' : undefined;
   const skillType: SkillType | undefined =
     discipline?.id === 'judo'
@@ -165,6 +168,12 @@ export default function StartActivityScreen() {
   const [skillRounds, setSkillRounds] = useState('');
   const [skillIntensity, setSkillIntensity] = useState<SessionIntensity | undefined>(undefined);
   const [skillNotes, setSkillNotes] = useState('');
+  const [lapsPoolLengthMeters, setLapsPoolLengthMeters] = useState('');
+  const [lapsCount, setLapsCount] = useState('');
+  const [lapsDistanceMeters, setLapsDistanceMeters] = useState('');
+  const [lapsStrokeType, setLapsStrokeType] = useState<LapsStrokeType | undefined>(undefined);
+  const [lapsIntensity, setLapsIntensity] = useState<SessionIntensity | undefined>(undefined);
+  const [lapsNotes, setLapsNotes] = useState('');
   const [exerciseDrafts, setExerciseDrafts] = useState<ExerciseDraft[]>([createExerciseDraft()]);
   const timerRef = useRef<number | null>(null);
 
@@ -261,6 +270,14 @@ export default function StartActivityScreen() {
     return techniques.length > 0 ? techniques : undefined;
   };
 
+  const getComputedLapsDistanceMeters = (): number | undefined => {
+    const poolLength = toOptionalNonNegativeNumber(lapsPoolLengthMeters);
+    const laps = toOptionalNonNegativeNumber(lapsCount);
+    if (poolLength === undefined || laps === undefined) return undefined;
+    const distance = poolLength * laps;
+    return distance > 0 ? distance : undefined;
+  };
+
   React.useEffect(() => {
     return () => stopTimer();
   }, []);
@@ -292,6 +309,13 @@ export default function StartActivityScreen() {
     const sessionFocusAreas = isSessionDiscipline ? buildSessionFocusAreas() : undefined;
     const matchPersonalStats = isMatchDiscipline ? buildMatchPersonalStats() : undefined;
     const skillTechniques = isSkillDiscipline ? buildSkillTechniques() : undefined;
+    const computedLapsDistanceMeters = isLapsDiscipline ? getComputedLapsDistanceMeters() : undefined;
+    const enteredLapsDistanceMeters = isLapsDiscipline ? toOptionalNonNegativeNumber(lapsDistanceMeters) : undefined;
+    const resolvedLapsDistanceMeters = enteredLapsDistanceMeters ?? computedLapsDistanceMeters;
+    const lapsPacePer100mSeconds =
+      isLapsDiscipline && resolvedLapsDistanceMeters !== undefined && resolvedLapsDistanceMeters > 0
+        ? seconds / (resolvedLapsDistanceMeters / 100)
+        : undefined;
 
     setSaving(true);
     try {
@@ -308,7 +332,7 @@ export default function StartActivityScreen() {
         durationSeconds: seconds,
         status: 'completed',
         metrics:
-          isWorkoutDiscipline || isSessionDiscipline || isMatchDiscipline || isScoreDiscipline || isSkillDiscipline
+          isWorkoutDiscipline || isSessionDiscipline || isMatchDiscipline || isScoreDiscipline || isSkillDiscipline || isLapsDiscipline
             ? {
                 workout:
                   isWorkoutDiscipline && workoutExercises
@@ -368,6 +392,17 @@ export default function StartActivityScreen() {
                       rounds: toOptionalNonNegativeNumber(skillRounds),
                       intensity: skillIntensity,
                       notes: skillNotes.trim().length > 0 ? skillNotes.trim() : undefined,
+                    }
+                  : undefined,
+                laps: isLapsDiscipline
+                  ? {
+                      poolLengthMeters: toOptionalNonNegativeNumber(lapsPoolLengthMeters),
+                      laps: toOptionalNonNegativeNumber(lapsCount),
+                      distanceMeters: resolvedLapsDistanceMeters,
+                      strokeType: lapsStrokeType,
+                      pacePer100mSeconds: lapsPacePer100mSeconds,
+                      intensity: lapsIntensity,
+                      notes: lapsNotes.trim().length > 0 ? lapsNotes.trim() : undefined,
                     }
                   : undefined,
               }
@@ -757,6 +792,77 @@ export default function StartActivityScreen() {
 
           <Text style={styles.fieldLabel}>Notities</Text>
           <TextInput style={[styles.input, styles.notesInput]} placeholder="Notities optioneel" value={skillNotes} onChangeText={setSkillNotes} multiline />
+        </View>
+      )}
+
+      {isLapsDiscipline && status === 'FINISHED' && (
+        <View style={styles.metricsBlock}>
+          <Text style={styles.metricsTitle}>Laps metrics</Text>
+
+          <Text style={styles.fieldLabel}>Zwembadlengte (meters)</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Bijv. 25"
+            keyboardType="numeric"
+            value={lapsPoolLengthMeters}
+            onChangeText={setLapsPoolLengthMeters}
+          />
+
+          <Text style={styles.fieldLabel}>Aantal banen</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Bijv. 40"
+            keyboardType="numeric"
+            value={lapsCount}
+            onChangeText={setLapsCount}
+          />
+
+          <Text style={styles.fieldLabel}>Afstand (meters)</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Wordt automatisch berekend als mogelijk"
+            keyboardType="numeric"
+            value={lapsDistanceMeters}
+            onChangeText={setLapsDistanceMeters}
+          />
+          {getComputedLapsDistanceMeters() !== undefined ? (
+            <Text style={styles.privacyNote}>Automatisch berekend: {Math.round(getComputedLapsDistanceMeters() ?? 0)} m</Text>
+          ) : null}
+
+          <Text style={styles.fieldLabel}>Slagtype</Text>
+          <View style={styles.optionRow}>
+            {LAPS_STROKE_OPTIONS.map((option) => (
+              <TouchableOpacity
+                key={`laps-stroke-${option}`}
+                style={[styles.optionChip, lapsStrokeType === option ? styles.optionChipActive : null]}
+                onPress={() => setLapsStrokeType(option)}
+                accessibilityRole="button"
+              >
+                <Text style={[styles.optionChipText, lapsStrokeType === option ? styles.optionChipTextActive : null]}>
+                  {option}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          <Text style={styles.fieldLabel}>Intensiteit</Text>
+          <View style={styles.optionRow}>
+            {SESSION_INTENSITY_OPTIONS.map((option) => (
+              <TouchableOpacity
+                key={`laps-intensity-${option}`}
+                style={[styles.optionChip, lapsIntensity === option ? styles.optionChipActive : null]}
+                onPress={() => setLapsIntensity(option)}
+                accessibilityRole="button"
+              >
+                <Text style={[styles.optionChipText, lapsIntensity === option ? styles.optionChipTextActive : null]}>
+                  {option}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          <Text style={styles.fieldLabel}>Notities</Text>
+          <TextInput style={[styles.input, styles.notesInput]} placeholder="Notities optioneel" value={lapsNotes} onChangeText={setLapsNotes} multiline />
         </View>
       )}
 

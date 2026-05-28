@@ -74,6 +74,13 @@ export default function ActivitiesScreen() {
                 {a.metrics.skill.grade ? ` · ${a.metrics.skill.grade}` : ''}
               </Text>
             )}
+            {a.metrics?.laps && (
+              <Text style={styles.lapsMeta}>
+                {a.metrics.laps.distanceMeters !== undefined ? `${Math.round(a.metrics.laps.distanceMeters)} m` : 'Laps'}
+                {a.metrics.laps.laps !== undefined ? ` · ${Math.round(a.metrics.laps.laps)} banen` : ''}
+                {a.metrics.laps.strokeType ? ` · ${a.metrics.laps.strokeType}` : ''}
+              </Text>
+            )}
             <Text style={styles.status}>{a.status}</Text>
           </Pressable>
         ))
@@ -150,6 +157,11 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   skillMeta: {
+    fontSize: 13,
+    color: '#374151',
+    marginBottom: 4,
+  },
+  lapsMeta: {
     fontSize: 13,
     color: '#374151',
     marginBottom: 4,
