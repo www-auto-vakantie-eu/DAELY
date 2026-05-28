@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import PageHeader from '../components/PageHeader';
-import { getActivities, Activity } from 'services/activity-storage';
+import { getActivities, deleteActivity, Activity } from 'services/activity-storage';
 import { SPORT_DISCIPLINES } from '../constants/sport-disciplines';
 
 export default function ActivityDetailScreen() {
@@ -14,6 +14,29 @@ export default function ActivityDetailScreen() {
       setActivity(acts.find((a) => a.id === id) || null);
     });
   }, [id]);
+
+
+  // Delete handler
+  const handleDelete = () => {
+    if (!activity) return;
+    Alert.alert(
+      'Activiteit verwijderen',
+      'Weet je zeker dat je deze activiteit wilt verwijderen?',
+      [
+        { text: 'Annuleren', style: 'cancel' },
+        {
+          text: 'Verwijderen',
+          style: 'destructive',
+          onPress: async () => {
+            await deleteActivity(activity.id);
+            if (typeof window !== 'undefined' && window.location) {
+              window.location.href = '/activities';
+            }
+          },
+        },
+      ]
+    );
+  };
 
   if (!activity) {
     return (
@@ -188,9 +211,21 @@ export default function ActivityDetailScreen() {
           <Text style={styles.placeholder}>Metrics komen binnenkort voor deze discipline.</Text>
         </View>
       ) : null}
+
+      {/* Actieknoppen */}
+      <View style={styles.actionsRow}>
+        <TouchableOpacity style={styles.deleteBtn} onPress={handleDelete}>
+          <Text style={styles.deleteBtnText}>Activiteit verwijderen</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.editBtn} disabled>
+          <Text style={styles.editBtnText}>Activiteit bewerken (binnenkort)</Text>
+        </TouchableOpacity>
+      </View>
+
     </ScrollView>
   );
 }
+
 
 function formatDuration(seconds: number) {
   const min = Math.floor(seconds / 60);
@@ -295,5 +330,35 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontStyle: 'italic',
     textAlign: 'center',
+  },
+  actionsRow: {
+    flexDirection: 'column',
+    marginTop: 24,
+    marginBottom: 16,
+    gap: 10,
+  },
+  deleteBtn: {
+    backgroundColor: '#EF4444',
+    borderRadius: 12,
+    paddingVertical: 12,
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  deleteBtnText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  editBtn: {
+    backgroundColor: '#CBD5E1',
+    borderRadius: 12,
+    paddingVertical: 12,
+    alignItems: 'center',
+    opacity: 0.7,
+  },
+  editBtnText: {
+    color: '#64748B',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
 });
