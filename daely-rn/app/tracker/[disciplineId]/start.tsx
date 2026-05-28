@@ -15,6 +15,8 @@ import {
   type ScoreType,
   type SkillType,
   type LapsStrokeType,
+  type GpsRoutePoint,
+  type GpsPermissionStatus,
 } from 'services/activity-storage';
 
 const SESSION_STATUS = {
@@ -101,6 +103,29 @@ function calculateTotalVolumeKg(exercises: WorkoutExercise[]): number | undefine
   return total > 0 ? total : undefined;
 }
 
+function calculateHaversineDistanceMeters(from: GpsRoutePoint, to: GpsRoutePoint): number {
+  const earthRadiusMeters = 6371000;
+  const toRadians = (value: number) => (value * Math.PI) / 180;
+  const dLat = toRadians(to.latitude - from.latitude);
+  const dLon = toRadians(to.longitude - from.longitude);
+
+  const lat1 = toRadians(from.latitude);
+  const lat2 = toRadians(to.latitude);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return earthRadiusMeters * c;
+}
+
+function calculateRouteDistanceMeters(points: GpsRoutePoint[]): number | undefined {
+  if (points.length < 2) return undefined;
+  const total = points.slice(1).reduce((sum, point, index) => {
+    return sum + calculateHaversineDistanceMeters(points[index], point);
+  }, 0);
+  return total > 0 ? total : undefined;
+}
+
 export default function StartActivityScreen() {
   const { disciplineId } = useLocalSearchParams<{ disciplineId: string }>();
   const discipline = SPORT_DISCIPLINES.find((d) => d.id === disciplineId);
@@ -110,6 +135,8 @@ export default function StartActivityScreen() {
   const isScoreDiscipline = discipline?.trackingType === 'score';
   const isSkillDiscipline = discipline?.trackingType === 'skill';
   const isLapsDiscipline = discipline?.trackingType === 'laps';
+  const isGpsDiscipline = discipline?.trackingType === 'gps';
+  const isGpsTrackingAvailable = false;
   const scoreType: ScoreType | undefined = discipline?.id === 'golf' ? 'golf' : discipline?.id === 'racketsporten' ? 'racket' : isScoreDiscipline ? 'other' : undefined;
   const skillType: SkillType | undefined =
     discipline?.id === 'judo'
@@ -174,6 +201,9 @@ export default function StartActivityScreen() {
   const [lapsStrokeType, setLapsStrokeType] = useState<LapsStrokeType | undefined>(undefined);
   const [lapsIntensity, setLapsIntensity] = useState<SessionIntensity | undefined>(undefined);
   const [lapsNotes, setLapsNotes] = useState('');
+  const [gpsNotes, setGpsNotes] = useState('');
+  const [gpsRoutePoints] = useState<GpsRoutePoint[]>([]);
+  const [gpsPermissionStatus, setGpsPermissionStatus] = useState<GpsPermissionStatus | undefined>(undefined);
   const [exerciseDrafts, setExerciseDrafts] = useState<ExerciseDraft[]>([createExerciseDraft()]);
   const timerRef = useRef<number | null>(null);
 
@@ -192,6 +222,9 @@ export default function StartActivityScreen() {
   };
 
   const handleStart = () => {
+    if (isGpsDiscipline && !isGpsTrackingAvailable) {
+      setGpsPermissionStatus('unavailable');
+    }
     setStatus('ACTIVE');
     startTimer();
   };
@@ -312,6 +345,22 @@ export default function StartActivityScreen() {
     const computedLapsDistanceMeters = isLapsDiscipline ? getComputedLapsDistanceMeters() : undefined;
     const enteredLapsDistanceMeters = isLapsDiscipline ? toOptionalNonNegativeNumber(lapsDistanceMeters) : undefined;
     const resolvedLapsDistanceMeters = enteredLapsDistanceMeters ?? computedLapsDistanceMeters;
+    const gpsDistanceMeters = isGpsDiscipline ? calculateRouteDistanceMeters(gpsRoutePoints) : undefined;
+    const gpsAverageSpeedKmh =
+      isGpsDiscipline && gpsDistanceMeters !== undefined && seconds > 0
+        ? (gpsDistanceMeters / seconds) * 3.6
+        : undefined;
+    const gpsMaxSpeedKmh = isGpsDiscipline
+      ? gpsRoutePoints.reduce<number | undefined>((max, point) => {
+          if (point.speedMps === undefined || point.speedMps < 0) return max;
+          const kmh = point.speedMps * 3.6;
+          if (max === undefined || kmh > max) return kmh;
+          return max;
+        }, undefined)
+      : undefined;
+    const resolvedGpsPermissionStatus = isGpsDiscipline
+      ? gpsPermissionStatus ?? (isGpsTrackingAvailable ? 'undetermined' : 'unavailable')
+      : undefined;
     const lapsPacePer100mSeconds =
       isLapsDiscipline && resolvedLapsDistanceMeters !== undefined && resolvedLapsDistanceMeters > 0
         ? seconds / (resolvedLapsDistanceMeters / 100)
@@ -332,7 +381,7 @@ export default function StartActivityScreen() {
         durationSeconds: seconds,
         status: 'completed',
         metrics:
-          isWorkoutDiscipline || isSessionDiscipline || isMatchDiscipline || isScoreDiscipline || isSkillDiscipline || isLapsDiscipline
+          isWorkoutDiscipline || isSessionDiscipline || isMatchDiscipline || isScoreDiscipline || isSkillDiscipline || isLapsDiscipline || isGpsDiscipline
             ? {
                 workout:
                   isWorkoutDiscipline && workoutExercises
@@ -403,6 +452,16 @@ export default function StartActivityScreen() {
                       pacePer100mSeconds: lapsPacePer100mSeconds,
                       intensity: lapsIntensity,
                       notes: lapsNotes.trim().length > 0 ? lapsNotes.trim() : undefined,
+                    }
+                  : undefined,
+                gps: isGpsDiscipline
+                  ? {
+                      distanceMeters: gpsDistanceMeters,
+                      averageSpeedKmh: gpsAverageSpeedKmh,
+                      maxSpeedKmh: gpsMaxSpeedKmh,
+                      routePoints: gpsRoutePoints.length > 0 ? gpsRoutePoints : undefined,
+                      locationPermissionStatus: resolvedGpsPermissionStatus,
+                      notes: gpsNotes.trim().length > 0 ? gpsNotes.trim() : undefined,
                     }
                   : undefined,
               }
@@ -863,6 +922,22 @@ export default function StartActivityScreen() {
 
           <Text style={styles.fieldLabel}>Notities</Text>
           <TextInput style={[styles.input, styles.notesInput]} placeholder="Notities optioneel" value={lapsNotes} onChangeText={setLapsNotes} multiline />
+        </View>
+      )}
+
+      {isGpsDiscipline && status === 'FINISHED' && (
+        <View style={styles.metricsBlock}>
+          <Text style={styles.metricsTitle}>GPS metrics</Text>
+          {!isGpsTrackingAvailable ? (
+            <Text style={styles.privacyNote}>GPS tracking komt binnenkort beschikbaar.</Text>
+          ) : null}
+          {gpsPermissionStatus ? <Text style={styles.privacyNote}>Locatie permissie: {gpsPermissionStatus}</Text> : null}
+          {calculateRouteDistanceMeters(gpsRoutePoints) !== undefined ? (
+            <Text style={styles.privacyNote}>Berekende afstand: {Math.round(calculateRouteDistanceMeters(gpsRoutePoints) ?? 0)} m</Text>
+          ) : null}
+
+          <Text style={styles.fieldLabel}>Notities</Text>
+          <TextInput style={[styles.input, styles.notesInput]} placeholder="Notities optioneel" value={gpsNotes} onChangeText={setGpsNotes} multiline />
         </View>
       )}
 

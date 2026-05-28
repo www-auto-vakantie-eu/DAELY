@@ -18,6 +18,14 @@ export type ScoreType = 'racket' | 'golf' | 'other';
 export type ScoreResult = 'gewonnen' | 'verloren' | 'gelijkspel' | 'n.v.t.';
 export type SkillType = 'combat' | 'gymnastics' | 'parkour' | 'climbing' | 'other';
 export type LapsStrokeType = 'vrije slag' | 'schoolslag' | 'rugslag' | 'vlinderslag' | 'wisselslag' | 'gemengd';
+export type GpsPermissionStatus = 'granted' | 'denied' | 'undetermined' | 'unavailable';
+
+export interface GpsRoutePoint {
+  latitude: number;
+  longitude: number;
+  timestamp?: number;
+  speedMps?: number;
+}
 
 export interface MatchPersonalStats {
   goals?: number;
@@ -78,6 +86,15 @@ export interface LapsMetrics {
   notes?: string;
 }
 
+export interface GpsMetrics {
+  distanceMeters?: number;
+  averageSpeedKmh?: number;
+  maxSpeedKmh?: number;
+  routePoints?: GpsRoutePoint[];
+  locationPermissionStatus?: GpsPermissionStatus;
+  notes?: string;
+}
+
 export interface SessionMetrics {
   intensity?: SessionIntensity;
   focusAreas?: string[];
@@ -98,6 +115,7 @@ export interface ActivityMetrics {
   score?: ScoreMetrics;
   skill?: SkillMetrics;
   laps?: LapsMetrics;
+  gps?: GpsMetrics;
 }
 
 export interface Activity {
@@ -164,6 +182,33 @@ function toOptionalLapsStrokeType(value: unknown): LapsStrokeType | undefined {
   return undefined;
 }
 
+function toOptionalGpsPermissionStatus(value: unknown): GpsPermissionStatus | undefined {
+  if (value === 'granted' || value === 'denied' || value === 'undetermined' || value === 'unavailable') return value;
+  return undefined;
+}
+
+function normalizeGpsRoutePoints(value: unknown): GpsRoutePoint[] | undefined {
+  if (!Array.isArray(value)) return undefined;
+  const points = value
+    .map((entry): GpsRoutePoint | null => {
+      if (!entry || typeof entry !== 'object') return null;
+      const raw = entry as Record<string, unknown>;
+      const latitude = toOptionalNumber(raw.latitude);
+      const longitude = toOptionalNumber(raw.longitude);
+      if (latitude === undefined || longitude === undefined) return null;
+
+      return {
+        latitude,
+        longitude,
+        timestamp: toOptionalNumber(raw.timestamp),
+        speedMps: toOptionalNumber(raw.speedMps),
+      };
+    })
+    .filter((point): point is GpsRoutePoint => point !== null);
+
+  return points.length > 0 ? points : undefined;
+}
+
 function toOptionalNonNegativeNumber(value: unknown): number | undefined {
   if (typeof value !== 'number' || Number.isNaN(value) || !Number.isFinite(value) || value < 0) return undefined;
   return value;
@@ -206,6 +251,7 @@ function normalizeMetrics(value: unknown): ActivityMetrics | undefined {
   const scoreRaw = raw.score;
   const skillRaw = raw.skill;
   const lapsRaw = raw.laps;
+  const gpsRaw = raw.gps;
 
   let workout: ActivityMetrics['workout'];
   if (workoutRaw && typeof workoutRaw === 'object') {
@@ -399,8 +445,32 @@ function normalizeMetrics(value: unknown): ActivityMetrics | undefined {
     }
   }
 
-  if (!workout && !session && !match && !score && !skill && !laps) return undefined;
-  return { workout, session, match, score, skill, laps };
+  let gps: GpsMetrics | undefined;
+  if (gpsRaw && typeof gpsRaw === 'object') {
+    const gpsRecord = gpsRaw as Record<string, unknown>;
+    const normalizedGps: GpsMetrics = {
+      distanceMeters: toOptionalNonNegativeNumber(gpsRecord.distanceMeters),
+      averageSpeedKmh: toOptionalNonNegativeNumber(gpsRecord.averageSpeedKmh),
+      maxSpeedKmh: toOptionalNonNegativeNumber(gpsRecord.maxSpeedKmh),
+      routePoints: normalizeGpsRoutePoints(gpsRecord.routePoints),
+      locationPermissionStatus: toOptionalGpsPermissionStatus(gpsRecord.locationPermissionStatus),
+      notes: toOptionalString(gpsRecord.notes),
+    };
+
+    if (
+      normalizedGps.distanceMeters !== undefined ||
+      normalizedGps.averageSpeedKmh !== undefined ||
+      normalizedGps.maxSpeedKmh !== undefined ||
+      normalizedGps.routePoints !== undefined ||
+      normalizedGps.locationPermissionStatus !== undefined ||
+      normalizedGps.notes !== undefined
+    ) {
+      gps = normalizedGps;
+    }
+  }
+
+  if (!workout && !session && !match && !score && !skill && !laps && !gps) return undefined;
+  return { workout, session, match, score, skill, laps, gps };
 }
 
 function normalizeActivities(value: unknown): Activity[] {

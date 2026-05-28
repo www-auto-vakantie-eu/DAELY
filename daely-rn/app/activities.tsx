@@ -81,6 +81,13 @@ export default function ActivitiesScreen() {
                 {a.metrics.laps.strokeType ? ` · ${a.metrics.laps.strokeType}` : ''}
               </Text>
             )}
+            {a.metrics?.gps && (
+              <Text style={styles.gpsMeta}>
+                {a.metrics.gps.distanceMeters !== undefined ? `${Math.round(a.metrics.gps.distanceMeters)} m` : 'GPS activiteit'}
+                {a.metrics.gps.averageSpeedKmh !== undefined ? ` · ${a.metrics.gps.averageSpeedKmh.toFixed(1)} km/u gem.` : ''}
+                {a.metrics.gps.maxSpeedKmh !== undefined ? ` · max ${a.metrics.gps.maxSpeedKmh.toFixed(1)} km/u` : ''}
+              </Text>
+            )}
             <Text style={styles.status}>{a.status}</Text>
           </Pressable>
         ))
@@ -162,6 +169,11 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   lapsMeta: {
+    fontSize: 13,
+    color: '#374151',
+    marginBottom: 4,
+  },
+  gpsMeta: {
     fontSize: 13,
     color: '#374151',
     marginBottom: 4,

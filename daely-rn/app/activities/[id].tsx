@@ -170,7 +170,20 @@ export default function ActivityDetailScreen() {
           {activity.metrics.laps.notes ? <Text style={styles.notes}>Laps notities: {activity.metrics.laps.notes}</Text> : null}
         </View>
       ) : null}
-      {!activity.metrics?.workout && !activity.metrics?.session && !activity.metrics?.match && !activity.metrics?.score && !activity.metrics?.skill && !activity.metrics?.laps ? (
+      {activity.metrics?.gps ? (
+        <View style={styles.metricsBox}>
+          <Text style={styles.metricsTitle}>GPS metrics</Text>
+          {activity.metrics.gps.distanceMeters !== undefined ? <Text style={styles.meta}>Afstand: {Math.round(activity.metrics.gps.distanceMeters)} m</Text> : null}
+          {activity.metrics.gps.averageSpeedKmh !== undefined ? <Text style={styles.meta}>Gemiddelde snelheid: {activity.metrics.gps.averageSpeedKmh.toFixed(1)} km/u</Text> : null}
+          {activity.metrics.gps.maxSpeedKmh !== undefined ? <Text style={styles.meta}>Max snelheid: {activity.metrics.gps.maxSpeedKmh.toFixed(1)} km/u</Text> : null}
+          {activity.metrics.gps.locationPermissionStatus ? <Text style={styles.meta}>Locatie permissie: {activity.metrics.gps.locationPermissionStatus}</Text> : null}
+          {activity.metrics.gps.routePoints && activity.metrics.gps.routePoints.length > 0 ? (
+            <Text style={styles.meta}>Routepunten: {activity.metrics.gps.routePoints.length}</Text>
+          ) : null}
+          {activity.metrics.gps.notes ? <Text style={styles.notes}>GPS notities: {activity.metrics.gps.notes}</Text> : null}
+        </View>
+      ) : null}
+      {!activity.metrics?.workout && !activity.metrics?.session && !activity.metrics?.match && !activity.metrics?.score && !activity.metrics?.skill && !activity.metrics?.laps && !activity.metrics?.gps ? (
         <View style={styles.placeholderBox}>
           <Text style={styles.placeholder}>Metrics komen binnenkort voor deze discipline.</Text>
         </View>
