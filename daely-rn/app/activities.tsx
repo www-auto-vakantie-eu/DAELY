@@ -45,6 +45,15 @@ export default function ActivitiesScreen() {
                   : ''}
               </Text>
             )}
+            {a.metrics?.match && (
+              <Text style={styles.matchMeta}>
+                {a.metrics.match.matchType ? a.metrics.match.matchType : 'match'}
+                {a.metrics.match.scoreFor !== undefined && a.metrics.match.scoreAgainst !== undefined
+                  ? ` · ${a.metrics.match.scoreFor}-${a.metrics.match.scoreAgainst}`
+                  : ''}
+                {a.metrics.match.opponent ? ` · vs ${a.metrics.match.opponent}` : ''}
+              </Text>
+            )}
             <Text style={styles.status}>{a.status}</Text>
           </Pressable>
         ))
@@ -106,6 +115,11 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   sessionMeta: {
+    fontSize: 13,
+    color: '#374151',
+    marginBottom: 4,
+  },
+  matchMeta: {
     fontSize: 13,
     color: '#374151',
     marginBottom: 4,

@@ -13,6 +13,28 @@ export interface WorkoutExercise {
 
 export type SessionIntensity = 'laag' | 'gemiddeld' | 'hoog';
 export type SessionFeeling = 'laag' | 'neutraal' | 'goed' | 'sterk';
+export type MatchType = 'training' | 'wedstrijd';
+
+export interface MatchPersonalStats {
+  goals?: number;
+  assists?: number;
+  points?: number;
+  rebounds?: number;
+  blocks?: number;
+  tackles?: number;
+}
+
+export interface MatchMetrics {
+  matchType?: MatchType;
+  opponent?: string;
+  team?: string;
+  position?: string;
+  scoreFor?: number;
+  scoreAgainst?: number;
+  personalStats?: MatchPersonalStats;
+  intensity?: SessionIntensity;
+  notes?: string;
+}
 
 export interface SessionMetrics {
   intensity?: SessionIntensity;
@@ -30,6 +52,7 @@ export interface ActivityMetrics {
     notes?: string;
   };
   session?: SessionMetrics;
+  match?: MatchMetrics;
 }
 
 export interface Activity {
@@ -69,6 +92,16 @@ function toOptionalSessionFeeling(value: unknown): SessionFeeling | undefined {
   return undefined;
 }
 
+function toOptionalMatchType(value: unknown): MatchType | undefined {
+  if (value === 'training' || value === 'wedstrijd') return value;
+  return undefined;
+}
+
+function toOptionalNonNegativeNumber(value: unknown): number | undefined {
+  if (typeof value !== 'number' || Number.isNaN(value) || !Number.isFinite(value) || value < 0) return undefined;
+  return value;
+}
+
 function normalizeFocusAreas(value: unknown): string[] | undefined {
   if (!Array.isArray(value)) return undefined;
   const cleaned = value
@@ -102,6 +135,7 @@ function normalizeMetrics(value: unknown): ActivityMetrics | undefined {
 
   const workoutRaw = raw.workout;
   const sessionRaw = raw.session;
+  const matchRaw = raw.match;
 
   let workout: ActivityMetrics['workout'];
   if (workoutRaw && typeof workoutRaw === 'object') {
@@ -146,8 +180,63 @@ function normalizeMetrics(value: unknown): ActivityMetrics | undefined {
     }
   }
 
-  if (!workout && !session) return undefined;
-  return { workout, session };
+  let match: MatchMetrics | undefined;
+  if (matchRaw && typeof matchRaw === 'object') {
+    const matchRecord = matchRaw as Record<string, unknown>;
+
+    let personalStats: MatchPersonalStats | undefined;
+    if (matchRecord.personalStats && typeof matchRecord.personalStats === 'object') {
+      const statsRecord = matchRecord.personalStats as Record<string, unknown>;
+      const normalizedStats: MatchPersonalStats = {
+        goals: toOptionalNonNegativeNumber(statsRecord.goals),
+        assists: toOptionalNonNegativeNumber(statsRecord.assists),
+        points: toOptionalNonNegativeNumber(statsRecord.points),
+        rebounds: toOptionalNonNegativeNumber(statsRecord.rebounds),
+        blocks: toOptionalNonNegativeNumber(statsRecord.blocks),
+        tackles: toOptionalNonNegativeNumber(statsRecord.tackles),
+      };
+
+      if (
+        normalizedStats.goals !== undefined ||
+        normalizedStats.assists !== undefined ||
+        normalizedStats.points !== undefined ||
+        normalizedStats.rebounds !== undefined ||
+        normalizedStats.blocks !== undefined ||
+        normalizedStats.tackles !== undefined
+      ) {
+        personalStats = normalizedStats;
+      }
+    }
+
+    const normalizedMatch: MatchMetrics = {
+      matchType: toOptionalMatchType(matchRecord.matchType),
+      opponent: toOptionalString(matchRecord.opponent),
+      team: toOptionalString(matchRecord.team),
+      position: toOptionalString(matchRecord.position),
+      scoreFor: toOptionalNonNegativeNumber(matchRecord.scoreFor),
+      scoreAgainst: toOptionalNonNegativeNumber(matchRecord.scoreAgainst),
+      personalStats,
+      intensity: toOptionalSessionIntensity(matchRecord.intensity),
+      notes: toOptionalString(matchRecord.notes),
+    };
+
+    if (
+      normalizedMatch.matchType !== undefined ||
+      normalizedMatch.opponent !== undefined ||
+      normalizedMatch.team !== undefined ||
+      normalizedMatch.position !== undefined ||
+      normalizedMatch.scoreFor !== undefined ||
+      normalizedMatch.scoreAgainst !== undefined ||
+      normalizedMatch.personalStats !== undefined ||
+      normalizedMatch.intensity !== undefined ||
+      normalizedMatch.notes !== undefined
+    ) {
+      match = normalizedMatch;
+    }
+  }
+
+  if (!workout && !session && !match) return undefined;
+  return { workout, session, match };
 }
 
 function normalizeActivities(value: unknown): Activity[] {

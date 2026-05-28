@@ -79,7 +79,34 @@ export default function ActivityDetailScreen() {
           {isPrivateDefault ? <Text style={styles.privacyNote}>Deze activiteit staat standaard prive.</Text> : null}
         </View>
       ) : null}
-      {!activity.metrics?.workout && !activity.metrics?.session ? (
+      {activity.metrics?.match ? (
+        <View style={styles.metricsBox}>
+          <Text style={styles.metricsTitle}>Match metrics</Text>
+          {activity.metrics.match.matchType ? <Text style={styles.meta}>Type: {activity.metrics.match.matchType}</Text> : null}
+          {activity.metrics.match.team ? <Text style={styles.meta}>Team: {activity.metrics.match.team}</Text> : null}
+          {activity.metrics.match.opponent ? <Text style={styles.meta}>Tegenstander: {activity.metrics.match.opponent}</Text> : null}
+          {activity.metrics.match.position ? <Text style={styles.meta}>Positie: {activity.metrics.match.position}</Text> : null}
+          {activity.metrics.match.scoreFor !== undefined || activity.metrics.match.scoreAgainst !== undefined ? (
+            <Text style={styles.meta}>
+              Score: {activity.metrics.match.scoreFor ?? '-'} - {activity.metrics.match.scoreAgainst ?? '-'}
+            </Text>
+          ) : null}
+          {activity.metrics.match.personalStats ? (
+            <View style={styles.personalStatsBox}>
+              <Text style={styles.personalStatsTitle}>Persoonlijke stats</Text>
+              {activity.metrics.match.personalStats.goals !== undefined ? <Text style={styles.meta}>Goals: {activity.metrics.match.personalStats.goals}</Text> : null}
+              {activity.metrics.match.personalStats.assists !== undefined ? <Text style={styles.meta}>Assists: {activity.metrics.match.personalStats.assists}</Text> : null}
+              {activity.metrics.match.personalStats.points !== undefined ? <Text style={styles.meta}>Points: {activity.metrics.match.personalStats.points}</Text> : null}
+              {activity.metrics.match.personalStats.rebounds !== undefined ? <Text style={styles.meta}>Rebounds: {activity.metrics.match.personalStats.rebounds}</Text> : null}
+              {activity.metrics.match.personalStats.blocks !== undefined ? <Text style={styles.meta}>Blocks: {activity.metrics.match.personalStats.blocks}</Text> : null}
+              {activity.metrics.match.personalStats.tackles !== undefined ? <Text style={styles.meta}>Tackles: {activity.metrics.match.personalStats.tackles}</Text> : null}
+            </View>
+          ) : null}
+          {activity.metrics.match.intensity ? <Text style={styles.meta}>Intensiteit: {activity.metrics.match.intensity}</Text> : null}
+          {activity.metrics.match.notes ? <Text style={styles.notes}>Match notities: {activity.metrics.match.notes}</Text> : null}
+        </View>
+      ) : null}
+      {!activity.metrics?.workout && !activity.metrics?.session && !activity.metrics?.match ? (
         <View style={styles.placeholderBox}>
           <Text style={styles.placeholder}>Metrics komen binnenkort voor deze discipline.</Text>
         </View>
@@ -160,6 +187,16 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#6B7280',
     marginTop: 4,
+  },
+  personalStatsBox: {
+    marginTop: 6,
+    marginBottom: 6,
+  },
+  personalStatsTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#1F2937',
+    marginBottom: 4,
   },
   placeholderBox: {
     backgroundColor: '#E5E7EB',

@@ -9,6 +9,8 @@ import {
   type WorkoutExercise,
   type SessionIntensity,
   type SessionFeeling,
+  type MatchType,
+  type MatchPersonalStats,
 } from 'services/activity-storage';
 
 const SESSION_STATUS = {
@@ -22,6 +24,7 @@ type SessionStatus = keyof typeof SESSION_STATUS;
 
 const SESSION_INTENSITY_OPTIONS: SessionIntensity[] = ['laag', 'gemiddeld', 'hoog'];
 const SESSION_FEELING_OPTIONS: SessionFeeling[] = ['laag', 'neutraal', 'goed', 'sterk'];
+const MATCH_TYPE_OPTIONS: MatchType[] = ['training', 'wedstrijd'];
 
 type ExerciseDraft = {
   id: string;
@@ -59,6 +62,14 @@ function toOptionalPositiveNumber(value: string): number | undefined {
   return parsed;
 }
 
+function toOptionalNonNegativeNumber(value: string): number | undefined {
+  const normalized = value.trim();
+  if (normalized.length === 0) return undefined;
+  const parsed = Number(normalized);
+  if (!Number.isFinite(parsed) || parsed < 0) return undefined;
+  return parsed;
+}
+
 function toWorkoutExercise(draft: ExerciseDraft): WorkoutExercise | null {
   const name = draft.name.trim();
   const sets = toPositiveInt(draft.sets);
@@ -89,6 +100,7 @@ export default function StartActivityScreen() {
   const discipline = SPORT_DISCIPLINES.find((d) => d.id === disciplineId);
   const isWorkoutDiscipline = discipline?.trackingType === 'workout';
   const isSessionDiscipline = discipline?.trackingType === 'session';
+  const isMatchDiscipline = discipline?.trackingType === 'match';
 
   const [status, setStatus] = useState<SessionStatus>('NOT_STARTED');
   const [seconds, setSeconds] = useState(0);
@@ -100,6 +112,20 @@ export default function StartActivityScreen() {
   const [sessionFeelingBefore, setSessionFeelingBefore] = useState<SessionFeeling | undefined>(undefined);
   const [sessionFeelingAfter, setSessionFeelingAfter] = useState<SessionFeeling | undefined>(undefined);
   const [sessionNotes, setSessionNotes] = useState('');
+  const [matchType, setMatchType] = useState<MatchType | undefined>(undefined);
+  const [matchTeam, setMatchTeam] = useState('');
+  const [matchOpponent, setMatchOpponent] = useState('');
+  const [matchPosition, setMatchPosition] = useState('');
+  const [matchScoreFor, setMatchScoreFor] = useState('');
+  const [matchScoreAgainst, setMatchScoreAgainst] = useState('');
+  const [matchGoals, setMatchGoals] = useState('');
+  const [matchAssists, setMatchAssists] = useState('');
+  const [matchPoints, setMatchPoints] = useState('');
+  const [matchRebounds, setMatchRebounds] = useState('');
+  const [matchBlocks, setMatchBlocks] = useState('');
+  const [matchTackles, setMatchTackles] = useState('');
+  const [matchIntensity, setMatchIntensity] = useState<SessionIntensity | undefined>(undefined);
+  const [matchNotes, setMatchNotes] = useState('');
   const [exerciseDrafts, setExerciseDrafts] = useState<ExerciseDraft[]>([createExerciseDraft()]);
   const timerRef = useRef<number | null>(null);
 
@@ -164,6 +190,30 @@ export default function StartActivityScreen() {
     return areas.length > 0 ? areas : undefined;
   };
 
+  const buildMatchPersonalStats = (): MatchPersonalStats | undefined => {
+    const stats: MatchPersonalStats = {
+      goals: toOptionalNonNegativeNumber(matchGoals),
+      assists: toOptionalNonNegativeNumber(matchAssists),
+      points: toOptionalNonNegativeNumber(matchPoints),
+      rebounds: toOptionalNonNegativeNumber(matchRebounds),
+      blocks: toOptionalNonNegativeNumber(matchBlocks),
+      tackles: toOptionalNonNegativeNumber(matchTackles),
+    };
+
+    if (
+      stats.goals === undefined &&
+      stats.assists === undefined &&
+      stats.points === undefined &&
+      stats.rebounds === undefined &&
+      stats.blocks === undefined &&
+      stats.tackles === undefined
+    ) {
+      return undefined;
+    }
+
+    return stats;
+  };
+
   React.useEffect(() => {
     return () => stopTimer();
   }, []);
@@ -193,6 +243,7 @@ export default function StartActivityScreen() {
     }
 
     const sessionFocusAreas = isSessionDiscipline ? buildSessionFocusAreas() : undefined;
+    const matchPersonalStats = isMatchDiscipline ? buildMatchPersonalStats() : undefined;
 
     setSaving(true);
     try {
@@ -209,7 +260,7 @@ export default function StartActivityScreen() {
         durationSeconds: seconds,
         status: 'completed',
         metrics:
-          isWorkoutDiscipline || isSessionDiscipline
+          isWorkoutDiscipline || isSessionDiscipline || isMatchDiscipline
             ? {
                 workout:
                   isWorkoutDiscipline && workoutExercises
@@ -226,6 +277,19 @@ export default function StartActivityScreen() {
                       feelingBefore: sessionFeelingBefore,
                       feelingAfter: sessionFeelingAfter,
                       notes: sessionNotes.trim().length > 0 ? sessionNotes.trim() : undefined,
+                    }
+                  : undefined,
+                match: isMatchDiscipline
+                  ? {
+                      matchType,
+                      team: matchTeam.trim().length > 0 ? matchTeam.trim() : undefined,
+                      opponent: matchOpponent.trim().length > 0 ? matchOpponent.trim() : undefined,
+                      position: matchPosition.trim().length > 0 ? matchPosition.trim() : undefined,
+                      scoreFor: toOptionalNonNegativeNumber(matchScoreFor),
+                      scoreAgainst: toOptionalNonNegativeNumber(matchScoreAgainst),
+                      personalStats: matchPersonalStats,
+                      intensity: matchIntensity,
+                      notes: matchNotes.trim().length > 0 ? matchNotes.trim() : undefined,
                     }
                   : undefined,
               }
@@ -395,6 +459,94 @@ export default function StartActivityScreen() {
             placeholder="Notities optioneel"
             value={sessionNotes}
             onChangeText={setSessionNotes}
+            multiline
+          />
+        </View>
+      )}
+
+      {isMatchDiscipline && status === 'FINISHED' && (
+        <View style={styles.metricsBlock}>
+          <Text style={styles.metricsTitle}>Match metrics</Text>
+
+          <Text style={styles.fieldLabel}>Type</Text>
+          <View style={styles.optionRow}>
+            {MATCH_TYPE_OPTIONS.map((option) => (
+              <TouchableOpacity
+                key={option}
+                style={[styles.optionChip, matchType === option ? styles.optionChipActive : null]}
+                onPress={() => setMatchType(option)}
+                accessibilityRole="button"
+              >
+                <Text style={[styles.optionChipText, matchType === option ? styles.optionChipTextActive : null]}>
+                  {option}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          <Text style={styles.fieldLabel}>Team</Text>
+          <TextInput style={styles.input} placeholder="Team optioneel" value={matchTeam} onChangeText={setMatchTeam} />
+
+          <Text style={styles.fieldLabel}>Tegenstander</Text>
+          <TextInput style={styles.input} placeholder="Tegenstander optioneel" value={matchOpponent} onChangeText={setMatchOpponent} />
+
+          <Text style={styles.fieldLabel}>Positie</Text>
+          <TextInput style={styles.input} placeholder="Positie optioneel" value={matchPosition} onChangeText={setMatchPosition} />
+
+          <Text style={styles.fieldLabel}>Score</Text>
+          <View style={styles.rowInputs}>
+            <TextInput
+              style={[styles.input, styles.halfInput]}
+              placeholder="Voor"
+              keyboardType="numeric"
+              value={matchScoreFor}
+              onChangeText={setMatchScoreFor}
+            />
+            <TextInput
+              style={[styles.input, styles.halfInput]}
+              placeholder="Tegen"
+              keyboardType="numeric"
+              value={matchScoreAgainst}
+              onChangeText={setMatchScoreAgainst}
+            />
+          </View>
+
+          <Text style={styles.fieldLabel}>Persoonlijke stats</Text>
+          <View style={styles.rowInputs}>
+            <TextInput style={[styles.input, styles.halfInput]} placeholder="Goals" keyboardType="numeric" value={matchGoals} onChangeText={setMatchGoals} />
+            <TextInput style={[styles.input, styles.halfInput]} placeholder="Assists" keyboardType="numeric" value={matchAssists} onChangeText={setMatchAssists} />
+          </View>
+          <View style={styles.rowInputs}>
+            <TextInput style={[styles.input, styles.halfInput]} placeholder="Points" keyboardType="numeric" value={matchPoints} onChangeText={setMatchPoints} />
+            <TextInput style={[styles.input, styles.halfInput]} placeholder="Rebounds" keyboardType="numeric" value={matchRebounds} onChangeText={setMatchRebounds} />
+          </View>
+          <View style={styles.rowInputs}>
+            <TextInput style={[styles.input, styles.halfInput]} placeholder="Blocks" keyboardType="numeric" value={matchBlocks} onChangeText={setMatchBlocks} />
+            <TextInput style={[styles.input, styles.halfInput]} placeholder="Tackles" keyboardType="numeric" value={matchTackles} onChangeText={setMatchTackles} />
+          </View>
+
+          <Text style={styles.fieldLabel}>Intensiteit</Text>
+          <View style={styles.optionRow}>
+            {SESSION_INTENSITY_OPTIONS.map((option) => (
+              <TouchableOpacity
+                key={`match-intensity-${option}`}
+                style={[styles.optionChip, matchIntensity === option ? styles.optionChipActive : null]}
+                onPress={() => setMatchIntensity(option)}
+                accessibilityRole="button"
+              >
+                <Text style={[styles.optionChipText, matchIntensity === option ? styles.optionChipTextActive : null]}>
+                  {option}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          <Text style={styles.fieldLabel}>Notities</Text>
+          <TextInput
+            style={[styles.input, styles.notesInput]}
+            placeholder="Notities optioneel"
+            value={matchNotes}
+            onChangeText={setMatchNotes}
             multiline
           />
         </View>
