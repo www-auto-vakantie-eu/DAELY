@@ -1,11 +1,10 @@
 // Redesigned Mijn Statistieken page scaffold
-import React, { useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, ActivityIndicator, TouchableOpacity, Image, SectionList, FlatList, Modal, Switch } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, ScrollView, StyleSheet, ActivityIndicator, TouchableOpacity, Image, Modal, Switch } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
 import PageHeader from '../components/PageHeader';
-// TODO: import Victory Native or other chart lib when installed
-// import { VictoryLine, VictoryBar, VictoryPie, VictoryArea, VictoryChart, VictoryTheme } from 'victory-native';
+import { getActivities, Activity } from 'services/activity-storage';
 
 // Placeholder chart component
 const ChartPlaceholder = ({ title }: { title: string }) => (
@@ -20,6 +19,7 @@ const ChartPlaceholder = ({ title }: { title: string }) => (
 export default function MijnStatistiekenScreen() {
   const router = useRouter();
   const theme = useTheme();
+
   // State for loading, privacy, and settings
   const [loading, setLoading] = useState(false);
   const [settingsVisible, setSettingsVisible] = useState(false);
@@ -31,8 +31,73 @@ export default function MijnStatistiekenScreen() {
     showPRs: true,
     showAchievements: true,
   });
-  // TODO: fetch user/profile/data
-  const isEmpty = true;
+
+  // Activities state
+  const [activities, setActivities] = useState<Activity[]>([]);
+  const [activitiesLoading, setActivitiesLoading] = useState(true);
+
+  useEffect(() => {
+    getActivities().then((acts) => {
+      setActivities(acts);
+      setActivitiesLoading(false);
+    });
+  }, []);
+
+  const isEmpty = !activitiesLoading && activities.length === 0;
+
+  // Summary calculations
+  const totalActivities = activities.length;
+  const totalDurationSeconds = activities.reduce((sum, a) => sum + (a.durationSeconds || 0), 0);
+  const totalDurationHours = Math.floor(totalDurationSeconds / 3600);
+  const totalDurationMinutes = Math.floor((totalDurationSeconds % 3600) / 60);
+  const uniqueDisciplines = Array.from(new Set(activities.map((a) => a.disciplineId))).length;
+  const mostRecent = activities[0];
+
+  // Per trackingType counts
+  const trackingTypeCounts: Record<string, number> = {};
+  for (const a of activities) {
+    trackingTypeCounts[a.trackingType] = (trackingTypeCounts[a.trackingType] || 0) + 1;
+  }
+
+  // Recent activities (last 3)
+  const recentActivities = activities.slice(0, 3);
+
+  function formatDate(dateStr: string) {
+    const d = new Date(dateStr);
+    return d.toLocaleDateString('nl-NL', { day: '2-digit', month: 'short', year: '2-digit', hour: '2-digit', minute: '2-digit' });
+  }
+
+  function formatDuration(seconds: number) {
+    const min = Math.floor(seconds / 60);
+    const sec = seconds % 60;
+    return `${min}m ${sec}s`;
+  }
+
+  function renderMetricsSummary(a: Activity) {
+    if (!a.metrics) return null;
+    if (a.metrics.workout) {
+      return `${a.metrics.workout.exercises?.length ?? 0} oefeningen${a.metrics.workout.totalVolumeKg !== undefined ? ` · ${Math.round(a.metrics.workout.totalVolumeKg)} kg` : ''}`;
+    }
+    if (a.metrics.session) {
+      return `Intensiteit ${a.metrics.session.intensity ?? '-'}`;
+    }
+    if (a.metrics.match) {
+      return `${a.metrics.match.matchType ?? 'match'}${a.metrics.match.scoreFor !== undefined && a.metrics.match.scoreAgainst !== undefined ? ` · ${a.metrics.match.scoreFor}-${a.metrics.match.scoreAgainst}` : ''}`;
+    }
+    if (a.metrics.score) {
+      return `${a.metrics.score.scoreType ?? 'score'}${a.metrics.score.result ? ` · ${a.metrics.score.result}` : ''}`;
+    }
+    if (a.metrics.skill) {
+      return a.metrics.skill.techniques && a.metrics.skill.techniques.length > 0 ? a.metrics.skill.techniques.join(', ') : 'Skill';
+    }
+    if (a.metrics.laps) {
+      return a.metrics.laps.distanceMeters !== undefined ? `${Math.round(a.metrics.laps.distanceMeters)} m` : 'Laps';
+    }
+    if (a.metrics.gps) {
+      return a.metrics.gps.distanceMeters !== undefined ? `${Math.round(a.metrics.gps.distanceMeters)} m` : 'GPS activiteit';
+    }
+    return null;
+  }
 
   // Privacy lock overlay
   if (privacy.lock) {
@@ -44,14 +109,16 @@ export default function MijnStatistiekenScreen() {
     );
   }
 
+
   return (
-    <ScrollView style={[styles.container, { backgroundColor: theme.background }]}>
+    <ScrollView style={[styles.container, { backgroundColor: theme.background }]}> 
       <PageHeader
         title="Data"
         onSettingsPress={() => router.push('/(tabs)/athlete')}
         onSearchPress={() => router.push('/nutrition/search')}
         onCartPress={() => router.push('/(tabs)/cart')}
       />
+
       {/* Profile Section */}
       <View style={styles.profileRow}>
         <TouchableOpacity>
@@ -98,6 +165,73 @@ export default function MijnStatistiekenScreen() {
           <Text style={styles.summaryDeltaUp}>↑ 1</Text>
         </View>
       </ScrollView>
+
+      {/* DAELY Activiteitenoverzicht */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Activiteitenoverzicht</Text>
+        {activitiesLoading ? (
+          <ActivityIndicator size="small" color="#2563EB" />
+        ) : isEmpty ? (
+          <Text style={styles.emptyText}>Nog geen activiteiten opgeslagen.</Text>
+        ) : (
+          <>
+            <Text style={styles.meta}>Totaal aantal activiteiten: <Text style={styles.bold}>{totalActivities}</Text></Text>
+            <Text style={styles.meta}>Totale sporttijd: <Text style={styles.bold}>{totalDurationHours}u {totalDurationMinutes}m</Text></Text>
+            <Text style={styles.meta}>Aantal disciplines gebruikt: <Text style={styles.bold}>{uniqueDisciplines}</Text></Text>
+            {mostRecent && (
+              <Text style={styles.meta}>Meest recent: <Text style={styles.bold}>{mostRecent.disciplineName}</Text> op {formatDate(mostRecent.endedAt)}</Text>
+            )}
+          </>
+        )}
+      </View>
+
+      {/* DAELY Per trackingtype */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Per trackingtype</Text>
+        {activitiesLoading ? (
+          <ActivityIndicator size="small" color="#2563EB" />
+        ) : isEmpty ? (
+          <Text style={styles.emptyText}>Nog geen activiteiten opgeslagen.</Text>
+        ) : (
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+            <Text style={styles.trackingTypeItem}>Workout: <Text style={styles.bold}>{trackingTypeCounts['workout'] || 0}</Text></Text>
+            <Text style={styles.trackingTypeItem}>Session: <Text style={styles.bold}>{trackingTypeCounts['session'] || 0}</Text></Text>
+            <Text style={styles.trackingTypeItem}>Match: <Text style={styles.bold}>{trackingTypeCounts['match'] || 0}</Text></Text>
+            <Text style={styles.trackingTypeItem}>Score: <Text style={styles.bold}>{trackingTypeCounts['score'] || 0}</Text></Text>
+            <Text style={styles.trackingTypeItem}>Skill: <Text style={styles.bold}>{trackingTypeCounts['skill'] || 0}</Text></Text>
+            <Text style={styles.trackingTypeItem}>Laps: <Text style={styles.bold}>{trackingTypeCounts['laps'] || 0}</Text></Text>
+            <Text style={styles.trackingTypeItem}>GPS: <Text style={styles.bold}>{trackingTypeCounts['gps'] || 0}</Text></Text>
+          </View>
+        )}
+      </View>
+
+      {/* DAELY Recente activiteiten */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Recente activiteiten</Text>
+        {activitiesLoading ? (
+          <ActivityIndicator size="small" color="#2563EB" />
+        ) : isEmpty ? (
+          <Text style={styles.emptyText}>Nog geen activiteiten opgeslagen.</Text>
+        ) : (
+          recentActivities.map((a) => (
+            <TouchableOpacity key={a.id} style={styles.recentItem} onPress={() => router.push({ pathname: '/activities/[id]', params: { id: a.id } })}>
+              <Text style={styles.recentName}>{a.disciplineName}</Text>
+              <Text style={styles.recentMeta}>{formatDate(a.endedAt)} · {formatDuration(a.durationSeconds)}</Text>
+              {renderMetricsSummary(a) && <Text style={styles.recentSummary}>{renderMetricsSummary(a)}</Text>}
+            </TouchableOpacity>
+          ))
+        )}
+      </View>
+
+      {/* DAELY Navigatieknoppen */}
+      <View style={styles.section}>
+        <TouchableOpacity style={styles.ctaBtn} onPress={() => router.push('/activities')}>
+          <Text style={styles.ctaBtnText}>Activiteiten bekijken</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.ctaBtn} onPress={() => router.push('/tracker')}>
+          <Text style={styles.ctaBtnText}>Start activiteit</Text>
+        </TouchableOpacity>
+      </View>
 
       {/* Charts Section */}
       <View style={styles.section}>
