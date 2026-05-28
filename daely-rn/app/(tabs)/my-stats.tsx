@@ -301,6 +301,15 @@ export default function MijnStatistiekenScreen() {
 
 // Styles: modern, dark cards, blue accent, rounded, shadow
 const styles = StyleSheet.create({
+      // Recent activities styles
+      recentItem: { backgroundColor: '#fff', borderRadius: 12, padding: 14, marginBottom: 10, shadowColor: '#000', shadowOpacity: 0.04, shadowRadius: 4, elevation: 1 },
+      recentName: { fontWeight: 'bold', color: '#2563EB', fontSize: 16, marginBottom: 2 },
+      recentMeta: { color: '#64748B', fontSize: 13, marginBottom: 2 },
+      recentSummary: { color: '#334155', fontSize: 13 },
+    // Activity summary styles
+    bold: { fontWeight: 'bold', color: '#0F172A' },
+    meta: { color: '#334155', fontSize: 14, marginBottom: 2 },
+    trackingTypeItem: { marginRight: 16, marginBottom: 6, color: '#2563EB', fontWeight: '600', fontSize: 14 },
   container: { flex: 1, backgroundColor: '#F3F4F6' },
   profileRow: { flexDirection: 'row', alignItems: 'center', padding: 20, backgroundColor: '#fff', borderBottomWidth: 1, borderColor: '#E5E7EB' },
   avatar: { width: 56, height: 56, borderRadius: 28, marginRight: 16 },
