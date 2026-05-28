@@ -137,7 +137,26 @@ export default function ActivityDetailScreen() {
           {activity.metrics.score.notes ? <Text style={styles.notes}>Score notities: {activity.metrics.score.notes}</Text> : null}
         </View>
       ) : null}
-      {!activity.metrics?.workout && !activity.metrics?.session && !activity.metrics?.match && !activity.metrics?.score ? (
+      {activity.metrics?.skill ? (
+        <View style={styles.metricsBox}>
+          <Text style={styles.metricsTitle}>Skill metrics</Text>
+          {activity.metrics.skill.skillType ? <Text style={styles.meta}>Type: {activity.metrics.skill.skillType}</Text> : null}
+          {activity.metrics.skill.level ? <Text style={styles.meta}>Niveau: {activity.metrics.skill.level}</Text> : null}
+          {activity.metrics.skill.techniques && activity.metrics.skill.techniques.length > 0 ? (
+            <Text style={styles.meta}>Technieken: {activity.metrics.skill.techniques.join(', ')}</Text>
+          ) : null}
+          {activity.metrics.skill.attempts !== undefined || activity.metrics.skill.successfulAttempts !== undefined ? (
+            <Text style={styles.meta}>
+              Pogingen: {activity.metrics.skill.successfulAttempts ?? '-'} / {activity.metrics.skill.attempts ?? '-'} succesvol
+            </Text>
+          ) : null}
+          {activity.metrics.skill.grade ? <Text style={styles.meta}>Grade: {activity.metrics.skill.grade}</Text> : null}
+          {activity.metrics.skill.rounds !== undefined ? <Text style={styles.meta}>Rondes: {activity.metrics.skill.rounds}</Text> : null}
+          {activity.metrics.skill.intensity ? <Text style={styles.meta}>Intensiteit: {activity.metrics.skill.intensity}</Text> : null}
+          {activity.metrics.skill.notes ? <Text style={styles.notes}>Skill notities: {activity.metrics.skill.notes}</Text> : null}
+        </View>
+      ) : null}
+      {!activity.metrics?.workout && !activity.metrics?.session && !activity.metrics?.match && !activity.metrics?.score && !activity.metrics?.skill ? (
         <View style={styles.placeholderBox}>
           <Text style={styles.placeholder}>Metrics komen binnenkort voor deze discipline.</Text>
         </View>

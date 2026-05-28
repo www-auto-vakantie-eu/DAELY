@@ -16,6 +16,7 @@ export type SessionFeeling = 'laag' | 'neutraal' | 'goed' | 'sterk';
 export type MatchType = 'training' | 'wedstrijd';
 export type ScoreType = 'racket' | 'golf' | 'other';
 export type ScoreResult = 'gewonnen' | 'verloren' | 'gelijkspel' | 'n.v.t.';
+export type SkillType = 'combat' | 'gymnastics' | 'parkour' | 'climbing' | 'other';
 
 export interface MatchPersonalStats {
   goals?: number;
@@ -54,6 +55,18 @@ export interface ScoreMetrics {
   notes?: string;
 }
 
+export interface SkillMetrics {
+  skillType?: SkillType;
+  level?: string;
+  techniques?: string[];
+  attempts?: number;
+  successfulAttempts?: number;
+  grade?: string;
+  rounds?: number;
+  intensity?: SessionIntensity;
+  notes?: string;
+}
+
 export interface SessionMetrics {
   intensity?: SessionIntensity;
   focusAreas?: string[];
@@ -72,6 +85,7 @@ export interface ActivityMetrics {
   session?: SessionMetrics;
   match?: MatchMetrics;
   score?: ScoreMetrics;
+  skill?: SkillMetrics;
 }
 
 export interface Activity {
@@ -126,6 +140,11 @@ function toOptionalScoreResult(value: unknown): ScoreResult | undefined {
   return undefined;
 }
 
+function toOptionalSkillType(value: unknown): SkillType | undefined {
+  if (value === 'combat' || value === 'gymnastics' || value === 'parkour' || value === 'climbing' || value === 'other') return value;
+  return undefined;
+}
+
 function toOptionalNonNegativeNumber(value: unknown): number | undefined {
   if (typeof value !== 'number' || Number.isNaN(value) || !Number.isFinite(value) || value < 0) return undefined;
   return value;
@@ -166,6 +185,7 @@ function normalizeMetrics(value: unknown): ActivityMetrics | undefined {
   const sessionRaw = raw.session;
   const matchRaw = raw.match;
   const scoreRaw = raw.score;
+  const skillRaw = raw.skill;
 
   let workout: ActivityMetrics['workout'];
   if (workoutRaw && typeof workoutRaw === 'object') {
@@ -303,8 +323,38 @@ function normalizeMetrics(value: unknown): ActivityMetrics | undefined {
     }
   }
 
-  if (!workout && !session && !match && !score) return undefined;
-  return { workout, session, match, score };
+  let skill: SkillMetrics | undefined;
+  if (skillRaw && typeof skillRaw === 'object') {
+    const skillRecord = skillRaw as Record<string, unknown>;
+    const normalizedSkill: SkillMetrics = {
+      skillType: toOptionalSkillType(skillRecord.skillType),
+      level: toOptionalString(skillRecord.level),
+      techniques: normalizeFocusAreas(skillRecord.techniques),
+      attempts: toOptionalNonNegativeNumber(skillRecord.attempts),
+      successfulAttempts: toOptionalNonNegativeNumber(skillRecord.successfulAttempts),
+      grade: toOptionalString(skillRecord.grade),
+      rounds: toOptionalNonNegativeNumber(skillRecord.rounds),
+      intensity: toOptionalSessionIntensity(skillRecord.intensity),
+      notes: toOptionalString(skillRecord.notes),
+    };
+
+    if (
+      normalizedSkill.skillType !== undefined ||
+      normalizedSkill.level !== undefined ||
+      normalizedSkill.techniques !== undefined ||
+      normalizedSkill.attempts !== undefined ||
+      normalizedSkill.successfulAttempts !== undefined ||
+      normalizedSkill.grade !== undefined ||
+      normalizedSkill.rounds !== undefined ||
+      normalizedSkill.intensity !== undefined ||
+      normalizedSkill.notes !== undefined
+    ) {
+      skill = normalizedSkill;
+    }
+  }
+
+  if (!workout && !session && !match && !score && !skill) return undefined;
+  return { workout, session, match, score, skill };
 }
 
 function normalizeActivities(value: unknown): Activity[] {

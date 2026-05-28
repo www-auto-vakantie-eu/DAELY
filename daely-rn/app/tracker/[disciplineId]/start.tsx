@@ -13,6 +13,7 @@ import {
   type MatchPersonalStats,
   type ScoreResult,
   type ScoreType,
+  type SkillType,
 } from 'services/activity-storage';
 
 const SESSION_STATUS = {
@@ -105,7 +106,20 @@ export default function StartActivityScreen() {
   const isSessionDiscipline = discipline?.trackingType === 'session';
   const isMatchDiscipline = discipline?.trackingType === 'match';
   const isScoreDiscipline = discipline?.trackingType === 'score';
+  const isSkillDiscipline = discipline?.trackingType === 'skill';
   const scoreType: ScoreType | undefined = discipline?.id === 'golf' ? 'golf' : discipline?.id === 'racketsporten' ? 'racket' : isScoreDiscipline ? 'other' : undefined;
+  const skillType: SkillType | undefined =
+    discipline?.id === 'judo'
+      ? 'combat'
+      : discipline?.id === 'turnen'
+        ? 'gymnastics'
+        : discipline?.id === 'parkour'
+          ? 'parkour'
+          : discipline?.id === 'klimmen'
+            ? 'climbing'
+            : isSkillDiscipline
+              ? 'other'
+              : undefined;
 
   const [status, setStatus] = useState<SessionStatus>('NOT_STARTED');
   const [seconds, setSeconds] = useState(0);
@@ -143,6 +157,14 @@ export default function StartActivityScreen() {
   const [scoreHandicap, setScoreHandicap] = useState('');
   const [scoreIntensity, setScoreIntensity] = useState<SessionIntensity | undefined>(undefined);
   const [scoreNotes, setScoreNotes] = useState('');
+  const [skillLevel, setSkillLevel] = useState('');
+  const [skillTechniquesInput, setSkillTechniquesInput] = useState('');
+  const [skillAttempts, setSkillAttempts] = useState('');
+  const [skillSuccessfulAttempts, setSkillSuccessfulAttempts] = useState('');
+  const [skillGrade, setSkillGrade] = useState('');
+  const [skillRounds, setSkillRounds] = useState('');
+  const [skillIntensity, setSkillIntensity] = useState<SessionIntensity | undefined>(undefined);
+  const [skillNotes, setSkillNotes] = useState('');
   const [exerciseDrafts, setExerciseDrafts] = useState<ExerciseDraft[]>([createExerciseDraft()]);
   const timerRef = useRef<number | null>(null);
 
@@ -231,6 +253,14 @@ export default function StartActivityScreen() {
     return stats;
   };
 
+  const buildSkillTechniques = (): string[] | undefined => {
+    const techniques = skillTechniquesInput
+      .split(',')
+      .map((item) => item.trim())
+      .filter((item) => item.length > 0);
+    return techniques.length > 0 ? techniques : undefined;
+  };
+
   React.useEffect(() => {
     return () => stopTimer();
   }, []);
@@ -261,6 +291,7 @@ export default function StartActivityScreen() {
 
     const sessionFocusAreas = isSessionDiscipline ? buildSessionFocusAreas() : undefined;
     const matchPersonalStats = isMatchDiscipline ? buildMatchPersonalStats() : undefined;
+    const skillTechniques = isSkillDiscipline ? buildSkillTechniques() : undefined;
 
     setSaving(true);
     try {
@@ -277,7 +308,7 @@ export default function StartActivityScreen() {
         durationSeconds: seconds,
         status: 'completed',
         metrics:
-          isWorkoutDiscipline || isSessionDiscipline || isMatchDiscipline || isScoreDiscipline
+          isWorkoutDiscipline || isSessionDiscipline || isMatchDiscipline || isScoreDiscipline || isSkillDiscipline
             ? {
                 workout:
                   isWorkoutDiscipline && workoutExercises
@@ -324,6 +355,19 @@ export default function StartActivityScreen() {
                       handicap: toOptionalNonNegativeNumber(scoreHandicap),
                       intensity: scoreIntensity,
                       notes: scoreNotes.trim().length > 0 ? scoreNotes.trim() : undefined,
+                    }
+                  : undefined,
+                skill: isSkillDiscipline
+                  ? {
+                      skillType,
+                      level: skillLevel.trim().length > 0 ? skillLevel.trim() : undefined,
+                      techniques: skillTechniques,
+                      attempts: toOptionalNonNegativeNumber(skillAttempts),
+                      successfulAttempts: toOptionalNonNegativeNumber(skillSuccessfulAttempts),
+                      grade: skillGrade.trim().length > 0 ? skillGrade.trim() : undefined,
+                      rounds: toOptionalNonNegativeNumber(skillRounds),
+                      intensity: skillIntensity,
+                      notes: skillNotes.trim().length > 0 ? skillNotes.trim() : undefined,
                     }
                   : undefined,
               }
@@ -659,6 +703,60 @@ export default function StartActivityScreen() {
 
           <Text style={styles.fieldLabel}>Notities</Text>
           <TextInput style={[styles.input, styles.notesInput]} placeholder="Notities optioneel" value={scoreNotes} onChangeText={setScoreNotes} multiline />
+        </View>
+      )}
+
+      {isSkillDiscipline && status === 'FINISHED' && (
+        <View style={styles.metricsBlock}>
+          <Text style={styles.metricsTitle}>Skill metrics</Text>
+
+          <Text style={styles.fieldLabel}>Niveau</Text>
+          <TextInput style={styles.input} placeholder="Niveau/level optioneel" value={skillLevel} onChangeText={setSkillLevel} />
+
+          <Text style={styles.fieldLabel}>Technieken</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Meerdere technieken, gescheiden met komma"
+            value={skillTechniquesInput}
+            onChangeText={setSkillTechniquesInput}
+          />
+
+          <Text style={styles.fieldLabel}>Pogingen</Text>
+          <TextInput style={styles.input} placeholder="Pogingen" keyboardType="numeric" value={skillAttempts} onChangeText={setSkillAttempts} />
+
+          <Text style={styles.fieldLabel}>Succesvolle pogingen</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Succesvolle pogingen"
+            keyboardType="numeric"
+            value={skillSuccessfulAttempts}
+            onChangeText={setSkillSuccessfulAttempts}
+          />
+
+          <Text style={styles.fieldLabel}>Grade</Text>
+          <TextInput style={styles.input} placeholder="Grade optioneel" value={skillGrade} onChangeText={setSkillGrade} />
+
+          <Text style={styles.fieldLabel}>Rondes</Text>
+          <TextInput style={styles.input} placeholder="Rondes optioneel" keyboardType="numeric" value={skillRounds} onChangeText={setSkillRounds} />
+
+          <Text style={styles.fieldLabel}>Intensiteit</Text>
+          <View style={styles.optionRow}>
+            {SESSION_INTENSITY_OPTIONS.map((option) => (
+              <TouchableOpacity
+                key={`skill-intensity-${option}`}
+                style={[styles.optionChip, skillIntensity === option ? styles.optionChipActive : null]}
+                onPress={() => setSkillIntensity(option)}
+                accessibilityRole="button"
+              >
+                <Text style={[styles.optionChipText, skillIntensity === option ? styles.optionChipTextActive : null]}>
+                  {option}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          <Text style={styles.fieldLabel}>Notities</Text>
+          <TextInput style={[styles.input, styles.notesInput]} placeholder="Notities optioneel" value={skillNotes} onChangeText={setSkillNotes} multiline />
         </View>
       )}
 

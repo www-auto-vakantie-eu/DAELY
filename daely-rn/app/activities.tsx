@@ -63,6 +63,17 @@ export default function ActivitiesScreen() {
                     : 'Score'}
               </Text>
             )}
+            {a.metrics?.skill && (
+              <Text style={styles.skillMeta}>
+                {a.metrics.skill.techniques && a.metrics.skill.techniques.length > 0
+                  ? a.metrics.skill.techniques.join(', ')
+                  : 'Skill'}
+                {a.metrics.skill.attempts !== undefined || a.metrics.skill.successfulAttempts !== undefined
+                  ? ` · ${a.metrics.skill.successfulAttempts ?? '-'} / ${a.metrics.skill.attempts ?? '-'} succes`
+                  : ''}
+                {a.metrics.skill.grade ? ` · ${a.metrics.skill.grade}` : ''}
+              </Text>
+            )}
             <Text style={styles.status}>{a.status}</Text>
           </Pressable>
         ))
@@ -134,6 +145,11 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   scoreMeta: {
+    fontSize: 13,
+    color: '#374151',
+    marginBottom: 4,
+  },
+  skillMeta: {
     fontSize: 13,
     color: '#374151',
     marginBottom: 4,
