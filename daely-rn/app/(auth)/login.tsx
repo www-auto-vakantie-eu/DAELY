@@ -43,6 +43,8 @@ export default function LoginScreen() {
   const googleWebClientId = process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID ?? '';
   const googleAndroidClientId =
     process.env.EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID ?? googleWebClientId;
+  const isDevTestLoginEnabled =
+    __DEV__ && (process.env.EXPO_PUBLIC_ENABLE_DEV_TEST_LOGIN ?? '').toLowerCase() === 'true';
   const [, response, promptAsync] = Google.useAuthRequest({
     // expo-auth-session requires an Android client id on Android.
     // Use a non-empty fallback to avoid startup crashes when env vars are missing.
@@ -159,6 +161,12 @@ export default function LoginScreen() {
     setActiveTab('forgot');
   };
 
+  const handleDevTestLogin = () => {
+    setAccountType('standard');
+    setIsLoggedIn(true);
+    router.replace('/(tabs)/today');
+  };
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -268,6 +276,13 @@ export default function LoginScreen() {
                   <Text style={styles.loginButtonText}>Inloggen</Text>
                 </LinearGradient>
               </Pressable>
+
+              {/* Local smoke-test helper: only render in development when explicitly enabled via public env flag. */}
+              {isDevTestLoginEnabled ? (
+                <Pressable style={styles.devTestLoginButton} onPress={handleDevTestLogin}>
+                  <Text style={styles.devTestLoginButtonText}>Test login (dev only)</Text>
+                </Pressable>
+              ) : null}
 
               {/* Create Account */}
               <Pressable
@@ -609,6 +624,22 @@ const styles = StyleSheet.create({
   loginButtonText: {
     color: '#FFFFFF',
     fontSize: 16,
+    fontWeight: '700',
+  },
+  devTestLoginButton: {
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#93C5FD',
+    backgroundColor: '#EFF6FF',
+    paddingVertical: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: -4,
+    marginBottom: 8,
+  },
+  devTestLoginButtonText: {
+    color: '#1D4ED8',
+    fontSize: 14,
     fontWeight: '700',
   },
   linkButton: {
