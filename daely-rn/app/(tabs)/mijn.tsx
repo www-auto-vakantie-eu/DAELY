@@ -339,7 +339,7 @@ export default function HomeScreen() {
                 styles.quickActionButtonFeedback,
                 pressed ? styles.quickActionButtonPressed : null,
               ]}
-              onPress={() => setFeedbackModalVisible(true)}
+              onPress={() => handleCardPress('/feedback')}
             >
               <MaterialCommunityIcons name="chat-outline" size={18} color="#FFFFFF" />
               <Text style={styles.quickActionText}>Geef Feedback</Text>
