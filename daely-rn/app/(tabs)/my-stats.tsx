@@ -3,8 +3,10 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, StyleSheet, ActivityIndicator, TouchableOpacity, Image, Modal, Switch } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import PageHeader from '../components/PageHeader';
 import { getActivities, Activity } from 'services/activity-storage';
+import { CONNECTED_DEVICES, WHOOP_TOKEN_STORAGE_KEY } from '../constants/connected-devices';
 
 // Placeholder chart component
 const ChartPlaceholder = ({ title }: { title: string }) => (
@@ -23,6 +25,8 @@ export default function MijnStatistiekenScreen() {
   // State for loading, privacy, and settings
   const [loading, setLoading] = useState(false);
   const [settingsVisible, setSettingsVisible] = useState(false);
+  const [isWhoopConnected, setIsWhoopConnected] = useState(false);
+  const [isFitbitConnected, setIsFitbitConnected] = useState(false);
   const [privacy, setPrivacy] = useState({
     lock: false,
     showWeight: true,
@@ -42,6 +46,27 @@ export default function MijnStatistiekenScreen() {
       setActivitiesLoading(false);
     });
   }, []);
+
+  useEffect(() => {
+    const restoreConnectedStatus = async () => {
+      try {
+        const values = await AsyncStorage.multiGet([WHOOP_TOKEN_STORAGE_KEY, 'fitbit_oauth_token', 'fitbit_connected']);
+        const valueMap = new Map(values);
+        setIsWhoopConnected(!!valueMap.get(WHOOP_TOKEN_STORAGE_KEY));
+        const fitbitConnected = !!valueMap.get('fitbit_oauth_token') || valueMap.get('fitbit_connected') === 'true';
+        setIsFitbitConnected(fitbitConnected);
+      } catch {
+        setIsWhoopConnected(false);
+        setIsFitbitConnected(false);
+      }
+    };
+
+    void restoreConnectedStatus();
+  }, []);
+
+  const deviceStatusItems = CONNECTED_DEVICES.filter((device) =>
+    ['whoop', 'fitbit', 'apple-health', 'garmin', 'google-fit-health-connect'].includes(device.id)
+  );
 
   const isEmpty = !activitiesLoading && activities.length === 0;
 
@@ -165,6 +190,31 @@ export default function MijnStatistiekenScreen() {
           <Text style={styles.summaryDeltaUp}>↑ 1</Text>
         </View>
       </ScrollView>
+
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Gekoppelde apparaten</Text>
+        {deviceStatusItems.map((device) => {
+          const isSoon = device.status === 'soon';
+          const isConnected = device.id === 'whoop' ? isWhoopConnected : device.id === 'fitbit' ? isFitbitConnected : false;
+          const statusLabel = isSoon ? 'Binnenkort' : isConnected ? 'Verbonden' : 'Koppelbaar';
+
+          return (
+            <View key={device.id} style={styles.deviceCard}>
+              <View style={styles.deviceTopRow}>
+                <Text style={styles.deviceName}>{device.name}</Text>
+                <Text style={[styles.deviceStatus, isSoon ? styles.deviceStatusSoon : isConnected ? styles.deviceStatusConnected : styles.deviceStatusConnectable]}>
+                  {statusLabel}
+                </Text>
+              </View>
+              <Text style={styles.deviceMeta}>Data: {device.dataPoints.join(', ')}</Text>
+              <Text style={styles.deviceHint}>{isSoon ? 'Ondersteuning wordt binnenkort toegevoegd.' : isConnected ? 'Apparaatstatus is lokaal beschikbaar.' : 'Koppel dit apparaat via Data koppelen.'}</Text>
+            </View>
+          );
+        })}
+        <TouchableOpacity style={styles.ctaBtn} onPress={() => router.push('/data-link')}>
+          <Text style={styles.ctaBtnText}>Apparaat koppelen</Text>
+        </TouchableOpacity>
+      </View>
 
       {/* DAELY Activiteitenoverzicht */}
       <View style={styles.section}>
@@ -328,6 +378,15 @@ const styles = StyleSheet.create({
   summaryDeltaDown: { color: '#EF4444', fontWeight: 'bold', fontSize: 13 },
   section: { marginTop: 18, paddingHorizontal: 16 },
   sectionTitle: { fontSize: 18, fontWeight: 'bold', color: '#0F172A', marginBottom: 10 },
+  deviceCard: { backgroundColor: '#fff', borderRadius: 14, padding: 12, marginBottom: 8, shadowColor: '#000', shadowOpacity: 0.04, shadowRadius: 6, elevation: 1 },
+  deviceTopRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 },
+  deviceName: { color: '#0F172A', fontSize: 15, fontWeight: '700', flexShrink: 1, marginRight: 10 },
+  deviceStatus: { fontSize: 12, fontWeight: '700', borderRadius: 999, paddingHorizontal: 8, paddingVertical: 3 },
+  deviceStatusConnected: { color: '#166534', backgroundColor: '#DCFCE7' },
+  deviceStatusConnectable: { color: '#1E3A8A', backgroundColor: '#DBEAFE' },
+  deviceStatusSoon: { color: '#374151', backgroundColor: '#E5E7EB' },
+  deviceMeta: { color: '#475569', fontSize: 12, marginBottom: 2 },
+  deviceHint: { color: '#64748B', fontSize: 12 },
   chartCardEmpty: { backgroundColor: '#fff', borderRadius: 16, marginBottom: 16, padding: 14, borderWidth: 0, shadowColor: '#000', shadowOpacity: 0.06, shadowRadius: 8, elevation: 2, alignItems: 'center', justifyContent: 'center' },
   chartTitle: { fontSize: 15, fontWeight: '600', color: '#0F172A', marginBottom: 8 },
   chartPlaceholder: { width: '100%', height: 100, backgroundColor: '#F1F5F9', borderRadius: 8, alignItems: 'center', justifyContent: 'center', marginBottom: 8 },

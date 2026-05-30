@@ -7,6 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import PageHeader from '../components/PageHeader';
 import { Activity, getActivities } from 'services/activity-storage';
 import { useAppContext } from '@/contexts/AppContext';
+import { CONNECTED_DEVICES, WHOOP_TOKEN_STORAGE_KEY } from '../constants/connected-devices';
 
 const HERO_BACKGROUND_STORAGE_KEY = 'daely.today.heroBackground.v1';
 
@@ -85,6 +86,8 @@ export default function TodayScreen() {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [heroBackground, setHeroBackground] = useState<HeroBackgroundOptionId>('daelyHeader');
   const [showHeroBackgroundPicker, setShowHeroBackgroundPicker] = useState(false);
+  const [isWhoopConnected, setIsWhoopConnected] = useState(false);
+  const [isFitbitConnected, setIsFitbitConnected] = useState(false);
 
   useEffect(() => {
     getActivities().then((items) => {
@@ -101,6 +104,23 @@ export default function TodayScreen() {
         setHeroBackground(stored as HeroBackgroundOptionId);
       }
     });
+  }, []);
+
+  useEffect(() => {
+    const restoreConnectedStatus = async () => {
+      try {
+        const values = await AsyncStorage.multiGet([WHOOP_TOKEN_STORAGE_KEY, 'fitbit_oauth_token', 'fitbit_connected']);
+        const valueMap = new Map(values);
+        setIsWhoopConnected(!!valueMap.get(WHOOP_TOKEN_STORAGE_KEY));
+        const fitbitConnected = !!valueMap.get('fitbit_oauth_token') || valueMap.get('fitbit_connected') === 'true';
+        setIsFitbitConnected(fitbitConnected);
+      } catch {
+        setIsWhoopConnected(false);
+        setIsFitbitConnected(false);
+      }
+    };
+
+    void restoreConnectedStatus();
   }, []);
 
   const selectedHeroBackground = HERO_BACKGROUND_OPTIONS.find((option) => option.id === heroBackground) ?? HERO_BACKGROUND_OPTIONS[1];
@@ -125,6 +145,9 @@ export default function TodayScreen() {
     [activities, todayKey]
   );
   const mostRecentTodayActivity = todayActivities[0];
+  const whoopDevice = CONNECTED_DEVICES.find((device) => device.id === 'whoop');
+  const fitbitDevice = CONNECTED_DEVICES.find((device) => device.id === 'fitbit');
+  const hasConnectedDevice = isWhoopConnected || isFitbitConnected;
 
   return (
     <ScrollView style={[styles.screen, { backgroundColor: theme.background }]} contentContainerStyle={styles.content}>
@@ -205,15 +228,24 @@ export default function TodayScreen() {
       </Pressable>
 
       <View style={[styles.sectionCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-        <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Vandaag data</Text>
-        <Text style={[styles.dataFallback, { color: theme.subtitleColor }]}>Nog geen data gekoppeld.</Text>
-        <View style={styles.dataGrid}>
-          <DataTile label="Stappen" value="-" />
-          <DataTile label="Hartslag" value="-" />
-          <DataTile label="Kcal" value="-" />
-          <DataTile label="Actieve minuten" value="-" />
-          <DataTile label="Slaap/herstel" value="-" />
-        </View>
+        <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Gekoppelde data</Text>
+        {!hasConnectedDevice ? (
+          <>
+            <Text style={[styles.dataFallback, { color: theme.subtitleColor }]}>Nog geen apparaat gekoppeld.</Text>
+            <Text style={[styles.connectedSubtext, { color: theme.subtitleColor }]}>Koppel WHOOP of Fitbit om je dagdata automatisch te verrijken.</Text>
+          </>
+        ) : (
+          <View style={styles.connectedList}>
+            <View style={[styles.connectedItem, isWhoopConnected ? styles.connectedItemActive : null]}>
+              <Text style={styles.connectedItemTitle}>WHOOP · {isWhoopConnected ? 'Verbonden' : 'Koppelbaar'}</Text>
+              <Text style={styles.connectedItemText}>Data: {whoopDevice ? whoopDevice.dataPoints.join(', ') : 'Recovery, Sleep, Strain, Heart rate'}</Text>
+            </View>
+            <View style={[styles.connectedItem, isFitbitConnected ? styles.connectedItemActive : null]}>
+              <Text style={styles.connectedItemTitle}>Fitbit · {isFitbitConnected ? 'Verbonden' : 'Koppelbaar'}</Text>
+              <Text style={styles.connectedItemText}>Data: {fitbitDevice ? fitbitDevice.dataPoints.join(', ') : 'Steps, Sleep, Heart rate, HRV'}</Text>
+            </View>
+          </View>
+        )}
         <Pressable style={styles.linkButton} onPress={() => router.push('/data-link')}>
           <Text style={styles.linkButtonText}>Data koppelen</Text>
         </Pressable>
@@ -258,15 +290,6 @@ export default function TodayScreen() {
 
       <View style={styles.bottomSpacer} />
     </ScrollView>
-  );
-}
-
-function DataTile({ label, value }: { label: string; value: string }) {
-  return (
-    <View style={styles.dataTile}>
-      <Text style={styles.dataTileLabel}>{label}</Text>
-      <Text style={styles.dataTileValue}>{value}</Text>
-    </View>
   );
 }
 
@@ -435,6 +458,35 @@ const styles = StyleSheet.create({
   dataFallback: {
     fontSize: 13,
     marginBottom: 10,
+  },
+  connectedSubtext: {
+    fontSize: 13,
+    lineHeight: 18,
+    marginBottom: 10,
+  },
+  connectedList: {
+    gap: 8,
+  },
+  connectedItem: {
+    backgroundColor: '#F8FAFC',
+    borderRadius: 10,
+    padding: 10,
+  },
+  connectedItemActive: {
+    borderWidth: 1,
+    borderColor: '#93C5FD',
+    backgroundColor: '#EFF6FF',
+  },
+  connectedItemTitle: {
+    color: '#0F172A',
+    fontSize: 13,
+    fontWeight: '700',
+    marginBottom: 2,
+  },
+  connectedItemText: {
+    color: '#475569',
+    fontSize: 12,
+    lineHeight: 17,
   },
   dataGrid: {
     flexDirection: 'row',
