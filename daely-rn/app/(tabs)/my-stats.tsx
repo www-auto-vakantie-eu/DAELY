@@ -1,48 +1,37 @@
-// Redesigned Mijn Statistieken page scaffold
-import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, StyleSheet, ActivityIndicator, TouchableOpacity, Image, Modal, Switch } from 'react-native';
+import React, { useEffect, useMemo, useState } from 'react';
+import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import PageHeader from '../components/PageHeader';
-import { getActivities, Activity } from 'services/activity-storage';
+import { Activity, getActivities } from 'services/activity-storage';
 import { CONNECTED_DEVICES, WHOOP_TOKEN_STORAGE_KEY } from '../constants/connected-devices';
 
-// Placeholder chart component
-const ChartPlaceholder = ({ title }: { title: string }) => (
-  <View style={styles.chartCardEmpty}>
-    <Text style={styles.chartTitle}>{title}</Text>
-    <View style={styles.chartPlaceholder}><Text style={styles.chartPlaceholderText}>[Chart]</Text></View>
-    <Text style={styles.chartValue}>--</Text>
-    <Text style={styles.chartDelta}>--</Text>
-  </View>
-);
+type TrackingTypeKey = 'workout' | 'session' | 'match' | 'score' | 'skill' | 'laps' | 'gps';
 
-export default function MijnStatistiekenScreen() {
+const TRACKING_TYPE_ORDER: Array<{ key: TrackingTypeKey; label: string }> = [
+  { key: 'workout', label: 'Workout' },
+  { key: 'session', label: 'Session' },
+  { key: 'match', label: 'Match' },
+  { key: 'score', label: 'Score' },
+  { key: 'skill', label: 'Skill' },
+  { key: 'laps', label: 'Laps' },
+  { key: 'gps', label: 'GPS' },
+];
+
+export default function MyStatsScreen() {
   const router = useRouter();
   const theme = useTheme();
 
-  // State for loading, privacy, and settings
-  const [loading, setLoading] = useState(false);
-  const [settingsVisible, setSettingsVisible] = useState(false);
-  const [isWhoopConnected, setIsWhoopConnected] = useState(false);
-  const [isFitbitConnected, setIsFitbitConnected] = useState(false);
-  const [privacy, setPrivacy] = useState({
-    lock: false,
-    showWeight: true,
-    showCalories: true,
-    showPhotos: true,
-    showPRs: true,
-    showAchievements: true,
-  });
-
-  // Activities state
   const [activities, setActivities] = useState<Activity[]>([]);
   const [activitiesLoading, setActivitiesLoading] = useState(true);
+  const [isWhoopConnected, setIsWhoopConnected] = useState(false);
+  const [isFitbitConnected, setIsFitbitConnected] = useState(false);
 
   useEffect(() => {
-    getActivities().then((acts) => {
-      setActivities(acts);
+    getActivities().then((items) => {
+      const sorted = [...items].sort((a, b) => new Date(b.endedAt).getTime() - new Date(a.endedAt).getTime());
+      setActivities(sorted);
       setActivitiesLoading(false);
     });
   }, []);
@@ -64,32 +53,50 @@ export default function MijnStatistiekenScreen() {
     void restoreConnectedStatus();
   }, []);
 
-  const deviceStatusItems = CONNECTED_DEVICES.filter((device) =>
-    ['whoop', 'fitbit', 'apple-health', 'garmin', 'google-fit-health-connect'].includes(device.id)
+  const deviceStatusItems = useMemo(
+    () => CONNECTED_DEVICES.filter((device) => ['whoop', 'fitbit', 'apple-health', 'garmin', 'google-fit-health-connect'].includes(device.id)),
+    []
   );
 
-  const isEmpty = !activitiesLoading && activities.length === 0;
-
-  // Summary calculations
   const totalActivities = activities.length;
-  const totalDurationSeconds = activities.reduce((sum, a) => sum + (a.durationSeconds || 0), 0);
+  const totalDurationSeconds = activities.reduce((sum, activity) => sum + (activity.durationSeconds || 0), 0);
   const totalDurationHours = Math.floor(totalDurationSeconds / 3600);
   const totalDurationMinutes = Math.floor((totalDurationSeconds % 3600) / 60);
-  const uniqueDisciplines = Array.from(new Set(activities.map((a) => a.disciplineId))).length;
+  const uniqueDisciplines = Array.from(new Set(activities.map((activity) => activity.disciplineId))).length;
   const mostRecent = activities[0];
-
-  // Per trackingType counts
-  const trackingTypeCounts: Record<string, number> = {};
-  for (const a of activities) {
-    trackingTypeCounts[a.trackingType] = (trackingTypeCounts[a.trackingType] || 0) + 1;
-  }
-
-  // Recent activities (last 3)
   const recentActivities = activities.slice(0, 3);
+  const isEmpty = !activitiesLoading && activities.length === 0;
+
+  const trackingTypeCounts = useMemo(() => {
+    const counts: Record<TrackingTypeKey, number> = {
+      workout: 0,
+      session: 0,
+      match: 0,
+      score: 0,
+      skill: 0,
+      laps: 0,
+      gps: 0,
+    };
+
+    for (const activity of activities) {
+      const key = activity.trackingType as TrackingTypeKey;
+      if (key in counts) {
+        counts[key] += 1;
+      }
+    }
+
+    return counts;
+  }, [activities]);
 
   function formatDate(dateStr: string) {
-    const d = new Date(dateStr);
-    return d.toLocaleDateString('nl-NL', { day: '2-digit', month: 'short', year: '2-digit', hour: '2-digit', minute: '2-digit' });
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('nl-NL', {
+      day: '2-digit',
+      month: 'short',
+      year: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
   }
 
   function formatDuration(seconds: number) {
@@ -98,45 +105,36 @@ export default function MijnStatistiekenScreen() {
     return `${min}m ${sec}s`;
   }
 
-  function renderMetricsSummary(a: Activity) {
-    if (!a.metrics) return null;
-    if (a.metrics.workout) {
-      return `${a.metrics.workout.exercises?.length ?? 0} oefeningen${a.metrics.workout.totalVolumeKg !== undefined ? ` · ${Math.round(a.metrics.workout.totalVolumeKg)} kg` : ''}`;
+  function renderMetricsSummary(activity: Activity) {
+    if (!activity.metrics) return null;
+
+    if (activity.metrics.workout) {
+      return `${activity.metrics.workout.exercises?.length ?? 0} oefeningen${activity.metrics.workout.totalVolumeKg !== undefined ? ` · ${Math.round(activity.metrics.workout.totalVolumeKg)} kg` : ''}`;
     }
-    if (a.metrics.session) {
-      return `Intensiteit ${a.metrics.session.intensity ?? '-'}`;
+    if (activity.metrics.session) {
+      return `Intensiteit ${activity.metrics.session.intensity ?? '-'}`;
     }
-    if (a.metrics.match) {
-      return `${a.metrics.match.matchType ?? 'match'}${a.metrics.match.scoreFor !== undefined && a.metrics.match.scoreAgainst !== undefined ? ` · ${a.metrics.match.scoreFor}-${a.metrics.match.scoreAgainst}` : ''}`;
+    if (activity.metrics.match) {
+      return `${activity.metrics.match.matchType ?? 'match'}${activity.metrics.match.scoreFor !== undefined && activity.metrics.match.scoreAgainst !== undefined ? ` · ${activity.metrics.match.scoreFor}-${activity.metrics.match.scoreAgainst}` : ''}`;
     }
-    if (a.metrics.score) {
-      return `${a.metrics.score.scoreType ?? 'score'}${a.metrics.score.result ? ` · ${a.metrics.score.result}` : ''}`;
+    if (activity.metrics.score) {
+      return `${activity.metrics.score.scoreType ?? 'score'}${activity.metrics.score.result ? ` · ${activity.metrics.score.result}` : ''}`;
     }
-    if (a.metrics.skill) {
-      return a.metrics.skill.techniques && a.metrics.skill.techniques.length > 0 ? a.metrics.skill.techniques.join(', ') : 'Skill';
+    if (activity.metrics.skill) {
+      return activity.metrics.skill.techniques && activity.metrics.skill.techniques.length > 0 ? activity.metrics.skill.techniques.join(', ') : 'Skill';
     }
-    if (a.metrics.laps) {
-      return a.metrics.laps.distanceMeters !== undefined ? `${Math.round(a.metrics.laps.distanceMeters)} m` : 'Laps';
+    if (activity.metrics.laps) {
+      return activity.metrics.laps.distanceMeters !== undefined ? `${Math.round(activity.metrics.laps.distanceMeters)} m` : 'Laps';
     }
-    if (a.metrics.gps) {
-      return a.metrics.gps.distanceMeters !== undefined ? `${Math.round(a.metrics.gps.distanceMeters)} m` : 'GPS activiteit';
+    if (activity.metrics.gps) {
+      return activity.metrics.gps.distanceMeters !== undefined ? `${Math.round(activity.metrics.gps.distanceMeters)} m` : 'GPS activiteit';
     }
+
     return null;
   }
 
-  // Privacy lock overlay
-  if (privacy.lock) {
-    return (
-      <View style={styles.lockedOverlay}>
-        <Text style={styles.lockedText}>Pagina vergrendeld</Text>
-        <TouchableOpacity style={styles.ctaBtn}><Text style={styles.ctaBtnText}>Ontgrendel</Text></TouchableOpacity>
-      </View>
-    );
-  }
-
-
   return (
-    <ScrollView style={[styles.container, { backgroundColor: theme.background }]}> 
+    <ScrollView style={[styles.screen, { backgroundColor: theme.background }]} contentContainerStyle={styles.content}>
       <PageHeader
         title="Data"
         onSettingsPress={() => router.push('/(tabs)/athlete')}
@@ -144,276 +142,330 @@ export default function MijnStatistiekenScreen() {
         onCartPress={() => router.push('/(tabs)/cart')}
       />
 
-      {/* Profile Section */}
-      <View style={styles.profileRow}>
-        <TouchableOpacity>
-          <Image source={{ uri: 'https://randomuser.me/api/portraits/men/32.jpg' }} style={styles.avatar} />
-        </TouchableOpacity>
-        <View style={{ flex: 1 }}>
-          <Text style={styles.displayName}>Jan Jansen</Text>
-          <Text style={styles.memberSince}>Lid sinds jan 2024</Text>
-          <View style={styles.goalPill}><Text style={styles.goalPillText}>Doel: 78 kg</Text></View>
-        </View>
-        <TouchableOpacity onPress={() => setSettingsVisible(true)}>
-          <Text style={styles.gearIcon}>⚙️</Text>
-        </TouchableOpacity>
+      <View style={[styles.heroCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+        <Text style={[styles.heroTitle, { color: theme.titleColor }]}>Data</Text>
+        <Text style={[styles.heroText, { color: theme.subtitleColor }]}>Bekijk je voortgang, activiteiten en gekoppelde apparaten.</Text>
       </View>
 
-      {/* Summary Cards Row */}
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.summaryRow}>
-        <View style={[styles.summaryCard, { backgroundColor: '#1e293b' }]}> {/* Workouts */}
-          <Text style={styles.summaryIcon}>🏋️‍♂️</Text>
-          <Text style={styles.summaryValue}>12</Text>
-          <Text style={styles.summaryLabel}>Workouts</Text>
-          <Text style={styles.summarySub}>deze maand</Text>
-          <Text style={styles.summaryDeltaUp}>↑ 8%</Text>
-        </View>
-        <View style={[styles.summaryCard, { backgroundColor: '#0ea5e9' }]}> {/* Calorieën */}
-          <Text style={styles.summaryIcon}>🔥</Text>
-          <Text style={styles.summaryValue}>18.200</Text>
-          <Text style={styles.summaryLabel}>Calorieën</Text>
-          <Text style={styles.summarySub}>deze maand</Text>
-          <Text style={styles.summaryDeltaDown}>↓ 2%</Text>
-        </View>
-        <View style={[styles.summaryCard, { backgroundColor: '#334155' }]}> {/* Gewicht */}
-          <Text style={styles.summaryIcon}>⚖️</Text>
-          <Text style={styles.summaryValue}>81.2</Text>
-          <Text style={styles.summaryLabel}>Gewicht</Text>
-          <Text style={styles.summarySub}>laatste meting</Text>
-          <Text style={styles.summaryDeltaUp}>↑ 0.3 kg</Text>
-        </View>
-        <View style={[styles.summaryCard, { backgroundColor: '#f59e42' }]}> {/* Streak */}
-          <Text style={styles.summaryIcon}>📅</Text>
-          <Text style={styles.summaryValue}>7</Text>
-          <Text style={styles.summaryLabel}>Actieve dagen</Text>
-          <Text style={styles.summarySub}>streak</Text>
-          <Text style={styles.summaryDeltaUp}>↑ 1</Text>
-        </View>
-      </ScrollView>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Gekoppelde apparaten</Text>
-        {deviceStatusItems.map((device) => {
-          const isSoon = device.status === 'soon';
-          const isConnected = device.id === 'whoop' ? isWhoopConnected : device.id === 'fitbit' ? isFitbitConnected : false;
-          const statusLabel = isSoon ? 'Binnenkort' : isConnected ? 'Verbonden' : 'Koppelbaar';
-
-          return (
-            <View key={device.id} style={styles.deviceCard}>
-              <View style={styles.deviceTopRow}>
-                <Text style={styles.deviceName}>{device.name}</Text>
-                <Text style={[styles.deviceStatus, isSoon ? styles.deviceStatusSoon : isConnected ? styles.deviceStatusConnected : styles.deviceStatusConnectable]}>
-                  {statusLabel}
-                </Text>
-              </View>
-              <Text style={styles.deviceMeta}>Data: {device.dataPoints.join(', ')}</Text>
-              <Text style={styles.deviceHint}>{isSoon ? 'Ondersteuning wordt binnenkort toegevoegd.' : isConnected ? 'Apparaatstatus is lokaal beschikbaar.' : 'Koppel dit apparaat via Data koppelen.'}</Text>
+      <View style={[styles.sectionCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+        <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Activiteitenoverzicht</Text>
+        {activitiesLoading ? (
+          <ActivityIndicator size="small" color="#2563EB" />
+        ) : isEmpty ? (
+          <Text style={[styles.emptyText, { color: theme.subtitleColor }]}>Nog geen activiteiten opgeslagen.</Text>
+        ) : (
+          <View style={styles.statsGrid}>
+            <View style={styles.statCard}>
+              <Text style={styles.statLabel}>Totaal activiteiten</Text>
+              <Text style={styles.statValue}>{totalActivities}</Text>
             </View>
-          );
-        })}
-        <TouchableOpacity style={styles.ctaBtn} onPress={() => router.push('/data-link')}>
-          <Text style={styles.ctaBtnText}>Apparaat koppelen</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* DAELY Activiteitenoverzicht */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Activiteitenoverzicht</Text>
-        {activitiesLoading ? (
-          <ActivityIndicator size="small" color="#2563EB" />
-        ) : isEmpty ? (
-          <Text style={styles.emptyText}>Nog geen activiteiten opgeslagen.</Text>
-        ) : (
-          <>
-            <Text style={styles.meta}>Totaal aantal activiteiten: <Text style={styles.bold}>{totalActivities}</Text></Text>
-            <Text style={styles.meta}>Totale sporttijd: <Text style={styles.bold}>{totalDurationHours}u {totalDurationMinutes}m</Text></Text>
-            <Text style={styles.meta}>Aantal disciplines gebruikt: <Text style={styles.bold}>{uniqueDisciplines}</Text></Text>
-            {mostRecent && (
-              <Text style={styles.meta}>Meest recent: <Text style={styles.bold}>{mostRecent.disciplineName}</Text> op {formatDate(mostRecent.endedAt)}</Text>
-            )}
-          </>
-        )}
-      </View>
-
-      {/* DAELY Per trackingtype */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Per trackingtype</Text>
-        {activitiesLoading ? (
-          <ActivityIndicator size="small" color="#2563EB" />
-        ) : isEmpty ? (
-          <Text style={styles.emptyText}>Nog geen activiteiten opgeslagen.</Text>
-        ) : (
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-            <Text style={styles.trackingTypeItem}>Workout: <Text style={styles.bold}>{trackingTypeCounts['workout'] || 0}</Text></Text>
-            <Text style={styles.trackingTypeItem}>Session: <Text style={styles.bold}>{trackingTypeCounts['session'] || 0}</Text></Text>
-            <Text style={styles.trackingTypeItem}>Match: <Text style={styles.bold}>{trackingTypeCounts['match'] || 0}</Text></Text>
-            <Text style={styles.trackingTypeItem}>Score: <Text style={styles.bold}>{trackingTypeCounts['score'] || 0}</Text></Text>
-            <Text style={styles.trackingTypeItem}>Skill: <Text style={styles.bold}>{trackingTypeCounts['skill'] || 0}</Text></Text>
-            <Text style={styles.trackingTypeItem}>Laps: <Text style={styles.bold}>{trackingTypeCounts['laps'] || 0}</Text></Text>
-            <Text style={styles.trackingTypeItem}>GPS: <Text style={styles.bold}>{trackingTypeCounts['gps'] || 0}</Text></Text>
+            <View style={styles.statCard}>
+              <Text style={styles.statLabel}>Totale sporttijd</Text>
+              <Text style={styles.statValue}>{totalDurationHours}u {totalDurationMinutes}m</Text>
+            </View>
+            <View style={styles.statCard}>
+              <Text style={styles.statLabel}>Disciplines</Text>
+              <Text style={styles.statValue}>{uniqueDisciplines}</Text>
+            </View>
+            <View style={styles.statCard}>
+              <Text style={styles.statLabel}>Meest recent</Text>
+              <Text style={styles.statValueSmall}>{mostRecent ? mostRecent.disciplineName : '-'}</Text>
+              {mostRecent ? <Text style={styles.statMeta}>{formatDate(mostRecent.endedAt)}</Text> : null}
+            </View>
           </View>
         )}
       </View>
 
-      {/* DAELY Recente activiteiten */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Recente activiteiten</Text>
+      <View style={[styles.sectionCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+        <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Per trackingtype</Text>
         {activitiesLoading ? (
           <ActivityIndicator size="small" color="#2563EB" />
-        ) : isEmpty ? (
-          <Text style={styles.emptyText}>Nog geen activiteiten opgeslagen.</Text>
         ) : (
-          recentActivities.map((a) => (
-            <TouchableOpacity key={a.id} style={styles.recentItem} onPress={() => router.push({ pathname: '/activities/[id]', params: { id: a.id } })}>
-              <Text style={styles.recentName}>{a.disciplineName}</Text>
-              <Text style={styles.recentMeta}>{formatDate(a.endedAt)} · {formatDuration(a.durationSeconds)}</Text>
-              {renderMetricsSummary(a) && <Text style={styles.recentSummary}>{renderMetricsSummary(a)}</Text>}
-            </TouchableOpacity>
-          ))
+          <View style={styles.trackingGrid}>
+            {TRACKING_TYPE_ORDER.map((item) => (
+              <View key={item.key} style={styles.trackingChip}>
+                <Text style={styles.trackingChipLabel}>{item.label}</Text>
+                <Text style={styles.trackingChipValue}>{trackingTypeCounts[item.key]}</Text>
+              </View>
+            ))}
+          </View>
         )}
       </View>
 
-      {/* DAELY Navigatieknoppen */}
-      <View style={styles.section}>
-        <TouchableOpacity style={styles.ctaBtn} onPress={() => router.push('/activities')}>
-          <Text style={styles.ctaBtnText}>Activiteiten bekijken</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.ctaBtn} onPress={() => router.push('/tracker')}>
-          <Text style={styles.ctaBtnText}>Start activiteit</Text>
-        </TouchableOpacity>
-      </View>
+      <View style={[styles.sectionCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+        <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Gekoppelde apparaten</Text>
+        <View style={styles.deviceList}>
+          {deviceStatusItems.map((device) => {
+            const isSoon = device.status === 'soon';
+            const isConnected = device.id === 'whoop' ? isWhoopConnected : device.id === 'fitbit' ? isFitbitConnected : false;
+            const statusLabel = isSoon ? 'Binnenkort' : isConnected ? 'Verbonden' : 'Koppelbaar';
 
-      {/* Charts Section */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Data</Text>
-        <ChartPlaceholder title="Gewicht over tijd" />
-        <ChartPlaceholder title="Workouts per week" />
-        <ChartPlaceholder title="Calorieën verbrand" />
-        <ChartPlaceholder title="Body measurements" />
-      </View>
-
-      {/* Progress Photos Section */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Voortgang foto&apos;s</Text>
-        <View style={styles.emptyState}><Text style={styles.emptyText}>Nog geen foto&apos;s. Voeg je eerste foto toe!</Text></View>
-        <TouchableOpacity style={styles.ctaBtn}><Text style={styles.ctaBtnText}>Foto toevoegen</Text></TouchableOpacity>
-      </View>
-
-      {/* Persoonlijke Records Section */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Persoonlijke Records (PR&apos;s)</Text>
-        <View style={styles.emptyState}><Text style={styles.emptyText}>Nog geen records. Log je eerste workout om te beginnen.</Text></View>
-      </View>
-
-      {/* Achievements / Badges Section */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Achievements</Text>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <View style={styles.badgeCard}><Text>🏅</Text><Text style={styles.badgeLabel}>Eerste workout</Text></View>
-          <View style={styles.badgeCardLocked}><Text>🔒</Text><Text style={styles.badgeLabel}>7 dagen streak</Text></View>
-        </ScrollView>
-      </View>
-
-      {/* Insights Section */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Inzichten</Text>
-        <View style={styles.insightCard}><Text style={styles.insightIcon}>💡</Text><Text style={styles.insightText}>Je beste week was week 12</Text></View>
-        <TouchableOpacity style={styles.ctaBtnOutline}><Text style={styles.ctaBtnOutlineText}>Bekijk alle inzichten</Text></TouchableOpacity>
-      </View>
-
-      {/* Goals Section */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Doelen</Text>
-        <View style={styles.goalCard}><Text style={styles.goalTitle}>Afvallen naar 78 kg</Text><View style={styles.goalBar}><View style={styles.goalBarFill} /></View><Text style={styles.goalSub}>60% voltooid · 12 dagen resterend</Text></View>
-        <TouchableOpacity style={styles.ctaBtn}><Text style={styles.ctaBtnText}>Doel toevoegen</Text></TouchableOpacity>
-      </View>
-
-      {/* Settings Modal */}
-      <Modal visible={settingsVisible} animationType="slide" transparent>
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalSheet}>
-            <Text style={styles.modalTitle}>Pagina-instellingen</Text>
-            <View style={styles.modalRow}><Text>Pagina vergrendelen</Text><Switch value={privacy.lock} onValueChange={v => setPrivacy(p => ({ ...p, lock: v }))} /></View>
-            <View style={styles.modalRow}><Text>Toon gewicht</Text><Switch value={privacy.showWeight} onValueChange={v => setPrivacy(p => ({ ...p, showWeight: v }))} /></View>
-            <View style={styles.modalRow}><Text>Toon calorieën</Text><Switch value={privacy.showCalories} onValueChange={v => setPrivacy(p => ({ ...p, showCalories: v }))} /></View>
-            <View style={styles.modalRow}><Text>Toon voortgang foto&apos;s</Text><Switch value={privacy.showPhotos} onValueChange={v => setPrivacy(p => ({ ...p, showPhotos: v }))} /></View>
-            <View style={styles.modalRow}><Text>Toon PR&apos;s</Text><Switch value={privacy.showPRs} onValueChange={v => setPrivacy(p => ({ ...p, showPRs: v }))} /></View>
-            <View style={styles.modalRow}><Text>Toon achievements</Text><Switch value={privacy.showAchievements} onValueChange={v => setPrivacy(p => ({ ...p, showAchievements: v }))} /></View>
-            <TouchableOpacity style={styles.ctaBtnOutline}><Text style={styles.ctaBtnOutlineText}>Exporteer data</Text></TouchableOpacity>
-            <TouchableOpacity style={styles.ctaBtnOutline}><Text style={[styles.ctaBtnOutlineText, { color: '#EF4444' }]}>Verwijder alle data</Text></TouchableOpacity>
-            <TouchableOpacity style={styles.ctaBtn} onPress={() => setSettingsVisible(false)}><Text style={styles.ctaBtnText}>Sluiten</Text></TouchableOpacity>
-          </View>
+            return (
+              <View key={device.id} style={styles.deviceCard}>
+                <View style={styles.deviceHeaderRow}>
+                  <Text style={styles.deviceName}>{device.name}</Text>
+                  <Text
+                    style={[
+                      styles.deviceStatus,
+                      isSoon ? styles.deviceStatusSoon : isConnected ? styles.deviceStatusConnected : styles.deviceStatusConnectable,
+                    ]}
+                  >
+                    {statusLabel}
+                  </Text>
+                </View>
+                <Text style={styles.deviceMeta}>Data: {device.dataPoints.join(', ')}</Text>
+              </View>
+            );
+          })}
         </View>
-      </Modal>
+        <Pressable style={styles.secondaryCtaBtn} onPress={() => router.push('/data-link')}>
+          <Text style={styles.secondaryCtaBtnText}>Apparaat koppelen</Text>
+        </Pressable>
+      </View>
+
+      <View style={[styles.sectionCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+        <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Recente activiteiten</Text>
+        {activitiesLoading ? (
+          <ActivityIndicator size="small" color="#2563EB" />
+        ) : isEmpty ? (
+          <Text style={[styles.emptyText, { color: theme.subtitleColor }]}>Nog geen activiteiten opgeslagen.</Text>
+        ) : (
+          <View style={styles.recentList}>
+            {recentActivities.map((activity) => (
+              <Pressable
+                key={activity.id}
+                style={styles.recentCard}
+                onPress={() => router.push({ pathname: '/activities/[id]', params: { id: activity.id } })}
+              >
+                <Text style={styles.recentTitle}>{activity.disciplineName}</Text>
+                <Text style={styles.recentMeta}>{formatDate(activity.endedAt)} · {formatDuration(activity.durationSeconds)}</Text>
+                {renderMetricsSummary(activity) ? <Text style={styles.recentSummary}>{renderMetricsSummary(activity)}</Text> : null}
+              </Pressable>
+            ))}
+          </View>
+        )}
+      </View>
+
+      <View style={styles.ctaRow}>
+        <Pressable style={styles.primaryCtaBtn} onPress={() => router.push('/tracker')}>
+          <Text style={styles.primaryCtaBtnText}>Start activiteit</Text>
+        </Pressable>
+        <Pressable style={styles.secondaryCtaBtn} onPress={() => router.push('/activities')}>
+          <Text style={styles.secondaryCtaBtnText}>Activiteiten bekijken</Text>
+        </Pressable>
+      </View>
+
+      <View style={styles.bottomSpacer} />
     </ScrollView>
   );
 }
 
-// Styles: modern, dark cards, blue accent, rounded, shadow
 const styles = StyleSheet.create({
-      // Recent activities styles
-      recentItem: { backgroundColor: '#fff', borderRadius: 12, padding: 14, marginBottom: 10, shadowColor: '#000', shadowOpacity: 0.04, shadowRadius: 4, elevation: 1 },
-      recentName: { fontWeight: 'bold', color: '#2563EB', fontSize: 16, marginBottom: 2 },
-      recentMeta: { color: '#64748B', fontSize: 13, marginBottom: 2 },
-      recentSummary: { color: '#334155', fontSize: 13 },
-    // Activity summary styles
-    bold: { fontWeight: 'bold', color: '#0F172A' },
-    meta: { color: '#334155', fontSize: 14, marginBottom: 2 },
-    trackingTypeItem: { marginRight: 16, marginBottom: 6, color: '#2563EB', fontWeight: '600', fontSize: 14 },
-  container: { flex: 1, backgroundColor: '#F3F4F6' },
-  profileRow: { flexDirection: 'row', alignItems: 'center', padding: 20, backgroundColor: '#fff', borderBottomWidth: 1, borderColor: '#E5E7EB' },
-  avatar: { width: 56, height: 56, borderRadius: 28, marginRight: 16 },
-  displayName: { fontSize: 20, fontWeight: 'bold', color: '#0F172A' },
-  memberSince: { color: '#64748B', fontSize: 13 },
-  goalPill: { backgroundColor: '#E0E7FF', borderRadius: 12, paddingHorizontal: 10, paddingVertical: 3, alignSelf: 'flex-start', marginTop: 4 },
-  goalPillText: { color: '#2563EB', fontWeight: '600', fontSize: 12 },
-  gearIcon: { fontSize: 24, color: '#64748B', marginLeft: 12 },
-  summaryRow: { flexDirection: 'row', paddingVertical: 16, paddingLeft: 12, backgroundColor: 'transparent' },
-  summaryCard: { width: 140, height: 120, borderRadius: 18, marginRight: 14, padding: 16, justifyContent: 'center', alignItems: 'center', shadowColor: '#000', shadowOpacity: 0.08, shadowRadius: 8, elevation: 2 },
-  summaryIcon: { fontSize: 32, marginBottom: 6 },
-  summaryValue: { fontSize: 28, fontWeight: 'bold', color: '#fff' },
-  summaryLabel: { color: '#F1F5F9', fontWeight: '600', fontSize: 13 },
-  summarySub: { color: '#CBD5E1', fontSize: 11 },
-  summaryDeltaUp: { color: '#22C55E', fontWeight: 'bold', fontSize: 13 },
-  summaryDeltaDown: { color: '#EF4444', fontWeight: 'bold', fontSize: 13 },
-  section: { marginTop: 18, paddingHorizontal: 16 },
-  sectionTitle: { fontSize: 18, fontWeight: 'bold', color: '#0F172A', marginBottom: 10 },
-  deviceCard: { backgroundColor: '#fff', borderRadius: 14, padding: 12, marginBottom: 8, shadowColor: '#000', shadowOpacity: 0.04, shadowRadius: 6, elevation: 1 },
-  deviceTopRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 },
-  deviceName: { color: '#0F172A', fontSize: 15, fontWeight: '700', flexShrink: 1, marginRight: 10 },
-  deviceStatus: { fontSize: 12, fontWeight: '700', borderRadius: 999, paddingHorizontal: 8, paddingVertical: 3 },
-  deviceStatusConnected: { color: '#166534', backgroundColor: '#DCFCE7' },
-  deviceStatusConnectable: { color: '#1E3A8A', backgroundColor: '#DBEAFE' },
-  deviceStatusSoon: { color: '#374151', backgroundColor: '#E5E7EB' },
-  deviceMeta: { color: '#475569', fontSize: 12, marginBottom: 2 },
-  deviceHint: { color: '#64748B', fontSize: 12 },
-  chartCardEmpty: { backgroundColor: '#fff', borderRadius: 16, marginBottom: 16, padding: 14, borderWidth: 0, shadowColor: '#000', shadowOpacity: 0.06, shadowRadius: 8, elevation: 2, alignItems: 'center', justifyContent: 'center' },
-  chartTitle: { fontSize: 15, fontWeight: '600', color: '#0F172A', marginBottom: 8 },
-  chartPlaceholder: { width: '100%', height: 100, backgroundColor: '#F1F5F9', borderRadius: 8, alignItems: 'center', justifyContent: 'center', marginBottom: 8 },
-  chartPlaceholderText: { color: '#94A3B8' },
-  chartValue: { fontSize: 18, fontWeight: 'bold', color: '#2563EB', marginBottom: 2 },
-  chartDelta: { fontSize: 13, color: '#64748B' },
-  emptyState: { alignItems: 'center', marginTop: 16, padding: 12 },
-  emptyText: { color: '#64748B', textAlign: 'center', marginBottom: 8 },
-  ctaBtn: { backgroundColor: '#2563EB', borderRadius: 16, paddingVertical: 10, paddingHorizontal: 28, marginTop: 8 },
-  ctaBtnText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
-  ctaBtnOutline: { borderWidth: 1, borderColor: '#2563EB', borderRadius: 16, paddingVertical: 10, paddingHorizontal: 28, marginTop: 8 },
-  ctaBtnOutlineText: { color: '#2563EB', fontWeight: 'bold', fontSize: 16 },
-  badgeCard: { backgroundColor: '#fff', borderRadius: 14, padding: 12, marginRight: 10, alignItems: 'center', minWidth: 80 },
-  badgeCardLocked: { backgroundColor: '#F1F5F9', borderRadius: 14, padding: 12, marginRight: 10, alignItems: 'center', minWidth: 80, opacity: 0.5 },
-  badgeLabel: { fontSize: 12, color: '#64748B', marginTop: 4 },
-  insightCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#fff', borderRadius: 14, padding: 12, marginBottom: 8, shadowColor: '#000', shadowOpacity: 0.04, shadowRadius: 6, elevation: 1 },
-  insightIcon: { fontSize: 20, marginRight: 10 },
-  insightText: { color: '#0F172A', fontWeight: '600' },
-  goalCard: { backgroundColor: '#fff', borderRadius: 14, padding: 14, marginBottom: 10, shadowColor: '#000', shadowOpacity: 0.04, shadowRadius: 6, elevation: 1 },
-  goalTitle: { fontWeight: 'bold', color: '#2563EB', fontSize: 15, marginBottom: 6 },
-  goalBar: { height: 10, backgroundColor: '#E0E7FF', borderRadius: 5, marginVertical: 8, overflow: 'hidden' },
-  goalBarFill: { width: '60%', height: '100%', backgroundColor: '#2563EB', borderRadius: 5 },
-  goalSub: { color: '#64748B', fontSize: 12 },
-  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.3)', justifyContent: 'flex-end' },
-  modalSheet: { backgroundColor: '#fff', borderTopLeftRadius: 18, borderTopRightRadius: 18, padding: 24 },
-  modalTitle: { fontSize: 18, fontWeight: 'bold', color: '#0F172A', marginBottom: 18 },
-  modalRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 },
-  lockedOverlay: { flex: 1, backgroundColor: '#111827CC', alignItems: 'center', justifyContent: 'center' },
-  lockedText: { color: '#fff', fontSize: 22, fontWeight: 'bold', marginBottom: 18 },
+  screen: {
+    flex: 1,
+  },
+  content: {
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 24,
+  },
+  heroCard: {
+    borderWidth: 1,
+    borderRadius: 14,
+    paddingHorizontal: 14,
+    paddingVertical: 14,
+    marginBottom: 12,
+  },
+  heroTitle: {
+    fontSize: 22,
+    fontWeight: '800',
+    marginBottom: 4,
+  },
+  heroText: {
+    fontSize: 14,
+    lineHeight: 20,
+  },
+  sectionCard: {
+    borderWidth: 1,
+    borderRadius: 14,
+    paddingHorizontal: 14,
+    paddingVertical: 14,
+    marginBottom: 12,
+  },
+  sectionTitle: {
+    fontSize: 17,
+    fontWeight: '800',
+    marginBottom: 10,
+  },
+  emptyText: {
+    fontSize: 13,
+  },
+  statsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  statCard: {
+    width: '48%',
+    backgroundColor: '#F8FAFC',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+  },
+  statLabel: {
+    color: '#64748B',
+    fontSize: 12,
+    marginBottom: 4,
+  },
+  statValue: {
+    color: '#0F172A',
+    fontSize: 18,
+    fontWeight: '800',
+  },
+  statValueSmall: {
+    color: '#0F172A',
+    fontSize: 14,
+    fontWeight: '700',
+  },
+  statMeta: {
+    marginTop: 2,
+    color: '#64748B',
+    fontSize: 11,
+  },
+  trackingGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  trackingChip: {
+    width: '31%',
+    minHeight: 56,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#DBEAFE',
+    backgroundColor: '#EFF6FF',
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    justifyContent: 'center',
+  },
+  trackingChipLabel: {
+    color: '#1E3A8A',
+    fontSize: 12,
+    fontWeight: '600',
+    marginBottom: 2,
+  },
+  trackingChipValue: {
+    color: '#1E3A8A',
+    fontSize: 16,
+    fontWeight: '800',
+  },
+  deviceList: {
+    gap: 8,
+  },
+  deviceCard: {
+    backgroundColor: '#F8FAFC',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+  },
+  deviceHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  deviceName: {
+    color: '#0F172A',
+    fontSize: 14,
+    fontWeight: '700',
+    flexShrink: 1,
+    marginRight: 8,
+  },
+  deviceStatus: {
+    fontSize: 12,
+    fontWeight: '700',
+    borderRadius: 999,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+  },
+  deviceStatusConnected: {
+    color: '#166534',
+    backgroundColor: '#DCFCE7',
+  },
+  deviceStatusConnectable: {
+    color: '#1E3A8A',
+    backgroundColor: '#DBEAFE',
+  },
+  deviceStatusSoon: {
+    color: '#374151',
+    backgroundColor: '#E5E7EB',
+  },
+  deviceMeta: {
+    color: '#475569',
+    fontSize: 12,
+    lineHeight: 17,
+  },
+  recentList: {
+    gap: 8,
+  },
+  recentCard: {
+    backgroundColor: '#F8FAFC',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+  },
+  recentTitle: {
+    color: '#2563EB',
+    fontSize: 15,
+    fontWeight: '800',
+    marginBottom: 2,
+  },
+  recentMeta: {
+    color: '#64748B',
+    fontSize: 12,
+    marginBottom: 4,
+  },
+  recentSummary: {
+    color: '#1F2937',
+    fontSize: 12,
+    lineHeight: 17,
+  },
+  ctaRow: {
+    gap: 8,
+    marginTop: 2,
+  },
+  primaryCtaBtn: {
+    backgroundColor: '#2563EB',
+    borderRadius: 12,
+    paddingVertical: 11,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  primaryCtaBtnText: {
+    color: '#FFFFFF',
+    fontSize: 15,
+    fontWeight: '800',
+  },
+  secondaryCtaBtn: {
+    backgroundColor: '#E2E8F0',
+    borderRadius: 12,
+    paddingVertical: 11,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 10,
+  },
+  secondaryCtaBtnText: {
+    color: '#1E3A8A',
+    fontSize: 14,
+    fontWeight: '700',
+  },
+  bottomSpacer: {
+    height: 18,
+  },
 });
