@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { View, Text, Pressable, StyleSheet, ScrollView, Alert, ActivityIndicator, Platform } from 'react-native';
-import { useRouter } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
 import * as WebBrowser from 'expo-web-browser';
 import * as AuthSession from 'expo-auth-session';
@@ -32,6 +31,25 @@ const BUTTON_LABEL: Record<ConnectedDeviceStatus, string> = {
   optional_later: 'Later',
 };
 
+const SECTION_COPY: Record<ConnectedDeviceStatus, string | null> = {
+  available: 'Koppel direct en verrijk je dagdata automatisch.',
+  soon: 'Deze koppelingen komen binnenkort beschikbaar.',
+  optional_later: 'Optioneel later voor import van bestaande activiteiten en routes.',
+};
+
+const DEVICE_BENEFITS: Record<string, string> = {
+  whoop: 'Ideaal voor herstel, strain en slaapinzicht.',
+  fitbit: 'Voor dagelijkse activiteit, slaap en hartslagtrends.',
+  'apple-health': 'Voor iPhone dagdata en gezondheidsmetingen.',
+  garmin: 'Voor training, belasting en sportprofielen.',
+  'google-fit-health-connect': 'Voor Android activiteit en gezondheidsdata.',
+  strava: 'Voor import van historische sessies en routes.',
+  polar: 'Voor trainingsbelasting en herstelmetingen.',
+  suunto: 'Voor outdoor activiteiten en routegegevens.',
+  oura: 'Voor slaapkwaliteit, readiness en herstel.',
+  coros: 'Voor running metrics en trainingsprogressie.',
+};
+
 function getErrorMessage(error: unknown): string {
   if (error instanceof Error && error.message) {
     return error.message;
@@ -42,7 +60,6 @@ function getErrorMessage(error: unknown): string {
 
 export default function DataLinkScreen() {
   const theme = useTheme();
-  const router = useRouter();
   const [isConnectingWhoop, setIsConnectingWhoop] = useState(false);
   const [isWhoopConnected, setIsWhoopConnected] = useState(false);
   const [statusMessage, setStatusMessage] = useState('');
@@ -197,14 +214,11 @@ export default function DataLinkScreen() {
 
       <ScrollView style={styles.scroll} contentContainerStyle={styles.contentContainer} showsVerticalScrollIndicator={false}>
         <View style={[styles.introCard, { backgroundColor: theme.card, borderColor: theme.border }]}> 
-          <Text style={[styles.introTitle, { color: theme.titleColor }]}>Automatische data verrijking</Text>
+          <Text style={[styles.introTitle, { color: theme.titleColor }]}>Data koppelen</Text>
           <Text style={[styles.introText, { color: theme.subtitleColor }]}>
             Koppel je wearables en apps om je activiteiten, herstel en dagelijkse data automatisch te verrijken.
           </Text>
-          <Text style={[styles.introHint, { color: theme.subtitleColor }]}>Na koppeling verschijnt je data op Vandaag en Data.</Text>
-          <Pressable style={styles.linkedDevicesButton} onPress={() => router.push('/(tabs)/connected-devices')}>
-            <Text style={styles.linkedDevicesButtonText}>Bekijk gekoppelde apparaten</Text>
-          </Pressable>
+          <Text style={[styles.introHint, { color: theme.subtitleColor }]}>Je data verschijnt daarna op Vandaag en Data.</Text>
         </View>
 
         {statusMessage ? <Text style={[styles.feedbackText, { color: theme.subtitleColor }]}>{statusMessage}</Text> : null}
@@ -212,22 +226,46 @@ export default function DataLinkScreen() {
         {SECTION_ORDER.map((status) => (
           <View key={status} style={styles.section}>
             <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>{SECTION_TITLE[status]}</Text>
+            {SECTION_COPY[status] ? (
+              <Text style={[styles.sectionDescription, { color: theme.subtitleColor }]}>{SECTION_COPY[status]}</Text>
+            ) : null}
             <View style={styles.cardList}>
               {groupedDevices[status].map((device) => {
                 const isAvailable = device.status === 'available';
+                const isSoon = device.status === 'soon';
                 const isWhoop = device.id === 'whoop';
                 const isBusy = isWhoop && isConnectingWhoop;
                 const isConnected = isWhoop && isWhoopConnected;
+                const cardVariant = isAvailable
+                  ? styles.deviceCardAvailable
+                  : isSoon
+                    ? styles.deviceCardSoon
+                    : styles.deviceCardOptional;
 
                 return (
-                  <View key={device.id} style={[styles.deviceCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+                  <View key={device.id} style={[styles.deviceCard, cardVariant, { backgroundColor: theme.card, borderColor: theme.border }]}>
                     <View style={styles.deviceHeaderRow}>
                       <Text style={[styles.deviceName, { color: theme.titleColor }]}>{device.name}</Text>
-                      <View style={[styles.statusBadge, isAvailable ? styles.statusAvailable : styles.statusUpcoming]}>
+                      <View
+                        style={[
+                          styles.statusBadge,
+                          isAvailable ? styles.statusAvailable : styles.statusUpcoming,
+                          status === 'optional_later' ? styles.statusOptional : null,
+                        ]}
+                      >
                         <Text style={styles.statusBadgeText}>{CONNECTED_DEVICE_STATUS_LABELS[device.status]}</Text>
                       </View>
                     </View>
-                    <Text style={[styles.deviceDataText, { color: theme.subtitleColor }]}>Data: {device.dataPoints.join(', ')}</Text>
+                    <Text style={[styles.deviceBenefit, { color: theme.subtitleColor }]}>
+                      {DEVICE_BENEFITS[device.id] ?? 'Koppel dit apparaat om extra context aan je data toe te voegen.'}
+                    </Text>
+                    <View style={styles.chipRow}>
+                      {device.dataPoints.map((point) => (
+                        <View key={`${device.id}-${point}`} style={[styles.dataChip, { borderColor: theme.border }]}>
+                          <Text style={[styles.dataChipText, { color: theme.subtitleColor }]}>{point}</Text>
+                        </View>
+                      ))}
+                    </View>
                     {isWhoop ? (
                       <Text style={[styles.connectionHint, { color: theme.subtitleColor }]}>
                         Status: {isConnected ? 'Verbonden' : 'Nog niet gekoppeld'}
@@ -255,6 +293,13 @@ export default function DataLinkScreen() {
             </View>
           </View>
         ))}
+
+        <View style={[styles.usageCard, { backgroundColor: theme.card, borderColor: theme.border }]}> 
+          <Text style={[styles.usageTitle, { color: theme.titleColor }]}>Waar wordt je data gebruikt?</Text>
+          <Text style={[styles.usageItem, { color: theme.subtitleColor }]}>Vandaag: dagdata en herstel</Text>
+          <Text style={[styles.usageItem, { color: theme.subtitleColor }]}>Data: voortgang en trends</Text>
+          <Text style={[styles.usageItem, { color: theme.subtitleColor }]}>Activiteiten: verrijkte sessies</Text>
+        </View>
       </ScrollView>
     </View>
   );
@@ -273,37 +318,24 @@ const styles = StyleSheet.create({
   },
   introCard: {
     borderWidth: 1,
-    borderRadius: 14,
-    padding: 16,
-    marginBottom: 12,
+    borderRadius: 16,
+    padding: 18,
+    marginBottom: 14,
   },
   introTitle: {
-    fontSize: 18,
+    fontSize: 22,
     fontWeight: '800',
-    marginBottom: 6,
+    marginBottom: 8,
   },
   introText: {
-    fontSize: 14,
-    lineHeight: 20,
+    fontSize: 15,
+    lineHeight: 22,
   },
   introHint: {
-    marginTop: 10,
+    marginTop: 12,
     fontSize: 13,
-    lineHeight: 18,
+    lineHeight: 20,
     fontWeight: '600',
-  },
-  linkedDevicesButton: {
-    marginTop: 14,
-    alignSelf: 'flex-start',
-    borderRadius: 999,
-    backgroundColor: '#E0E7FF',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-  },
-  linkedDevicesButtonText: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#1D4ED8',
   },
   feedbackText: {
     fontSize: 13,
@@ -311,20 +343,36 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   section: {
-    marginTop: 12,
+    marginTop: 14,
   },
   sectionTitle: {
-    fontSize: 19,
+    fontSize: 20,
     fontWeight: '800',
+    marginBottom: 6,
+  },
+  sectionDescription: {
+    fontSize: 13,
+    lineHeight: 19,
     marginBottom: 10,
   },
   cardList: {
-    gap: 10,
+    gap: 12,
   },
   deviceCard: {
     borderWidth: 1,
-    borderRadius: 14,
+    borderRadius: 16,
+  },
+  deviceCardAvailable: {
+    padding: 16,
+    borderColor: '#BFDBFE',
+  },
+  deviceCardSoon: {
+    padding: 12,
+    opacity: 0.95,
+  },
+  deviceCardOptional: {
     padding: 14,
+    opacity: 0.9,
   },
   deviceHeaderRow: {
     flexDirection: 'row',
@@ -348,18 +396,38 @@ const styles = StyleSheet.create({
   statusUpcoming: {
     backgroundColor: '#E5E7EB',
   },
+  statusOptional: {
+    backgroundColor: '#F3F4F6',
+  },
   statusBadgeText: {
     fontSize: 11,
     color: '#1F2937',
     fontWeight: '700',
   },
-  deviceDataText: {
+  deviceBenefit: {
     marginTop: 8,
     fontSize: 13,
     lineHeight: 19,
   },
+  chipRow: {
+    marginTop: 10,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  dataChip: {
+    borderWidth: 1,
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    backgroundColor: '#F8FAFC',
+  },
+  dataChipText: {
+    fontSize: 11,
+    fontWeight: '600',
+  },
   connectionHint: {
-    marginTop: 4,
+    marginTop: 8,
     fontSize: 12,
     fontWeight: '600',
   },
@@ -383,5 +451,21 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontWeight: '700',
     fontSize: 14,
+  },
+  usageCard: {
+    marginTop: 16,
+    borderWidth: 1,
+    borderRadius: 14,
+    padding: 14,
+  },
+  usageTitle: {
+    fontSize: 16,
+    fontWeight: '800',
+    marginBottom: 8,
+  },
+  usageItem: {
+    fontSize: 13,
+    lineHeight: 19,
+    marginBottom: 4,
   },
 });
