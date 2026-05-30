@@ -14,16 +14,18 @@ export default function AddNutritionScreen() {
   const [moment, setMoment] = useState<Moment>('Ontbijt');
   const [amount, setAmount] = useState('');
   const [notes, setNotes] = useState('');
+  const [showPlaceholderFeedback, setShowPlaceholderFeedback] = useState(false);
 
   const canSubmit = useMemo(() => mealName.trim().length > 0, [mealName]);
 
   const handleSubmit = () => {
     if (!canSubmit) {
+      setShowPlaceholderFeedback(false);
       Alert.alert('Incompleet', 'Vul eerst een product of maaltijdnaam in.');
       return;
     }
 
-    Alert.alert('Binnenkort', 'Voeding opslaan komt binnenkort.');
+    setShowPlaceholderFeedback(true);
   };
 
   return (
@@ -91,6 +93,12 @@ export default function AddNutritionScreen() {
           <Pressable style={[styles.submitButton, !canSubmit ? styles.submitButtonDisabled : null]} onPress={handleSubmit}>
             <Text style={styles.submitButtonText}>Toevoegen</Text>
           </Pressable>
+
+          {showPlaceholderFeedback ? (
+            <View style={[styles.feedbackCard, { borderColor: theme.border, backgroundColor: theme.background }]}>
+              <Text style={[styles.feedbackText, { color: theme.subtitleColor }]}>Voeding opslaan komt binnenkort.</Text>
+            </View>
+          ) : null}
         </View>
       </ScrollView>
     </View>
@@ -176,5 +184,17 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 14,
     fontWeight: '700',
+  },
+  feedbackCard: {
+    marginTop: 10,
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+  },
+  feedbackText: {
+    fontSize: 13,
+    lineHeight: 18,
+    fontWeight: '600',
   },
 });
