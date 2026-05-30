@@ -43,8 +43,9 @@ export default function LoginScreen() {
   const googleWebClientId = process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID ?? '';
   const googleAndroidClientId =
     process.env.EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID ?? googleWebClientId;
+  const isDevelopmentBuild = __DEV__ || process.env.NODE_ENV !== 'production';
   const isDevTestLoginEnabled =
-    __DEV__ && (process.env.EXPO_PUBLIC_ENABLE_DEV_TEST_LOGIN ?? '').toLowerCase() === 'true';
+    isDevelopmentBuild && process.env.EXPO_PUBLIC_ENABLE_DEV_TEST_LOGIN === 'true';
   const [, response, promptAsync] = Google.useAuthRequest({
     // expo-auth-session requires an Android client id on Android.
     // Use a non-empty fallback to avoid startup crashes when env vars are missing.
