@@ -228,7 +228,34 @@ export default function TodayScreen() {
       </Pressable>
 
       <View style={[styles.sectionCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+        <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Vandaag actief</Text>
+        {todayActivities.length > 0 ? (
+          <>
+            <Text style={[styles.activityStatus, { color: theme.subtitleColor }]}>{todayActivities.length} activiteit{todayActivities.length > 1 ? 'en' : ''} vandaag</Text>
+            {mostRecentTodayActivity ? (
+              <Pressable
+                style={styles.recentActivityCard}
+                onPress={() => router.push({ pathname: '/activities/[id]', params: { id: mostRecentTodayActivity.id } })}
+              >
+                <Text style={styles.recentDiscipline}>{mostRecentTodayActivity.disciplineName}</Text>
+                <Text style={styles.recentMeta}>{formatDuration(mostRecentTodayActivity.durationSeconds)} · {formatDateTime(mostRecentTodayActivity.endedAt)}</Text>
+                <Text style={styles.recentSummary}>{getMetricsSummary(mostRecentTodayActivity)}</Text>
+              </Pressable>
+            ) : null}
+          </>
+        ) : (
+          <View>
+            <Text style={[styles.activityStatus, { color: theme.subtitleColor }]}>Nog geen activiteit vandaag.</Text>
+            <Pressable onPress={() => router.push('/tracker')}>
+              <Text style={styles.inlineLink}>Start activiteit</Text>
+            </Pressable>
+          </View>
+        )}
+      </View>
+
+      <View style={[styles.sectionCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
         <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Gekoppelde data</Text>
+        <Text style={[styles.sectionHint, { color: theme.subtitleColor }]}>Overzicht van je huidige device-koppelingen.</Text>
         {!hasConnectedDevice ? (
           <>
             <Text style={[styles.dataFallback, { color: theme.subtitleColor }]}>Nog geen apparaat gekoppeld.</Text>
@@ -260,32 +287,6 @@ export default function TodayScreen() {
           <QuickActionTile label="Habit tracker" icon="calendar-check-outline" disabled />
           <QuickActionTile label="Geef feedback" icon="chat-outline" onPress={() => router.push('/(tabs)')} />
         </View>
-      </View>
-
-      <View style={[styles.sectionCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-        <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Vandaag actief</Text>
-        {todayActivities.length > 0 ? (
-          <>
-            <Text style={[styles.activityStatus, { color: theme.subtitleColor }]}>{todayActivities.length} activiteit{todayActivities.length > 1 ? 'en' : ''} vandaag</Text>
-            {mostRecentTodayActivity ? (
-              <Pressable
-                style={styles.recentActivityCard}
-                onPress={() => router.push({ pathname: '/activities/[id]', params: { id: mostRecentTodayActivity.id } })}
-              >
-                <Text style={styles.recentDiscipline}>{mostRecentTodayActivity.disciplineName}</Text>
-                <Text style={styles.recentMeta}>{formatDuration(mostRecentTodayActivity.durationSeconds)} · {formatDateTime(mostRecentTodayActivity.endedAt)}</Text>
-                <Text style={styles.recentSummary}>{getMetricsSummary(mostRecentTodayActivity)}</Text>
-              </Pressable>
-            ) : null}
-          </>
-        ) : (
-          <View>
-            <Text style={[styles.activityStatus, { color: theme.subtitleColor }]}>Nog geen activiteit vandaag.</Text>
-            <Pressable onPress={() => router.push('/tracker')}>
-              <Text style={styles.inlineLink}>Start activiteit</Text>
-            </Pressable>
-          </View>
-        )}
       </View>
 
       <View style={styles.bottomSpacer} />
@@ -417,15 +418,21 @@ const styles = StyleSheet.create({
   primaryCard: {
     backgroundColor: '#2563EB',
     borderRadius: 14,
-    padding: 16,
+    paddingVertical: 18,
+    paddingHorizontal: 16,
     marginBottom: 14,
     flexDirection: 'row',
     alignItems: 'center',
+    shadowColor: '#1D4ED8',
+    shadowOpacity: 0.26,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 5,
   },
   primaryIconWrap: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     backgroundColor: 'rgba(255,255,255,0.2)',
     alignItems: 'center',
     justifyContent: 'center',
@@ -453,11 +460,16 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 17,
     fontWeight: '800',
+    marginBottom: 8,
+  },
+  sectionHint: {
+    fontSize: 12,
+    lineHeight: 17,
     marginBottom: 10,
   },
   dataFallback: {
     fontSize: 13,
-    marginBottom: 10,
+    marginBottom: 8,
   },
   connectedSubtext: {
     fontSize: 13,
@@ -468,14 +480,15 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   connectedItem: {
-    backgroundColor: '#F8FAFC',
+    backgroundColor: '#F1F5F9',
     borderRadius: 10,
-    padding: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 9,
   },
   connectedItemActive: {
     borderWidth: 1,
-    borderColor: '#93C5FD',
-    backgroundColor: '#EFF6FF',
+    borderColor: '#BFDBFE',
+    backgroundColor: '#F8FAFF',
   },
   connectedItemTitle: {
     color: '#0F172A',
@@ -523,17 +536,19 @@ const styles = StyleSheet.create({
     fontSize: 13,
   },
   quickGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
+    gap: 6,
   },
   quickTile: {
-    width: '48%',
+    width: '100%',
     backgroundColor: '#F8FAFC',
     borderRadius: 10,
-    padding: 10,
-    minHeight: 68,
-    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    paddingHorizontal: 10,
+    paddingVertical: 9,
+    minHeight: 0,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   quickTilePressed: {
     opacity: 0.8,
@@ -542,7 +557,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#E2E8F0',
   },
   quickTileText: {
-    marginTop: 6,
+    marginTop: 0,
+    marginLeft: 8,
+    flex: 1,
     color: '#1E293B',
     fontSize: 13,
     fontWeight: '600',
