@@ -284,7 +284,7 @@ export default function TodayScreen() {
           <QuickActionTile label="Voeding toevoegen" icon="plus-circle-outline" onPress={() => router.push('/nutrition/add')} />
           <QuickActionTile label="Voeding vergelijken" icon="scale-balance" onPress={() => router.push('/nutrition/compare')} />
           <QuickActionTile label="Snel informatie vinden" icon="magnify" onPress={() => router.push('/nutrition/search')} />
-          <QuickActionTile label="Habit tracker" icon="calendar-check-outline" disabled />
+          <QuickActionTile label="Habit tracker" icon="calendar-check-outline" onPress={() => router.push('/habits')} />
           <QuickActionTile label="Geef feedback" icon="chat-outline" onPress={() => router.push('/(tabs)')} />
         </View>
       </View>
