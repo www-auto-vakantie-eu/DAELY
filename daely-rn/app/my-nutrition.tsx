@@ -1,180 +1,179 @@
-import { useCallback, useState } from 'react';
-import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useFocusEffect, useRouter } from 'expo-router';
+import { useState } from 'react';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { useTheme } from '@/hooks/use-theme';
-import {
-  buildDayKey,
-  deleteNutritionLog,
-  getNutritionDailyTotals,
-  getNutritionLogsForDay,
-} from '@/services/nutrition-log';
-import type { NutritionDailyTotals, NutritionLogEntry, NutritionMealType } from '@/services/nutrition-log.types';
 import PageHeader from './components/PageHeader';
 
-const MEAL_ORDER: NutritionMealType[] = ['ontbijt', 'lunch', 'diner', 'snack', 'pre-workout', 'post-workout', 'supplement'];
+const FOCUS_TIPS = [
+  {
+    title: 'Eiwitten bij elke maaltijd',
+    description: 'Helpt met spierherstel en verzadiging.',
+    icon: 'dumbbell' as const,
+  },
+  {
+    title: 'Genoeg drinken',
+    description: 'Minstens 2-3 liter water per dag.',
+    icon: 'water' as const,
+  },
+  {
+    title: 'Herstelmaaltijd na training',
+    description: 'Eiwitten en koolhydraten binnen 2 uur.',
+    icon: 'chef-hat' as const,
+  },
+];
 
-const MEAL_LABELS: Record<NutritionMealType, string> = {
-  ontbijt: 'Ontbijt',
-  lunch: 'Lunch',
-  diner: 'Diner',
-  snack: 'Snack',
-  'pre-workout': 'Pre-workout',
-  'post-workout': 'Post-workout',
-  supplement: 'Supplement',
-};
-
-function groupByMealType(entries: NutritionLogEntry[]) {
-  return MEAL_ORDER
-    .map((mealType) => {
-      const items = entries.filter((entry) => entry.mealType === mealType);
-      if (items.length === 0) return null;
-
-      const subtotals = items.reduce(
-        (accumulator, entry) => ({
-          kcal: Number((accumulator.kcal + entry.macros.kcal).toFixed(2)),
-          protein: Number((accumulator.protein + entry.macros.protein).toFixed(2)),
-          carbs: Number((accumulator.carbs + entry.macros.carbs).toFixed(2)),
-          fats: Number((accumulator.fats + entry.macros.fats).toFixed(2)),
-        }),
-        { kcal: 0, protein: 0, carbs: 0, fats: 0 }
-      );
-
-      return {
-        mealType,
-        items,
-        subtotals,
-      };
-    })
-    .filter((group): group is { mealType: NutritionMealType; items: NutritionLogEntry[]; subtotals: { kcal: number; protein: number; carbs: number; fats: number } } => !!group);
-}
+const POPULAR_GOALS = ['Spieropbouw', 'Vetverlies', 'Energie', 'Herstel', 'Gezonde routine'] as const;
 
 export default function MyNutritionScreen() {
+  const router = useRouter();
   const theme = useTheme();
 
-  const router = useRouter();
-  const [entries, setEntries] = useState<NutritionLogEntry[]>([]);
-  const [totals, setTotals] = useState<NutritionDailyTotals>({
-    dayKey: buildDayKey(new Date()),
-    kcal: 0,
-    protein: 0,
-    carbs: 0,
-    fats: 0,
-    itemCount: 0,
-  });
-
-  const loadToday = useCallback(async () => {
-    const dayKey = buildDayKey(new Date());
-    const [dayEntries, dayTotals] = await Promise.all([
-      getNutritionLogsForDay(dayKey),
-      getNutritionDailyTotals(dayKey),
-    ]);
-    setEntries(dayEntries);
-    setTotals(dayTotals);
-  }, []);
-
-  useFocusEffect(
-    useCallback(() => {
-      void loadToday();
-    }, [loadToday])
-  );
-
-  const handleDelete = (id: string) => {
-    Alert.alert('Item verwijderen', 'Weet je zeker dat je dit item wilt verwijderen?', [
-      { text: 'Annuleren', style: 'cancel' },
-      {
-        text: 'Verwijderen',
-        style: 'destructive',
-        onPress: async () => {
-          await deleteNutritionLog(id);
-          await loadToday();
-        },
-      },
-    ]);
-  };
-
-  const todayLabel = new Date().toLocaleDateString('nl-NL', {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-  });
-
-  const mealGroups = groupByMealType(entries);
+  const [selectedGoal, setSelectedGoal] = useState<(typeof POPULAR_GOALS)[number] | null>(null);
+  const [placeholderMessage, setPlaceholderMessage] = useState<string | null>(null);
 
   return (
-    <ScrollView style={[styles.screen, { backgroundColor: theme.background }]} contentContainerStyle={styles.content}>
-      <PageHeader
-        title="My Nutrition"
-        onSettingsPress={() => router.push('/(tabs)/athlete')}
-        onSearchPress={() => router.push('/nutrition/search')}
-        onCartPress={() => router.push('/(tabs)/cart')}
-      />
-      <View style={styles.headerRow}>
-        <Text style={[styles.subtitle, { color: theme.subtitleColor }]}>{todayLabel.toUpperCase()}</Text>
-        <Pressable style={styles.addButton} onPress={() => router.push('/nutrition/add')}>
-          <MaterialCommunityIcons name="plus" size={15} color="#2563EB" />
-          <Text style={styles.addButtonText}>Snel toevoegen</Text>
-        </Pressable>
-      </View>
+    <View style={[styles.screen, { backgroundColor: theme.background }]}>
+      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+        <PageHeader
+          title="Mijn Voeding"
+          onSettingsPress={() => router.push('/(tabs)/athlete')}
+          onSearchPress={() => router.push('/nutrition/search')}
+          onCartPress={() => router.push('/(tabs)/cart')}
+        />
 
-      <Text style={[styles.sectionLabel, { color: theme.subtitleColor }]}>DAGOVERZICHT</Text>
-      <View style={styles.totalsGrid}>
-        <View style={[styles.totalCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <Text style={[styles.totalValue, { color: theme.titleColor }]}>{totals.kcal}</Text>
-          <Text style={[styles.totalLabel, { color: theme.subtitleColor }]}>kcal</Text>
+        <View style={[styles.heroCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+          <Text style={[styles.heroTitle, { color: theme.titleColor }]}>Voeding</Text>
+          <Text style={[styles.heroText, { color: theme.subtitleColor }]}>
+            Houd grip op je energie, herstel en dagelijkse keuzes.
+          </Text>
         </View>
-        <View style={[styles.totalCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <Text style={[styles.totalValue, { color: theme.titleColor }]}>{totals.protein}g</Text>
-          <Text style={[styles.totalLabel, { color: theme.subtitleColor }]}>eiwit</Text>
-        </View>
-        <View style={[styles.totalCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <Text style={[styles.totalValue, { color: theme.titleColor }]}>{totals.carbs}g</Text>
-          <Text style={[styles.totalLabel, { color: theme.subtitleColor }]}>koolhydraten</Text>
-        </View>
-        <View style={[styles.totalCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <Text style={[styles.totalValue, { color: theme.titleColor }]}>{totals.fats}g</Text>
-          <Text style={[styles.totalLabel, { color: theme.subtitleColor }]}>vetten</Text>
-        </View>
-      </View>
 
-      <Text style={[styles.sectionLabel, { color: theme.subtitleColor }]}>LOGBOEK VANDAAG ({totals.itemCount})</Text>
-      {entries.length === 0 ? (
-        <View style={[styles.emptyCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <MaterialCommunityIcons name="silverware-fork-knife" size={20} color={theme.subtitleColor} />
-          <Text style={[styles.emptyText, { color: theme.subtitleColor }]}>Nog geen items gelogd vandaag.</Text>
-        </View>
-      ) : (
-        mealGroups.map((group) => (
-          <View key={group.mealType} style={[styles.groupCard, { borderColor: theme.border, backgroundColor: theme.card }]}>
-            <View style={styles.groupHeader}>
-              <Text style={[styles.groupTitle, { color: theme.titleColor }]}>{MEAL_LABELS[group.mealType]}</Text>
-              <Text style={[styles.groupSubtotal, { color: theme.subtitleColor }]}>{group.subtotals.kcal} kcal · E {group.subtotals.protein}g · K {group.subtotals.carbs}g · V {group.subtotals.fats}g</Text>
-            </View>
-
-            {group.items.map((entry) => (
-              <View key={entry.id} style={[styles.entryCard, { borderColor: theme.border }]}> 
-                <View style={styles.entryTopRow}>
-                  <View style={styles.entryLeft}>
-                    <Text style={[styles.entryName, { color: theme.titleColor }]}>{entry.name}</Text>
-                    <Text style={[styles.entryMeta, { color: theme.subtitleColor }]}>
-                      {entry.itemType}
-                      {entry.amount && entry.amountUnit ? ` · ${entry.amount} ${entry.amountUnit}` : ''}
-                    </Text>
-                  </View>
-                  <Pressable onPress={() => handleDelete(entry.id)} style={styles.deleteButton}>
-                    <MaterialCommunityIcons name="trash-can-outline" size={18} color="#EF4444" />
-                  </Pressable>
-                </View>
-                <Text style={[styles.entryMacros, { color: theme.subtitleColor }]}>
-                  {entry.macros.kcal} kcal · E {entry.macros.protein}g · K {entry.macros.carbs}g · V {entry.macros.fats}g
-                </Text>
-              </View>
-            ))}
+        {placeholderMessage ? (
+          <View style={[styles.placeholderNotice, { backgroundColor: theme.card, borderColor: theme.border }]}>
+            <Text style={[styles.placeholderNoticeText, { color: theme.titleColor }]}>{placeholderMessage}</Text>
           </View>
-        ))
-      )}
-    </ScrollView>
+        ) : null}
+
+        <View style={styles.sectionHeader}>
+          <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Snelle acties</Text>
+        </View>
+        <View style={styles.quickActionsGrid}>
+          <Pressable
+            style={[styles.actionCard, { backgroundColor: theme.card, borderColor: theme.border }]}
+            onPress={() => router.push('/nutrition/add')}
+          >
+            <MaterialCommunityIcons name="plus-circle-outline" size={22} color={theme.titleColor} />
+            <Text style={[styles.actionTitle, { color: theme.titleColor }]}>Voeding toevoegen</Text>
+            <Text style={[styles.actionSubtitle, { color: theme.subtitleColor }]}>Log je maaltijd</Text>
+          </Pressable>
+
+          <Pressable
+            style={[styles.actionCard, { backgroundColor: theme.card, borderColor: theme.border }]}
+            onPress={() => router.push('/nutrition/compare')}
+          >
+            <MaterialCommunityIcons name="scale-balance" size={22} color={theme.titleColor} />
+            <Text style={[styles.actionTitle, { color: theme.titleColor }]}>Voeding vergelijken</Text>
+            <Text style={[styles.actionSubtitle, { color: theme.subtitleColor }]}>Vergelijk voedingwaarden</Text>
+          </Pressable>
+
+          <Pressable
+            style={[styles.actionCard, { backgroundColor: theme.card, borderColor: theme.border }]}
+            onPress={() => router.push('/nutrition/search')}
+          >
+            <MaterialCommunityIcons name="magnify" size={22} color={theme.titleColor} />
+            <Text style={[styles.actionTitle, { color: theme.titleColor }]}>Voeding zoeken</Text>
+            <Text style={[styles.actionSubtitle, { color: theme.subtitleColor }]}>Vind voedingsitems</Text>
+          </Pressable>
+        </View>
+
+        <View style={styles.sectionHeader}>
+          <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Vandaag overzicht</Text>
+        </View>
+        <View style={styles.todayGrid}>
+          <View style={[styles.todayCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+            <Text style={[styles.todayValue, { color: theme.titleColor }]}>—</Text>
+            <Text style={[styles.todayLabel, { color: theme.subtitleColor }]}>Kcal</Text>
+          </View>
+          <View style={[styles.todayCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+            <Text style={[styles.todayValue, { color: theme.titleColor }]}>—</Text>
+            <Text style={[styles.todayLabel, { color: theme.subtitleColor }]}>Eiwitten</Text>
+          </View>
+          <View style={[styles.todayCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+            <Text style={[styles.todayValue, { color: theme.titleColor }]}>—</Text>
+            <Text style={[styles.todayLabel, { color: theme.subtitleColor }]}>Koolhydraten</Text>
+          </View>
+          <View style={[styles.todayCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+            <Text style={[styles.todayValue, { color: theme.titleColor }]}>—</Text>
+            <Text style={[styles.todayLabel, { color: theme.subtitleColor }]}>Vetten</Text>
+          </View>
+          <View style={[styles.todayCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+            <Text style={[styles.todayValue, { color: theme.titleColor }]}>—</Text>
+            <Text style={[styles.todayLabel, { color: theme.subtitleColor }]}>Water</Text>
+          </View>
+        </View>
+
+        <View style={styles.sectionHeader}>
+          <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Focus vandaag</Text>
+        </View>
+        <View style={styles.tipsWrap}>
+          {FOCUS_TIPS.map((tip) => (
+            <View
+              key={tip.title}
+              style={[styles.tipCard, { backgroundColor: theme.card, borderColor: theme.border }]}
+            >
+              <MaterialCommunityIcons name={tip.icon} size={18} color={theme.titleColor} />
+              <View style={styles.tipContent}>
+                <Text style={[styles.tipTitle, { color: theme.titleColor }]}>{tip.title}</Text>
+                <Text style={[styles.tipDescription, { color: theme.subtitleColor }]}>{tip.description}</Text>
+              </View>
+            </View>
+          ))}
+        </View>
+
+        <View style={styles.sectionHeader}>
+          <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Populaire doelen</Text>
+        </View>
+        <View style={styles.goalsWrap}>
+          {POPULAR_GOALS.map((goal) => {
+            const active = selectedGoal === goal;
+            return (
+              <Pressable
+                key={goal}
+                style={[
+                  styles.goalChip,
+                  {
+                    backgroundColor: active ? theme.titleColor : theme.card,
+                    borderColor: active ? theme.titleColor : theme.border,
+                  },
+                ]}
+                onPress={() => {
+                  setSelectedGoal(goal);
+                  setPlaceholderMessage(`Doelvoeding voor ${goal} komt binnenkort.`);
+                }}
+              >
+                <Text style={[styles.goalLabel, { color: active ? theme.background : theme.titleColor }]}>
+                  {goal}
+                </Text>
+              </Pressable>
+            );
+          })}
+        </View>
+
+        <View style={styles.sectionHeader}>
+          <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Recente voedingsacties</Text>
+        </View>
+        <View style={[styles.emptyState, { backgroundColor: theme.card, borderColor: theme.border }]}>
+          <Text style={[styles.emptyTitle, { color: theme.titleColor }]}>Nog geen voedingsmomenten opgeslagen.</Text>
+          <Text style={[styles.emptyText, { color: theme.subtitleColor }]}>
+            Gebruik Voeding toevoegen om straks je dag bij te houden.
+          </Text>
+        </View>
+
+        <View style={styles.bottomSpacer} />
+      </ScrollView>
+    </View>
   );
 }
 
@@ -183,144 +182,142 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    paddingHorizontal: 18,
-    paddingTop: 22,
+    paddingHorizontal: 16,
+    paddingTop: 18,
     paddingBottom: 96,
+    gap: 14,
   },
-  headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: 12,
-  },
-  title: {
-    fontSize: 36,
-    lineHeight: 40,
-    fontWeight: '900',
-    letterSpacing: -0.9,
-  },
-  subtitle: {
-    marginTop: 4,
-    fontSize: 11,
-    fontWeight: '700',
-    letterSpacing: 1.2,
-  },
-  addButton: {
-    marginTop: 4,
-    backgroundColor: '#DBEAFE',
+  heroCard: {
+    borderRadius: 20,
     borderWidth: 1,
-    borderColor: '#BFDBFE',
-    borderRadius: 999,
-    paddingHorizontal: 11,
-    paddingVertical: 7,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
+    padding: 18,
+    gap: 8,
   },
-  addButtonText: {
-    color: '#2563EB',
-    fontSize: 11,
+  heroTitle: {
+    fontSize: 24,
+    fontWeight: '800',
+    letterSpacing: -0.4,
+  },
+  heroText: {
+    fontSize: 15,
+    lineHeight: 22,
+    fontWeight: '500',
+  },
+  placeholderNotice: {
+    borderRadius: 14,
+    borderWidth: 1,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+  },
+  placeholderNoticeText: {
+    fontSize: 13,
     fontWeight: '700',
   },
-  sectionLabel: {
-    marginTop: 4,
-    marginBottom: 9,
-    marginLeft: 2,
-    fontSize: 11,
-    fontWeight: '700',
-    letterSpacing: 1.2,
+  sectionHeader: {
+    marginTop: 6,
   },
-  totalsGrid: {
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '800',
+    letterSpacing: -0.2,
+  },
+  quickActionsGrid: {
+    gap: 10,
+  },
+  actionCard: {
+    borderRadius: 16,
+    borderWidth: 1,
+    padding: 14,
+    gap: 5,
+  },
+  actionTitle: {
+    fontSize: 15,
+    fontWeight: '700',
+  },
+  actionSubtitle: {
+    fontSize: 13,
+    fontWeight: '500',
+  },
+  todayGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 10,
-    marginBottom: 14,
   },
-  totalCard: {
-    width: '48.5%',
-    borderWidth: 1,
+  todayCard: {
+    width: '30%',
+    aspectRatio: 0.85,
     borderRadius: 16,
-    paddingHorizontal: 12,
-    paddingVertical: 13,
-  },
-  totalValue: {
-    fontSize: 23,
-    fontWeight: '900',
-    letterSpacing: -0.6,
-  },
-  totalLabel: {
-    marginTop: 3,
-    fontSize: 11,
-    fontWeight: '600',
-  },
-  emptyCard: {
     borderWidth: 1,
-    borderRadius: 14,
     paddingHorizontal: 12,
-    paddingVertical: 12,
-    flexDirection: 'row',
+    paddingVertical: 14,
+    justifyContent: 'center',
     alignItems: 'center',
-    gap: 8,
+    gap: 6,
   },
-  emptyText: {
-    fontSize: 13,
-    fontWeight: '600',
-  },
-  groupCard: {
-    borderWidth: 1,
-    borderRadius: 16,
-    paddingHorizontal: 11,
-    paddingVertical: 11,
-    marginBottom: 11,
-    gap: 9,
-  },
-  groupHeader: {
-    gap: 2,
-    paddingHorizontal: 2,
-  },
-  groupTitle: {
+  todayValue: {
     fontSize: 16,
     fontWeight: '900',
+    letterSpacing: -0.3,
   },
-  groupSubtotal: {
+  todayLabel: {
     fontSize: 11,
     fontWeight: '600',
+    textAlign: 'center',
   },
-  entryCard: {
+  tipsWrap: {
+    gap: 10,
+  },
+  tipCard: {
+    borderRadius: 16,
     borderWidth: 1,
-    borderRadius: 13,
-    paddingHorizontal: 11,
-    paddingVertical: 10,
-  },
-  entryTopRow: {
+    padding: 14,
     flexDirection: 'row',
+    gap: 12,
     alignItems: 'flex-start',
-    justifyContent: 'space-between',
-    gap: 8,
   },
-  entryLeft: {
+  tipContent: {
     flex: 1,
+    gap: 3,
   },
-  entryName: {
+  tipTitle: {
     fontSize: 14,
-    fontWeight: '800',
-  },
-  entryMeta: {
-    marginTop: 2,
-    fontSize: 11,
-    fontWeight: '600',
-    textTransform: 'capitalize',
-  },
-  entryMacros: {
-    marginTop: 9,
-    fontSize: 11,
     fontWeight: '700',
   },
-  deleteButton: {
-    padding: 6,
+  tipDescription: {
+    fontSize: 12,
+    lineHeight: 17,
+    fontWeight: '500',
+  },
+  goalsWrap: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+  },
+  goalChip: {
     borderRadius: 999,
-    backgroundColor: '#FEF2F2',
     borderWidth: 1,
-    borderColor: '#FEE2E2',
+    paddingHorizontal: 14,
+    paddingVertical: 9,
+  },
+  goalLabel: {
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  emptyState: {
+    borderRadius: 16,
+    borderWidth: 1,
+    padding: 14,
+    gap: 4,
+  },
+  emptyTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  emptyText: {
+    fontSize: 14,
+    lineHeight: 20,
+  },
+  bottomSpacer: {
+    height: 24,
   },
 });
