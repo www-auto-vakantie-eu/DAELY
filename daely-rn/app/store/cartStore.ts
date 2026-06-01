@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-export type CartItemType = 'challenge' | 'clothing' | 'supplement' | 'dish';
+export type CartItemType = 'challenge' | 'clothing' | 'supplement' | 'dish' | 'accessory' | 'essential';
 
 export interface CartItem {
   id: string;
@@ -9,6 +9,8 @@ export interface CartItem {
   price: number;
   image?: string;
   quantity: number;
+  partnerId?: string;
+  partnerName?: string;
   meta?: Record<string, any>; // Voor extra info per type
 }
 

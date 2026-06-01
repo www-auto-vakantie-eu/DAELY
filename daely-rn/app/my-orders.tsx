@@ -1,30 +1,83 @@
-import React from 'react';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { StyleSheet, Text, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
 import PageHeader from './components/PageHeader';
+import { CommerceOrder } from '@/app/constants/commerce';
+import { getCommerceOrders } from '@/services/commerce-storage';
+
+const formatCurrency = (value: number) =>
+  new Intl.NumberFormat('nl-NL', {
+    style: 'currency',
+    currency: 'EUR',
+  }).format(value);
+
+const formatStatus = (status: CommerceOrder['status']) => {
+  switch (status) {
+    case 'draft':
+      return 'Concept';
+    case 'pending_payment':
+      return 'In afwachting';
+    case 'paid_placeholder':
+      return 'Betaald';
+    case 'sent_to_partners_placeholder':
+      return 'Verzonden naar partners';
+    default:
+      return status;
+  }
+};
 
 export default function MyOrdersScreen() {
   const theme = useTheme();
   const router = useRouter();
+  const [orders, setOrders] = useState<CommerceOrder[]>([]);
+
+  useEffect(() => {
+    getCommerceOrders().then(setOrders);
+  }, []);
 
   return (
-    <View style={[styles.screen, { backgroundColor: theme.background }]}>
+    <View style={[styles.screen, { backgroundColor: theme.background }]}> 
       <PageHeader
         title="My Orders"
-        onSettingsPress={() => router.push('/(tabs)/athlete')}
-        onSearchPress={() => router.push('/nutrition/search')}
         onCartPress={() => router.push('/(tabs)/cart')}
+        showSearch={false}
+        showSettings={false}
       />
-      <View style={[styles.card, { backgroundColor: theme.card, borderColor: theme.border }]}>
-        <MaterialCommunityIcons name="package-variant-closed" size={36} color={theme.tabBarActive} />
-        <Text style={[styles.title, { color: theme.titleColor }]}>My Orders</Text>
-        <Text style={[styles.description, { color: theme.subtitleColor }]}>
-          Hier vind je binnenkort je bestellingen, pakketten en aankopen.
-        </Text>
-        <Text style={[styles.emptyState, { color: theme.subtitleColor }]}>Nog geen bestellingen.</Text>
-      </View>
+      <ScrollView contentContainerStyle={styles.content}>
+        {orders.length === 0 ? (
+          <View style={[styles.card, { backgroundColor: theme.card, borderColor: theme.border }]}> 
+            <Text style={[styles.title, { color: theme.titleColor }]}>Nog geen bestellingen.</Text>
+            <Text style={[styles.description, { color: theme.subtitleColor }]}>Producten en partnerbestellingen komen binnenkort volledig beschikbaar.</Text>
+            <Pressable style={styles.shopButton} onPress={() => router.push('/shop')}>
+              <Text style={styles.shopButtonText}>Shop openen</Text>
+            </Pressable>
+          </View>
+        ) : (
+          orders.map((order) => (
+            <View key={order.id} style={[styles.orderCard, { backgroundColor: theme.card, borderColor: theme.border }]}> 
+              <View style={styles.orderHeader}>
+                <Text style={[styles.orderTitle, { color: theme.titleColor }]}>Bestelling {order.id.replace('order-', '')}</Text>
+                <Text style={[styles.orderStatus, { color: theme.titleColor }]}>{formatStatus(order.status)}</Text>
+              </View>
+              <Text style={[styles.orderMeta, { color: theme.subtitleColor }]}>{new Date(order.createdAt).toLocaleDateString('nl-NL', { day: 'numeric', month: 'long', year: 'numeric' })}</Text>
+              <Text style={[styles.orderMeta, { color: theme.subtitleColor }]}>Totaal: {formatCurrency(order.totalCents / 100)}</Text>
+              {order.appliedInfluencerCode ? (
+                <Text style={[styles.orderMeta, { color: theme.subtitleColor }]}>Code: {order.appliedInfluencerCode}</Text>
+              ) : null}
+              <View style={styles.partnerList}>
+                {order.partnerOrders.map((partnerOrder) => (
+                  <View key={partnerOrder.partnerId} style={styles.partnerRow}> 
+                    <Text style={[styles.partnerName, { color: theme.titleColor }]}>{partnerOrder.partnerName}</Text>
+                    <Text style={[styles.partnerData, { color: theme.subtitleColor }]}>{partnerOrder.itemCount} items • {formatCurrency(partnerOrder.totalCents / 100)}</Text>
+                    <Text style={[styles.partnerStatus, { color: theme.subtitleColor }]}>Status: {partnerOrder.status === 'not_sent' ? 'Niet verzonden' : 'Verzonden'}</Text>
+                  </View>
+                ))}
+              </View>
+            </View>
+          ))
+        )}
+      </ScrollView>
     </View>
   );
 }
@@ -32,6 +85,10 @@ export default function MyOrdersScreen() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
+  },
+  content: {
+    padding: 16,
+    paddingBottom: 40,
   },
   card: {
     marginHorizontal: 16,
@@ -44,14 +101,67 @@ const styles = StyleSheet.create({
     fontSize: 26,
     fontWeight: '800',
     letterSpacing: 0.3,
+    marginBottom: 8,
   },
   description: {
     fontSize: 15,
     lineHeight: 22,
+    marginBottom: 14,
   },
-  emptyState: {
-    fontSize: 14,
-    fontWeight: '600',
-    marginTop: 6,
+  shopButton: {
+    marginTop: 8,
+    borderRadius: 16,
+    backgroundColor: '#2563EB',
+    paddingVertical: 14,
+    alignItems: 'center',
+  },
+  shopButtonText: {
+    color: '#fff',
+    fontWeight: '700',
+  },
+  orderCard: {
+    marginBottom: 16,
+    borderRadius: 20,
+    borderWidth: 1,
+    padding: 18,
+  },
+  orderHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  orderTitle: {
+    fontSize: 17,
+    fontWeight: '800',
+  },
+  orderStatus: {
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  orderMeta: {
+    fontSize: 13,
+    marginBottom: 6,
+  },
+  partnerList: {
+    marginTop: 10,
+    borderTopWidth: 1,
+    borderTopColor: '#E5E7EB',
+    paddingTop: 12,
+  },
+  partnerRow: {
+    marginBottom: 10,
+  },
+  partnerName: {
+    fontSize: 15,
+    fontWeight: '700',
+  },
+  partnerData: {
+    fontSize: 13,
+    marginBottom: 4,
+  },
+  partnerStatus: {
+    fontSize: 13,
   },
 });
+
