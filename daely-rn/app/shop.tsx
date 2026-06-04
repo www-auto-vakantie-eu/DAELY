@@ -177,6 +177,10 @@ export default function ShopScreen() {
           {message ? <Text style={[styles.message, { color: theme.titleColor }]}>{message}</Text> : null}
         </View>
 
+        <Pressable style={styles.favoritesLink} onPress={() => router.push('/favorites')}>
+          <Text style={styles.favoritesLinkText}>Favorieten →</Text>
+        </Pressable>
+
         <View style={styles.filterRow}>
           {FILTER_CATEGORIES.map((category) => (
             <Pressable
@@ -202,13 +206,17 @@ export default function ShopScreen() {
             : product.priceCents / 100;
 
           return (
-            <View key={product.id} style={[styles.productCard, { backgroundColor: theme.card, borderColor: theme.border }]}> 
+            <Pressable
+              key={product.id}
+              style={[styles.productCard, { backgroundColor: theme.card, borderColor: theme.border }]}
+              onPress={() => router.push(`/product/${product.id}` as any)}
+            >
               <Image source={{ uri: product.imagePlaceholder }} style={styles.productImage} />
-              <View style={styles.productInfo}> 
+              <View style={styles.productInfo}>
                 <Text style={[styles.productBrand, { color: theme.subtitleColor }]}>{product.partnerName}</Text>
                 <Text style={[styles.productName, { color: theme.titleColor }]}>{product.name}</Text>
                 <Text style={[styles.productCategory, { color: theme.subtitleColor }]}>{product.category}</Text>
-                <View style={styles.productPriceRow}> 
+                <View style={styles.productPriceRow}>
                   <Text style={[styles.productPrice, { color: theme.titleColor }]}>{formatCurrency(finalPrice)}</Text>
                   {discount > 0 ? (
                     <Text style={styles.productOriginalPrice}>{formatCurrency(product.priceCents / 100)}</Text>
@@ -221,10 +229,13 @@ export default function ShopScreen() {
                   <Text style={styles.productTag}>Binnenkort</Text>
                 ) : null}
               </View>
-              <View style={styles.cardActions}> 
+              <View style={styles.cardActions}>
                 <Pressable
                   style={styles.favoriteButton}
-                  onPress={() => handleToggleFavorite(product.id)}
+                  onPress={(e) => {
+                    e.stopPropagation();
+                    handleToggleFavorite(product.id);
+                  }}
                 >
                   <Text style={{ color: favoriteIds.includes(product.id) ? '#F59E0B' : theme.subtitleColor }}>
                     {favoriteIds.includes(product.id) ? '♥' : '♡'}
@@ -233,12 +244,15 @@ export default function ShopScreen() {
                 <Pressable
                   style={[styles.addButton, product.status !== 'available' && styles.disabledButton]}
                   disabled={product.status !== 'available'}
-                  onPress={() => handleAddToCart(product)}
+                  onPress={(e) => {
+                    e.stopPropagation();
+                    handleAddToCart(product);
+                  }}
                 >
                   <Text style={styles.addButtonText}>{product.status === 'available' ? 'In winkelwagen' : 'Binnenkort'}</Text>
                 </Pressable>
               </View>
-            </View>
+            </Pressable>
           );
         })}
       </ScrollView>
@@ -307,6 +321,15 @@ const styles = StyleSheet.create({
   message: {
     marginTop: 8,
     fontSize: 14,
+  },
+  favoritesLink: {
+    alignSelf: 'flex-end',
+    marginBottom: 12,
+  },
+  favoritesLinkText: {
+    color: '#2563EB',
+    fontSize: 14,
+    fontWeight: '600',
   },
   filterRow: {
     flexDirection: 'row',
