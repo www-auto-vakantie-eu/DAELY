@@ -37,6 +37,21 @@ const FILTER_CATEGORIES: (CommerceProductCategory | 'Alles')[] = [
   'Essentials',
 ];
 
+const FILTER_PARTNERS: string[] = [
+  'Alles',
+  'Nike',
+  'Gymshark',
+  'DFYNE',
+  'DAELY Essentials',
+];
+
+const SORT_OPTIONS: ('Aanbevolen' | 'Prijs laag-hoog' | 'Prijs hoog-laag' | 'Partner A-Z')[] = [
+  'Aanbevolen',
+  'Prijs laag-hoog',
+  'Prijs hoog-laag',
+  'Partner A-Z',
+];
+
 const formatCurrency = (value: number) =>
   new Intl.NumberFormat('nl-NL', {
     style: 'currency',
@@ -63,6 +78,9 @@ export default function ShopScreen() {
   const hydrateCart = useCartStore((state) => state._hydrate);
 
   const [selectedCategory, setSelectedCategory] = useState<CommerceProductCategory | 'Alles'>('Alles');
+  const [selectedPartner, setSelectedPartner] = useState<string>('Alles');
+  const [selectedSort, setSelectedSort] = useState<'Aanbevolen' | 'Prijs laag-hoog' | 'Prijs hoog-laag' | 'Partner A-Z'>('Aanbevolen');
+  const [searchQuery, setSearchQuery] = useState<string>('');
   const [influencerCode, setInfluencerCode] = useState<string>('');
   const [savedCode, setSavedCode] = useState<string | null>(null);
   const [message, setMessage] = useState<string>('');
@@ -85,13 +103,36 @@ export default function ShopScreen() {
     getFavoriteProducts().then(setFavoriteIds);
   }, []);
 
-  const filteredProducts = useMemo(
-    () =>
-      selectedCategory === 'Alles'
-        ? COMMERCE_PRODUCTS
-        : COMMERCE_PRODUCTS.filter((product) => product.category === selectedCategory),
-    [selectedCategory]
-  );
+  const filteredProducts = useMemo(() => {
+  let products = COMMERCE_PRODUCTS;
+
+  if (selectedCategory !== 'Alles') {
+    products = products.filter((product) => product.category === selectedCategory);
+  }
+
+  if (selectedPartner !== 'Alles') {
+    products = products.filter((product) => product.partnerName === selectedPartner);
+  }
+
+  if (searchQuery.trim()) {
+    const query = searchQuery.toLowerCase().trim();
+    products = products.filter((product) =>
+      product.name.toLowerCase().includes(query) ||
+      product.partnerName.toLowerCase().includes(query) ||
+      product.category.toLowerCase().includes(query)
+    );
+  }
+
+  if (selectedSort === 'Prijs laag-hoog') {
+    products = [...products].sort((a, b) => a.priceCents - b.priceCents);
+  } else if (selectedSort === 'Prijs hoog-laag') {
+    products = [...products].sort((a, b) => b.priceCents - a.priceCents);
+  } else if (selectedSort === 'Partner A-Z') {
+    products = [...products].sort((a, b) => a.partnerName.localeCompare(b.partnerName));
+  }
+
+  return products;
+}, [selectedCategory, selectedPartner, selectedSort, searchQuery]);
 
   const handleSaveCode = async () => {
     const normalized = influencerCode.trim().toUpperCase();
@@ -123,6 +164,13 @@ export default function ShopScreen() {
     await addFavoriteProduct(productId);
   };
 
+  const handleClearFilters = () => {
+    setSelectedCategory('Alles');
+    setSelectedPartner('Alles');
+    setSelectedSort('Aanbevolen');
+    setSearchQuery('');
+  };
+
   const handleAddToCart = (product: CommerceProduct) => {
     addItem({
       id: product.id,
@@ -149,9 +197,17 @@ export default function ShopScreen() {
         showSettings={false}
       />
       <ScrollView contentContainerStyle={styles.content}>
-        <View style={[styles.hero, { backgroundColor: theme.card, borderColor: theme.border }]}> 
+        <View style={[styles.hero, { backgroundColor: theme.card, borderColor: theme.border }]}>
           <Text style={[styles.heroTitle, { color: theme.titleColor }]}>Ontdek sportproducten van DAELY partners.</Text>
           <Text style={[styles.heroDescription, { color: theme.subtitleColor }]}>Kleding, accessoires en supplementen in één winkelervaring. Gebruik jouw influencercode voor extra korting.</Text>
+          <View style={styles.heroActions}>
+            <Pressable style={styles.heroActionButton} onPress={() => router.push('/favorites')}>
+              <Text style={styles.heroActionText}>Favorieten</Text>
+            </Pressable>
+            <Pressable style={styles.heroActionButton} onPress={() => router.push('/(tabs)/cart')}>
+              <Text style={styles.heroActionText}>Winkelwagen</Text>
+            </Pressable>
+          </View>
         </View>
 
         <View style={[styles.codeSection, { backgroundColor: theme.card, borderColor: theme.border }]}> 
@@ -177,25 +233,99 @@ export default function ShopScreen() {
           {message ? <Text style={[styles.message, { color: theme.titleColor }]}>{message}</Text> : null}
         </View>
 
-        <Pressable style={styles.favoritesLink} onPress={() => router.push('/favorites')}>
-          <Text style={styles.favoritesLinkText}>Favorieten →</Text>
-        </Pressable>
-
-        <View style={styles.filterRow}>
-          {FILTER_CATEGORIES.map((category) => (
-            <Pressable
-              key={category}
-              style={[
-                styles.filterChip,
-                selectedCategory === category && { backgroundColor: '#2563EB' },
-                { borderColor: theme.border },
-              ]}
-              onPress={() => setSelectedCategory(category)}
-            >
-              <Text style={[styles.filterChipText, selectedCategory === category && { color: '#FFFFFF' }]}>{category}</Text>
-            </Pressable>
-          ))}
+        <View style={[styles.searchSection, { backgroundColor: theme.card, borderColor: theme.border }]}>
+          <TextInput
+            style={[styles.searchInput, { backgroundColor: theme.background, color: theme.titleColor, borderColor: theme.border }]}
+            placeholder="Zoek product, partner of categorie"
+            placeholderTextColor={theme.subtitleColor}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
         </View>
+
+        <View style={styles.filterSection}>
+          <Text style={[styles.filterLabel, { color: theme.titleColor }]}>Partner</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterScroll}>
+            <View style={styles.filterRow}>
+              {FILTER_PARTNERS.map((partner) => (
+                <Pressable
+                  key={partner}
+                  style={[
+                    styles.filterChip,
+                    selectedPartner === partner && { backgroundColor: '#2563EB' },
+                    { borderColor: theme.border },
+                  ]}
+                  onPress={() => setSelectedPartner(partner)}
+                >
+                  <Text style={[styles.filterChipText, selectedPartner === partner && { color: '#FFFFFF' }]}>{partner}</Text>
+                </Pressable>
+              ))}
+            </View>
+          </ScrollView>
+        </View>
+
+        <View style={styles.filterSection}>
+          <Text style={[styles.filterLabel, { color: theme.titleColor }]}>Categorie</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterScroll}>
+            <View style={styles.filterRow}>
+              {FILTER_CATEGORIES.map((category) => (
+                <Pressable
+                  key={category}
+                  style={[
+                    styles.filterChip,
+                    selectedCategory === category && { backgroundColor: '#2563EB' },
+                    { borderColor: theme.border },
+                  ]}
+                  onPress={() => setSelectedCategory(category)}
+                >
+                  <Text style={[styles.filterChipText, selectedCategory === category && { color: '#FFFFFF' }]}>{category}</Text>
+                </Pressable>
+              ))}
+            </View>
+          </ScrollView>
+        </View>
+
+        <View style={styles.filterSection}>
+          <Text style={[styles.filterLabel, { color: theme.titleColor }]}>Sorteren</Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterScroll}>
+            <View style={styles.filterRow}>
+              {SORT_OPTIONS.map((sort) => (
+                <Pressable
+                  key={sort}
+                  style={[
+                    styles.filterChip,
+                    selectedSort === sort && { backgroundColor: '#2563EB' },
+                    { borderColor: theme.border },
+                  ]}
+                  onPress={() => setSelectedSort(sort)}
+                >
+                  <Text style={[styles.filterChipText, selectedSort === sort && { color: '#FFFFFF' }]}>{sort}</Text>
+                </Pressable>
+              ))}
+            </View>
+          </ScrollView>
+        </View>
+
+        <View style={styles.resultSection}>
+          <Text style={[styles.resultText, { color: theme.subtitleColor }]}>
+            {filteredProducts.length} product{filteredProducts.length !== 1 ? 'en' : ''} gevonden
+          </Text>
+          {(searchQuery || selectedPartner !== 'Alles' || selectedCategory !== 'Alles') && (
+            <Pressable onPress={handleClearFilters}>
+              <Text style={styles.clearFiltersText}>Filters wissen</Text>
+            </Pressable>
+          )}
+        </View>
+
+        {filteredProducts.length === 0 ? (
+          <View style={[styles.emptyCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+            <Text style={[styles.emptyTitle, { color: theme.titleColor }]}>Geen producten gevonden.</Text>
+            <Text style={[styles.emptyText, { color: theme.subtitleColor }]}>Pas je zoekterm of filters aan.</Text>
+            <Pressable style={styles.clearButton} onPress={handleClearFilters}>
+              <Text style={styles.clearButtonText}>Filters wissen</Text>
+            </Pressable>
+          </View>
+        ) : null}
 
         {filteredProducts.map((product) => {
           const discount = savedCode && product.eligibleForInfluencerDiscount
@@ -283,6 +413,22 @@ const styles = StyleSheet.create({
     fontSize: 15,
     lineHeight: 22,
   },
+  heroActions: {
+    flexDirection: 'row',
+    gap: 10,
+    marginTop: 12,
+  },
+  heroActionButton: {
+    backgroundColor: '#2563EB',
+    borderRadius: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+  },
+  heroActionText: {
+    color: '#FFFFFF',
+    fontWeight: '700',
+    fontSize: 14,
+  },
   codeSection: {
     marginBottom: 16,
     borderRadius: 20,
@@ -322,20 +468,32 @@ const styles = StyleSheet.create({
     marginTop: 8,
     fontSize: 14,
   },
-  favoritesLink: {
-    alignSelf: 'flex-end',
+  searchSection: {
+    marginBottom: 12,
+    borderRadius: 20,
+    borderWidth: 1,
+    padding: 14,
+  },
+  searchInput: {
+    borderRadius: 14,
+    borderWidth: 1,
+    padding: 12,
+    fontSize: 15,
+  },
+  filterSection: {
     marginBottom: 12,
   },
-  favoritesLinkText: {
-    color: '#2563EB',
+  filterLabel: {
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: '700',
+    marginBottom: 8,
+  },
+  filterScroll: {
+    marginBottom: 0,
   },
   filterRow: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 10,
-    marginBottom: 16,
+    gap: 8,
   },
   filterChip: {
     borderWidth: 1,
@@ -345,6 +503,45 @@ const styles = StyleSheet.create({
   },
   filterChipText: {
     fontSize: 13,
+    fontWeight: '700',
+  },
+  resultSection: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  resultText: {
+    fontSize: 13,
+  },
+  clearFiltersText: {
+    color: '#2563EB',
+    fontSize: 13,
+    fontWeight: '600',
+  },
+  emptyCard: {
+    borderRadius: 20,
+    borderWidth: 1,
+    padding: 20,
+    alignItems: 'center',
+  },
+  emptyTitle: {
+    fontSize: 18,
+    fontWeight: '800',
+    marginBottom: 6,
+  },
+  emptyText: {
+    fontSize: 14,
+    marginBottom: 14,
+  },
+  clearButton: {
+    backgroundColor: '#2563EB',
+    borderRadius: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 18,
+  },
+  clearButtonText: {
+    color: '#FFFFFF',
     fontWeight: '700',
   },
   productCard: {
