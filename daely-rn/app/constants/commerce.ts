@@ -12,6 +12,14 @@ export interface CommerceProduct {
   imagePlaceholder: string;
   eligibleForInfluencerDiscount: boolean;
   status: CommerceProductStatus;
+  description?: string;
+  benefits?: string[];
+  sizes?: string[];
+  colors?: string[];
+  shippingInfo?: string;
+  returnInfo?: string;
+  partnerLogoPlaceholder?: string;
+  productBadge?: string;
 }
 
 export interface InfluencerDiscountCode {
@@ -129,6 +137,13 @@ export const COMMERCE_PRODUCTS: CommerceProduct[] = [
     imagePlaceholder: 'https://images.unsplash.com/photo-1520975922043-7ef1ae42be33?auto=format&fit=crop&w=800&q=80',
     eligibleForInfluencerDiscount: true,
     status: 'available',
+    description: 'Ademend en comfortabel trainingsshirt gemaakt van hoogwaardige stof.',
+    benefits: ['Ademend materiaal', 'Sneldrogend', 'Lichtgewicht'],
+    sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
+    colors: ['Zwart', 'Wit', 'Grijs', 'Navy'],
+    shippingInfo: 'Verzending binnen 2-3 werkdagen',
+    returnInfo: 'Gratis retour binnen 30 dagen',
+    productBadge: 'Populair',
   },
   {
     id: 'nike-essential-hoodie',
@@ -141,6 +156,13 @@ export const COMMERCE_PRODUCTS: CommerceProduct[] = [
     imagePlaceholder: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=800&q=80',
     eligibleForInfluencerDiscount: true,
     status: 'available',
+    description: 'Comfortabele hoodie voor training en casual gebruik.',
+    benefits: ['Warm en zacht', 'Kap met trekkoord', 'Kangaroo zak'],
+    sizes: ['S', 'M', 'L', 'XL', 'XXL'],
+    colors: ['Zwart', 'Donkergrijs', 'Marine'],
+    shippingInfo: 'Verzending binnen 2-3 werkdagen',
+    returnInfo: 'Gratis retour binnen 30 dagen',
+    productBadge: 'DAELY keuze',
   },
   {
     id: 'gymshark-training-tank',
@@ -153,6 +175,13 @@ export const COMMERCE_PRODUCTS: CommerceProduct[] = [
     imagePlaceholder: 'https://images.unsplash.com/photo-1526403227-35d2ca032302?auto=format&fit=crop&w=800&q=80',
     eligibleForInfluencerDiscount: true,
     status: 'available',
+    description: 'Strakke tanktop voor intensieve trainingssessies.',
+    benefits: ['Strakke pasvorm', 'Ademend', 'Sneldrogend'],
+    sizes: ['XS', 'S', 'M', 'L', 'XL'],
+    colors: ['Zwart', 'Wit', 'Grijs', 'Rood'],
+    shippingInfo: 'Verzending binnen 2-3 werkdagen',
+    returnInfo: 'Gratis retour binnen 30 dagen',
+    productBadge: 'Partner deal',
   },
   {
     id: 'gymshark-pro-shaker',
@@ -165,6 +194,13 @@ export const COMMERCE_PRODUCTS: CommerceProduct[] = [
     imagePlaceholder: 'https://images.unsplash.com/photo-1534430480878-4d8f1dca1d7e?auto=format&fit=crop&w=800&q=80',
     eligibleForInfluencerDiscount: true,
     status: 'available',
+    description: 'Professionele proteïne shaker met mixing bal.',
+    benefits: ['600ml capaciteit', 'Mixing bal', 'Lekbestend'],
+    sizes: [],
+    colors: ['Zwart', 'Wit'],
+    shippingInfo: 'Verzending binnen 2-3 werkdagen',
+    returnInfo: 'Gratis retour binnen 30 dagen',
+    productBadge: '',
   },
   {
     id: 'dfyne-performance-bottle',
@@ -177,6 +213,13 @@ export const COMMERCE_PRODUCTS: CommerceProduct[] = [
     imagePlaceholder: 'https://images.unsplash.com/photo-1580910051074-2cba82b0793c?auto=format&fit=crop&w=800&q=80',
     eligibleForInfluencerDiscount: false,
     status: 'available',
+    description: 'Premium drinkfles voor hydratatie tijdens training.',
+    benefits: ['Dubbelwand isolatie', 'BPA-vrij', 'Handig formaat'],
+    sizes: [],
+    colors: ['Blauw', 'Roze', 'Zwart'],
+    shippingInfo: 'Verzending binnen 2-3 werkdagen',
+    returnInfo: 'Gratis retour binnen 30 dagen',
+    productBadge: 'Nieuw',
   },
   {
     id: 'dfyne-recovery-bundle',
@@ -189,6 +232,13 @@ export const COMMERCE_PRODUCTS: CommerceProduct[] = [
     imagePlaceholder: 'https://images.unsplash.com/photo-1514996937319-344454492b37?auto=format&fit=crop&w=800&q=80',
     eligibleForInfluencerDiscount: true,
     status: 'available',
+    description: 'Complete recovery bundel voor na je training.',
+    benefits: ['Eiwitshake', 'BCAA supplement', 'Magnesium'],
+    sizes: [],
+    colors: [],
+    shippingInfo: 'Verzending binnen 2-3 werkdagen',
+    returnInfo: 'Gratis retour binnen 30 dagen',
+    productBadge: '',
   },
   {
     id: 'daely-essentials-protein',
@@ -201,6 +251,13 @@ export const COMMERCE_PRODUCTS: CommerceProduct[] = [
     imagePlaceholder: 'https://images.unsplash.com/photo-1510626176961-4b89d53ef2a5?auto=format&fit=crop&w=800&q=80',
     eligibleForInfluencerDiscount: true,
     status: 'available',
+    description: 'Hoogwaardige proteïne voor spierherstel.',
+    benefits: ['25g proteïne per serving', 'Snel opneembaar', 'Natuurlijke smaken'],
+    sizes: [],
+    colors: [],
+    shippingInfo: 'Verzending binnen 2-3 werkdagen',
+    returnInfo: 'Gratis retour binnen 30 dagen',
+    productBadge: 'Populair',
   },
   {
     id: 'daely-essentials-core-mat',
@@ -213,6 +270,13 @@ export const COMMERCE_PRODUCTS: CommerceProduct[] = [
     imagePlaceholder: 'https://images.unsplash.com/photo-1517832207067-4db24a2ae47c?auto=format&fit=crop&w=800&q=80',
     eligibleForInfluencerDiscount: true,
     status: 'coming_soon',
+    description: 'Duurzame yogamat voor training en stretching.',
+    benefits: ['Anti-slip', 'Milieuvriendelijk', 'Extra dik'],
+    sizes: [],
+    colors: [],
+    shippingInfo: 'Verzending binnen 2-3 werkdagen',
+    returnInfo: 'Gratis retour binnen 30 dagen',
+    productBadge: 'Nieuw',
   },
   {
     id: 'daely-essentials-resistance-band',
@@ -225,5 +289,12 @@ export const COMMERCE_PRODUCTS: CommerceProduct[] = [
     imagePlaceholder: 'https://images.unsplash.com/photo-1534367615393-12a4c6f708e7?auto=format&fit=crop&w=800&q=80',
     eligibleForInfluencerDiscount: true,
     status: 'available',
+    description: 'Veelzijdige weerstandsband voor krachttraining.',
+    benefits: ['Lichtgewicht', 'Duurzaam', 'Compact'],
+    sizes: [],
+    colors: ['Zwart', 'Rood', 'Blauw', 'Groen'],
+    shippingInfo: 'Verzending binnen 2-3 werkdagen',
+    returnInfo: 'Gratis retour binnen 30 dagen',
+    productBadge: '',
   },
 ];

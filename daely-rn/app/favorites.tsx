@@ -133,9 +133,15 @@ export default function FavoritesScreen() {
                 <View key={product.id} style={[styles.productCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
                   <Image source={{ uri: product.imagePlaceholder }} style={styles.productImage} />
                   <View style={styles.productInfo}>
+                    {product.productBadge ? (
+                      <Text style={styles.cardBadge}>{product.productBadge}</Text>
+                    ) : null}
                     <Text style={[styles.partnerName, { color: theme.subtitleColor }]}>{product.partnerName}</Text>
                     <Text style={[styles.productName, { color: theme.titleColor }]}>{product.name}</Text>
                     <Text style={[styles.category, { color: theme.subtitleColor }]}>{product.category}</Text>
+                    {product.description ? (
+                      <Text style={[styles.productDescription, { color: theme.subtitleColor }]} numberOfLines={2}>{product.description}</Text>
+                    ) : null}
                     <View style={styles.priceRow}>
                       <Text style={[styles.price, { color: theme.titleColor }]}>{formatCurrency(finalPrice)}</Text>
                       {discount > 0 ? (
@@ -247,6 +253,21 @@ const styles = StyleSheet.create({
   category: {
     fontSize: 13,
     marginBottom: 10,
+  },
+  productDescription: {
+    fontSize: 12,
+    marginBottom: 8,
+  },
+  cardBadge: {
+    backgroundColor: '#F59E0B',
+    color: '#FFFFFF',
+    fontSize: 10,
+    fontWeight: '700',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+    alignSelf: 'flex-start',
+    marginBottom: 4,
   },
   priceRow: {
     flexDirection: 'row',

@@ -343,9 +343,15 @@ export default function ShopScreen() {
             >
               <Image source={{ uri: product.imagePlaceholder }} style={styles.productImage} />
               <View style={styles.productInfo}>
+                {product.productBadge ? (
+                  <Text style={styles.cardBadge}>{product.productBadge}</Text>
+                ) : null}
                 <Text style={[styles.productBrand, { color: theme.subtitleColor }]}>{product.partnerName}</Text>
                 <Text style={[styles.productName, { color: theme.titleColor }]}>{product.name}</Text>
                 <Text style={[styles.productCategory, { color: theme.subtitleColor }]}>{product.category}</Text>
+                {product.description ? (
+                  <Text style={[styles.productDescription, { color: theme.subtitleColor }]} numberOfLines={2}>{product.description}</Text>
+                ) : null}
                 <View style={styles.productPriceRow}>
                   <Text style={[styles.productPrice, { color: theme.titleColor }]}>{formatCurrency(finalPrice)}</Text>
                   {discount > 0 ? (
@@ -353,7 +359,7 @@ export default function ShopScreen() {
                   ) : null}
                 </View>
                 {product.eligibleForInfluencerDiscount && savedCode ? (
-                  <Text style={[styles.productBadge, { color: '#059669' }]}>-{discount}% met {savedCode}</Text>
+                  <Text style={[styles.discountBadge, { color: '#059669' }]}>-{discount}% met {savedCode}</Text>
                 ) : null}
                 {product.status === 'coming_soon' ? (
                   <Text style={styles.productTag}>Binnenkort</Text>
@@ -570,6 +576,21 @@ const styles = StyleSheet.create({
     fontSize: 13,
     marginBottom: 10,
   },
+  productDescription: {
+    fontSize: 12,
+    marginBottom: 8,
+  },
+  cardBadge: {
+    backgroundColor: '#F59E0B',
+    color: '#FFFFFF',
+    fontSize: 10,
+    fontWeight: '700',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+    alignSelf: 'flex-start',
+    marginBottom: 4,
+  },
   productPriceRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -585,7 +606,7 @@ const styles = StyleSheet.create({
     color: '#6B7280',
     textDecorationLine: 'line-through',
   },
-  productBadge: {
+  discountBadge: {
     fontSize: 13,
     fontWeight: '700',
   },

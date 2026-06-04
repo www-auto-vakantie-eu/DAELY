@@ -152,6 +152,11 @@ export default function ProductDetailScreen() {
         <Image source={{ uri: product.imagePlaceholder }} style={styles.productImage} />
 
         <View style={[styles.infoCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+          {product.productBadge ? (
+            <View style={styles.badgeWrap}>
+              <Text style={styles.badgeText}>{product.productBadge}</Text>
+            </View>
+          ) : null}
           <Text style={[styles.partnerName, { color: theme.subtitleColor }]}>{product.partnerName}</Text>
           <Text style={[styles.productName, { color: theme.titleColor }]}>{product.name}</Text>
           <Text style={[styles.category, { color: theme.subtitleColor }]}>{product.category}</Text>
@@ -164,7 +169,7 @@ export default function ProductDetailScreen() {
           </View>
 
           {product.eligibleForInfluencerDiscount && savedCode ? (
-            <Text style={[styles.discountBadge, { color: '#059669' }]}>-{discount}% met {savedCode}</Text>
+            <Text style={[styles.discountBadge, { color: '#059669' }]}>-{discount}% korting met code {savedCode}</Text>
           ) : null}
 
           {savedCode ? (
@@ -177,11 +182,59 @@ export default function ProductDetailScreen() {
 
           <Text style={[styles.partnerInfo, { color: theme.subtitleColor }]}>Verkocht door {product.partnerName}</Text>
 
-          <Text style={[styles.descriptionTitle, { color: theme.titleColor }]}>Beschrijving</Text>
-          <Text style={[styles.description, { color: theme.subtitleColor }]}>
-            {product.name} is een hoogwaardig {product.category.toLowerCase()} product van {product.partnerName}.
-            Perfect voor sporters die het beste uit zichzelf willen halen.
-          </Text>
+          {product.description ? (
+            <>
+              <Text style={[styles.descriptionTitle, { color: theme.titleColor }]}>Beschrijving</Text>
+              <Text style={[styles.description, { color: theme.subtitleColor }]}>{product.description}</Text>
+            </>
+          ) : null}
+
+          {product.benefits && product.benefits.length > 0 ? (
+            <>
+              <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Voordelen</Text>
+              <View style={styles.benefitsRow}>
+                {product.benefits.map((benefit, index) => (
+                  <View key={index} style={[styles.benefitChip, { backgroundColor: theme.background, borderColor: theme.border }]}>
+                    <Text style={[styles.benefitText, { color: theme.titleColor }]}>{benefit}</Text>
+                  </View>
+                ))}
+              </View>
+            </>
+          ) : null}
+
+          {product.sizes && product.sizes.length > 0 ? (
+            <>
+              <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Maten</Text>
+              <View style={styles.optionsRow}>
+                {product.sizes.map((size, index) => (
+                  <View key={index} style={[styles.optionChip, { backgroundColor: theme.background, borderColor: theme.border }]}>
+                    <Text style={[styles.optionText, { color: theme.titleColor }]}>{size}</Text>
+                  </View>
+                ))}
+              </View>
+            </>
+          ) : null}
+
+          {product.colors && product.colors.length > 0 ? (
+            <>
+              <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Kleuren</Text>
+              <View style={styles.optionsRow}>
+                {product.colors.map((color, index) => (
+                  <View key={index} style={[styles.optionChip, { backgroundColor: theme.background, borderColor: theme.border }]}>
+                    <Text style={[styles.optionText, { color: theme.titleColor }]}>{color}</Text>
+                  </View>
+                ))}
+              </View>
+            </>
+          ) : null}
+
+          {product.shippingInfo ? (
+            <Text style={[styles.infoText, { color: theme.subtitleColor }]}>Verzending: {product.shippingInfo}</Text>
+          ) : null}
+
+          {product.returnInfo ? (
+            <Text style={[styles.infoText, { color: theme.subtitleColor }]}>Retour: {product.returnInfo}</Text>
+          ) : null}
 
           <View style={styles.actionRow}>
             <Pressable
@@ -309,6 +362,19 @@ const styles = StyleSheet.create({
     fontSize: 13,
     marginBottom: 16,
   },
+  badgeWrap: {
+    alignSelf: 'flex-start',
+    marginBottom: 8,
+  },
+  badgeText: {
+    backgroundColor: '#F59E0B',
+    color: '#FFFFFF',
+    fontSize: 11,
+    fontWeight: '700',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
+  },
   descriptionTitle: {
     fontSize: 16,
     fontWeight: '700',
@@ -317,7 +383,48 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 14,
     lineHeight: 20,
-    marginBottom: 20,
+    marginBottom: 16,
+  },
+  sectionTitle: {
+    fontSize: 15,
+    fontWeight: '700',
+    marginBottom: 8,
+  },
+  benefitsRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginBottom: 16,
+  },
+  benefitChip: {
+    borderRadius: 8,
+    borderWidth: 1,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+  },
+  benefitText: {
+    fontSize: 13,
+    fontWeight: '600',
+  },
+  optionsRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginBottom: 16,
+  },
+  optionChip: {
+    borderRadius: 8,
+    borderWidth: 1,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+  },
+  optionText: {
+    fontSize: 13,
+    fontWeight: '600',
+  },
+  infoText: {
+    fontSize: 13,
+    marginBottom: 4,
   },
   actionRow: {
     flexDirection: 'row',
