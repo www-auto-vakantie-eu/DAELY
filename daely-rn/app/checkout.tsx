@@ -5,6 +5,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   View,
 } from 'react-native';
 import { useRouter } from 'expo-router';
@@ -16,6 +17,7 @@ import {
   getDiscountForCode,
   getSavedInfluencerCode,
 } from '@/services/commerce-storage';
+import { OrderCustomer, OrderShippingAddress } from '@/app/constants/commerce';
 
 const formatCurrency = (value: number) =>
   new Intl.NumberFormat('nl-NL', {
@@ -29,6 +31,16 @@ export default function CheckoutScreen() {
   const { items, clearCart } = useCartStore();
   const [savedCode, setSavedCode] = useState<string | null>(null);
   const [statusMessage, setStatusMessage] = useState<string>('');
+  const [validationError, setValidationError] = useState<string>('');
+
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [street, setStreet] = useState('');
+  const [postalCode, setPostalCode] = useState('');
+  const [city, setCity] = useState('');
+  const [country, setCountry] = useState('');
 
   useEffect(() => {
     getSavedInfluencerCode().then((code) => {
@@ -80,15 +92,60 @@ export default function CheckoutScreen() {
   }, [items]);
 
   const handleCreateDraftOrder = async () => {
+    setValidationError('');
+
     if (items.length === 0) {
       Alert.alert('Winkelwagen leeg', 'Voeg eerst een product toe voordat je een concept-bestelling maakt.');
       return;
     }
 
+    if (!firstName.trim()) {
+      setValidationError('Voornaam is verplicht.');
+      return;
+    }
+    if (!lastName.trim()) {
+      setValidationError('Achternaam is verplicht.');
+      return;
+    }
+    if (!email.trim()) {
+      setValidationError('E-mailadres is verplicht.');
+      return;
+    }
+    if (!street.trim()) {
+      setValidationError('Straat en huisnummer zijn verplicht.');
+      return;
+    }
+    if (!postalCode.trim()) {
+      setValidationError('Postcode is verplicht.');
+      return;
+    }
+    if (!city.trim()) {
+      setValidationError('Plaats is verplicht.');
+      return;
+    }
+    if (!country.trim()) {
+      setValidationError('Land is verplicht.');
+      return;
+    }
+
+    const customer: OrderCustomer = {
+      firstName: firstName.trim(),
+      lastName: lastName.trim(),
+      email: email.trim(),
+      phone: phone.trim() || undefined,
+    };
+
+    const shippingAddress: OrderShippingAddress = {
+      street: street.trim(),
+      postalCode: postalCode.trim(),
+      city: city.trim(),
+      country: country.trim(),
+    };
+
     try {
-      await createDraftOrderFromCart(items, savedCode);
+      await createDraftOrderFromCart(items, savedCode, customer, shippingAddress);
       clearCart();
-      setStatusMessage('Concept-bestelling gemaakt. Je kunt hem terugvinden bij My Orders.');
+      setStatusMessage('Bestelling voorbereid. Betalen en partnerverwerking komen binnenkort.');
       router.push('/my-orders');
     } catch {
       Alert.alert('Fout', 'Er is iets misgegaan bij het maken van de concept-bestelling.');
@@ -136,6 +193,78 @@ export default function CheckoutScreen() {
             ))
           )}
         </View>
+
+        <View style={[styles.formSection, { backgroundColor: theme.card, borderColor: theme.border }]}>
+          <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Klantgegevens</Text>
+          <TextInput
+            style={[styles.input, { backgroundColor: theme.background, borderColor: theme.border, color: theme.titleColor }]}
+            placeholder="Voornaam *"
+            placeholderTextColor={theme.subtitleColor}
+            value={firstName}
+            onChangeText={setFirstName}
+          />
+          <TextInput
+            style={[styles.input, { backgroundColor: theme.background, borderColor: theme.border, color: theme.titleColor }]}
+            placeholder="Achternaam *"
+            placeholderTextColor={theme.subtitleColor}
+            value={lastName}
+            onChangeText={setLastName}
+          />
+          <TextInput
+            style={[styles.input, { backgroundColor: theme.background, borderColor: theme.border, color: theme.titleColor }]}
+            placeholder="E-mailadres *"
+            placeholderTextColor={theme.subtitleColor}
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+          />
+          <TextInput
+            style={[styles.input, { backgroundColor: theme.background, borderColor: theme.border, color: theme.titleColor }]}
+            placeholder="Telefoonnummer (optioneel)"
+            placeholderTextColor={theme.subtitleColor}
+            value={phone}
+            onChangeText={setPhone}
+            keyboardType="phone-pad"
+          />
+        </View>
+
+        <View style={[styles.formSection, { backgroundColor: theme.card, borderColor: theme.border }]}>
+          <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Afleveradres</Text>
+          <TextInput
+            style={[styles.input, { backgroundColor: theme.background, borderColor: theme.border, color: theme.titleColor }]}
+            placeholder="Straat + huisnummer *"
+            placeholderTextColor={theme.subtitleColor}
+            value={street}
+            onChangeText={setStreet}
+          />
+          <TextInput
+            style={[styles.input, { backgroundColor: theme.background, borderColor: theme.border, color: theme.titleColor }]}
+            placeholder="Postcode *"
+            placeholderTextColor={theme.subtitleColor}
+            value={postalCode}
+            onChangeText={setPostalCode}
+          />
+          <TextInput
+            style={[styles.input, { backgroundColor: theme.background, borderColor: theme.border, color: theme.titleColor }]}
+            placeholder="Plaats *"
+            placeholderTextColor={theme.subtitleColor}
+            value={city}
+            onChangeText={setCity}
+          />
+          <TextInput
+            style={[styles.input, { backgroundColor: theme.background, borderColor: theme.border, color: theme.titleColor }]}
+            placeholder="Land *"
+            placeholderTextColor={theme.subtitleColor}
+            value={country}
+            onChangeText={setCountry}
+          />
+        </View>
+
+        <Text style={[styles.paymentStatus, { color: theme.subtitleColor }]}>Betaling komt binnenkort beschikbaar.</Text>
+        <Text style={[styles.fulfillmentStatus, { color: theme.subtitleColor }]}>Partnerverwerking wordt later uitgevoerd.</Text>
+
+        {validationError ? <Text style={styles.validationError}>{validationError}</Text> : null}
 
         <Pressable
           style={[styles.primaryButton, items.length === 0 && styles.disabledButton]}
@@ -227,5 +356,34 @@ const styles = StyleSheet.create({
   statusMessage: {
     marginTop: 16,
     fontSize: 14,
+  },
+  formSection: {
+    borderRadius: 20,
+    borderWidth: 1,
+    padding: 18,
+    marginBottom: 16,
+  },
+  input: {
+    borderWidth: 1,
+    borderRadius: 10,
+    padding: 14,
+    marginBottom: 12,
+    fontSize: 15,
+  },
+  paymentStatus: {
+    fontSize: 13,
+    marginBottom: 4,
+    textAlign: 'center',
+  },
+  fulfillmentStatus: {
+    fontSize: 13,
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  validationError: {
+    color: '#EF4444',
+    fontSize: 14,
+    marginBottom: 12,
+    textAlign: 'center',
   },
 });

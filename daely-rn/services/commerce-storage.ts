@@ -6,6 +6,8 @@ import {
   CommercePartnerOrder,
   InfluencerDiscountCode,
   INFLUENCER_DISCOUNT_CODES,
+  OrderCustomer,
+  OrderShippingAddress,
 } from '@/app/constants/commerce';
 
 const INFLUENCER_CODE_STORAGE_KEY = 'daely.commerce.influencerCode.v1';
@@ -80,7 +82,9 @@ export async function getCommerceOrders(): Promise<CommerceOrder[]> {
 
 export async function createDraftOrderFromCart(
   items: CartItem[],
-  appliedCode?: string | null
+  appliedCode?: string | null,
+  customer?: OrderCustomer,
+  shippingAddress?: OrderShippingAddress
 ): Promise<CommerceOrder> {
   const orderItems: CommerceOrderItem[] = items.map((item) => ({
     id: item.id,
@@ -137,6 +141,10 @@ export async function createDraftOrderFromCart(
     totalCents,
     items: orderItems,
     partnerOrders,
+    customer,
+    shippingAddress,
+    paymentStatus: 'not_started',
+    fulfillmentStatus: 'not_sent',
   };
 
   const currentOrders = await getCommerceOrders();

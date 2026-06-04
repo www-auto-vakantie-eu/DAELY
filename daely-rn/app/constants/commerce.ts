@@ -53,6 +53,23 @@ export interface CommercePartnerOrder {
 
 export type CommerceOrderStatus = 'draft' | 'pending_payment' | 'paid_placeholder' | 'sent_to_partners_placeholder';
 
+export type PaymentStatus = 'not_started' | 'payment_placeholder';
+export type FulfillmentStatus = 'not_sent' | 'sent_to_partners_placeholder';
+
+export interface OrderCustomer {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone?: string;
+}
+
+export interface OrderShippingAddress {
+  street: string;
+  postalCode: string;
+  city: string;
+  country: string;
+}
+
 export interface CommerceOrder {
   id: string;
   createdAt: string;
@@ -63,6 +80,10 @@ export interface CommerceOrder {
   totalCents: number;
   items: CommerceOrderItem[];
   partnerOrders: CommercePartnerOrder[];
+  customer?: OrderCustomer;
+  shippingAddress?: OrderShippingAddress;
+  paymentStatus?: PaymentStatus;
+  fulfillmentStatus?: FulfillmentStatus;
 }
 
 export const INFLUENCER_DISCOUNT_CODES: InfluencerDiscountCode[] = [

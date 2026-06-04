@@ -55,7 +55,7 @@ export default function MyOrdersScreen() {
           </View>
         ) : (
           orders.map((order) => (
-            <View key={order.id} style={[styles.orderCard, { backgroundColor: theme.card, borderColor: theme.border }]}> 
+            <View key={order.id} style={[styles.orderCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
               <View style={styles.orderHeader}>
                 <Text style={[styles.orderTitle, { color: theme.titleColor }]}>Bestelling {order.id.replace('order-', '')}</Text>
                 <Text style={[styles.orderStatus, { color: theme.titleColor }]}>{formatStatus(order.status)}</Text>
@@ -65,9 +65,24 @@ export default function MyOrdersScreen() {
               {order.appliedInfluencerCode ? (
                 <Text style={[styles.orderMeta, { color: theme.subtitleColor }]}>Code: {order.appliedInfluencerCode}</Text>
               ) : null}
+              {order.customer ? (
+                <>
+                  <Text style={[styles.orderMeta, { color: theme.subtitleColor }]}>Klant: {order.customer.firstName} {order.customer.lastName}</Text>
+                  <Text style={[styles.orderMeta, { color: theme.subtitleColor }]}>E-mail: {order.customer.email}</Text>
+                </>
+              ) : null}
+              {order.shippingAddress ? (
+                <Text style={[styles.orderMeta, { color: theme.subtitleColor }]}>Afleveren: {order.shippingAddress.city}, {order.shippingAddress.country}</Text>
+              ) : null}
+              {order.paymentStatus ? (
+                <Text style={[styles.orderMeta, { color: theme.subtitleColor }]}>Betaling: {order.paymentStatus === 'not_started' ? 'Niet gestart' : 'Placeholder'}</Text>
+              ) : null}
+              {order.fulfillmentStatus ? (
+                <Text style={[styles.orderMeta, { color: theme.subtitleColor }]}>Verzending: {order.fulfillmentStatus === 'not_sent' ? 'Niet verzonden' : 'Placeholder'}</Text>
+              ) : null}
               <View style={styles.partnerList}>
                 {order.partnerOrders.map((partnerOrder) => (
-                  <View key={partnerOrder.partnerId} style={styles.partnerRow}> 
+                  <View key={partnerOrder.partnerId} style={styles.partnerRow}>
                     <Text style={[styles.partnerName, { color: theme.titleColor }]}>{partnerOrder.partnerName}</Text>
                     <Text style={[styles.partnerData, { color: theme.subtitleColor }]}>{partnerOrder.itemCount} items • {formatCurrency(partnerOrder.totalCents / 100)}</Text>
                     <Text style={[styles.partnerStatus, { color: theme.subtitleColor }]}>Status: {partnerOrder.status === 'not_sent' ? 'Niet verzonden' : 'Verzonden'}</Text>
