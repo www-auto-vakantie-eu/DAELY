@@ -27,6 +27,8 @@ import {
   validateInfluencerCode,
 } from '@/services/commerce-storage';
 
+let cartHydrated = false;
+
 const FILTER_CATEGORIES: (CommerceProductCategory | 'Alles')[] = [
   'Alles',
   'Kleding',
@@ -58,12 +60,20 @@ export default function ShopScreen() {
   const theme = useTheme();
   const router = useRouter();
   const addItem = useCartStore((state) => state.addItem);
+  const hydrateCart = useCartStore((state) => state._hydrate);
 
   const [selectedCategory, setSelectedCategory] = useState<CommerceProductCategory | 'Alles'>('Alles');
   const [influencerCode, setInfluencerCode] = useState<string>('');
   const [savedCode, setSavedCode] = useState<string | null>(null);
   const [message, setMessage] = useState<string>('');
   const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (!cartHydrated) {
+      hydrateCart();
+      cartHydrated = true;
+    }
+  }, [hydrateCart]);
 
   useEffect(() => {
     getSavedInfluencerCode().then((code) => {

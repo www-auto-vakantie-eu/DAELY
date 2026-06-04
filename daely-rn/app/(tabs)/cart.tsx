@@ -19,6 +19,8 @@ import {
   validateInfluencerCode,
 } from '@/services/commerce-storage';
 
+let cartHydrated = false;
+
 const formatCurrency = (value: number) =>
   new Intl.NumberFormat('nl-NL', {
     style: 'currency',
@@ -28,10 +30,17 @@ const formatCurrency = (value: number) =>
 export default function CartScreen() {
   const theme = useTheme();
   const router = useRouter();
-  const { items, removeItem, updateQuantity } = useCartStore();
+  const { items, removeItem, updateQuantity, _hydrate: hydrateCart } = useCartStore();
   const [codeInput, setCodeInput] = useState('');
   const [activeCode, setActiveCode] = useState<string | null>(null);
   const [message, setMessage] = useState('');
+
+  useEffect(() => {
+    if (!cartHydrated) {
+      hydrateCart();
+      cartHydrated = true;
+    }
+  }, [hydrateCart]);
 
   useEffect(() => {
     getSavedInfluencerCode().then((code) => {
