@@ -53,7 +53,12 @@ export interface CommercePartnerOrder {
 
 export type CommerceOrderStatus = 'draft' | 'pending_payment' | 'paid_placeholder' | 'sent_to_partners_placeholder';
 
-export type PaymentStatus = 'not_started' | 'payment_placeholder';
+export type PaymentProvider = 'none' | 'mollie_test_placeholder' | 'stripe_test_placeholder';
+
+export type PaymentMethod = 'ideal' | 'card' | 'apple_pay' | 'klarna' | 'manual_placeholder';
+
+export type PaymentStatus = 'not_started' | 'payment_placeholder' | 'pending_placeholder' | 'paid_placeholder' | 'failed_placeholder' | 'cancelled_placeholder';
+
 export type FulfillmentStatus = 'not_sent' | 'sent_to_partners_placeholder';
 
 export interface OrderCustomer {
@@ -84,6 +89,11 @@ export interface CommerceOrder {
   shippingAddress?: OrderShippingAddress;
   paymentStatus?: PaymentStatus;
   fulfillmentStatus?: FulfillmentStatus;
+  paymentProvider?: PaymentProvider;
+  paymentMethod?: PaymentMethod;
+  paymentReference?: string;
+  paymentRedirectUrl?: string;
+  paymentCreatedAt?: string;
 }
 
 export const INFLUENCER_DISCOUNT_CODES: InfluencerDiscountCode[] = [

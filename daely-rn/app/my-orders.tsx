@@ -74,8 +74,17 @@ export default function MyOrdersScreen() {
               {order.shippingAddress ? (
                 <Text style={[styles.orderMeta, { color: theme.subtitleColor }]}>Afleveren: {order.shippingAddress.city}, {order.shippingAddress.country}</Text>
               ) : null}
+              {order.paymentMethod ? (
+                <Text style={[styles.orderMeta, { color: theme.subtitleColor }]}>Betaalmethode: {order.paymentMethod === 'ideal' ? 'iDEAL' : order.paymentMethod === 'card' ? 'Kaart' : order.paymentMethod === 'apple_pay' ? 'Apple Pay' : order.paymentMethod === 'klarna' ? 'Klarna' : 'Later'}</Text>
+              ) : null}
+              {order.paymentProvider ? (
+                <Text style={[styles.orderMeta, { color: theme.subtitleColor }]}>Payment provider: {order.paymentProvider === 'mollie_test_placeholder' ? 'Mollie (test)' : order.paymentProvider === 'stripe_test_placeholder' ? 'Stripe (test)' : 'Geen'}</Text>
+              ) : null}
+              {order.paymentReference ? (
+                <Text style={[styles.orderMeta, { color: theme.subtitleColor }]}>Payment ref: {order.paymentReference}</Text>
+              ) : null}
               {order.paymentStatus ? (
-                <Text style={[styles.orderMeta, { color: theme.subtitleColor }]}>Betaling: {order.paymentStatus === 'not_started' ? 'Niet gestart' : 'Placeholder'}</Text>
+                <Text style={[styles.orderMeta, { color: theme.subtitleColor }]}>Betaling: {order.paymentStatus === 'not_started' ? 'Niet gestart' : order.paymentStatus === 'payment_placeholder' ? 'Binnenkort beschikbaar' : 'Placeholder'}</Text>
               ) : null}
               {order.fulfillmentStatus ? (
                 <Text style={[styles.orderMeta, { color: theme.subtitleColor }]}>Verzending: {order.fulfillmentStatus === 'not_sent' ? 'Niet verzonden' : 'Placeholder'}</Text>

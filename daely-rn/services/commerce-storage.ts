@@ -8,6 +8,8 @@ import {
   INFLUENCER_DISCOUNT_CODES,
   OrderCustomer,
   OrderShippingAddress,
+  PaymentMethod,
+  PaymentProvider,
 } from '@/app/constants/commerce';
 
 const INFLUENCER_CODE_STORAGE_KEY = 'daely.commerce.influencerCode.v1';
@@ -84,7 +86,9 @@ export async function createDraftOrderFromCart(
   items: CartItem[],
   appliedCode?: string | null,
   customer?: OrderCustomer,
-  shippingAddress?: OrderShippingAddress
+  shippingAddress?: OrderShippingAddress,
+  paymentMethod?: PaymentMethod,
+  paymentProvider?: PaymentProvider
 ): Promise<CommerceOrder> {
   const orderItems: CommerceOrderItem[] = items.map((item) => ({
     id: item.id,
@@ -145,6 +149,10 @@ export async function createDraftOrderFromCart(
     shippingAddress,
     paymentStatus: 'not_started',
     fulfillmentStatus: 'not_sent',
+    paymentProvider: paymentProvider || 'none',
+    paymentMethod: paymentMethod || 'manual_placeholder',
+    paymentReference: `pay-ref-${Date.now()}`,
+    paymentCreatedAt: new Date().toISOString(),
   };
 
   const currentOrders = await getCommerceOrders();

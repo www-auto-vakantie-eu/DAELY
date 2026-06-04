@@ -17,7 +17,7 @@ import {
   getDiscountForCode,
   getSavedInfluencerCode,
 } from '@/services/commerce-storage';
-import { OrderCustomer, OrderShippingAddress } from '@/app/constants/commerce';
+import { OrderCustomer, OrderShippingAddress, PaymentMethod } from '@/app/constants/commerce';
 
 const formatCurrency = (value: number) =>
   new Intl.NumberFormat('nl-NL', {
@@ -41,6 +41,7 @@ export default function CheckoutScreen() {
   const [postalCode, setPostalCode] = useState('');
   const [city, setCity] = useState('');
   const [country, setCountry] = useState('');
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<PaymentMethod>('ideal');
 
   useEffect(() => {
     getSavedInfluencerCode().then((code) => {
@@ -143,7 +144,7 @@ export default function CheckoutScreen() {
     };
 
     try {
-      await createDraftOrderFromCart(items, savedCode, customer, shippingAddress);
+      await createDraftOrderFromCart(items, savedCode, customer, shippingAddress, selectedPaymentMethod, 'mollie_test_placeholder');
       clearCart();
       setStatusMessage('Bestelling voorbereid. Betalen en partnerverwerking komen binnenkort.');
       router.push('/my-orders');
@@ -259,6 +260,34 @@ export default function CheckoutScreen() {
             value={country}
             onChangeText={setCountry}
           />
+        </View>
+
+        <View style={[styles.formSection, { backgroundColor: theme.card, borderColor: theme.border }]}>
+          <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Betaalmethode</Text>
+          <View style={styles.paymentMethodsWrap}>
+            {(['ideal', 'card', 'apple_pay', 'klarna', 'manual_placeholder'] as PaymentMethod[]).map((method) => (
+              <Pressable
+                key={method}
+                style={[
+                  styles.paymentMethodCard,
+                  selectedPaymentMethod === method && styles.paymentMethodCardSelected,
+                  { backgroundColor: theme.background, borderColor: theme.border },
+                ]}
+                onPress={() => setSelectedPaymentMethod(method)}
+              >
+                <Text style={[
+                  styles.paymentMethodName,
+                  { color: selectedPaymentMethod === method ? '#2563EB' : theme.titleColor }
+                ]}>
+                  {method === 'ideal' ? 'iDEAL' : method === 'card' ? 'Kaart' : method === 'apple_pay' ? 'Apple Pay' : method === 'klarna' ? 'Klarna' : 'Later betalen / Binnenkort'}
+                </Text>
+                {selectedPaymentMethod === method && (
+                  <View style={styles.selectedIndicator} />
+                )}
+              </Pressable>
+            ))}
+          </View>
+          <Text style={[styles.paymentHelpText, { color: theme.subtitleColor }]}>Betalen komt binnenkort beschikbaar. Deze keuze wordt alvast opgeslagen bij je concept-bestelling.</Text>
         </View>
 
         <Text style={[styles.paymentStatus, { color: theme.subtitleColor }]}>Betaling komt binnenkort beschikbaar.</Text>
@@ -385,5 +414,34 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginBottom: 12,
     textAlign: 'center',
+  },
+  paymentMethodsWrap: {
+    gap: 10,
+  },
+  paymentMethodCard: {
+    borderWidth: 1,
+    borderRadius: 12,
+    padding: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  paymentMethodCardSelected: {
+    borderWidth: 2,
+    borderColor: '#2563EB',
+  },
+  paymentMethodName: {
+    fontSize: 15,
+    fontWeight: '700',
+  },
+  selectedIndicator: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#2563EB',
+  },
+  paymentHelpText: {
+    fontSize: 13,
+    marginTop: 8,
   },
 });
