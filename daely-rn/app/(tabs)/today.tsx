@@ -10,8 +10,18 @@ import { useAppContext } from '@/contexts/AppContext';
 import { CONNECTED_DEVICES, WHOOP_TOKEN_STORAGE_KEY } from '../constants/connected-devices';
 
 const HERO_BACKGROUND_STORAGE_KEY = 'daely.today.heroBackground.v1';
+const SHORTCUTS_STORAGE_KEY = 'daely.today.shortcuts.v1';
 
 type HeroBackgroundOptionId = 'ownPhoto' | 'daelyHeader' | 'performance' | 'recovery' | 'community' | 'minimalDark';
+
+type ShortcutId = 'nutrition' | 'habits' | 'stats' | 'tracker' | 'activities' | 'shop' | 'feedback';
+
+type ShortcutOption = {
+  id: ShortcutId;
+  label: string;
+  icon: React.ComponentProps<typeof MaterialCommunityIcons>['name'];
+  route: string;
+};
 
 type HeroBackgroundOption = {
   id: HeroBackgroundOptionId;
@@ -28,6 +38,18 @@ const HERO_BACKGROUND_OPTIONS: HeroBackgroundOption[] = [
   { id: 'community', label: 'Community', source: require('../../assets/images/theme-retro-sport.png') },
   { id: 'minimalDark', label: 'Minimal dark' },
 ];
+
+const SHORTCUT_OPTIONS: ShortcutOption[] = [
+  { id: 'nutrition', label: 'Voeding', icon: 'food-apple-outline', route: '/nutrition/add' },
+  { id: 'habits', label: 'Habit tracker', icon: 'calendar-check-outline', route: '/habits' },
+  { id: 'stats', label: 'Data', icon: 'chart-bar', route: '/my-stats' },
+  { id: 'tracker', label: 'Tracker', icon: 'run-fast', route: '/tracker' },
+  { id: 'activities', label: 'Activiteiten', icon: 'history', route: '/activities' },
+  { id: 'shop', label: 'Shop', icon: 'shopping-outline', route: '/shop' },
+  { id: 'feedback', label: 'Feedback', icon: 'chat-outline', route: '/feedback' },
+];
+
+const DEFAULT_SHORTCUTS: ShortcutId[] = ['nutrition', 'habits', 'stats'];
 
 function formatTodayLabel() {
   const now = new Date();
@@ -88,6 +110,8 @@ export default function TodayScreen() {
   const [showHeroBackgroundPicker, setShowHeroBackgroundPicker] = useState(false);
   const [isWhoopConnected, setIsWhoopConnected] = useState(false);
   const [isFitbitConnected, setIsFitbitConnected] = useState(false);
+  const [shortcuts, setShortcuts] = useState<ShortcutId[]>(DEFAULT_SHORTCUTS);
+  const [showShortcutPicker, setShowShortcutPicker] = useState(false);
 
   useEffect(() => {
     getActivities().then((items) => {
@@ -102,6 +126,20 @@ export default function TodayScreen() {
       const exists = HERO_BACKGROUND_OPTIONS.some((option) => option.id === stored);
       if (exists) {
         setHeroBackground(stored as HeroBackgroundOptionId);
+      }
+    });
+  }, []);
+
+useEffect(() => {
+    AsyncStorage.getItem(SHORTCUTS_STORAGE_KEY).then((stored) => {
+      if (!stored) return;
+      try {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length === 3 && parsed.every((id: string) => SHORTCUT_OPTIONS.some((opt) => opt.id === id))) {
+          setShortcuts(parsed as ShortcutId[]);
+        }
+      } catch {
+        // Fallback to defaults
       }
     });
   }, []);
@@ -148,6 +186,25 @@ export default function TodayScreen() {
   const whoopDevice = CONNECTED_DEVICES.find((device) => device.id === 'whoop');
   const fitbitDevice = CONNECTED_DEVICES.find((device) => device.id === 'fitbit');
   const hasConnectedDevice = isWhoopConnected || isFitbitConnected;
+
+const handleShortcutPress = (shortcutId: ShortcutId) => {
+  const option = SHORTCUT_OPTIONS.find((opt) => opt.id === shortcutId);
+  if (option) {
+    router.push(option.route as any);
+  }
+};
+
+const handleSaveShortcuts = async (newShortcuts: ShortcutId[]) => {
+  setShortcuts(newShortcuts);
+  setShowShortcutPicker(false);
+  try {
+    await AsyncStorage.setItem(SHORTCUTS_STORAGE_KEY, JSON.stringify(newShortcuts));
+  } catch {
+    // Silent fail, shortcuts remain in state
+  }
+};
+
+const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => opt.id === id)).filter(Boolean) as ShortcutOption[];
 
   return (
     <ScrollView style={[styles.screen, { backgroundColor: theme.background }]} contentContainerStyle={styles.content}>
@@ -212,6 +269,68 @@ export default function TodayScreen() {
                 <Text style={[styles.heroPickerText, option.disabled ? styles.heroPickerTextDisabled : null]}>{option.label}</Text>
               </Pressable>
             ))}
+          </View>
+        ) : null}
+      </View>
+
+      <View style={styles.shortcutsSection}>
+        <View style={styles.shortcutsHeader}>
+          <Text style={[styles.shortcutsTitle, { color: theme.titleColor }]}>Snel naar</Text>
+          <Pressable onPress={() => setShowShortcutPicker(true)}>
+            <Text style={styles.customizeButton}>Aanpassen</Text>
+          </Pressable>
+        </View>
+        <View style={styles.shortcutsRow}>
+          {selectedShortcuts.map((shortcut) => (
+            <Pressable
+              key={shortcut.id}
+              style={[styles.shortcutCard, { backgroundColor: theme.card, borderColor: theme.border }]}
+              onPress={() => handleShortcutPress(shortcut.id)}
+            >
+              <MaterialCommunityIcons name={shortcut.icon} size={20} color="#2563EB" />
+              <Text style={[styles.shortcutLabel, { color: theme.titleColor }]}>{shortcut.label}</Text>
+            </Pressable>
+          ))}
+        </View>
+        {showShortcutPicker ? (
+          <View style={[styles.shortcutsPickerCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+            <Text style={[styles.shortcutsPickerTitle, { color: theme.titleColor }]}>Kies 3 sneltoetsen</Text>
+            <Text style={[styles.shortcutsPickerHint, { color: theme.subtitleColor }]}>Tap op een optie om te selecteren. Selecteer precies 3 opties.</Text>
+            <View style={styles.shortcutsPickerOptions}>
+              {SHORTCUT_OPTIONS.map((option) => (
+                <Pressable
+                  key={option.id}
+                  style={[
+                    styles.shortcutsPickerOption,
+                    shortcuts.includes(option.id) ? styles.shortcutsPickerOptionSelected : null,
+                    { backgroundColor: theme.background, borderColor: theme.border },
+                  ]}
+                  onPress={() => {
+                    if (shortcuts.includes(option.id)) {
+                      if (shortcuts.length > 1) {
+                        handleSaveShortcuts(shortcuts.filter((id) => id !== option.id));
+                      }
+                    } else if (shortcuts.length < 3) {
+                      handleSaveShortcuts([...shortcuts, option.id]);
+                    }
+                  }}
+                >
+                  <MaterialCommunityIcons name={option.icon} size={18} color={shortcuts.includes(option.id) ? '#2563EB' : '#94A3B8'} />
+                  <Text style={[styles.shortcutsPickerOptionText, { color: shortcuts.includes(option.id) ? '#2563EB' : theme.titleColor }]}>{option.label}</Text>
+                  {shortcuts.includes(option.id) && (
+                    <MaterialCommunityIcons name="check-circle" size={16} color="#2563EB" />
+                  )}
+                </Pressable>
+              ))}
+            </View>
+            <View style={styles.shortcutsPickerActions}>
+              <Pressable
+                style={[styles.shortcutsPickerButton, { backgroundColor: theme.background, borderColor: theme.border }]}
+                onPress={() => setShowShortcutPicker(false)}
+              >
+                <Text style={[styles.shortcutsPickerButtonText, { color: theme.titleColor }]}>Annuleren</Text>
+              </Pressable>
+            </View>
           </View>
         ) : null}
       </View>
@@ -414,6 +533,89 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#E2E8F0',
     lineHeight: 20,
+  },
+  shortcutsSection: {
+    marginBottom: 12,
+  },
+  shortcutsHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  shortcutsTitle: {
+    fontSize: 16,
+    fontWeight: '800',
+  },
+  customizeButton: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#2563EB',
+  },
+  shortcutsRow: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  shortcutCard: {
+    flex: 1,
+    borderRadius: 12,
+    borderWidth: 1,
+    paddingVertical: 12,
+    paddingHorizontal: 10,
+    alignItems: 'center',
+    gap: 6,
+  },
+  shortcutLabel: {
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  shortcutsPickerCard: {
+    marginTop: 8,
+    borderRadius: 12,
+    padding: 14,
+  },
+  shortcutsPickerTitle: {
+    fontSize: 16,
+    fontWeight: '800',
+    marginBottom: 6,
+  },
+  shortcutsPickerHint: {
+    fontSize: 12,
+    marginBottom: 12,
+  },
+  shortcutsPickerOptions: {
+    gap: 6,
+  },
+  shortcutsPickerOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderRadius: 10,
+    borderWidth: 1,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+  },
+  shortcutsPickerOptionSelected: {
+    borderWidth: 2,
+    borderColor: '#2563EB',
+  },
+  shortcutsPickerOptionText: {
+    fontSize: 14,
+    fontWeight: '600',
+    flex: 1,
+  },
+  shortcutsPickerActions: {
+    marginTop: 8,
+  },
+  shortcutsPickerButton: {
+    borderRadius: 10,
+    paddingVertical: 10,
+    alignItems: 'center',
+    borderWidth: 1,
+  },
+  shortcutsPickerButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
   },
   primaryCard: {
     backgroundColor: '#2563EB',
