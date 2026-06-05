@@ -12,7 +12,7 @@ import { CONNECTED_DEVICES, WHOOP_TOKEN_STORAGE_KEY } from '../constants/connect
 const HERO_BACKGROUND_STORAGE_KEY = 'daely.today.heroBackground.v1';
 const SHORTCUTS_STORAGE_KEY = 'daely.today.shortcuts.v1';
 
-type HeroBackgroundOptionId = 'ownPhoto' | 'daelyHeader' | 'performance' | 'recovery' | 'community' | 'minimalDark';
+type HeroBackgroundOptionId = 'ownPhoto' | 'daelyClassic' | 'sunriseEnergy' | 'midnightFocus' | 'recoveryFlow' | 'performanceBlue' | 'forestBalance' | 'communityPulse' | 'pureMinimal';
 
 type ShortcutId = 'nutrition' | 'habits' | 'stats' | 'tracker' | 'activities' | 'shop' | 'feedback';
 
@@ -32,11 +32,14 @@ type HeroBackgroundOption = {
 
 const HERO_BACKGROUND_OPTIONS: HeroBackgroundOption[] = [
   { id: 'ownPhoto', label: 'Eigen foto (Binnenkort)', disabled: true },
-  { id: 'daelyHeader', label: 'DAELY header', source: require('../../assets/images/theme-classic.png') },
-  { id: 'performance', label: 'Performance', source: require('../../assets/images/theme-pulse.png') },
-  { id: 'recovery', label: 'Recovery', source: require('../../assets/images/theme-zen.ink.png') },
-  { id: 'community', label: 'Community', source: require('../../assets/images/theme-retro-sport.png') },
-  { id: 'minimalDark', label: 'Minimal dark' },
+  { id: 'daelyClassic', label: 'DAELY Classic', source: require('../../assets/images/theme-classic.png') },
+  { id: 'sunriseEnergy', label: 'Sunrise Energy', source: require('../../assets/images/theme-ember.png') },
+  { id: 'midnightFocus', label: 'Midnight Focus', source: require('../../assets/images/theme-rogue.png') },
+  { id: 'recoveryFlow', label: 'Recovery Flow', source: require('../../assets/images/theme-zen.ink.png') },
+  { id: 'performanceBlue', label: 'Performance Blue', source: require('../../assets/images/theme-pulse.png') },
+  { id: 'forestBalance', label: 'Forest Balance', source: require('../../assets/images/theme-forest-breath.png') },
+  { id: 'communityPulse', label: 'Community Pulse', source: require('../../assets/images/theme-retro-sport.png') },
+  { id: 'pureMinimal', label: 'Pure Minimal' },
 ];
 
 const SHORTCUT_OPTIONS: ShortcutOption[] = [
@@ -107,7 +110,7 @@ export default function TodayScreen() {
   const theme = useTheme();
   const { user } = useAppContext();
   const [activities, setActivities] = useState<Activity[]>([]);
-  const [heroBackground, setHeroBackground] = useState<HeroBackgroundOptionId>('daelyHeader');
+  const [heroBackground, setHeroBackground] = useState<HeroBackgroundOptionId>('daelyClassic');
   const [showHeroBackgroundPicker, setShowHeroBackgroundPicker] = useState(false);
   const [isWhoopConnected, setIsWhoopConnected] = useState(false);
   const [isFitbitConnected, setIsFitbitConnected] = useState(false);
@@ -235,7 +238,7 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
               </View>
               <View style={styles.heroContent}>
                 <Text style={styles.welcomeTitle}>{heroGreeting}</Text>
-                <Text style={styles.welcomeSubtitle}>Alles wat je vandaag nodig hebt, staat hier klaar.</Text>
+                <Text style={styles.welcomeSubtitle}>Vandaag hoeft niet perfect te zijn. Wel bewust, actief en beter dan gisteren.</Text>
               </View>
             </View>
           </ImageBackground>
@@ -247,7 +250,7 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
               </View>
               <View style={styles.heroContent}>
                 <Text style={styles.welcomeTitle}>{heroGreeting}</Text>
-                <Text style={styles.welcomeSubtitle}>Alles wat je vandaag nodig hebt, staat hier klaar.</Text>
+                <Text style={styles.welcomeSubtitle}>Vandaag hoeft niet perfect te zijn. Wel bewust, actief en beter dan gisteren.</Text>
               </View>
             </View>
           </View>
