@@ -211,7 +211,8 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
       <View style={styles.heroWrap}>
         {selectedHeroBackground.source ? (
           <Pressable onPress={() => router.push('/(tabs)/hero-background-settings')}>
-            <ImageBackground source={selectedHeroBackground.source} resizeMode="cover" imageStyle={styles.heroImage} style={styles.heroCard}>
+            <View style={styles.heroCard}>
+              <ImageBackground source={selectedHeroBackground.source} resizeMode="cover" imageStyle={styles.heroImage} style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0 }} />
               <View style={styles.heroOverlay}>
                 <View style={styles.heroTopRow}>
                   <Text style={styles.heroDateLabel}>{todayLabel}</Text>
@@ -221,12 +222,12 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
                   <Text style={styles.welcomeSubtitle}>Vandaag hoeft niet perfect te zijn. Wel bewust, actief en beter dan gisteren.</Text>
                 </View>
               </View>
-            </ImageBackground>
+            </View>
           </Pressable>
         ) : (
           <Pressable onPress={() => router.push('/(tabs)/hero-background-settings')}>
             <View style={[styles.heroCard, styles.heroCardFallback]}>
-              <View style={styles.heroOverlay}>
+              <View style={styles.heroOverlayFallback}>
                 <View style={styles.heroTopRow}>
                   <Text style={styles.heroDateLabel}>{todayLabel}</Text>
                 </View>
@@ -408,18 +409,31 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   heroCard: {
-    minHeight: 210,
+    height: 210,
     borderRadius: 16,
     overflow: 'hidden',
     backgroundColor: '#0F172A',
+    position: 'relative',
   },
   heroCardFallback: {
     backgroundColor: '#111827',
   },
   heroImage: {
-    borderRadius: 16,
+    width: '100%',
+    height: '100%',
   },
   heroOverlay: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    backgroundColor: 'rgba(2,6,23,0.55)',
+    padding: 16,
+    paddingTop: 20,
+    justifyContent: 'space-between',
+  },
+  heroOverlayFallback: {
     flex: 1,
     backgroundColor: 'rgba(2,6,23,0.55)',
     padding: 16,
