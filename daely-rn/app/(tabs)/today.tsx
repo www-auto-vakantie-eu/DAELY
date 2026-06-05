@@ -211,7 +211,7 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
       <View style={styles.heroWrap}>
         {selectedHeroBackground.source ? (
           <Pressable onPress={() => router.push('/(tabs)/hero-background-settings')}>
-            <ImageBackground source={selectedHeroBackground.source} resizeMode="cover" imageStyle={styles.heroImage} style={styles.heroCard}>
+            <ImageBackground source={selectedHeroBackground.source} resizeMode="contain" imageStyle={styles.heroImage} style={styles.heroCard}>
               <View style={styles.heroOverlay}>
                 <View style={styles.heroTopRow}>
                   <Text style={styles.heroDateLabel}>{todayLabel}</Text>
@@ -409,6 +409,7 @@ const styles = StyleSheet.create({
   },
   heroCard: {
     minHeight: 210,
+    aspectRatio: 16 / 9,
     borderRadius: 16,
     overflow: 'hidden',
     backgroundColor: '#0F172A',
@@ -421,7 +422,7 @@ const styles = StyleSheet.create({
   },
   heroOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(2,6,23,0.55)',
+    backgroundColor: 'rgba(2,6,23,0.25)',
     padding: 16,
     paddingTop: 20,
     justifyContent: 'space-between',
