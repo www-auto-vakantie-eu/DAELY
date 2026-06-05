@@ -211,7 +211,7 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
       <View style={styles.heroWrap}>
         {selectedHeroBackground.source ? (
           <Pressable onPress={() => router.push('/(tabs)/hero-background-settings')}>
-            <ImageBackground source={selectedHeroBackground.source} imageStyle={styles.heroImage} style={styles.heroCard}>
+            <ImageBackground source={selectedHeroBackground.source} resizeMode="cover" imageStyle={styles.heroImage} style={styles.heroCard}>
               <View style={styles.heroOverlay}>
                 <View style={styles.heroTopRow}>
                   <Text style={styles.heroDateLabel}>{todayLabel}</Text>

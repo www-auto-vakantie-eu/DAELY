@@ -61,7 +61,7 @@ export default function HeroBackgroundSettingsScreen() {
                 onPress={() => handleSelect(option.id)}
               >
                 {option.source ? (
-                  <ImageBackground source={option.source} style={styles.heroPickerCardImage} imageStyle={styles.heroPickerCardImageStyle}>
+                  <ImageBackground source={option.source} resizeMode="cover" style={styles.heroPickerCardImage} imageStyle={styles.heroPickerCardImageStyle}>
                     <LinearGradient
                       colors={['rgba(0,0,0,0.3)', 'rgba(0,0,0,0.6)']}
                       start={{ x: 0, y: 0 }}
