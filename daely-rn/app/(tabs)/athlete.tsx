@@ -196,6 +196,15 @@ export default function InstellingenScreen() {
             <Text style={styles.settingLabel}>Koppel nieuw apparaat</Text>
             <MaterialCommunityIcons name="chevron-right" size={22} color="#D1D5DB" />
           </Pressable>
+          <View style={styles.separator} />
+          <Pressable style={styles.settingRow} onPress={() => router.push('/(tabs)/hero-background-settings')}>
+            <MaterialCommunityIcons name="image-outline" size={22} color="#6B7280" />
+            <View style={styles.settingLabelContainer}>
+              <Text style={styles.settingLabel}>Welkom terug achtergrond</Text>
+              <Text style={styles.settingSublabel}>Kies je Today hero theme</Text>
+            </View>
+            <MaterialCommunityIcons name="chevron-right" size={22} color="#D1D5DB" />
+          </Pressable>
         </View>
 
         {/* Sectie: Account */}
@@ -449,11 +458,18 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     gap: 14,
   },
-  settingLabel: {
+  settingLabelContainer: {
     flex: 1,
+  },
+  settingLabel: {
     fontSize: 15,
     fontWeight: '500',
     color: '#1F2937',
+  },
+  settingSublabel: {
+    fontSize: 13,
+    color: '#6B7280',
+    marginTop: 2,
   },
   syncInfoWrap: {
     flex: 1,

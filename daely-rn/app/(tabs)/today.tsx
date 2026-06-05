@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { ScrollView, StyleSheet, Text, View, Pressable, ImageBackground, ImageSourcePropType } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+import { ScrollView, StyleSheet, Text, View, Pressable, ImageBackground } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/use-theme';
@@ -9,11 +8,13 @@ import PageHeader from '../components/PageHeader';
 import { Activity, getActivities } from 'services/activity-storage';
 import { useAppContext } from '@/contexts/AppContext';
 import { CONNECTED_DEVICES, WHOOP_TOKEN_STORAGE_KEY } from '../constants/connected-devices';
+import {
+  HERO_BACKGROUND_STORAGE_KEY,
+  HERO_BACKGROUND_OPTIONS,
+  HeroBackgroundOptionId,
+} from '@/constants/hero-background';
 
-const HERO_BACKGROUND_STORAGE_KEY = 'daely.today.heroBackground.v1';
 const SHORTCUTS_STORAGE_KEY = 'daely.today.shortcuts.v1';
-
-type HeroBackgroundOptionId = 'ownPhoto' | 'daelyClassic' | 'sunriseEnergy' | 'midnightFocus' | 'recoveryFlow' | 'performanceBlue' | 'forestBalance' | 'communityPulse' | 'pureMinimal' | 'badgeWall' | 'streakFire' | 'levelUp' | 'trophyRoom' | 'heroEnergy' | 'raceDay' | 'dataPulse' | 'gymBlackout' | 'footballMatchday' | 'neonNight';
 
 type ShortcutId = 'nutrition' | 'habits' | 'stats' | 'tracker' | 'activities' | 'shop' | 'feedback';
 
@@ -23,39 +24,6 @@ type ShortcutOption = {
   icon: React.ComponentProps<typeof MaterialCommunityIcons>['name'];
   route: string;
 };
-
-type HeroBackgroundOption = {
-  id: HeroBackgroundOptionId;
-  label: string;
-  source?: ImageSourcePropType;
-  disabled?: boolean;
-  locked?: boolean;
-  unlockLabel?: string;
-  category?: string;
-  rarity?: 'common' | 'rare' | 'epic' | 'legendary';
-};
-
-const HERO_BACKGROUND_OPTIONS: HeroBackgroundOption[] = [
-  { id: 'ownPhoto', label: 'Eigen foto (Binnenkort)', disabled: true },
-  { id: 'daelyClassic', label: 'DAELY Classic', source: require('../../assets/images/theme-classic.png') },
-  { id: 'sunriseEnergy', label: 'Sunrise Energy', source: require('../../assets/images/theme-ember.png') },
-  { id: 'midnightFocus', label: 'Midnight Focus', source: require('../../assets/images/theme-rogue.png') },
-  { id: 'recoveryFlow', label: 'Recovery Flow', source: require('../../assets/images/theme-zen.ink.png') },
-  { id: 'performanceBlue', label: 'Performance Blue', source: require('../../assets/images/theme-pulse.png') },
-  { id: 'forestBalance', label: 'Forest Balance', source: require('../../assets/images/theme-forest-breath.png') },
-  { id: 'communityPulse', label: 'Community Pulse', source: require('../../assets/images/theme-retro-sport.png') },
-  { id: 'pureMinimal', label: 'Pure Minimal' },
-  { id: 'badgeWall', label: 'Badge Wall', source: require('../../assets/images/theme-badge-wall.png'), locked: true, unlockLabel: 'Ontgrendel met je eerste badge', category: 'achievements', rarity: 'rare' },
-  { id: 'streakFire', label: 'Streak Fire', source: require('../../assets/images/theme-streak-fire.png'), locked: true, unlockLabel: 'Ontgrendel met een 7-daagse streak', category: 'gamification', rarity: 'epic' },
-  { id: 'levelUp', label: 'Level Up', source: require('../../assets/images/theme-level-up.png'), locked: true, unlockLabel: 'Ontgrendel bij level 5', category: 'achievements', rarity: 'rare' },
-  { id: 'trophyRoom', label: 'Trophy Room', source: require('../../assets/images/theme-trophy-room.png'), locked: true, unlockLabel: 'Ontgrendel na je eerste challenge win', category: 'achievements', rarity: 'legendary' },
-  { id: 'heroEnergy', label: 'Hero Energy', source: require('../../assets/images/theme-hero-energy.png'), locked: true, unlockLabel: 'Ontgrendel bij 10 voltooide workouts', category: 'performance', rarity: 'epic' },
-  { id: 'raceDay', label: 'Race Day', source: require('../../assets/images/theme-race-day.png'), locked: true, unlockLabel: 'Ontgrendel tijdens challenge week', category: 'sport', rarity: 'legendary' },
-  { id: 'dataPulse', label: 'Data Pulse', source: require('../../assets/images/theme-data-pulse.png'), locked: true, unlockLabel: 'Ontgrendel na 14 dagen tracking', category: 'performance', rarity: 'rare' },
-  { id: 'gymBlackout', label: 'Gym Blackout', source: require('../../assets/images/theme-gym-blackout.png'), locked: true, unlockLabel: 'Ontgrendel met 20 krachttrainingen', category: 'sport', rarity: 'epic' },
-  { id: 'footballMatchday', label: 'Football Matchday', source: require('../../assets/images/theme-football-matchday.png'), locked: true, unlockLabel: 'Ontgrendel via voetbalprofiel', category: 'sport', rarity: 'rare' },
-  { id: 'neonNight', label: 'Neon Night', source: require('../../assets/images/theme-neon-night.png'), locked: true, unlockLabel: 'Ontgrendel met 5 avondtrainingen', category: 'premium', rarity: 'epic' },
-];
 
 const SHORTCUT_OPTIONS: ShortcutOption[] = [
   { id: 'nutrition', label: 'Voeding', icon: 'food-apple-outline', route: '/nutrition/add' },
@@ -126,17 +94,13 @@ export default function TodayScreen() {
   const { user } = useAppContext();
   const [activities, setActivities] = useState<Activity[]>([]);
   const [heroBackground, setHeroBackground] = useState<HeroBackgroundOptionId>('daelyClassic');
-  const [showHeroBackgroundPicker, setShowHeroBackgroundPicker] = useState(false);
   const [isWhoopConnected, setIsWhoopConnected] = useState(false);
   const [isFitbitConnected, setIsFitbitConnected] = useState(false);
   const [shortcuts, setShortcuts] = useState<ShortcutId[]>(DEFAULT_SHORTCUTS);
   const [showShortcutPicker, setShowShortcutPicker] = useState(false);
 
   useEffect(() => {
-    if (params.open === 'background') {
-      setShowHeroBackgroundPicker(true);
-      router.setParams({ open: undefined });
-    } else if (params.open === 'shortcuts') {
+    if (params.open === 'shortcuts') {
       setShowShortcutPicker(true);
       router.setParams({ open: undefined });
     }
@@ -246,92 +210,34 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
 
       <View style={styles.heroWrap}>
         {selectedHeroBackground.source ? (
-          <ImageBackground source={selectedHeroBackground.source} imageStyle={styles.heroImage} style={styles.heroCard}>
-            <View style={styles.heroOverlay}>
-              <View style={styles.heroTopRow}>
-                <Text style={styles.heroDateLabel}>{todayLabel}</Text>
+          <Pressable onPress={() => router.push('/(tabs)/hero-background-settings')}>
+            <ImageBackground source={selectedHeroBackground.source} imageStyle={styles.heroImage} style={styles.heroCard}>
+              <View style={styles.heroOverlay}>
+                <View style={styles.heroTopRow}>
+                  <Text style={styles.heroDateLabel}>{todayLabel}</Text>
+                </View>
+                <View style={styles.heroContent}>
+                  <Text style={styles.welcomeTitle}>{heroGreeting}</Text>
+                  <Text style={styles.welcomeSubtitle}>Vandaag hoeft niet perfect te zijn. Wel bewust, actief en beter dan gisteren.</Text>
+                </View>
               </View>
-              <View style={styles.heroContent}>
-                <Text style={styles.welcomeTitle}>{heroGreeting}</Text>
-                <Text style={styles.welcomeSubtitle}>Vandaag hoeft niet perfect te zijn. Wel bewust, actief en beter dan gisteren.</Text>
-              </View>
-            </View>
-          </ImageBackground>
+            </ImageBackground>
+          </Pressable>
         ) : (
-          <View style={[styles.heroCard, styles.heroCardFallback]}>
-            <View style={styles.heroOverlay}>
-              <View style={styles.heroTopRow}>
-                <Text style={styles.heroDateLabel}>{todayLabel}</Text>
-              </View>
-              <View style={styles.heroContent}>
-                <Text style={styles.welcomeTitle}>{heroGreeting}</Text>
-                <Text style={styles.welcomeSubtitle}>Vandaag hoeft niet perfect te zijn. Wel bewust, actief en beter dan gisteren.</Text>
+          <Pressable onPress={() => router.push('/(tabs)/hero-background-settings')}>
+            <View style={[styles.heroCard, styles.heroCardFallback]}>
+              <View style={styles.heroOverlay}>
+                <View style={styles.heroTopRow}>
+                  <Text style={styles.heroDateLabel}>{todayLabel}</Text>
+                </View>
+                <View style={styles.heroContent}>
+                  <Text style={styles.welcomeTitle}>{heroGreeting}</Text>
+                  <Text style={styles.welcomeSubtitle}>Vandaag hoeft niet perfect te zijn. Wel bewust, actief en beter dan gisteren.</Text>
+                </View>
               </View>
             </View>
-          </View>
+          </Pressable>
         )}
-
-        {showHeroBackgroundPicker ? (
-          <View style={styles.heroPickerCard}>
-            <Text style={[styles.heroPickerTitle, { color: theme.titleColor }]}>Kies je thema</Text>
-            <View style={styles.heroPickerGrid}>
-              {HERO_BACKGROUND_OPTIONS.map((option) => (
-                <Pressable
-                  key={option.id}
-                  style={[
-                    styles.heroPickerCardItem,
-                    option.id === heroBackground ? styles.heroPickerCardItemActive : null,
-                    option.disabled || option.locked ? styles.heroPickerCardItemDisabled : null,
-                  ]}
-                  disabled={option.disabled || option.locked}
-                  onPress={() => {
-                    if (option.disabled || option.locked) return;
-                    setHeroBackground(option.id);
-                    setShowHeroBackgroundPicker(false);
-                    AsyncStorage.setItem(HERO_BACKGROUND_STORAGE_KEY, option.id);
-                  }}
-                >
-                  {option.source ? (
-                    <ImageBackground source={option.source} style={styles.heroPickerCardImage} imageStyle={styles.heroPickerCardImageStyle}>
-                      <LinearGradient
-                        colors={['rgba(0,0,0,0.3)', 'rgba(0,0,0,0.6)']}
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 0, y: 1 }}
-                        style={styles.heroPickerCardOverlay}
-                      >
-                        {option.id === heroBackground && (
-                          <View style={styles.heroPickerCardCheckmark}>
-                            <MaterialCommunityIcons name="check-circle" size={24} color="#fff" />
-                          </View>
-                        )}
-                        <Text style={styles.heroPickerCardLabel}>{option.label}</Text>
-                        {option.locked && option.unlockLabel && (
-                          <Text style={styles.heroPickerCardUnlockLabel}>{option.unlockLabel}</Text>
-                        )}
-                      </LinearGradient>
-                    </ImageBackground>
-                  ) : (
-                    <View style={[styles.heroPickerCardFallback, { backgroundColor: theme.card }]}>
-                      <LinearGradient
-                        colors={['#1E293B', '#334155']}
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 1, y: 1 }}
-                        style={styles.heroPickerCardFallbackGradient}
-                      >
-                        {option.id === heroBackground && (
-                          <View style={styles.heroPickerCardCheckmark}>
-                            <MaterialCommunityIcons name="check-circle" size={24} color="#fff" />
-                          </View>
-                        )}
-                        <Text style={styles.heroPickerCardLabel}>{option.label}</Text>
-                      </LinearGradient>
-                    </View>
-                  )}
-                </Pressable>
-              ))}
-            </View>
-          </View>
-        ) : null}
       </View>
 
       <View style={styles.shortcutsRow}>
