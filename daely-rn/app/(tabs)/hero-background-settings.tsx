@@ -61,9 +61,9 @@ export default function HeroBackgroundSettingsScreen() {
                 onPress={() => handleSelect(option.id)}
               >
                 {option.source ? (
-                  <ImageBackground source={option.source} resizeMode="contain" style={styles.heroPickerCardImage} imageStyle={styles.heroPickerCardImageStyle}>
+                  <ImageBackground source={option.source} resizeMode="cover" style={styles.heroPickerCardImage} imageStyle={styles.heroPickerCardImageStyle}>
                     <LinearGradient
-                      colors={['rgba(15, 23, 42, 0.25)', 'rgba(17, 24, 39, 0.45)']}
+                      colors={['rgba(0,0,0,0.3)', 'rgba(0,0,0,0.6)']}
                       start={{ x: 0, y: 0 }}
                       end={{ x: 0, y: 1 }}
                       style={styles.heroPickerCardOverlay}
@@ -174,7 +174,6 @@ const styles = StyleSheet.create({
   heroPickerCardImage: {
     width: '100%',
     height: '100%',
-    backgroundColor: '#0F172A',
   },
   heroPickerCardImageStyle: {
     borderRadius: 10,
