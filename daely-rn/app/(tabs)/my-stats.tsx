@@ -198,7 +198,7 @@ export default function MyStatsScreen() {
           {deviceStatusItems.map((device) => {
             const isSoon = device.status === 'soon';
             const isConnected = device.id === 'whoop' ? isWhoopConnected : device.id === 'fitbit' ? isFitbitConnected : false;
-            const statusLabel = isSoon ? 'Binnenkort' : isConnected ? 'Verbonden' : 'Koppelbaar';
+            const statusLabel = isSoon ? 'Binnenkort' : isConnected ? 'Verbonden' : 'Voorbereid';
 
             return (
               <View key={device.id} style={styles.deviceCard}>

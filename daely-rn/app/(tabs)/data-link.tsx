@@ -1,21 +1,13 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { View, Text, Pressable, StyleSheet, ScrollView, Alert, ActivityIndicator, Platform } from 'react-native';
+import React, { useMemo } from 'react';
+import { View, Text, Pressable, StyleSheet, ScrollView, Alert } from 'react-native';
 import { useTheme } from '@/hooks/use-theme';
-import * as WebBrowser from 'expo-web-browser';
-import * as AuthSession from 'expo-auth-session';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import PageHeader from '../components/PageHeader';
 import {
   CONNECTED_DEVICES,
   CONNECTED_DEVICE_STATUS_LABELS,
   type ConnectedDevice,
   type ConnectedDeviceStatus,
-  WHOOP_TOKEN_STORAGE_KEY,
 } from '../constants/connected-devices';
-
-WebBrowser.maybeCompleteAuthSession();
-
-const API_BASE_URL = (process.env.EXPO_PUBLIC_API_BASE_URL ?? 'http://localhost:8085').replace(/\/$/, '');
 
 const SECTION_ORDER: ConnectedDeviceStatus[] = ['available', 'soon', 'optional_later'];
 
@@ -26,13 +18,13 @@ const SECTION_TITLE: Record<ConnectedDeviceStatus, string> = {
 };
 
 const BUTTON_LABEL: Record<ConnectedDeviceStatus, string> = {
-  available: 'Koppelen',
+  available: 'Voorbereid',
   soon: 'Binnenkort',
   optional_later: 'Later',
 };
 
 const SECTION_COPY: Record<ConnectedDeviceStatus, string | null> = {
-  available: 'Koppel direct en verrijk je dagdata automatisch.',
+  available: 'Koppel straks direct en verrijk je dagdata automatisch.',
   soon: 'Deze koppelingen komen binnenkort beschikbaar.',
   optional_later: 'Optioneel later voor import van bestaande activiteiten en routes.',
 };
@@ -50,142 +42,16 @@ const DEVICE_BENEFITS: Record<string, string> = {
   coros: 'Voor running metrics en trainingsprogressie.',
 };
 
-function getErrorMessage(error: unknown): string {
-  if (error instanceof Error && error.message) {
-    return error.message;
-  }
-
-  return 'Onbekende fout';
-}
-
 export default function DataLinkScreen() {
   const theme = useTheme();
-  const [isConnectingWhoop, setIsConnectingWhoop] = useState(false);
-  const [isWhoopConnected, setIsWhoopConnected] = useState(false);
-  const [statusMessage, setStatusMessage] = useState('');
-
-  useEffect(() => {
-    const restoreWhoopState = async () => {
-      try {
-        const tokenRaw = await AsyncStorage.getItem(WHOOP_TOKEN_STORAGE_KEY);
-        setIsWhoopConnected(!!tokenRaw);
-      } catch {
-        setIsWhoopConnected(false);
-      }
-    };
-
-    restoreWhoopState();
-  }, []);
-
-  const connectWhoop = async () => {
-    setIsConnectingWhoop(true);
-    setStatusMessage('WHOOP login wordt gestart...');
-
-    try {
-      const redirectUri =
-        Platform.OS === 'web'
-          ? `${window.location.origin}/whoop-callback`
-          : AuthSession.makeRedirectUri({ path: 'whoop-callback' });
-      const state = `whoop-${Date.now()}`;
-
-      const authUrlResponse = await fetch(
-        `${API_BASE_URL}/api/whoop/auth/url?state=${encodeURIComponent(state)}&redirectUri=${encodeURIComponent(redirectUri)}`
-      );
-
-      if (!authUrlResponse.ok) {
-        const errorText = await authUrlResponse.text();
-        throw new Error(errorText || 'Kon WHOOP authorization URL niet ophalen');
-      }
-
-      const authData = (await authUrlResponse.json()) as { authorizeUrl?: string };
-      if (!authData.authorizeUrl) {
-        throw new Error('WHOOP authorization URL ontbreekt in backend response');
-      }
-
-      setStatusMessage('Open WHOOP login...');
-      const authResult = await WebBrowser.openAuthSessionAsync(authData.authorizeUrl, redirectUri);
-      if (authResult.type !== 'success' || !authResult.url) {
-        if (Platform.OS === 'web' && authData.authorizeUrl) {
-          window.location.assign(authData.authorizeUrl);
-          return;
-        }
-
-        setStatusMessage('WHOOP login geannuleerd.');
-        return;
-      }
-
-      const callbackUrl = new URL(authResult.url);
-      const code = callbackUrl.searchParams.get('code') || '';
-      const returnedState = callbackUrl.searchParams.get('state') || '';
-
-      if (!code) {
-        throw new Error('Geen OAuth code ontvangen van WHOOP');
-      }
-
-      if (returnedState && returnedState !== state) {
-        throw new Error('OAuth state mismatch, probeer opnieuw');
-      }
-
-      const exchangeResponse = await fetch(`${API_BASE_URL}/api/whoop/oauth/exchange`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code, redirectUri, state }),
-      });
-
-      if (!exchangeResponse.ok) {
-        const errorText = await exchangeResponse.text();
-        throw new Error(errorText || 'Token exchange mislukt');
-      }
-
-      const exchangeData = (await exchangeResponse.json()) as {
-        token?: { access_token?: string; refresh_token?: string; expires_in?: number };
-      };
-      const accessToken = exchangeData.token?.access_token;
-
-      if (!accessToken) {
-        throw new Error('Geen access token ontvangen');
-      }
-
-      const profileResponse = await fetch(`${API_BASE_URL}/api/whoop/profile`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-
-      if (!profileResponse.ok) {
-        const errorText = await profileResponse.text();
-        throw new Error(errorText || 'WHOOP profiel ophalen mislukt');
-      }
-
-      await AsyncStorage.setItem(
-        WHOOP_TOKEN_STORAGE_KEY,
-        JSON.stringify({
-          ...exchangeData.token,
-          connectedAt: new Date().toISOString(),
-        })
-      );
-
-      setIsWhoopConnected(true);
-      setStatusMessage('WHOOP succesvol verbonden.');
-      Alert.alert('WHOOP gekoppeld', 'Je WHOOP apparaat is succesvol verbonden.');
-    } catch (error: unknown) {
-      const message = getErrorMessage(error);
-      setStatusMessage(`WHOOP koppelen mislukt: ${message}`);
-      Alert.alert('WHOOP koppelen mislukt', message);
-    } finally {
-      setIsConnectingWhoop(false);
-    }
-  };
 
   const handleConnect = async (device: ConnectedDevice) => {
     if (device.id === 'whoop') {
-      await connectWhoop();
-      return;
+      Alert.alert('WHOOP demo', 'Dit is een demo-koppeling. Echte WHOOP integratie komt binnenkort beschikbaar.');
     }
 
     if (device.id === 'fitbit') {
-      setStatusMessage('Koppeling voorbereiden...');
-      Alert.alert('Fitbit', 'Koppeling voorbereiden...');
+      Alert.alert('Fitbit demo', 'Dit is een demo-koppeling. Echte Fitbit integratie komt binnenkort beschikbaar.');
     }
   };
 
@@ -216,12 +82,17 @@ export default function DataLinkScreen() {
         <View style={[styles.introCard, { backgroundColor: theme.card, borderColor: theme.border }]}> 
           <Text style={[styles.introTitle, { color: theme.titleColor }]}>Data koppelen</Text>
           <Text style={[styles.introText, { color: theme.subtitleColor }]}>
-            Koppel je wearables en apps om je activiteiten, herstel en dagelijkse data automatisch te verrijken.
+            Koppel straks je wearables en sportapps om je activiteiten, herstel en dagelijkse data automatisch te verrijken.
           </Text>
           <Text style={[styles.introHint, { color: theme.subtitleColor }]}>Je data verschijnt daarna op Vandaag en Data.</Text>
         </View>
 
-        {statusMessage ? <Text style={[styles.feedbackText, { color: theme.subtitleColor }]}>{statusMessage}</Text> : null}
+        <View style={[styles.infoCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+          <Text style={[styles.infoTitle, { color: theme.titleColor }]}>Demo-modus</Text>
+          <Text style={[styles.infoText, { color: theme.subtitleColor }]}>
+            Echte koppelingen worden pas actief zodra de officiële integraties klaar zijn. WHOOP en Fitbit zijn voorbereid als demo-koppelingen.
+          </Text>
+        </View>
 
         {SECTION_ORDER.map((status) => (
           <View key={status} style={styles.section}>
@@ -233,9 +104,6 @@ export default function DataLinkScreen() {
               {groupedDevices[status].map((device) => {
                 const isAvailable = device.status === 'available';
                 const isSoon = device.status === 'soon';
-                const isWhoop = device.id === 'whoop';
-                const isBusy = isWhoop && isConnectingWhoop;
-                const isConnected = isWhoop && isWhoopConnected;
                 const cardVariant = isAvailable
                   ? styles.deviceCardAvailable
                   : isSoon
@@ -266,26 +134,16 @@ export default function DataLinkScreen() {
                         </View>
                       ))}
                     </View>
-                    {isWhoop ? (
-                      <Text style={[styles.connectionHint, { color: theme.subtitleColor }]}>
-                        Status: {isConnected ? 'Verbonden' : 'Nog niet gekoppeld'}
-                      </Text>
-                    ) : null}
 
                     <Pressable
                       style={[
                         styles.actionButton,
                         isAvailable ? styles.actionButtonPrimary : styles.actionButtonDisabled,
-                        isBusy ? styles.actionButtonBusy : null,
                       ]}
                       onPress={isAvailable ? () => void handleConnect(device) : undefined}
-                      disabled={!isAvailable || isBusy}
+                      disabled={!isAvailable}
                     >
-                      {isBusy ? (
-                        <ActivityIndicator size="small" color="#FFFFFF" />
-                      ) : (
-                        <Text style={styles.actionButtonText}>{BUTTON_LABEL[device.status]}</Text>
-                      )}
+                      <Text style={styles.actionButtonText}>{BUTTON_LABEL[device.status]}</Text>
                     </Pressable>
                   </View>
                 );
@@ -337,10 +195,20 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     fontWeight: '600',
   },
-  feedbackText: {
-    fontSize: 13,
-    marginTop: 4,
-    marginBottom: 10,
+  infoCard: {
+    borderWidth: 1,
+    borderRadius: 16,
+    padding: 18,
+    marginBottom: 14,
+  },
+  infoTitle: {
+    fontSize: 18,
+    fontWeight: '800',
+    marginBottom: 8,
+  },
+  infoText: {
+    fontSize: 14,
+    lineHeight: 20,
   },
   section: {
     marginTop: 14,
@@ -443,9 +311,6 @@ const styles = StyleSheet.create({
   },
   actionButtonDisabled: {
     backgroundColor: '#9CA3AF',
-  },
-  actionButtonBusy: {
-    opacity: 0.9,
   },
   actionButtonText: {
     color: '#FFFFFF',

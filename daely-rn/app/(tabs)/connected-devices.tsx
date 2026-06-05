@@ -96,6 +96,7 @@ export default function ConnectedDevicesScreen() {
         <View style={[styles.infoCard, { backgroundColor: theme.card, borderColor: theme.border }]}> 
           <Text style={[styles.infoTitle, { color: theme.titleColor }]}>Jouw gekoppelde data</Text>
           <Text style={[styles.infoText, { color: theme.subtitleColor }]}>Bekijk welke wearables en apps verbonden zijn met DAELY.</Text>
+          <Text style={[styles.infoHint, { color: theme.subtitleColor }]}>Echte koppelingen komen binnenkort beschikbaar.</Text>
         </View>
 
         <View style={styles.metricsRow}>
@@ -116,7 +117,7 @@ export default function ConnectedDevicesScreen() {
         {connectedCount === 0 ? (
           <View style={[styles.emptyCard, { backgroundColor: theme.card, borderColor: theme.border }]}> 
             <Text style={[styles.emptyTitle, { color: theme.titleColor }]}>Nog geen apparaten gekoppeld.</Text>
-            <Text style={[styles.emptyText, { color: theme.subtitleColor }]}>Koppel WHOOP of Fitbit om je data automatisch te verrijken.</Text>
+            <Text style={[styles.emptyText, { color: theme.subtitleColor }]}>Koppel straks WHOOP of Fitbit om je herstel, slaap en activiteit automatisch te verrijken.</Text>
             <Pressable style={styles.primaryLinkButton} onPress={() => router.push('/(tabs)/data-link')}>
               <Text style={styles.primaryLinkButtonText}>Data koppelen</Text>
             </Pressable>
@@ -206,6 +207,12 @@ const styles = StyleSheet.create({
   infoText: {
     fontSize: 15,
     lineHeight: 22,
+  },
+  infoHint: {
+    marginTop: 12,
+    fontSize: 13,
+    lineHeight: 20,
+    fontWeight: '600',
   },
   metricsRow: {
     flexDirection: 'row',
