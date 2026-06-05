@@ -1,53 +1,212 @@
 import React from 'react';
-import { Text, StyleSheet, ScrollView, Image } from 'react-native';
+import { StyleSheet, ScrollView, View, Text, Pressable } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
+import PageHeader from '../components/PageHeader';
 
 export default function EventRunningDayScreen() {
   const theme = useTheme();
+  const router = useRouter();
+
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: theme.background }} contentContainerStyle={styles.container}>
-      <Image source={{ uri: 'https://images.unsplash.com/photo-1509228468518-180dd4864904?auto=format&fit=crop&w=1200&q=80' }} style={styles.headerImage} resizeMode="cover" />
-      <Text style={[styles.title, { color: theme.titleColor }]}>Running Day Utrecht</Text>
-      <Text style={[styles.subtitle, { color: theme.subtitleColor }]}>Hardloopevenement voor alle niveaus</Text>
-      <Text style={styles.sectionTitle}>Datum & Locatie</Text>
-      <Text style={styles.text}>15 september 2026, Utrecht centrum</Text>
-      <Text style={styles.sectionTitle}>Beschrijving</Text>
-      <Text style={styles.text}>
-        Running Day Utrecht is hét hardloopevenement voor jong en oud. Kies uit 5, 10 of 21 kilometer. Geniet van een sfeervol parcours door de stad en ontvang een medaille na afloop. Ook voor wandel- en kidsruns.
-      </Text>
-      <Text style={styles.sectionTitle}>Inschrijven</Text>
-      <Text style={styles.text}>Aanmelden via runningdayutrecht.nl</Text>
+    <ScrollView style={[styles.container, { backgroundColor: theme.background }]} showsVerticalScrollIndicator={false}>
+      <PageHeader
+        title="Running Day"
+        onSettingsPress={() => router.push('/(tabs)/athlete')}
+        onSearchPress={() => router.push('/nutrition/search')}
+        onCartPress={() => router.push('/(tabs)/cart')}
+      />
+
+      <View style={styles.content}>
+        <View style={[styles.heroCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+          <View style={styles.iconContainer}>
+            <MaterialCommunityIcons name="shoe-print" size={48} color="#10B981" />
+          </View>
+          <Text style={[styles.heroTitle, { color: theme.titleColor }]}>Binnenkort beschikbaar</Text>
+          <Text style={[styles.heroText, { color: theme.subtitleColor }]}>
+            DAELY Events komt binnenkort beschikbaar.
+          </Text>
+          <Text style={[styles.heroText, { color: theme.subtitleColor }]}>
+            Hier vind je straks events, challenges, voorbereiding en deelname-informatie.
+          </Text>
+          <View style={styles.statusBadge}>
+            <Text style={styles.statusText}>Binnenkort</Text>
+          </View>
+        </View>
+
+        <View style={[styles.infoCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+          <Text style={[styles.infoTitle, { color: theme.titleColor }]}>Wat is Running Day?</Text>
+          <Text style={[styles.infoText, { color: theme.subtitleColor }]}>
+            Running Day is hét hardloopevenement voor jong en oud. DAELY helpt je straks met hardloopschema&apos;s, doelen stellen en community challenges.
+          </Text>
+        </View>
+
+        <View style={[styles.infoCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+          <Text style={[styles.infoTitle, { color: theme.titleColor }]}>Wat komt eraan?</Text>
+          <View style={styles.bulletRow}>
+            <MaterialCommunityIcons name="check-circle" size={18} color="#10B981" />
+            <Text style={[styles.bulletText, { color: theme.subtitleColor }]}>Hardloopschema&apos;s voor alle afstanden</Text>
+          </View>
+          <View style={styles.bulletRow}>
+            <MaterialCommunityIcons name="check-circle" size={18} color="#10B981" />
+            <Text style={[styles.bulletText, { color: theme.subtitleColor }]}>Prestatie doelen en tracking</Text>
+          </View>
+          <View style={styles.bulletRow}>
+            <MaterialCommunityIcons name="check-circle" size={18} color="#10B981" />
+            <Text style={[styles.bulletText, { color: theme.subtitleColor }]}>Community challenges</Text>
+          </View>
+          <View style={styles.bulletRow}>
+            <MaterialCommunityIcons name="check-circle" size={18} color="#10B981" />
+            <Text style={[styles.bulletText, { color: theme.subtitleColor }]}>Event deelname-informatie</Text>
+          </View>
+        </View>
+
+        <View style={[styles.infoCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+          <Text style={[styles.infoTitle, { color: theme.titleColor }]}>Voor wie?</Text>
+          <Text style={[styles.infoText, { color: theme.subtitleColor }]}>
+            Voor hardlopers van elk niveau, van beginner tot marathonloper. DAELY biedt training op elk niveau.
+          </Text>
+        </View>
+
+        <View style={[styles.infoCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+          <Text style={[styles.infoTitle, { color: theme.titleColor }]}>Hoe helpt DAELY?</Text>
+          <Text style={[styles.infoText, { color: theme.subtitleColor }]}>
+            DAELY biedt persoonlijke hardloopschema&apos;s, voeding voor duursport, hersteladvies en community support om je optimaal voor te bereiden op je running day.
+          </Text>
+        </View>
+
+        <View style={styles.buttonRow}>
+          <Pressable style={styles.primaryButton} onPress={() => router.push('/(tabs)/today')}>
+            <Text style={styles.primaryButtonText}>Terug naar Today</Text>
+          </Pressable>
+          <Pressable style={styles.secondaryButton} onPress={() => router.push('/tracker')}>
+            <Text style={styles.secondaryButtonText}>Start training</Text>
+          </Pressable>
+          <Pressable
+            style={[styles.tertiaryButton, { backgroundColor: theme.background, borderColor: theme.border }]}
+            onPress={() => router.push('/feedback')}
+          >
+            <Text style={[styles.tertiaryButtonText, { color: theme.titleColor }]}>Feedback geven</Text>
+          </Pressable>
+        </View>
+      </View>
+
+      <View style={styles.bottomSpacer} />
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+  },
+  content: {
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 24,
+  },
+  heroCard: {
+    borderWidth: 1,
+    borderRadius: 20,
     padding: 24,
+    marginBottom: 16,
+    alignItems: 'center',
   },
-  headerImage: {
-    width: '100%',
-    height: 180,
-    borderRadius: 16,
-    marginBottom: 20,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 18,
+  iconContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+    alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: 16,
   },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginTop: 18,
+  heroTitle: {
+    fontSize: 22,
+    fontWeight: '800',
+    textAlign: 'center',
+    marginBottom: 8,
+  },
+  heroText: {
+    fontSize: 15,
+    lineHeight: 22,
+    textAlign: 'center',
     marginBottom: 4,
   },
-  text: {
-    fontSize: 15,
+  statusBadge: {
+    backgroundColor: '#E5E7EB',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 999,
+    marginTop: 12,
+  },
+  statusText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#374151',
+  },
+  infoCard: {
+    borderWidth: 1,
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 12,
+  },
+  infoTitle: {
+    fontSize: 17,
+    fontWeight: '700',
     marginBottom: 8,
+  },
+  infoText: {
+    fontSize: 14,
+    lineHeight: 20,
+  },
+  bulletRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 6,
+  },
+  bulletText: {
+    fontSize: 14,
+    marginLeft: 8,
+  },
+  buttonRow: {
+    gap: 12,
+    marginTop: 8,
+  },
+  primaryButton: {
+    borderRadius: 14,
+    backgroundColor: '#10B981',
+    paddingVertical: 14,
+    alignItems: 'center',
+  },
+  primaryButtonText: {
+    color: '#fff',
+    fontWeight: '700',
+    fontSize: 16,
+  },
+  secondaryButton: {
+    borderRadius: 14,
+    backgroundColor: '#3B82F6',
+    paddingVertical: 14,
+    alignItems: 'center',
+  },
+  secondaryButtonText: {
+    color: '#fff',
+    fontWeight: '700',
+    fontSize: 16,
+  },
+  tertiaryButton: {
+    borderRadius: 14,
+    borderWidth: 1,
+    paddingVertical: 14,
+    alignItems: 'center',
+  },
+  tertiaryButtonText: {
+    fontWeight: '700',
+    fontSize: 16,
+  },
+  bottomSpacer: {
+    height: 80,
   },
 });
