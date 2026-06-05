@@ -55,7 +55,11 @@ export default function MyOrdersScreen() {
           </View>
         ) : (
           orders.map((order) => (
-            <View key={order.id} style={[styles.orderCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+            <Pressable
+              key={order.id}
+              style={[styles.orderCard, { backgroundColor: theme.card, borderColor: theme.border }]}
+              onPress={() => router.push({ pathname: '/order/[id]', params: { id: order.id } })}
+            >
               <View style={styles.orderHeader}>
                 <Text style={[styles.orderTitle, { color: theme.titleColor }]}>Bestelling {order.id.replace('order-', '')}</Text>
                 <Text style={[styles.orderStatus, { color: theme.titleColor }]}>{formatStatus(order.status)}</Text>
@@ -65,40 +69,10 @@ export default function MyOrdersScreen() {
               {order.appliedInfluencerCode ? (
                 <Text style={[styles.orderMeta, { color: theme.subtitleColor }]}>Code: {order.appliedInfluencerCode}</Text>
               ) : null}
-              {order.customer ? (
-                <>
-                  <Text style={[styles.orderMeta, { color: theme.subtitleColor }]}>Klant: {order.customer.firstName} {order.customer.lastName}</Text>
-                  <Text style={[styles.orderMeta, { color: theme.subtitleColor }]}>E-mail: {order.customer.email}</Text>
-                </>
-              ) : null}
-              {order.shippingAddress ? (
-                <Text style={[styles.orderMeta, { color: theme.subtitleColor }]}>Afleveren: {order.shippingAddress.city}, {order.shippingAddress.country}</Text>
-              ) : null}
-              {order.paymentMethod ? (
-                <Text style={[styles.orderMeta, { color: theme.subtitleColor }]}>Betaalmethode: {order.paymentMethod === 'ideal' ? 'iDEAL' : order.paymentMethod === 'card' ? 'Kaart' : order.paymentMethod === 'apple_pay' ? 'Apple Pay' : order.paymentMethod === 'klarna' ? 'Klarna' : 'Later'}</Text>
-              ) : null}
-              {order.paymentProvider ? (
-                <Text style={[styles.orderMeta, { color: theme.subtitleColor }]}>Payment provider: {order.paymentProvider === 'mollie_test_placeholder' ? 'Mollie (test)' : order.paymentProvider === 'stripe_test_placeholder' ? 'Stripe (test)' : 'Geen'}</Text>
-              ) : null}
-              {order.paymentReference ? (
-                <Text style={[styles.orderMeta, { color: theme.subtitleColor }]}>Payment ref: {order.paymentReference}</Text>
-              ) : null}
-              {order.paymentStatus ? (
-                <Text style={[styles.orderMeta, { color: theme.subtitleColor }]}>Betaling: {order.paymentStatus === 'not_started' ? 'Niet gestart' : order.paymentStatus === 'payment_placeholder' ? 'Binnenkort beschikbaar' : 'Placeholder'}</Text>
-              ) : null}
-              {order.fulfillmentStatus ? (
-                <Text style={[styles.orderMeta, { color: theme.subtitleColor }]}>Verzending: {order.fulfillmentStatus === 'not_sent' ? 'Niet verzonden' : 'Placeholder'}</Text>
-              ) : null}
-              <View style={styles.partnerList}>
-                {order.partnerOrders.map((partnerOrder) => (
-                  <View key={partnerOrder.partnerId} style={styles.partnerRow}>
-                    <Text style={[styles.partnerName, { color: theme.titleColor }]}>{partnerOrder.partnerName}</Text>
-                    <Text style={[styles.partnerData, { color: theme.subtitleColor }]}>{partnerOrder.itemCount} items • {formatCurrency(partnerOrder.totalCents / 100)}</Text>
-                    <Text style={[styles.partnerStatus, { color: theme.subtitleColor }]}>Status: {partnerOrder.status === 'not_sent' ? 'Niet verzonden' : 'Verzonden'}</Text>
-                  </View>
-                ))}
-              </View>
-            </View>
+              <Pressable style={styles.viewButton} onPress={() => router.push({ pathname: '/order/[id]', params: { id: order.id } })}>
+                <Text style={styles.viewButtonText}>Bekijk bestelling</Text>
+              </Pressable>
+            </Pressable>
           ))
         )}
       </ScrollView>
@@ -167,25 +141,17 @@ const styles = StyleSheet.create({
     fontSize: 13,
     marginBottom: 6,
   },
-  partnerList: {
-    marginTop: 10,
-    borderTopWidth: 1,
-    borderTopColor: '#E5E7EB',
-    paddingTop: 12,
+  viewButton: {
+    marginTop: 8,
+    borderRadius: 12,
+    backgroundColor: '#2563EB',
+    paddingVertical: 10,
+    alignItems: 'center',
   },
-  partnerRow: {
-    marginBottom: 10,
-  },
-  partnerName: {
-    fontSize: 15,
+  viewButtonText: {
+    color: '#fff',
     fontWeight: '700',
-  },
-  partnerData: {
-    fontSize: 13,
-    marginBottom: 4,
-  },
-  partnerStatus: {
-    fontSize: 13,
+    fontSize: 14,
   },
 });
 
