@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View, Pressable, ImageBackground, ImageSourcePropType } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/use-theme';
@@ -28,6 +29,10 @@ type HeroBackgroundOption = {
   label: string;
   source?: ImageSourcePropType;
   disabled?: boolean;
+  locked?: boolean;
+  unlockLabel?: string;
+  category?: string;
+  rarity?: 'common' | 'rare' | 'epic' | 'legendary';
 };
 
 const HERO_BACKGROUND_OPTIONS: HeroBackgroundOption[] = [
@@ -258,21 +263,63 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
 
         {showHeroBackgroundPicker ? (
           <View style={styles.heroPickerCard}>
-            {HERO_BACKGROUND_OPTIONS.map((option) => (
-              <Pressable
-                key={option.id}
-                style={[styles.heroPickerItem, option.id === heroBackground ? styles.heroPickerItemActive : null, option.disabled ? styles.heroPickerItemDisabled : null]}
-                disabled={option.disabled}
-                onPress={() => {
-                  if (option.disabled) return;
-                  setHeroBackground(option.id);
-                  setShowHeroBackgroundPicker(false);
-                  AsyncStorage.setItem(HERO_BACKGROUND_STORAGE_KEY, option.id);
-                }}
-              >
-                <Text style={[styles.heroPickerText, option.disabled ? styles.heroPickerTextDisabled : null]}>{option.label}</Text>
-              </Pressable>
-            ))}
+            <Text style={[styles.heroPickerTitle, { color: theme.titleColor }]}>Kies je thema</Text>
+            <View style={styles.heroPickerGrid}>
+              {HERO_BACKGROUND_OPTIONS.map((option) => (
+                <Pressable
+                  key={option.id}
+                  style={[
+                    styles.heroPickerCardItem,
+                    option.id === heroBackground ? styles.heroPickerCardItemActive : null,
+                    option.disabled || option.locked ? styles.heroPickerCardItemDisabled : null,
+                  ]}
+                  disabled={option.disabled || option.locked}
+                  onPress={() => {
+                    if (option.disabled || option.locked) return;
+                    setHeroBackground(option.id);
+                    setShowHeroBackgroundPicker(false);
+                    AsyncStorage.setItem(HERO_BACKGROUND_STORAGE_KEY, option.id);
+                  }}
+                >
+                  {option.source ? (
+                    <ImageBackground source={option.source} style={styles.heroPickerCardImage} imageStyle={styles.heroPickerCardImageStyle}>
+                      <LinearGradient
+                        colors={['rgba(0,0,0,0.3)', 'rgba(0,0,0,0.6)']}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 0, y: 1 }}
+                        style={styles.heroPickerCardOverlay}
+                      >
+                        {option.id === heroBackground && (
+                          <View style={styles.heroPickerCardCheckmark}>
+                            <MaterialCommunityIcons name="check-circle" size={24} color="#fff" />
+                          </View>
+                        )}
+                        <Text style={styles.heroPickerCardLabel}>{option.label}</Text>
+                        {option.locked && option.unlockLabel && (
+                          <Text style={styles.heroPickerCardUnlockLabel}>{option.unlockLabel}</Text>
+                        )}
+                      </LinearGradient>
+                    </ImageBackground>
+                  ) : (
+                    <View style={[styles.heroPickerCardFallback, { backgroundColor: theme.card }]}>
+                      <LinearGradient
+                        colors={['#1E293B', '#334155']}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 1 }}
+                        style={styles.heroPickerCardFallbackGradient}
+                      >
+                        {option.id === heroBackground && (
+                          <View style={styles.heroPickerCardCheckmark}>
+                            <MaterialCommunityIcons name="check-circle" size={24} color="#fff" />
+                          </View>
+                        )}
+                        <Text style={styles.heroPickerCardLabel}>{option.label}</Text>
+                      </LinearGradient>
+                    </View>
+                  )}
+                </Pressable>
+              ))}
+            </View>
           </View>
         ) : null}
       </View>
@@ -489,29 +536,79 @@ const styles = StyleSheet.create({
   heroPickerCard: {
     marginTop: 8,
     backgroundColor: '#FFFFFF',
-    borderRadius: 12,
+    borderRadius: 16,
     borderWidth: 1,
     borderColor: '#E2E8F0',
+    padding: 12,
+  },
+  heroPickerTitle: {
+    fontSize: 16,
+    fontWeight: '800',
+    marginBottom: 12,
+  },
+  heroPickerGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  heroPickerCardItem: {
+    width: '48%',
+    height: 100,
+    borderRadius: 12,
+    overflow: 'hidden',
+    borderWidth: 2,
+    borderColor: 'transparent',
+  },
+  heroPickerCardItemActive: {
+    borderColor: '#2563EB',
+  },
+  heroPickerCardItemDisabled: {
+    opacity: 0.5,
+  },
+  heroPickerCardImage: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+  },
+  heroPickerCardImageStyle: {
+    borderRadius: 10,
+  },
+  heroPickerCardOverlay: {
+    flex: 1,
+    justifyContent: 'flex-end',
     padding: 8,
   },
-  heroPickerItem: {
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
+  heroPickerCardCheckmark: {
+    position: 'absolute',
+    top: 6,
+    right: 6,
+    backgroundColor: 'rgba(37, 99, 235, 0.9)',
+    borderRadius: 12,
+    padding: 2,
   },
-  heroPickerItemActive: {
-    backgroundColor: '#DBEAFE',
-  },
-  heroPickerItemDisabled: {
-    opacity: 0.6,
-  },
-  heroPickerText: {
-    color: '#1E293B',
+  heroPickerCardLabel: {
+    color: '#fff',
     fontSize: 13,
-    fontWeight: '600',
+    fontWeight: '700',
+    textShadowColor: 'rgba(0, 0, 0, 0.5)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
-  heroPickerTextDisabled: {
-    color: '#64748B',
+  heroPickerCardUnlockLabel: {
+    color: 'rgba(255, 255, 255, 0.9)',
+    fontSize: 11,
+    fontWeight: '600',
+    marginTop: 2,
+  },
+  heroPickerCardFallback: {
+    flex: 1,
+    borderRadius: 10,
+    overflow: 'hidden',
+  },
+  heroPickerCardFallbackGradient: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    padding: 8,
   },
   welcomeTitle: {
     fontSize: 24,
