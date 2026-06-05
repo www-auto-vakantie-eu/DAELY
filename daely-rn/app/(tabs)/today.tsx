@@ -13,7 +13,7 @@ import { CONNECTED_DEVICES, WHOOP_TOKEN_STORAGE_KEY } from '../constants/connect
 const HERO_BACKGROUND_STORAGE_KEY = 'daely.today.heroBackground.v1';
 const SHORTCUTS_STORAGE_KEY = 'daely.today.shortcuts.v1';
 
-type HeroBackgroundOptionId = 'ownPhoto' | 'daelyClassic' | 'sunriseEnergy' | 'midnightFocus' | 'recoveryFlow' | 'performanceBlue' | 'forestBalance' | 'communityPulse' | 'pureMinimal';
+type HeroBackgroundOptionId = 'ownPhoto' | 'daelyClassic' | 'sunriseEnergy' | 'midnightFocus' | 'recoveryFlow' | 'performanceBlue' | 'forestBalance' | 'communityPulse' | 'pureMinimal' | 'badgeWall' | 'streakFire' | 'levelUp' | 'trophyRoom' | 'heroEnergy' | 'raceDay' | 'dataPulse' | 'gymBlackout' | 'footballMatchday' | 'neonNight';
 
 type ShortcutId = 'nutrition' | 'habits' | 'stats' | 'tracker' | 'activities' | 'shop' | 'feedback';
 
@@ -45,6 +45,16 @@ const HERO_BACKGROUND_OPTIONS: HeroBackgroundOption[] = [
   { id: 'forestBalance', label: 'Forest Balance', source: require('../../assets/images/theme-forest-breath.png') },
   { id: 'communityPulse', label: 'Community Pulse', source: require('../../assets/images/theme-retro-sport.png') },
   { id: 'pureMinimal', label: 'Pure Minimal' },
+  { id: 'badgeWall', label: 'Badge Wall', locked: true, unlockLabel: 'Ontgrendel met je eerste badge', category: 'achievements', rarity: 'rare' },
+  { id: 'streakFire', label: 'Streak Fire', locked: true, unlockLabel: 'Ontgrendel met een 7-daagse streak', category: 'gamification', rarity: 'epic' },
+  { id: 'levelUp', label: 'Level Up', locked: true, unlockLabel: 'Ontgrendel bij level 5', category: 'achievements', rarity: 'rare' },
+  { id: 'trophyRoom', label: 'Trophy Room', locked: true, unlockLabel: 'Ontgrendel na je eerste challenge win', category: 'achievements', rarity: 'legendary' },
+  { id: 'heroEnergy', label: 'Hero Energy', locked: true, unlockLabel: 'Ontgrendel bij 10 voltooide workouts', category: 'performance', rarity: 'epic' },
+  { id: 'raceDay', label: 'Race Day', locked: true, unlockLabel: 'Ontgrendel tijdens challenge week', category: 'sport', rarity: 'legendary' },
+  { id: 'dataPulse', label: 'Data Pulse', locked: true, unlockLabel: 'Ontgrendel na 14 dagen tracking', category: 'performance', rarity: 'rare' },
+  { id: 'gymBlackout', label: 'Gym Blackout', locked: true, unlockLabel: 'Ontgrendel met 20 krachttrainingen', category: 'sport', rarity: 'epic' },
+  { id: 'footballMatchday', label: 'Football Matchday', locked: true, unlockLabel: 'Ontgrendel via voetbalprofiel', category: 'sport', rarity: 'rare' },
+  { id: 'neonNight', label: 'Neon Night', locked: true, unlockLabel: 'Ontgrendel met 5 avondtrainingen', category: 'premium', rarity: 'epic' },
 ];
 
 const SHORTCUT_OPTIONS: ShortcutOption[] = [
