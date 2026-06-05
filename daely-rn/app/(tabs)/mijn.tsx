@@ -39,7 +39,7 @@ const MY_DOMAIN_CARDS: MyDomainCard[] = [
   {
     id: 'nutrition',
     title: 'Voeding',
-    description: 'Weekgemiddelen, macro\'s en adherence op doel.',
+    description: 'Weekgemiddelden, macro\'s en adherence op doel.',
     category: 'VOEDING',
     accent: '#059669',
     image: 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=1200&q=80',
@@ -98,6 +98,24 @@ const MY_DOMAIN_CARDS: MyDomainCard[] = [
     accent: '#10B981',
     image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=1200&q=80',
     route: '/find-coach',
+  },
+  {
+    id: 'today-background',
+    title: 'Achtergrond wijzigen',
+    description: 'Pas de achtergrond van je Vandaag-pagina aan.',
+    category: 'INSTELLINGEN',
+    accent: '#6366F1',
+    image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80',
+    route: '/(tabs)/today?open=background',
+  },
+  {
+    id: 'today-shortcuts',
+    title: 'Snelfuncties aanpassen',
+    description: 'Pas je 3 sneltoetsen op de Vandaag-pagina aan.',
+    category: 'INSTELLINGEN',
+    accent: '#6366F1',
+    image: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&q=80',
+    route: '/(tabs)/today?open=shortcuts',
   },
 ];
 
@@ -174,6 +192,8 @@ export default function MijnScreen() {
                       card.id === 'habits' && { color: '#F59E0B' },
                       card.id === 'feedback' && { color: '#2563EB' },
                       card.id === 'find-coach' && { color: '#10B981' },
+                      card.id === 'today-background' && { color: '#6366F1' },
+                      card.id === 'today-shortcuts' && { color: '#6366F1' },
                     ]}>{card.title}</Text>
                     <Text style={styles.heroDescription}>{card.description}</Text>
                   </View>

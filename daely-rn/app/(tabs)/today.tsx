@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View, Pressable, ImageBackground, ImageSourcePropType } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/use-theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -43,7 +43,7 @@ const SHORTCUT_OPTIONS: ShortcutOption[] = [
   { id: 'nutrition', label: 'Voeding', icon: 'food-apple-outline', route: '/nutrition/add' },
   { id: 'habits', label: 'Habit tracker', icon: 'calendar-check-outline', route: '/habits' },
   { id: 'stats', label: 'Data', icon: 'chart-bar', route: '/my-stats' },
-  { id: 'tracker', label: 'Tracker', icon: 'run-fast', route: '/tracker' },
+  { id: 'tracker', label: 'Start activiteit', icon: 'run-fast', route: '/tracker' },
   { id: 'activities', label: 'Activiteiten', icon: 'history', route: '/activities' },
   { id: 'shop', label: 'Shop', icon: 'shopping-outline', route: '/shop' },
   { id: 'feedback', label: 'Feedback', icon: 'chat-outline', route: '/feedback' },
@@ -103,6 +103,7 @@ function getMetricsSummary(activity: Activity) {
 
 export default function TodayScreen() {
   const router = useRouter();
+  const params = useLocalSearchParams<{ open?: string }>();
   const theme = useTheme();
   const { user } = useAppContext();
   const [activities, setActivities] = useState<Activity[]>([]);
@@ -112,6 +113,16 @@ export default function TodayScreen() {
   const [isFitbitConnected, setIsFitbitConnected] = useState(false);
   const [shortcuts, setShortcuts] = useState<ShortcutId[]>(DEFAULT_SHORTCUTS);
   const [showShortcutPicker, setShowShortcutPicker] = useState(false);
+
+  useEffect(() => {
+    if (params.open === 'background') {
+      setShowHeroBackgroundPicker(true);
+      router.setParams({ open: undefined });
+    } else if (params.open === 'shortcuts') {
+      setShowShortcutPicker(true);
+      router.setParams({ open: undefined });
+    }
+  }, [params.open, router]);
 
   useEffect(() => {
     getActivities().then((items) => {
@@ -215,39 +226,29 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
         onCartPress={() => router.push('/(tabs)/cart')}
       />
 
-      <Text style={[styles.dateLabel, { color: theme.subtitleColor }]}>{todayLabel}</Text>
-
       <View style={styles.heroWrap}>
         {selectedHeroBackground.source ? (
           <ImageBackground source={selectedHeroBackground.source} imageStyle={styles.heroImage} style={styles.heroCard}>
             <View style={styles.heroOverlay}>
               <View style={styles.heroTopRow}>
-                <Pressable
-                  style={styles.heroSettingsButton}
-                  onPress={() => setShowHeroBackgroundPicker((v) => !v)}
-                >
-                  <MaterialCommunityIcons name="image-edit-outline" size={16} color="#FFFFFF" />
-                  <Text style={styles.heroSettingsButtonText}>Achtergrond wijzigen</Text>
-                </Pressable>
+                <Text style={styles.heroDateLabel}>{todayLabel}</Text>
               </View>
-              <Text style={styles.welcomeTitle}>{heroGreeting}</Text>
-              <Text style={styles.welcomeSubtitle}>Alles wat je vandaag nodig hebt, staat hier klaar.</Text>
+              <View style={styles.heroContent}>
+                <Text style={styles.welcomeTitle}>{heroGreeting}</Text>
+                <Text style={styles.welcomeSubtitle}>Alles wat je vandaag nodig hebt, staat hier klaar.</Text>
+              </View>
             </View>
           </ImageBackground>
         ) : (
           <View style={[styles.heroCard, styles.heroCardFallback]}>
             <View style={styles.heroOverlay}>
               <View style={styles.heroTopRow}>
-                <Pressable
-                  style={styles.heroSettingsButton}
-                  onPress={() => setShowHeroBackgroundPicker((v) => !v)}
-                >
-                  <MaterialCommunityIcons name="image-edit-outline" size={16} color="#FFFFFF" />
-                  <Text style={styles.heroSettingsButtonText}>Achtergrond wijzigen</Text>
-                </Pressable>
+                <Text style={styles.heroDateLabel}>{todayLabel}</Text>
               </View>
-              <Text style={styles.welcomeTitle}>{heroGreeting}</Text>
-              <Text style={styles.welcomeSubtitle}>Alles wat je vandaag nodig hebt, staat hier klaar.</Text>
+              <View style={styles.heroContent}>
+                <Text style={styles.welcomeTitle}>{heroGreeting}</Text>
+                <Text style={styles.welcomeSubtitle}>Alles wat je vandaag nodig hebt, staat hier klaar.</Text>
+              </View>
             </View>
           </View>
         )}
@@ -273,15 +274,8 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
         ) : null}
       </View>
 
-      <View style={styles.shortcutsSection}>
-        <View style={styles.shortcutsHeader}>
-          <Text style={[styles.shortcutsTitle, { color: theme.titleColor }]}>Snel naar</Text>
-          <Pressable onPress={() => setShowShortcutPicker(true)}>
-            <Text style={styles.customizeButton}>Aanpassen</Text>
-          </Pressable>
-        </View>
-        <View style={styles.shortcutsRow}>
-          {selectedShortcuts.map((shortcut) => (
+      <View style={styles.shortcutsRow}>
+        {selectedShortcuts.map((shortcut) => (
             <Pressable
               key={shortcut.id}
               style={[styles.shortcutCard, { backgroundColor: theme.card, borderColor: theme.border }]}
@@ -292,6 +286,7 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
             </Pressable>
           ))}
         </View>
+
         {showShortcutPicker ? (
           <View style={[styles.shortcutsPickerCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
             <Text style={[styles.shortcutsPickerTitle, { color: theme.titleColor }]}>Kies 3 sneltoetsen</Text>
@@ -333,18 +328,6 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
             </View>
           </View>
         ) : null}
-      </View>
-
-      <Pressable style={styles.primaryCard} onPress={() => router.push('/tracker')}>
-        <View style={styles.primaryIconWrap}>
-          <MaterialCommunityIcons name="run-fast" size={22} color="#FFFFFF" />
-        </View>
-        <View style={styles.primaryTextWrap}>
-          <Text style={styles.primaryTitle}>Start activiteit</Text>
-          <Text style={styles.primarySubtitle}>Track je training, wedstrijd of sessie.</Text>
-        </View>
-        <MaterialCommunityIcons name="chevron-right" size={24} color="#FFFFFF" />
-      </Pressable>
 
       <View style={[styles.sectionCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
         <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Vandaag actief</Text>
@@ -474,11 +457,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'rgba(2,6,23,0.55)',
     padding: 16,
+    paddingTop: 20,
     justifyContent: 'space-between',
   },
   heroTopRow: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
+  },
+  heroContent: {
+    marginTop: 'auto',
   },
   heroSettingsButton: {
     flexDirection: 'row',
@@ -534,6 +521,16 @@ const styles = StyleSheet.create({
     color: '#E2E8F0',
     lineHeight: 20,
   },
+  heroDateLabel: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#FFFFFF',
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 999,
+    alignSelf: 'flex-start',
+  },
   shortcutsSection: {
     marginBottom: 12,
   },
@@ -555,6 +552,7 @@ const styles = StyleSheet.create({
   shortcutsRow: {
     flexDirection: 'row',
     gap: 8,
+    marginBottom: 14,
   },
   shortcutCard: {
     flex: 1,
