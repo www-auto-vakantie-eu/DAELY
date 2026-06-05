@@ -26,6 +26,27 @@ import {
 
 let cartHydrated = false;
 
+const getPlaceholderColor = (placeholder: string): string => {
+  if (placeholder.includes('performance')) return '#1E3A8A';
+  if (placeholder.includes('essentials')) return '#059669';
+  if (placeholder.includes('studio')) return '#7C3AED';
+  if (placeholder.includes('recovery')) return '#DC2626';
+  return '#6B7280';
+};
+
+const ProductImage = ({ placeholder, style }: { placeholder: string; style: any }) => {
+  const isUrl = placeholder.startsWith('http://') || placeholder.startsWith('https://');
+  if (isUrl) {
+    return <Image source={{ uri: placeholder }} style={style} />;
+  }
+  const color = getPlaceholderColor(placeholder);
+  return (
+    <View style={[style, { backgroundColor: color, justifyContent: 'center', alignItems: 'center' }]}>
+      <Text style={{ color: '#FFFFFF', fontSize: 32, fontWeight: '800' }}>DAELY</Text>
+    </View>
+  );
+};
+
 const formatCurrency = (value: number) =>
   new Intl.NumberFormat('nl-NL', {
     style: 'currency',
@@ -149,7 +170,7 @@ export default function ProductDetailScreen() {
         showSettings={false}
       />
       <ScrollView contentContainerStyle={styles.content}>
-        <Image source={{ uri: product.imagePlaceholder }} style={styles.productImage} />
+        <ProductImage placeholder={product.imagePlaceholder} style={styles.productImage} />
 
         <View style={[styles.infoCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
           {product.productBadge ? (
