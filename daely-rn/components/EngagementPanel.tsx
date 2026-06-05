@@ -18,7 +18,7 @@ interface EngagementPanelProps {
   visible: boolean;
 }
 
-const CURRENT_USER_ID = 'current-user-default'; // TODO: Replace with actual current user
+const CURRENT_USER_ID = 'current-user-default'; // Placeholder: replace with actual authenticated user ID
 const CURRENT_USER_NAME = 'You';
 const CURRENT_USER_AVATAR = 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=400&q=80';
 

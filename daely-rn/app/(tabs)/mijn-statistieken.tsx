@@ -1,7 +1,7 @@
 // Redesigned Mijn Statistieken page scaffold
 import React, { useState } from 'react';
 import { View, Text, ScrollView, StyleSheet, ActivityIndicator, TouchableOpacity, Image, SectionList, FlatList, Modal, Switch } from 'react-native';
-// TODO: import Victory Native or other chart lib when installed
+// Placeholder: import Victory Native or other chart lib when installed
 // import { VictoryLine, VictoryBar, VictoryPie, VictoryArea, VictoryChart, VictoryTheme } from 'victory-native';
 
 // Placeholder chart component
@@ -26,7 +26,7 @@ export default function MijnStatistiekenScreen() {
     showPRs: true,
     showAchievements: true,
   });
-  // TODO: fetch user/profile/data
+  // Placeholder: fetch user/profile/data from backend
   const isEmpty = true;
 
   // Privacy lock overlay

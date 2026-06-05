@@ -47,7 +47,6 @@ export default function CreatorStudioScreen() {
   const [galleryImages, setGalleryImages] = useState<string[]>([]);
     // Simuleer ophalen gallery (vervang door echte fetch indien nodig)
     useEffect(() => {
-      // TODO: Vervang door echte gallery van de gebruiker
       setGalleryImages([
         'https://images.unsplash.com/photo-1519864600265-abb23847ef2c?auto=format&fit=crop&w=400&q=80',
         'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80',
