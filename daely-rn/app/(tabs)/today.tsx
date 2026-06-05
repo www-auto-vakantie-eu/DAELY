@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { ScrollView, StyleSheet, Text, View, Pressable, ImageBackground } from 'react-native';
+import { ScrollView, StyleSheet, Text, View, Pressable, Image } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/use-theme';
@@ -211,7 +211,8 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
       <View style={styles.heroWrap}>
         {selectedHeroBackground.source ? (
           <Pressable onPress={() => router.push('/(tabs)/hero-background-settings')}>
-            <ImageBackground source={selectedHeroBackground.source} resizeMode="contain" imageStyle={styles.heroImage} style={styles.heroCard}>
+            <View style={styles.heroCard}>
+              <Image source={selectedHeroBackground.source} resizeMode="contain" style={styles.heroCardImage} />
               <View style={styles.heroOverlay}>
                 <View style={styles.heroTopRow}>
                   <Text style={styles.heroDateLabel}>{todayLabel}</Text>
@@ -221,7 +222,7 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
                   <Text style={styles.welcomeSubtitle}>Vandaag hoeft niet perfect te zijn. Wel bewust, actief en beter dan gisteren.</Text>
                 </View>
               </View>
-            </ImageBackground>
+            </View>
           </Pressable>
         ) : (
           <Pressable onPress={() => router.push('/(tabs)/hero-background-settings')}>
@@ -409,20 +410,31 @@ const styles = StyleSheet.create({
   },
   heroCard: {
     minHeight: 210,
-    aspectRatio: 16 / 9,
     borderRadius: 16,
     overflow: 'hidden',
     backgroundColor: '#0F172A',
+    position: 'relative',
   },
   heroCardFallback: {
     backgroundColor: '#111827',
+  },
+  heroCardImage: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
   },
   heroImage: {
     borderRadius: 16,
   },
   heroOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(2,6,23,0.25)',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'rgba(2,6,23,0.55)',
     padding: 16,
     paddingTop: 20,
     justifyContent: 'space-between',
