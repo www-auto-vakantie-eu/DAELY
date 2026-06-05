@@ -1,5 +1,6 @@
-import { StyleSheet, ScrollView, View, Text, Pressable } from 'react-native';
+import { StyleSheet, ScrollView, View, Text, Pressable, ImageBackground } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '@/hooks/use-theme';
 import { useRouter } from 'expo-router';
 import PageHeader from '../components/PageHeader';
@@ -28,57 +29,105 @@ export default function MindScreen() {
           </Text>
         </View>
 
-        <View style={[styles.categoryCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <View style={styles.categoryHeader}>
-            <MaterialCommunityIcons name="weather-windy" size={24} color="#10B981" />
-            <Text style={[styles.categoryTitle, { color: theme.titleColor }]}>Ademhaling</Text>
-            <View style={styles.statusBadge}>
-              <Text style={styles.statusText}>Binnenkort</Text>
-            </View>
-          </View>
-          <Text style={[styles.categoryText, { color: theme.subtitleColor }]}>
-            Ademhalingsoefeningen voor focus en ontspanning.
-          </Text>
-        </View>
+        <Pressable
+          style={styles.card}
+          onPress={() => router.push('/mind/category/breathing')}
+        >
+          <ImageBackground
+            source={{ uri: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=800&q=80' }}
+            style={styles.cardImage}
+            imageStyle={styles.cardImageStyle}
+          >
+            <LinearGradient
+              colors={['rgba(0,0,0,0.3)', 'rgba(0,0,0,0.7)']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 0, y: 1 }}
+              style={styles.cardOverlay}
+            >
+              <MaterialCommunityIcons name="weather-windy" size={32} color="#fff" />
+              <Text style={styles.cardTitle}>Ademhaling</Text>
+              <Text style={styles.cardDescription}>Ademhalingsoefeningen voor focus en ontspanning</Text>
+              <View style={styles.cardBadge}>
+                <Text style={styles.cardBadgeText}>Binnenkort</Text>
+              </View>
+            </LinearGradient>
+          </ImageBackground>
+        </Pressable>
 
-        <View style={[styles.categoryCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <View style={styles.categoryHeader}>
-            <MaterialCommunityIcons name="brain" size={24} color="#F59E0B" />
-            <Text style={[styles.categoryTitle, { color: theme.titleColor }]}>Focus</Text>
-            <View style={styles.statusBadge}>
-              <Text style={styles.statusText}>Binnenkort</Text>
-            </View>
-          </View>
-          <Text style={[styles.categoryText, { color: theme.subtitleColor }]}>
-            Focusoefeningen voor mentale scherpte.
-          </Text>
-        </View>
+        <Pressable
+          style={styles.card}
+          onPress={() => router.push('/mind/category/focus')}
+        >
+          <ImageBackground
+            source={{ uri: 'https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?auto=format&fit=crop&w=800&q=80' }}
+            style={styles.cardImage}
+            imageStyle={styles.cardImageStyle}
+          >
+            <LinearGradient
+              colors={['rgba(0,0,0,0.3)', 'rgba(0,0,0,0.7)']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 0, y: 1 }}
+              style={styles.cardOverlay}
+            >
+              <MaterialCommunityIcons name="brain" size={32} color="#fff" />
+              <Text style={styles.cardTitle}>Focus</Text>
+              <Text style={styles.cardDescription}>Focusoefeningen voor mentale scherpte</Text>
+              <View style={styles.cardBadge}>
+                <Text style={styles.cardBadgeText}>Binnenkort</Text>
+              </View>
+            </LinearGradient>
+          </ImageBackground>
+        </Pressable>
 
-        <View style={[styles.categoryCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <View style={styles.categoryHeader}>
-            <MaterialCommunityIcons name="hand-okay" size={24} color="#F4A259" />
-            <Text style={[styles.categoryTitle, { color: theme.titleColor }]}>Tapping</Text>
-            <View style={styles.statusBadge}>
-              <Text style={styles.statusText}>Binnenkort</Text>
-            </View>
-          </View>
-          <Text style={[styles.categoryText, { color: theme.subtitleColor }]}>
-            Tapping-sessies voor stressreductie en emotionele balans.
-          </Text>
-        </View>
+        <Pressable
+          style={styles.card}
+          onPress={() => router.push('/mind/tapping')}
+        >
+          <ImageBackground
+            source={{ uri: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=800&q=80' }}
+            style={styles.cardImage}
+            imageStyle={styles.cardImageStyle}
+          >
+            <LinearGradient
+              colors={['rgba(0,0,0,0.3)', 'rgba(0,0,0,0.7)']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 0, y: 1 }}
+              style={styles.cardOverlay}
+            >
+              <MaterialCommunityIcons name="hand-okay" size={32} color="#fff" />
+              <Text style={styles.cardTitle}>Tapping</Text>
+              <Text style={styles.cardDescription}>Tapping-sessies voor stressreductie en emotionele balans</Text>
+              <View style={styles.cardBadge}>
+                <Text style={styles.cardBadgeText}>Binnenkort</Text>
+              </View>
+            </LinearGradient>
+          </ImageBackground>
+        </Pressable>
 
-        <View style={[styles.categoryCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <View style={styles.categoryHeader}>
-            <MaterialCommunityIcons name="battery-charging" size={24} color="#3B82F6" />
-            <Text style={[styles.categoryTitle, { color: theme.titleColor }]}>Herstel</Text>
-            <View style={styles.statusBadge}>
-              <Text style={styles.statusText}>Binnenkort</Text>
-            </View>
-          </View>
-          <Text style={[styles.categoryText, { color: theme.subtitleColor }]}>
-            Herstelroutines voor beter slapen en regeneratie.
-          </Text>
-        </View>
+        <Pressable
+          style={styles.card}
+          onPress={() => router.push('/mind/category/recovery')}
+        >
+          <ImageBackground
+            source={{ uri: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?auto=format&fit=crop&w=800&q=80' }}
+            style={styles.cardImage}
+            imageStyle={styles.cardImageStyle}
+          >
+            <LinearGradient
+              colors={['rgba(0,0,0,0.3)', 'rgba(0,0,0,0.7)']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 0, y: 1 }}
+              style={styles.cardOverlay}
+            >
+              <MaterialCommunityIcons name="battery-charging" size={32} color="#fff" />
+              <Text style={styles.cardTitle}>Herstel</Text>
+              <Text style={styles.cardDescription}>Herstelroutines voor beter slapen en regeneratie</Text>
+              <View style={styles.cardBadge}>
+                <Text style={styles.cardBadgeText}>Binnenkort</Text>
+              </View>
+            </LinearGradient>
+          </ImageBackground>
+        </Pressable>
 
         <View style={styles.buttonRow}>
           <Pressable style={styles.primaryButton} onPress={() => router.push('/(tabs)/mijn')}>
@@ -134,37 +183,48 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     textAlign: 'center',
   },
-  categoryCard: {
-    borderWidth: 1,
-    borderRadius: 16,
-    padding: 16,
+  card: {
+    height: 140,
+    borderRadius: 20,
+    marginBottom: 12,
+    overflow: 'hidden',
+  },
+  cardImage: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+  },
+  cardImageStyle: {
+    borderRadius: 20,
+  },
+  cardOverlay: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: 20,
+  },
+  cardTitle: {
+    fontSize: 24,
+    fontWeight: '800',
+    color: '#fff',
+    marginTop: 8,
+    marginBottom: 4,
+  },
+  cardDescription: {
+    fontSize: 14,
+    color: 'rgba(255, 255, 255, 0.9)',
     marginBottom: 12,
   },
-  categoryHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  categoryTitle: {
-    fontSize: 17,
-    fontWeight: '700',
-    marginLeft: 12,
-    flex: 1,
-  },
-  statusBadge: {
-    backgroundColor: '#E5E7EB',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
+  cardBadge: {
+    backgroundColor: 'rgba(255, 255, 255, 0.25)',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
     borderRadius: 999,
+    alignSelf: 'flex-start',
   },
-  statusText: {
+  cardBadgeText: {
     fontSize: 12,
     fontWeight: '700',
-    color: '#374151',
-  },
-  categoryText: {
-    fontSize: 14,
-    lineHeight: 20,
+    color: '#fff',
   },
   buttonRow: {
     gap: 12,
