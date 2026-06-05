@@ -1,39 +1,8 @@
-import { StyleSheet, ScrollView, View, Text, Pressable, ImageBackground } from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { LinearGradient } from 'expo-linear-gradient';
-import { useMemo } from 'react';
+import { StyleSheet, ScrollView, View, Text, Pressable } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
-import { MIND_CATEGORIES } from '@/constants/mind-categories';
-import { MIND_PROGRAMS } from '@/constants/mind-programs';
-
-function hexToRgba(hex: string, alpha: number): string {
-  const cleaned = hex.replace('#', '');
-  const r = parseInt(cleaned.slice(0, 2), 16);
-  const g = parseInt(cleaned.slice(2, 4), 16);
-  const b = parseInt(cleaned.slice(4, 6), 16);
-  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-}
-
-function formatCardTitle(title: string): string {
-  const words = title.trim().split(' ');
-  if (words.length <= 2) {
-    return title;
-  }
-
-  const splitIndex = Math.ceil(words.length / 2);
-  return `${words.slice(0, splitIndex).join(' ')}\n${words.slice(splitIndex).join(' ')}`;
-}
-
-function getCardTitleSize(title: string): { fontSize: number; lineHeight: number } {
-  if (title.length >= 28) {
-    return { fontSize: 40, lineHeight: 42 };
-  }
-  if (title.length >= 22) {
-    return { fontSize: 46, lineHeight: 48 };
-  }
-  return { fontSize: 54, lineHeight: 56 };
-}
+import PageHeader from '../../components/PageHeader';
 
 export default function MindCategoryScreen() {
   const theme = useTheme();
@@ -41,78 +10,60 @@ export default function MindCategoryScreen() {
   const params = useLocalSearchParams<{ id?: string | string[] }>();
   const categoryId = Array.isArray(params.id) ? params.id[0] : params.id;
 
-  const category = MIND_CATEGORIES.find((item) => item.id === categoryId);
+  const getCategoryName = (id: string | undefined): string => {
+    if (!id) return 'Mind';
+    const categoryNames: Record<string, string> = {
+      breathing: 'Ademhaling',
+      focus: 'Focus',
+      recovery: 'Herstel',
+      meditation: 'Meditatie',
+    };
+    return categoryNames[id] || 'Mind';
+  };
 
-  const programs = useMemo(() => {
-    if (!category) {
-      return [];
-    }
-    return MIND_PROGRAMS.filter((program) => program.categories.includes(category.id));
-  }, [category]);
+  const categoryName = getCategoryName(categoryId);
 
   return (
     <ScrollView style={[styles.container, { backgroundColor: theme.background }]} showsVerticalScrollIndicator={false}>
+      <PageHeader
+        title={categoryName}
+        onSettingsPress={() => router.push('/(tabs)/athlete')}
+        onSearchPress={() => router.push('/nutrition/search')}
+        onCartPress={() => router.push('/(tabs)/cart')}
+      />
+
       <View style={styles.content}>
-        <Pressable
-          style={[styles.backButton, { borderColor: theme.border, backgroundColor: theme.card }]}
-          onPress={() => router.back()}
-        >
-          <MaterialCommunityIcons name="arrow-left" size={20} color={theme.titleColor} />
-          <Text style={[styles.backText, { color: theme.titleColor }]}>Terug</Text>
-        </Pressable>
-
-        {category ? (
-          <ImageBackground source={{ uri: category.image }} style={styles.hero} imageStyle={styles.heroImage}>
-            <View style={[styles.heroDecor1, { backgroundColor: hexToRgba(category.accent, 0.2) }]} />
-            <View style={[styles.heroDecor2, { borderColor: hexToRgba(category.accent, 0.25), borderWidth: 1.5 }]} />
-            <LinearGradient
-              colors={[hexToRgba(category.accent, 0.12), hexToRgba(category.accent, 0.52), 'rgba(0,0,0,0.76)']}
-              style={styles.heroOverlay}
-            >
-              <View style={[styles.heroBadge, { borderColor: hexToRgba(category.accent, 0.9), backgroundColor: hexToRgba(category.accent, 0.26) }]}>
-                <MaterialCommunityIcons name={category.icon} size={18} color="#FFFFFF" />
-                <Text style={styles.heroBadgeText}>{category.name}</Text>
-              </View>
-              <Text style={styles.heroTitle}>{category.name}</Text>
-              <Text style={styles.heroSubtitle}>{category.description}</Text>
-            </LinearGradient>
-          </ImageBackground>
-        ) : (
-          <View style={[styles.notFound, { borderColor: theme.border }]}>
-            <Text style={[styles.notFoundTitle, { color: theme.titleColor }]}>Categorie niet gevonden</Text>
-            <Text style={[styles.notFoundSubtitle, { color: theme.subtitleColor }]}>Deze categorie bestaat niet of is verplaatst.</Text>
+        <View style={[styles.heroCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+          <View style={styles.iconContainer}>
+            <MaterialCommunityIcons name="meditation" size={48} color="#8B5CF6" />
           </View>
-        )}
+          <Text style={[styles.heroTitle, { color: theme.titleColor }]}>Binnenkort beschikbaar</Text>
+          <Text style={[styles.heroText, { color: theme.subtitleColor }]}>
+            Oefeningen in deze categorie worden later toegevoegd.
+          </Text>
+          <View style={styles.statusBadge}>
+            <Text style={styles.statusText}>Binnenkort</Text>
+          </View>
+        </View>
 
-        {programs.map((program) => (
-          <Pressable
-            key={program.id}
-            style={styles.cardWrap}
-            onPress={() => router.push({ pathname: '/mind/[id]', params: { id: program.id } })}
-          >
-            <ImageBackground source={{ uri: program.image }} style={styles.card} imageStyle={styles.cardImage}>
-              <LinearGradient colors={['rgba(0,0,0,0.02)', 'rgba(0,0,0,0.82)']} style={styles.cardOverlay}>
-                <Text
-                  style={[styles.cardTitle, getCardTitleSize(program.title)]}
-                  numberOfLines={2}
-                  adjustsFontSizeToFit
-                  minimumFontScale={0.7}
-                >
-                  {formatCardTitle(program.title)}
-                </Text>
-                <Text style={styles.cardMeta}>{program.minutes} MIN    {program.sessions} SESSIES</Text>
-              </LinearGradient>
-            </ImageBackground>
+        <View style={[styles.infoCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+          <Text style={[styles.infoTitle, { color: theme.titleColor }]}>Wat kun je verwachten?</Text>
+          <Text style={[styles.infoText, { color: theme.subtitleColor }]}>
+            In deze categorie vind je straks oefeningen en routines die je helpen om je mentale gezondheid te verbeteren.
+          </Text>
+        </View>
+
+        <View style={styles.buttonRow}>
+          <Pressable style={styles.primaryButton} onPress={() => router.push('/(tabs)/mind')}>
+            <Text style={styles.primaryButtonText}>Terug naar Mind</Text>
           </Pressable>
-        ))}
-
-        {category && programs.length === 0 && (
-          <View style={[styles.emptyState, { borderColor: theme.border }]}>
-            <MaterialCommunityIcons name="meditation" size={34} color={theme.subtitleColor} />
-            <Text style={[styles.emptyTitle, { color: theme.titleColor }]}>Geen technieken</Text>
-            <Text style={[styles.emptySubtitle, { color: theme.subtitleColor }]}>Er zijn nog geen technieken in deze categorie.</Text>
-          </View>
-        )}
+          <Pressable
+            style={[styles.secondaryButton, { backgroundColor: theme.background, borderColor: theme.border }]}
+            onPress={() => router.push('/feedback')}
+          >
+            <Text style={[styles.secondaryButtonText, { color: theme.titleColor }]}>Feedback geven</Text>
+          </Pressable>
+        </View>
       </View>
 
       <View style={styles.bottomSpacer} />
@@ -121,147 +72,94 @@ export default function MindCategoryScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
+  container: {
+    flex: 1,
+  },
   content: {
     paddingHorizontal: 16,
     paddingTop: 16,
+    paddingBottom: 24,
   },
-  backButton: {
-    alignSelf: 'flex-start',
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
+  heroCard: {
     borderWidth: 1,
-    borderRadius: 999,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    marginBottom: 12,
-  },
-  backText: {
-    fontSize: 14,
-    fontWeight: '700',
-  },
-  hero: {
-    height: 220,
+    borderRadius: 20,
+    padding: 24,
     marginBottom: 16,
+    alignItems: 'center',
   },
-  heroImage: {
-    borderRadius: 30,
-  },
-  heroOverlay: {
-    flex: 1,
-    borderRadius: 30,
-    justifyContent: 'flex-end',
-    paddingHorizontal: 16,
-    paddingBottom: 16,
-  },
-  heroDecor1: {
-    position: 'absolute',
-    top: -40,
-    right: -30,
-    width: 160,
-    height: 160,
-    borderRadius: 80,
-  },
-  heroDecor2: {
-    position: 'absolute',
-    top: 20,
-    right: 50,
+  iconContainer: {
     width: 80,
     height: 80,
     borderRadius: 40,
-  },
-  heroBadge: {
-    alignSelf: 'flex-start',
-    flexDirection: 'row',
+    backgroundColor: 'rgba(139, 92, 246, 0.1)',
     alignItems: 'center',
-    borderWidth: 1,
-    borderRadius: 999,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    gap: 6,
-    marginBottom: 10,
-  },
-  heroBadgeText: {
-    color: '#FFFFFF',
-    fontSize: 12,
-    fontWeight: '700',
-    letterSpacing: 0.2,
-  },
-  heroTitle: {
-    color: '#FFFFFF',
-    fontSize: 34,
-    lineHeight: 36,
-    fontWeight: '900',
-    letterSpacing: -1,
-  },
-  heroSubtitle: {
-    color: 'rgba(255,255,255,0.88)',
-    fontSize: 14,
-    marginTop: 6,
-    fontWeight: '500',
-  },
-  cardWrap: {
+    justifyContent: 'center',
     marginBottom: 16,
   },
-  card: {
-    height: 290,
-    justifyContent: 'flex-end',
-  },
-  cardImage: {
-    borderRadius: 40,
-  },
-  cardOverlay: {
-    borderRadius: 40,
-    paddingHorizontal: 18,
-    paddingBottom: 20,
-    paddingTop: 70,
-  },
-  cardTitle: {
-    color: '#FFFFFF',
-    letterSpacing: -1.8,
-    fontWeight: '900',
-  },
-  cardMeta: {
-    color: 'rgba(255,255,255,0.85)',
-    fontSize: 15,
-    letterSpacing: 1,
-    fontWeight: '700',
-    marginTop: 10,
-  },
-  emptyState: {
-    marginTop: 8,
-    borderWidth: 1.5,
-    borderStyle: 'dashed',
-    borderRadius: 18,
-    paddingVertical: 24,
-    paddingHorizontal: 16,
-    alignItems: 'center',
-  },
-  emptyTitle: {
-    marginTop: 8,
-    fontSize: 16,
-    fontWeight: '700',
-  },
-  emptySubtitle: {
-    marginTop: 4,
+  heroTitle: {
+    fontSize: 22,
+    fontWeight: '800',
     textAlign: 'center',
-    fontSize: 13,
+    marginBottom: 8,
   },
-  notFound: {
-    borderWidth: 1.5,
-    borderRadius: 18,
-    paddingVertical: 24,
-    paddingHorizontal: 16,
+  heroText: {
+    fontSize: 15,
+    lineHeight: 22,
+    textAlign: 'center',
     marginBottom: 12,
   },
-  notFoundTitle: {
-    fontSize: 18,
-    fontWeight: '800',
+  statusBadge: {
+    backgroundColor: '#E5E7EB',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 999,
   },
-  notFoundSubtitle: {
-    marginTop: 6,
+  statusText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#374151',
+  },
+  infoCard: {
+    borderWidth: 1,
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 12,
+  },
+  infoTitle: {
+    fontSize: 17,
+    fontWeight: '700',
+    marginBottom: 8,
+  },
+  infoText: {
     fontSize: 14,
+    lineHeight: 20,
   },
-  bottomSpacer: { height: 80 },
+  buttonRow: {
+    gap: 12,
+    marginTop: 8,
+  },
+  primaryButton: {
+    borderRadius: 14,
+    backgroundColor: '#8B5CF6',
+    paddingVertical: 14,
+    alignItems: 'center',
+  },
+  primaryButtonText: {
+    color: '#fff',
+    fontWeight: '700',
+    fontSize: 16,
+  },
+  secondaryButton: {
+    borderRadius: 14,
+    borderWidth: 1,
+    paddingVertical: 14,
+    alignItems: 'center',
+  },
+  secondaryButtonText: {
+    fontWeight: '700',
+    fontSize: 16,
+  },
+  bottomSpacer: {
+    height: 80,
+  },
 });
