@@ -347,7 +347,7 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
           </>
         ) : (
           <View>
-            <Text style={[styles.activityStatus, { color: theme.subtitleColor }]}>Nog geen activiteit vandaag.</Text>
+            <Text style={[styles.activityStatus, { color: theme.subtitleColor }]}>Nog geen activiteit</Text>
             <Pressable onPress={() => router.push('/tracker')}>
               <Text style={styles.inlineLink}>Start activiteit</Text>
             </Pressable>

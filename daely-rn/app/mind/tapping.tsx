@@ -43,7 +43,7 @@ export default function TappingScreen() {
   ];
 
   const openTechniqueFallback = (name: string) => {
-    Alert.alert('Binnenkort beschikbaar', `${name} detailpagina volgt binnenkort.`, [
+    Alert.alert('Binnenkort beschikbaar', `${name} is binnenkort beschikbaar.`, [
       { text: 'Terug naar Mind', onPress: () => router.replace('/(tabs)/mind') },
       { text: 'Sluiten', style: 'cancel' },
     ]);

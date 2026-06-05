@@ -48,7 +48,7 @@ const MY_DOMAIN_CARDS: MyDomainCard[] = [
   {
     id: 'mind',
     title: 'Mind',
-    description: 'Binnenkort beschikbaar op jouw Mijn-pagina.',
+    description: 'Binnenkort beschikbaar',
     category: 'MINDSET',
     accent: '#8B5CF6',
     image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=1200&q=80',
