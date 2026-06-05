@@ -12,7 +12,7 @@ export default function ContentStyleScreen() {
     try {
       await updateUser({ ...user, contentStyle });
       Alert.alert('Opgeslagen', 'Je contentstijl is opgeslagen.');
-    } catch (e) {
+    } catch {
       Alert.alert('Fout', 'Er ging iets mis bij het opslaan.');
     }
     setSaving(false);

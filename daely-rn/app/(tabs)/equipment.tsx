@@ -12,7 +12,7 @@ export default function EquipmentScreen() {
     try {
       await updateUser({ ...user, equipment });
       Alert.alert('Opgeslagen', 'Je apparatuur is opgeslagen.');
-    } catch (e) {
+    } catch {
       Alert.alert('Fout', 'Er ging iets mis bij het opslaan.');
     }
     setSaving(false);

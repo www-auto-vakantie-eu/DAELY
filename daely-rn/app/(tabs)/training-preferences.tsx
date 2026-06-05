@@ -12,7 +12,7 @@ export default function TrainingPreferencesScreen() {
     try {
       await updateUser({ ...user, trainingPreferences: preferences });
       Alert.alert('Opgeslagen', 'Je trainingsvoorkeuren zijn opgeslagen.');
-    } catch (e) {
+    } catch {
       Alert.alert('Fout', 'Er ging iets mis bij het opslaan.');
     }
     setSaving(false);

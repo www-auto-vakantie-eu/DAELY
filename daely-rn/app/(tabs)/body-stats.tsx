@@ -12,7 +12,7 @@ export default function BodyStatsScreen() {
     try {
       await updateUser({ ...user, bodyStats });
       Alert.alert('Opgeslagen', 'Je lichaamsgegevens zijn opgeslagen.');
-    } catch (e) {
+    } catch {
       Alert.alert('Fout', 'Er ging iets mis bij het opslaan.');
     }
     setSaving(false);

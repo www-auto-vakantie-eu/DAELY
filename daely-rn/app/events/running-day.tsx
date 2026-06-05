@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, Image } from 'react-native';
+import { Text, StyleSheet, ScrollView, Image } from 'react-native';
 import { useTheme } from '@/hooks/use-theme';
 
 export default function EventRunningDayScreen() {

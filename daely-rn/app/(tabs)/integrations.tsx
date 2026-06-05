@@ -12,7 +12,7 @@ export default function IntegrationsScreen() {
     try {
       await updateUser({ ...user, integrations });
       Alert.alert('Opgeslagen', 'Je integraties zijn opgeslagen.');
-    } catch (e) {
+    } catch {
       Alert.alert('Fout', 'Er ging iets mis bij het opslaan.');
     }
     setSaving(false);

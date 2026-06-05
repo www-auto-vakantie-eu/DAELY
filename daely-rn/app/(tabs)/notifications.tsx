@@ -12,7 +12,7 @@ export default function NotificationsScreen() {
     try {
       await updateUser({ ...user, notifications });
       Alert.alert('Opgeslagen', 'Je notificatie-instellingen zijn opgeslagen.');
-    } catch (e) {
+    } catch {
       Alert.alert('Fout', 'Er ging iets mis bij het opslaan.');
     }
     setSaving(false);

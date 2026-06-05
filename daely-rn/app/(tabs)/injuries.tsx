@@ -12,7 +12,7 @@ export default function InjuriesScreen() {
     try {
       await updateUser({ ...user, injuries });
       Alert.alert('Opgeslagen', 'Je blessures/beperkingen zijn opgeslagen.');
-    } catch (e) {
+    } catch {
       Alert.alert('Fout', 'Er ging iets mis bij het opslaan.');
     }
     setSaving(false);

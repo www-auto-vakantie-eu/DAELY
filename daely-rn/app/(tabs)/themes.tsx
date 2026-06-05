@@ -13,8 +13,6 @@ export default function ThemasScreen() {
   const theme = useTheme();
   const isClassicActive = activeThemeId === 'classic';
   const isZenInkActive = activeThemeId === 'zen-ink';
-  const isForestBreathActive = activeThemeId === 'forest-breath';
-  const isForceActive = activeThemeId === 'force';
   const isPureLuxuryActive = activeThemeId === 'pure-luxury';
   const isInnovationActive = activeThemeId === 'innovation';
   const isPastelCalmActive = activeThemeId === 'pastel-calm';

@@ -1,6 +1,6 @@
 // Redesigned Mijn Statistieken page scaffold
 import React, { useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, ActivityIndicator, TouchableOpacity, Image, SectionList, FlatList, Modal, Switch } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Image, Modal, Switch } from 'react-native';
 // Placeholder: import Victory Native or other chart lib when installed
 // import { VictoryLine, VictoryBar, VictoryPie, VictoryArea, VictoryChart, VictoryTheme } from 'victory-native';
 
@@ -15,8 +15,7 @@ const ChartPlaceholder = ({ title }: { title: string }) => (
 );
 
 export default function MijnStatistiekenScreen() {
-  // State for loading, privacy, and settings
-  const [loading, setLoading] = useState(false);
+  // State for privacy, and settings
   const [settingsVisible, setSettingsVisible] = useState(false);
   const [privacy, setPrivacy] = useState({
     lock: false,
@@ -27,7 +26,6 @@ export default function MijnStatistiekenScreen() {
     showAchievements: true,
   });
   // Placeholder: fetch user/profile/data from backend
-  const isEmpty = true;
 
   // Privacy lock overlay
   if (privacy.lock) {

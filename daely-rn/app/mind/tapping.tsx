@@ -1,5 +1,4 @@
 import { Alert, View, Text, StyleSheet, ScrollView, Pressable, ImageBackground } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';

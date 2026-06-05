@@ -12,7 +12,7 @@ export default function EventGoalsScreen() {
     try {
       await updateUser({ ...user, eventGoals });
       Alert.alert('Opgeslagen', 'Je event-/wedstrijddoelen zijn opgeslagen.');
-    } catch (e) {
+    } catch {
       Alert.alert('Fout', 'Er ging iets mis bij het opslaan.');
     }
     setSaving(false);

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, ScrollView, Pressable, Image, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Button, ScrollView, Image, StyleSheet } from 'react-native';
 import { useTheme } from '@/hooks/use-theme';
 
 const steps = [

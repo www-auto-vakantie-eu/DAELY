@@ -4,12 +4,11 @@ import { useRouter } from 'expo-router';
 import { useAppContext } from '@/contexts/AppContext';
 import { View, Text, ScrollView, Pressable, StyleSheet } from 'react-native';
 import { useTheme } from '@/hooks/use-theme';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 export default function SubscriptionSettingsScreen() {
   const theme = useTheme();
   const router = useRouter();
-  const { appSettings, user } = useAppContext();
+  const { user } = useAppContext();
   // Dummy data voor demo
   const subscription = {
     plan: 'DAELY Premium',

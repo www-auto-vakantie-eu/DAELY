@@ -12,7 +12,7 @@ export default function MotivationScreen() {
     try {
       await updateUser({ ...user, motivation });
       Alert.alert('Opgeslagen', 'Je motivatiestijl is opgeslagen.');
-    } catch (e) {
+    } catch {
       Alert.alert('Fout', 'Er ging iets mis bij het opslaan.');
     }
     setSaving(false);

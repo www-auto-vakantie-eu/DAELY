@@ -12,7 +12,7 @@ export default function RoleScreen() {
     try {
       await updateUser({ ...user, role });
       Alert.alert('Opgeslagen', 'Je app-rol is opgeslagen.');
-    } catch (e) {
+    } catch {
       Alert.alert('Fout', 'Er ging iets mis bij het opslaan.');
     }
     setSaving(false);

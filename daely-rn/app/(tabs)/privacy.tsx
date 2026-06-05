@@ -12,7 +12,7 @@ export default function PrivacyScreen() {
     try {
       await updateUser({ ...user, privacy });
       Alert.alert('Opgeslagen', 'Je privacy-instellingen zijn opgeslagen.');
-    } catch (e) {
+    } catch {
       Alert.alert('Fout', 'Er ging iets mis bij het opslaan.');
     }
     setSaving(false);
