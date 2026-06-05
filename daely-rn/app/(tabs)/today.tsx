@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { ScrollView, StyleSheet, Text, View, Pressable, ImageBackground } from 'react-native';
+import { ScrollView, StyleSheet, Text, View, Pressable, ImageBackground, Dimensions } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/use-theme';
@@ -211,7 +211,18 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
       <View style={styles.heroWrap}>
         {selectedHeroBackground.source ? (
           <Pressable onPress={() => router.push('/(tabs)/hero-background-settings')}>
-            <View style={styles.heroCard}>
+            <View style={styles.heroCard} onLayout={(event) => {
+              const { width, height } = event.nativeEvent.layout;
+              const screenWidth = Dimensions.get('window').width;
+              console.log('[DAELY heroCard layout]', {
+                width,
+                height,
+                aspectRatio: width / height,
+                screenWidth,
+                padding: 'heroWrap has no padding, only marginBottom: 12',
+                heroCardStyle: 'height: 210, borderRadius: 16, overflow: hidden',
+              });
+            }}>
               <ImageBackground source={selectedHeroBackground.source} resizeMode="cover" imageStyle={styles.heroImage} style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0 }} />
               <View style={styles.heroOverlay}>
                 <View style={styles.heroTopRow}>
