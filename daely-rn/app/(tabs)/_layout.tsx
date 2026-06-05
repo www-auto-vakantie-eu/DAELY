@@ -22,7 +22,7 @@ export default function TabLayout() {
   }, [isAppHydrated, isLoggedIn, router]);
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, maxWidth: 430, alignSelf: 'center', width: '100%' }}>
       <GlobalCartButton />
       <Tabs
         initialRouteName="index"

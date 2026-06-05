@@ -407,9 +407,6 @@ const styles = StyleSheet.create({
   },
   heroWrap: {
     marginBottom: 12,
-    maxWidth: 430,
-    alignSelf: 'center',
-    width: '100%',
   },
   heroCard: {
     height: 210,
