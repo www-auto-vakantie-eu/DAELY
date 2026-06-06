@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { Text, StyleSheet, ScrollView, Pressable, View } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import PageHeader from './components/PageHeader';
 import { getActivities, Activity } from 'services/activity-storage';
+import { useTheme } from '@/hooks/use-theme';
 
 export default function ActivitiesScreen() {
   const [activities, setActivities] = useState<Activity[]>([]);
   const router = useRouter();
+  const theme = useTheme();
 
   useEffect(() => {
     getActivities().then((acts) => {
@@ -19,61 +22,108 @@ export default function ActivitiesScreen() {
 
   const totalDurationSeconds = activities.reduce((sum, a) => sum + a.durationSeconds, 0);
   const uniqueDisciplines = new Set(activities.map((a) => a.disciplineId)).size;
+  const lastActivity = activities[0];
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={[styles.container, { backgroundColor: theme.background }]} showsVerticalScrollIndicator={false}>
       <PageHeader title="Activiteiten" />
 
-      <View style={styles.summaryCard}>
-        <View style={styles.summaryItem}>
-          <Text style={styles.summaryLabel}>Totaal activiteiten</Text>
-          <Text style={styles.summaryValue}>{activities.length}</Text>
+      <View style={styles.content}>
+        <View style={[styles.heroCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+          <View style={styles.iconContainer}>
+            <MaterialCommunityIcons name="timer" size={32} color="#2563EB" />
+          </View>
+          <Text style={[styles.heroTitle, { color: theme.titleColor }]}>Activiteiten</Text>
+          <Text style={[styles.heroText, { color: theme.subtitleColor }]}>
+            Bekijk je trainingen, sessies en voortgang.
+          </Text>
         </View>
-        <View style={styles.summaryItem}>
-          <Text style={styles.summaryLabel}>Totale sporttijd</Text>
-          <Text style={styles.summaryValue}>{formatTotalDuration(totalDurationSeconds)}</Text>
+
+        <View style={[styles.summaryCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+          <View style={styles.summaryItem}>
+            <Text style={[styles.summaryLabel, { color: theme.subtitleColor }]}>Totaal activiteiten</Text>
+            <Text style={[styles.summaryValue, { color: theme.titleColor }]}>{activities.length}</Text>
+          </View>
+          <View style={styles.summaryDivider} />
+          <View style={styles.summaryItem}>
+            <Text style={[styles.summaryLabel, { color: theme.subtitleColor }]}>Totale sporttijd</Text>
+            <Text style={[styles.summaryValue, { color: theme.titleColor }]}>{formatTotalDuration(totalDurationSeconds)}</Text>
+          </View>
+          <View style={styles.summaryDivider} />
+          <View style={styles.summaryItem}>
+            <Text style={[styles.summaryLabel, { color: theme.subtitleColor }]}>Disciplines</Text>
+            <Text style={[styles.summaryValue, { color: theme.titleColor }]}>{uniqueDisciplines}</Text>
+          </View>
         </View>
-        <View style={styles.summaryItem}>
-          <Text style={styles.summaryLabel}>Disciplines</Text>
-          <Text style={styles.summaryValue}>{uniqueDisciplines}</Text>
-        </View>
+
+        {lastActivity && (
+          <View style={[styles.lastActivityCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+            <Text style={[styles.lastActivityTitle, { color: theme.titleColor }]}>Laatste activiteit</Text>
+            <Text style={[styles.lastActivityName, { color: theme.titleColor }]}>{lastActivity.disciplineName}</Text>
+            <Text style={[styles.lastActivityMeta, { color: theme.subtitleColor }]}>
+              {formatDate(lastActivity.endedAt)} · {formatDuration(lastActivity.durationSeconds)}
+            </Text>
+          </View>
+        )}
+
+        {activities.length === 0 ? (
+          <View style={[styles.emptyCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+            <View style={styles.emptyIconContainer}>
+              <MaterialCommunityIcons name="run-fast" size={48} color="#2563EB" />
+            </View>
+            <Text style={[styles.emptyTitle, { color: theme.titleColor }]}>Nog geen activiteiten opgeslagen</Text>
+            <Text style={[styles.emptyText, { color: theme.subtitleColor }]}>
+              Start je eerste activiteit om je voortgang op te bouwen.
+            </Text>
+            <Pressable style={styles.startButton} onPress={() => router.push('/tracker')}>
+              <Text style={styles.startButtonText}>Start activiteit</Text>
+            </Pressable>
+          </View>
+        ) : (
+          <>
+            <View style={styles.sectionHeader}>
+              <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Alle activiteiten</Text>
+            </View>
+            {activities.map((a) => (
+              <Pressable
+                key={a.id}
+                style={[styles.itemCard, { backgroundColor: theme.card, borderColor: theme.border }]}
+                onPress={() => router.push({ pathname: '/activities/[id]', params: { id: a.id } })}
+              >
+                <View style={styles.itemTopRow}>
+                  <View style={styles.itemIconContainer}>
+                    <MaterialCommunityIcons name="dumbbell" size={20} color="#2563EB" />
+                  </View>
+                  <Text style={[styles.name, { color: theme.titleColor }]}>{a.disciplineName}</Text>
+                  <View style={[styles.statusBadge, { backgroundColor: '#DCFCE7' }]}>
+                    <Text style={styles.statusText}>{a.status}</Text>
+                  </View>
+                </View>
+
+                <View style={styles.metaRow}>
+                  <View style={[styles.typeBadge, { backgroundColor: theme.background, borderColor: theme.border }]}>
+                    <Text style={[styles.typeBadgeText, { color: theme.titleColor }]}>{trackingTypeCode(a.trackingType)}</Text>
+                  </View>
+                  <View style={[styles.typeBadge, { backgroundColor: '#DBEAFE' }]}>
+                    <Text style={[styles.typeBadgeText, { color: '#1D4ED8' }]}>{a.trackingType}</Text>
+                  </View>
+                  <Text style={[styles.metaText, { color: theme.subtitleColor }]}>{formatDate(a.endedAt)}</Text>
+                </View>
+
+                <View style={styles.durationRow}>
+                  <MaterialCommunityIcons name="clock-outline" size={16} color={theme.subtitleColor} />
+                  <Text style={[styles.durationText, { color: theme.titleColor }]}>Duur: {formatDuration(a.durationSeconds)}</Text>
+                </View>
+
+                <View style={[styles.metricsSummaryCard, { backgroundColor: theme.background, borderColor: theme.border }]}>
+                  <Text style={[styles.metricsSummaryLabel, { color: theme.subtitleColor }]}>Samenvatting</Text>
+                  <Text style={[styles.metricsSummaryText, { color: theme.titleColor }]}>{getMetricsSummary(a)}</Text>
+                </View>
+              </Pressable>
+            ))}
+          </>
+        )}
       </View>
-
-      {activities.length === 0 ? (
-        <View style={styles.emptyCard}>
-          <Text style={styles.emptyTitle}>Nog geen activiteiten</Text>
-          <Text style={styles.emptyText}>Start je eerste activiteit met DAELY Tracker.</Text>
-          <Pressable style={styles.startButton} onPress={() => router.push('/tracker')}>
-            <Text style={styles.startButtonText}>Start activiteit</Text>
-          </Pressable>
-        </View>
-      ) : (
-        activities.map((a) => (
-          <Pressable
-            key={a.id}
-            style={styles.itemCard}
-            onPress={() => router.push({ pathname: '/activities/[id]', params: { id: a.id } })}
-          >
-            <View style={styles.itemTopRow}>
-              <Text style={styles.name}>{a.disciplineName}</Text>
-              <Text style={styles.status}>{a.status}</Text>
-            </View>
-
-            <View style={styles.metaRow}>
-              <Text style={styles.trackingTypeIndicator}>{trackingTypeCode(a.trackingType)}</Text>
-              <Text style={styles.trackingTypeBadge}>{a.trackingType}</Text>
-              <Text style={styles.metaText}>{formatDate(a.endedAt)}</Text>
-            </View>
-
-            <Text style={styles.durationText}>Duur: {formatDuration(a.durationSeconds)}</Text>
-
-            <View style={styles.metricsSummaryCard}>
-              <Text style={styles.metricsSummaryLabel}>Samenvatting</Text>
-              <Text style={styles.metricsSummaryText}>{getMetricsSummary(a)}</Text>
-            </View>
-          </Pressable>
-        ))
-      )}
     </ScrollView>
   );
 }
@@ -145,154 +195,213 @@ function formatTotalDuration(seconds: number) {
 
 function formatDate(dateStr: string) {
   const d = new Date(dateStr);
-  return d.toLocaleString();
+  return d.toLocaleDateString('nl-NL', { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F3F4F6',
-    padding: 16,
+  },
+  content: {
+    paddingHorizontal: 16,
+    paddingTop: 20,
+    paddingBottom: 24,
+  },
+  heroCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+    padding: 20,
+    borderRadius: 16,
+    borderWidth: 1,
+    marginBottom: 24,
+  },
+  iconContainer: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: 'rgba(37, 99, 235, 0.1)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  heroTitle: {
+    fontSize: 22,
+    fontWeight: '700',
+    flex: 1,
+  },
+  heroText: {
+    fontSize: 15,
+    lineHeight: 22,
   },
   summaryCard: {
-    backgroundColor: '#0F172A',
-    borderRadius: 14,
-    padding: 14,
-    marginTop: 8,
-    marginBottom: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 20,
+    borderRadius: 16,
+    borderWidth: 1,
+    marginBottom: 24,
   },
   summaryItem: {
-    marginBottom: 8,
+    flex: 1,
+    alignItems: 'center',
   },
   summaryLabel: {
-    color: '#93C5FD',
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '600',
+    marginBottom: 4,
   },
   summaryValue: {
-    color: '#FFFFFF',
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: '800',
   },
-  emptyCard: {
-    marginTop: 12,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 14,
+  summaryDivider: {
+    width: 1,
+    height: 40,
+    backgroundColor: '#E2E8F0',
+  },
+  lastActivityCard: {
     padding: 16,
+    borderRadius: 12,
+    borderWidth: 1,
+    marginBottom: 24,
+  },
+  lastActivityTitle: {
+    fontSize: 13,
+    fontWeight: '600',
+    marginBottom: 4,
+  },
+  lastActivityName: {
+    fontSize: 18,
+    fontWeight: '700',
+    marginBottom: 4,
+  },
+  lastActivityMeta: {
+    fontSize: 14,
+  },
+  emptyCard: {
+    padding: 32,
+    borderRadius: 16,
+    borderWidth: 1,
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOpacity: 0.04,
-    shadowRadius: 6,
-    elevation: 1,
+    marginBottom: 24,
+  },
+  emptyIconContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: 'rgba(37, 99, 235, 0.1)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 16,
   },
   emptyTitle: {
-    fontSize: 19,
+    fontSize: 20,
     fontWeight: '700',
-    color: '#111827',
-    marginBottom: 6,
+    marginBottom: 8,
+    textAlign: 'center',
   },
   emptyText: {
-    color: '#6B7280',
     fontSize: 15,
+    lineHeight: 22,
+    marginBottom: 20,
     textAlign: 'center',
-    marginBottom: 12,
   },
   startButton: {
     backgroundColor: '#2563EB',
     borderRadius: 12,
-    paddingHorizontal: 18,
-    paddingVertical: 10,
+    paddingHorizontal: 24,
+    paddingVertical: 14,
   },
   startButtonText: {
     color: '#FFFFFF',
     fontWeight: '700',
-    fontSize: 15,
+    fontSize: 16,
+  },
+  sectionHeader: {
+    marginBottom: 16,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '700',
   },
   itemCard: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
     padding: 16,
+    borderRadius: 16,
+    borderWidth: 1,
     marginBottom: 12,
-    shadowColor: '#000',
-    shadowOpacity: 0.05,
-    shadowRadius: 5,
-    elevation: 1,
   },
   itemTopRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8,
+    gap: 12,
+    marginBottom: 12,
+  },
+  itemIconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(37, 99, 235, 0.1)',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   name: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#2563EB',
-  },
-  status: {
-    fontSize: 12,
-    color: '#15803D',
-    backgroundColor: '#DCFCE7',
-    borderRadius: 999,
-    paddingHorizontal: 10,
-    paddingVertical: 3,
-    overflow: 'hidden',
-    textTransform: 'capitalize',
     fontWeight: '700',
+    flex: 1,
+  },
+  statusBadge: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 999,
+  },
+  statusText: {
+    color: '#15803D',
+    fontSize: 12,
+    fontWeight: '700',
+    textTransform: 'capitalize',
   },
   metaRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 8,
+    marginBottom: 12,
     flexWrap: 'wrap',
-    marginBottom: 8,
   },
-  trackingTypeIndicator: {
-    backgroundColor: '#E2E8F0',
-    color: '#334155',
+  typeBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 3,
     borderRadius: 6,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    marginRight: 6,
+    borderWidth: 1,
+  },
+  typeBadgeText: {
     fontSize: 11,
     fontWeight: '700',
-    overflow: 'hidden',
-  },
-  trackingTypeBadge: {
-    backgroundColor: '#DBEAFE',
-    color: '#1D4ED8',
-    borderRadius: 999,
-    paddingHorizontal: 10,
-    paddingVertical: 3,
-    marginRight: 8,
-    overflow: 'hidden',
-    textTransform: 'capitalize',
-    fontWeight: '700',
-    fontSize: 12,
   },
   metaText: {
     fontSize: 14,
-    color: '#6B7280',
+  },
+  durationRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 12,
   },
   durationText: {
     fontSize: 15,
     fontWeight: '700',
-    color: '#0F172A',
-    marginBottom: 8,
   },
   metricsSummaryCard: {
-    backgroundColor: '#F8FAFC',
-    borderRadius: 10,
-    padding: 10,
+    padding: 12,
+    borderRadius: 12,
+    borderWidth: 1,
   },
   metricsSummaryLabel: {
     fontSize: 12,
-    color: '#64748B',
-    marginBottom: 4,
     fontWeight: '600',
+    marginBottom: 4,
   },
   metricsSummaryText: {
     fontSize: 13,
-    color: '#334155',
     lineHeight: 18,
   },
 });
