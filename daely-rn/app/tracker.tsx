@@ -5,6 +5,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import PageHeader from './components/PageHeader';
 import { SPORT_DISCIPLINES, SportDiscipline } from './constants/sport-disciplines';
+import { useTheme } from '@/hooks/use-theme';
 
 type FilterChip = 'Alles' | 'Kracht' | 'Mind & Mobility' | 'Duur & afstand' | 'Teamsport' | 'Score' | 'Skill' | 'Wellness';
 
@@ -14,6 +15,7 @@ const POPULAR_DISCIPLINE_IDS = ['fitness', 'hyrox', 'yoga', 'fietssporten', 'voe
 
 export default function TrackerScreen() {
   const router = useRouter();
+  const theme = useTheme();
   const [query, setQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState<FilterChip>('Alles');
 
@@ -47,28 +49,32 @@ export default function TrackerScreen() {
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <PageHeader title="DAELY Tracker" />
-      <Text style={styles.description}>
-        Kies je discipline en track je activiteit op jouw manier.
-      </Text>
+    <ScrollView style={[styles.container, { backgroundColor: theme.background }]} showsVerticalScrollIndicator={false}>
+      <PageHeader
+        title="DAELY Tracker"
+        onSettingsPress={() => router.push('/(tabs)/athlete')}
+        onSearchPress={() => router.push('/nutrition/search')}
+        onCartPress={() => router.push('/(tabs)/cart')}
+      />
 
-      <View style={styles.heroCard}>
-        <Text style={styles.heroTitle}>Start je activiteit</Text>
-        <Text style={styles.heroSubtitle}>
-          Van krachttraining tot teamsport en herstel: DAELY past de tracking aan op jouw discipline.
+      <View style={[styles.heroCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+        <View style={styles.iconContainer}>
+          <MaterialCommunityIcons name="timer" size={32} color="#2563EB" />
+        </View>
+        <Text style={[styles.heroTitle, { color: theme.titleColor }]}>Start activiteit</Text>
+        <Text style={[styles.heroSubtitle, { color: theme.subtitleColor }]}>
+          Kies je discipline en begin met meten.
         </Text>
-        <Text style={styles.heroHint}>Kies hieronder je sport.</Text>
       </View>
 
-      <View style={styles.searchWrap}>
-        <MaterialCommunityIcons name="magnify" size={20} color="#64748B" />
+      <View style={[styles.searchWrap, { backgroundColor: theme.card, borderColor: theme.border }]}>
+        <MaterialCommunityIcons name="magnify" size={20} color={theme.subtitleColor} />
         <TextInput
           value={query}
           onChangeText={setQuery}
           placeholder="Zoek discipline"
-          placeholderTextColor="#94A3B8"
-          style={styles.searchInput}
+          placeholderTextColor={theme.subtitleColor}
+          style={[styles.searchInput, { color: theme.titleColor }]}
         />
       </View>
 
@@ -76,22 +82,27 @@ export default function TrackerScreen() {
         {FILTER_CHIPS.map((chip) => (
           <Pressable
             key={chip}
-            style={[styles.filterChip, activeFilter === chip ? styles.filterChipActive : null]}
+            style={[
+              styles.filterChip,
+              { backgroundColor: theme.background, borderColor: theme.border },
+              activeFilter === chip && styles.filterChipActive,
+              activeFilter === chip && { backgroundColor: '#2563EB', borderColor: '#2563EB' },
+            ]}
             onPress={() => setActiveFilter(chip)}
           >
-            <Text style={[styles.filterChipText, activeFilter === chip ? styles.filterChipTextActive : null]}>{chip}</Text>
+            <Text style={[styles.filterChipText, { color: theme.subtitleColor }, activeFilter === chip && styles.filterChipTextActive]}>{chip}</Text>
           </Pressable>
         ))}
       </ScrollView>
 
       <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>Populaire disciplines</Text>
+        <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Populaire disciplines</Text>
       </View>
       <View style={styles.popularWrap}>
         {popularDisciplines.map((discipline) => (
           <Pressable
             key={discipline.id}
-            style={styles.popularPill}
+            style={[styles.popularPill, { backgroundColor: '#DBEAFE' }]}
             onPress={() => openDiscipline(discipline.id)}
           >
             <Text style={styles.popularPillText}>{discipline.name}</Text>
@@ -100,13 +111,13 @@ export default function TrackerScreen() {
       </View>
 
       <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>Alle disciplines</Text>
+        <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Alle disciplines</Text>
       </View>
 
       {filteredDisciplines.length === 0 ? (
-        <View style={styles.emptyCard}>
-          <Text style={styles.emptyTitle}>Geen disciplines gevonden.</Text>
-          <Pressable style={styles.clearBtn} onPress={clearFilters}>
+        <View style={[styles.emptyCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+          <Text style={[styles.emptyTitle, { color: theme.titleColor }]}>Geen disciplines gevonden</Text>
+          <Pressable style={[styles.clearBtn, { backgroundColor: '#2563EB' }]} onPress={clearFilters}>
             <Text style={styles.clearBtnText}>Filters wissen</Text>
           </Pressable>
         </View>
@@ -115,15 +126,17 @@ export default function TrackerScreen() {
           {filteredDisciplines.map((discipline) => (
             <Pressable
               key={discipline.id}
-              style={styles.card}
+              style={[styles.card, { backgroundColor: theme.card, borderColor: theme.border }]}
               onPress={() => openDiscipline(discipline.id)}
             >
-              <Text style={styles.cardTitle}>{discipline.name}</Text>
-              <Text style={styles.categoryBadge}>{getFilterLabel(discipline)}</Text>
-              <Text style={styles.cardSubtitle}>Tracking: {discipline.trackingType}</Text>
-              <Text style={styles.previewText}>{getTrackingPreview(discipline.trackingType)}</Text>
+              <Text style={[styles.cardTitle, { color: theme.titleColor }]}>{discipline.name}</Text>
+              <View style={[styles.categoryBadge, { backgroundColor: '#EEF2FF' }]}>
+                <Text style={styles.categoryBadgeText}>{getFilterLabel(discipline)}</Text>
+              </View>
+              <Text style={[styles.cardSubtitle, { color: theme.subtitleColor }]}>Tracking: {discipline.trackingType}</Text>
+              <Text style={[styles.previewText, { color: theme.subtitleColor }]}>{getTrackingPreview(discipline.trackingType)}</Text>
               <View style={styles.cardFooter}>
-                <Text style={styles.cardCategory}>{discipline.category}</Text>
+                <Text style={[styles.cardCategory, { color: theme.subtitleColor }]}>{discipline.category}</Text>
                 <Text style={styles.startCta}>Start</Text>
               </View>
             </Pressable>
@@ -168,72 +181,65 @@ function getTrackingPreview(trackingType: SportDiscipline['trackingType']) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F3F4F6',
-    padding: 16,
-  },
-  description: {
-    fontSize: 16,
-    color: '#4B5563',
-    marginBottom: 16,
+    paddingTop: 20,
   },
   heroCard: {
-    marginBottom: 16,
-    backgroundColor: '#0F172A',
-    borderRadius: 14,
-    padding: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+    marginHorizontal: 16,
+    marginBottom: 24,
+    padding: 20,
+    borderRadius: 16,
+    borderWidth: 1,
+  },
+  iconContainer: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: 'rgba(37, 99, 235, 0.1)',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   heroTitle: {
-    color: '#FFFFFF',
-    fontSize: 24,
-    fontWeight: '800',
-    marginBottom: 6,
+    fontSize: 22,
+    fontWeight: '700',
+    flex: 1,
   },
   heroSubtitle: {
-    color: '#CBD5E1',
-    fontSize: 14,
-    lineHeight: 20,
-    marginBottom: 8,
-  },
-  heroHint: {
-    color: '#93C5FD',
-    fontSize: 13,
-    fontWeight: '700',
+    fontSize: 15,
+    lineHeight: 22,
   },
   searchWrap: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 24,
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    shadowColor: '#000',
-    shadowOpacity: 0.04,
-    shadowRadius: 2,
-    elevation: 1,
+    marginHorizontal: 16,
+    marginBottom: 20,
+    borderRadius: 14,
+    borderWidth: 1,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    gap: 10,
   },
   searchInput: {
     flex: 1,
-    marginLeft: 8,
     fontSize: 15,
-    color: '#0F172A',
   },
   filtersRow: {
-    paddingBottom: 8,
-    marginBottom: 12,
-    gap: 8,
+    paddingHorizontal: 16,
+    paddingBottom: 12,
+    marginBottom: 8,
+    gap: 10,
   },
   filterChip: {
-    backgroundColor: '#E2E8F0',
     borderRadius: 999,
-    paddingHorizontal: 12,
-    paddingVertical: 7,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderWidth: 1,
   },
   filterChipActive: {
-    backgroundColor: '#2563EB',
   },
   filterChipText: {
-    color: '#334155',
     fontSize: 13,
     fontWeight: '600',
   },
@@ -241,24 +247,24 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   sectionHeader: {
-    marginBottom: 8,
+    paddingHorizontal: 16,
+    marginBottom: 12,
   },
   sectionTitle: {
-    fontSize: 17,
-    fontWeight: '800',
-    color: '#1F2937',
+    fontSize: 18,
+    fontWeight: '700',
   },
   popularWrap: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8,
-    marginBottom: 14,
+    paddingHorizontal: 16,
+    gap: 10,
+    marginBottom: 20,
   },
   popularPill: {
-    backgroundColor: '#DBEAFE',
     borderRadius: 999,
-    paddingHorizontal: 12,
-    paddingVertical: 7,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
   },
   popularPillText: {
     color: '#1D4ED8',
@@ -266,75 +272,67 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   emptyCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    padding: 16,
+    marginHorizontal: 16,
+    borderRadius: 16,
+    padding: 24,
     alignItems: 'center',
-    marginTop: 8,
-    marginBottom: 16,
+    borderWidth: 1,
+    marginBottom: 24,
   },
   emptyTitle: {
-    color: '#475569',
-    fontSize: 16,
-    marginBottom: 10,
+    fontSize: 18,
     fontWeight: '700',
+    marginBottom: 12,
   },
   clearBtn: {
-    backgroundColor: '#2563EB',
-    borderRadius: 10,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    borderRadius: 12,
+    paddingHorizontal: 20,
+    paddingVertical: 12,
   },
   clearBtnText: {
     color: '#FFFFFF',
     fontWeight: '700',
-    fontSize: 13,
+    fontSize: 15,
   },
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
+    paddingHorizontal: 16,
     gap: 12,
-    marginBottom: 18,
+    marginBottom: 24,
   },
   card: {
     width: '48%',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    padding: 12,
-    shadowColor: '#000',
-    shadowOpacity: 0.08,
-    shadowRadius: 4,
-    elevation: 2,
+    borderRadius: 16,
+    padding: 14,
+    borderWidth: 1,
   },
   cardTitle: {
-    fontSize: 15,
-    fontWeight: '800',
-    color: '#0F172A',
-    marginBottom: 6,
+    fontSize: 16,
+    fontWeight: '700',
+    marginBottom: 8,
   },
   categoryBadge: {
     alignSelf: 'flex-start',
-    backgroundColor: '#EEF2FF',
-    color: '#4338CA',
     borderRadius: 999,
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    overflow: 'hidden',
-    fontSize: 11,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    marginBottom: 8,
+  },
+  categoryBadgeText: {
+    color: '#4338CA',
+    fontSize: 12,
     fontWeight: '700',
-    marginBottom: 6,
   },
   cardSubtitle: {
     fontSize: 13,
-    color: '#6B7280',
     marginBottom: 4,
   },
   previewText: {
     fontSize: 12,
-    color: '#334155',
     lineHeight: 17,
     minHeight: 34,
-    marginBottom: 8,
+    marginBottom: 12,
   },
   cardFooter: {
     flexDirection: 'row',
@@ -342,12 +340,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   cardCategory: {
-    fontSize: 11,
-    color: '#64748B',
+    fontSize: 12,
   },
   startCta: {
     color: '#2563EB',
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '800',
   },
 });
