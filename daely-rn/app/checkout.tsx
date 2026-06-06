@@ -8,6 +8,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useCartStore } from './store/cartStore';
 import PageHeader from './components/PageHeader';
@@ -154,14 +155,27 @@ export default function CheckoutScreen() {
   };
 
   return (
-    <View style={[styles.screen, { backgroundColor: theme.background }]}> 
+    <View style={[styles.screen, { backgroundColor: theme.background }]}>
       <PageHeader
-        title="Checkout"
+        title="Afrekenen"
         onCartPress={() => router.push('/(tabs)/cart')}
         showSearch={false}
         showSettings={false}
       />
       <ScrollView contentContainerStyle={styles.content}>
+        <View style={[styles.heroCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+          <View style={styles.iconContainer}>
+            <MaterialCommunityIcons name="cart-check" size={32} color="#2563EB" />
+          </View>
+          <Text style={[styles.heroTitle, { color: theme.titleColor }]}>Afrekenen</Text>
+          <Text style={[styles.heroText, { color: theme.subtitleColor }]}>
+            Controleer je gegevens en rond je conceptbestelling af.
+          </Text>
+          <View style={[styles.statusBadge, { backgroundColor: '#F59E0B' }]}>
+            <Text style={styles.statusBadgeText}>Testmodus</Text>
+          </View>
+        </View>
+
         <View style={[styles.summaryCard, { backgroundColor: theme.card, borderColor: theme.border }]}> 
           <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Besteloverzicht</Text>
           <View style={styles.row}> 
@@ -196,7 +210,13 @@ export default function CheckoutScreen() {
         </View>
 
         <View style={[styles.formSection, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Klantgegevens</Text>
+          <View style={styles.sectionHeader}>
+            <MaterialCommunityIcons name="account" size={20} color="#2563EB" />
+            <View style={styles.sectionHeaderText}>
+              <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Klantgegevens</Text>
+              <Text style={[styles.sectionSubtitle, { color: theme.subtitleColor }]}>Vul je contactgegevens in</Text>
+            </View>
+          </View>
           <TextInput
             style={[styles.input, { backgroundColor: theme.background, borderColor: theme.border, color: theme.titleColor }]}
             placeholder="Voornaam *"
@@ -231,7 +251,13 @@ export default function CheckoutScreen() {
         </View>
 
         <View style={[styles.formSection, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Afleveradres</Text>
+          <View style={styles.sectionHeader}>
+            <MaterialCommunityIcons name="map-marker" size={20} color="#2563EB" />
+            <View style={styles.sectionHeaderText}>
+              <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Afleveradres</Text>
+              <Text style={[styles.sectionSubtitle, { color: theme.subtitleColor }]}>Waar moet je bestelling heen?</Text>
+            </View>
+          </View>
           <TextInput
             style={[styles.input, { backgroundColor: theme.background, borderColor: theme.border, color: theme.titleColor }]}
             placeholder="Straat + huisnummer *"
@@ -263,7 +289,13 @@ export default function CheckoutScreen() {
         </View>
 
         <View style={[styles.formSection, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Betaalmethode</Text>
+          <View style={styles.sectionHeader}>
+            <MaterialCommunityIcons name="credit-card" size={20} color="#2563EB" />
+            <View style={styles.sectionHeaderText}>
+              <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Betaalmethode</Text>
+              <Text style={[styles.sectionSubtitle, { color: theme.subtitleColor }]}>Kies je betaalmethode</Text>
+            </View>
+          </View>
           <View style={styles.paymentMethodsWrap}>
             {(['ideal', 'card', 'apple_pay', 'klarna', 'manual_placeholder'] as PaymentMethod[]).map((method) => (
               <Pressable
@@ -275,12 +307,24 @@ export default function CheckoutScreen() {
                 ]}
                 onPress={() => setSelectedPaymentMethod(method)}
               >
-                <Text style={[
-                  styles.paymentMethodName,
-                  { color: selectedPaymentMethod === method ? '#2563EB' : theme.titleColor }
-                ]}>
-                  {method === 'ideal' ? 'iDEAL' : method === 'card' ? 'Kaart' : method === 'apple_pay' ? 'Apple Pay' : method === 'klarna' ? 'Klarna' : 'Later betalen / Binnenkort'}
-                </Text>
+                <View style={styles.paymentMethodLeft}>
+                  <MaterialCommunityIcons
+                    name={
+                      method === 'ideal' ? 'bank' :
+                      method === 'card' ? 'credit-card' :
+                      method === 'apple_pay' ? 'apple' :
+                      method === 'klarna' ? 'tag' : 'clock'
+                    }
+                    size={20}
+                    color={selectedPaymentMethod === method ? '#2563EB' : theme.subtitleColor}
+                  />
+                  <Text style={[
+                    styles.paymentMethodName,
+                    { color: selectedPaymentMethod === method ? '#2563EB' : theme.titleColor }
+                  ]}>
+                    {method === 'ideal' ? 'iDEAL' : method === 'card' ? 'Kaart' : method === 'apple_pay' ? 'Apple Pay' : method === 'klarna' ? 'Klarna' : 'Later betalen / Binnenkort'}
+                  </Text>
+                </View>
                 {selectedPaymentMethod === method && (
                   <View style={styles.selectedIndicator} />
                 )}
@@ -316,16 +360,66 @@ const styles = StyleSheet.create({
     padding: 16,
     paddingBottom: 40,
   },
-  summaryCard: {
-    borderRadius: 20,
+  heroCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+    padding: 20,
+    borderRadius: 16,
     borderWidth: 1,
-    padding: 18,
-    marginBottom: 16,
+    marginBottom: 24,
+  },
+  iconContainer: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: 'rgba(37, 99, 235, 0.1)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  heroTitle: {
+    fontSize: 22,
+    fontWeight: '700',
+    flex: 1,
+  },
+  heroText: {
+    fontSize: 15,
+    lineHeight: 22,
+  },
+  statusBadge: {
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 999,
+    alignSelf: 'flex-start',
+  },
+  statusBadgeText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  summaryCard: {
+    borderRadius: 16,
+    borderWidth: 1,
+    padding: 20,
+    marginBottom: 20,
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: '800',
-    marginBottom: 12,
+    fontWeight: '700',
+    marginBottom: 4,
+  },
+  sectionSubtitle: {
+    fontSize: 14,
+    marginBottom: 16,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginBottom: 16,
+  },
+  sectionHeaderText: {
+    flex: 1,
   },
   row: {
     flexDirection: 'row',
@@ -349,9 +443,9 @@ const styles = StyleSheet.create({
     fontSize: 13,
   },
   partnerSection: {
-    borderRadius: 20,
+    borderRadius: 16,
     borderWidth: 1,
-    padding: 18,
+    padding: 20,
     marginBottom: 24,
   },
   partnerRow: {
@@ -359,7 +453,7 @@ const styles = StyleSheet.create({
   },
   partnerName: {
     fontSize: 16,
-    fontWeight: '800',
+    fontWeight: '700',
   },
   partnerMeta: {
     fontSize: 13,
@@ -372,7 +466,7 @@ const styles = StyleSheet.create({
   },
   primaryButtonText: {
     color: '#fff',
-    fontWeight: '800',
+    fontWeight: '700',
     fontSize: 16,
   },
   disabledButton: {
@@ -387,14 +481,14 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   formSection: {
-    borderRadius: 20,
+    borderRadius: 16,
     borderWidth: 1,
-    padding: 18,
-    marginBottom: 16,
+    padding: 20,
+    marginBottom: 20,
   },
   input: {
     borderWidth: 1,
-    borderRadius: 10,
+    borderRadius: 12,
     padding: 14,
     marginBottom: 12,
     fontSize: 15,
@@ -416,7 +510,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   paymentMethodsWrap: {
-    gap: 10,
+    gap: 12,
   },
   paymentMethodCard: {
     borderWidth: 1,
@@ -426,13 +520,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
+  paymentMethodLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
   paymentMethodCardSelected: {
     borderWidth: 2,
     borderColor: '#2563EB',
   },
   paymentMethodName: {
     fontSize: 15,
-    fontWeight: '700',
+    fontWeight: '600',
   },
   selectedIndicator: {
     width: 8,
