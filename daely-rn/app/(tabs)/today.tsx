@@ -13,6 +13,7 @@ import {
   HERO_BACKGROUND_OPTIONS,
   HeroBackgroundOptionId,
 } from '@/constants/hero-background';
+import { TODAY_QUOTES } from '@/constants/today-quotes';
 
 const SHORTCUTS_STORAGE_KEY = 'daely.today.shortcuts.v1';
 
@@ -50,6 +51,27 @@ function formatDuration(seconds: number) {
   const min = Math.floor(seconds / 60);
   const sec = seconds % 60;
   return `${min}m ${sec}s`;
+}
+
+function getTodayQuote() {
+  const now = new Date();
+  const start = new Date(now.getFullYear(), 0, 0);
+  const diff = now.getTime() - start.getTime();
+  const dayOfYear = Math.floor(diff / (1000 * 60 * 60 * 24));
+  
+  const safeQuotes = TODAY_QUOTES.filter(q => q.status === 'safe');
+  if (safeQuotes.length === 0) {
+    return {
+      id: 'fallback',
+      text: 'Vandaag hoeft niet perfect te zijn. Wel bewust, actief en beter dan gisteren.',
+      category: 'mindset',
+      sourceType: 'daely_original',
+      status: 'safe',
+    };
+  }
+  
+  const quoteIndex = dayOfYear % safeQuotes.length;
+  return safeQuotes[quoteIndex];
 }
 
 function formatDateTime(value: string) {
@@ -98,6 +120,8 @@ export default function TodayScreen() {
   const [isFitbitConnected, setIsFitbitConnected] = useState(false);
   const [shortcuts, setShortcuts] = useState<ShortcutId[]>(DEFAULT_SHORTCUTS);
   const [showShortcutPicker, setShowShortcutPicker] = useState(false);
+
+  const todayQuote = useMemo(() => getTodayQuote(), []);
 
   useEffect(() => {
     if (params.open === 'shortcuts') {
@@ -219,7 +243,7 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
                 </View>
                 <View style={styles.heroContent}>
                   <Text style={styles.welcomeTitle}>{heroGreeting}</Text>
-                  <Text style={styles.welcomeSubtitle}>Vandaag hoeft niet perfect te zijn. Wel bewust, actief en beter dan gisteren.</Text>
+                  <Text style={styles.welcomeSubtitle}>{todayQuote.text}</Text>
                 </View>
               </View>
             </View>
@@ -233,7 +257,7 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
                 </View>
                 <View style={styles.heroContent}>
                   <Text style={styles.welcomeTitle}>{heroGreeting}</Text>
-                  <Text style={styles.welcomeSubtitle}>Vandaag hoeft niet perfect te zijn. Wel bewust, actief en beter dan gisteren.</Text>
+                  <Text style={styles.welcomeSubtitle}>{todayQuote.text}</Text>
                 </View>
               </View>
             </View>
