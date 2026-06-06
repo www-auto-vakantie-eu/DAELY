@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Text, StyleSheet, ScrollView, Pressable, View } from 'react-native';
+import { Platform, Text, StyleSheet, ScrollView, Pressable, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import PageHeader from './components/PageHeader';
 import { getActivities, Activity } from 'services/activity-storage';
 import { useTheme } from '@/hooks/use-theme';
+import { AppBottomMenu } from '@/components/AppBottomMenu';
 
 export default function ActivitiesScreen() {
   const [activities, setActivities] = useState<Activity[]>([]);
@@ -25,10 +26,11 @@ export default function ActivitiesScreen() {
   const lastActivity = activities[0];
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: theme.background }]} showsVerticalScrollIndicator={false}>
+    <View style={[styles.screen, { backgroundColor: theme.background }]}>
+      <ScrollView contentContainerStyle={[styles.content, { paddingBottom: Platform.OS === 'ios' ? 80 : 60 }]} showsVerticalScrollIndicator={false}>
       <PageHeader title="Activiteiten" />
 
-      <View style={styles.content}>
+      <View style={styles.contentWrapper}>
         <View style={[styles.heroCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
           <View style={styles.iconContainer}>
             <MaterialCommunityIcons name="timer" size={32} color="#2563EB" />
@@ -125,6 +127,8 @@ export default function ActivitiesScreen() {
         )}
       </View>
     </ScrollView>
+    <AppBottomMenu activeRoute="today" />
+  </View>
   );
 }
 
@@ -199,13 +203,15 @@ function formatDate(dateStr: string) {
 }
 
 const styles = StyleSheet.create({
-  container: {
+  screen: {
     flex: 1,
   },
   content: {
     paddingHorizontal: 16,
     paddingTop: 20,
-    paddingBottom: 24,
+  },
+  contentWrapper: {
+    gap: 16,
   },
   heroCard: {
     flexDirection: 'row',

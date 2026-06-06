@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
 import PageHeader from '../components/PageHeader';
+import { AppBottomMenu } from '@/components/AppBottomMenu';
 import { CommerceOrder } from '@/app/constants/commerce';
 import { getCommerceOrders } from '@/services/commerce-storage';
 
@@ -122,7 +123,7 @@ export default function OrderDetailScreen() {
         showSearch={false}
         showSettings={false}
       />
-      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView contentContainerStyle={[styles.content, { paddingBottom: Platform.OS === 'ios' ? 80 : 60 }]} showsVerticalScrollIndicator={false}>
         <View style={[styles.heroCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
           <View style={styles.iconContainer}>
             <MaterialCommunityIcons name="package-variant" size={32} color="#2563EB" />
@@ -286,6 +287,7 @@ export default function OrderDetailScreen() {
           </Pressable>
         </View>
       </ScrollView>
+      <AppBottomMenu activeRoute="shop" />
     </View>
   );
 }
@@ -319,7 +321,6 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 16,
-    paddingBottom: 24,
   },
   card: {
     marginBottom: 20,

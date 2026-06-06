@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import {
   Image,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -12,6 +13,7 @@ import { useRouter } from 'expo-router';
 import { useCartStore } from './store/cartStore';
 import PageHeader from './components/PageHeader';
 import { useTheme } from '@/hooks/use-theme';
+import { AppBottomMenu } from '@/components/AppBottomMenu';
 import {
   COMMERCE_PRODUCTS,
   CommerceProduct,
@@ -217,7 +219,7 @@ export default function ShopScreen() {
         showSearch={false}
         showSettings={false}
       />
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView contentContainerStyle={[styles.content, { paddingBottom: Platform.OS === 'ios' ? 80 : 60 }]}>
         <View style={[styles.hero, { backgroundColor: theme.card, borderColor: theme.border }]}>
           <Text style={[styles.heroTitle, { color: theme.titleColor }]}>Ontdek sportproducten van DAELY partners.</Text>
           <Text style={[styles.heroDescription, { color: theme.subtitleColor }]}>Kleding, accessoires en supplementen in één winkelervaring. Gebruik jouw influencercode voor extra korting.</Text>
@@ -413,6 +415,7 @@ export default function ShopScreen() {
           );
         })}
       </ScrollView>
+      <AppBottomMenu activeRoute="shop" />
     </View>
   );
 }
@@ -423,7 +426,6 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 16,
-    paddingBottom: 40,
   },
   hero: {
     marginBottom: 16,
