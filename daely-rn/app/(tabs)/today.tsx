@@ -280,7 +280,6 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
 
       {/* Nieuw blok: Jouw dag vandaag */}
       <View style={[styles.sectionCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-        <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Jouw dag vandaag</Text>
         <View style={styles.dailyStatusRow}>
           <View style={[styles.dailyStatusItem, { backgroundColor: theme.background, borderColor: theme.border }]}>
             <MaterialCommunityIcons name="dumbbell" size={20} color="#2563EB" />
