@@ -14,6 +14,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
 import { useState } from 'react';
+import PageHeader from '../components/PageHeader';
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -386,8 +387,16 @@ export default function DisciplineScreen() {
 
   if (!discipline) {
     return (
-      <View style={[styles.screen, { backgroundColor: theme.background }]}> 
-        <Text style={[styles.errorText, { color: theme.titleColor }]}>Discipline niet gevonden</Text>
+      <View style={[styles.screen, { backgroundColor: theme.background }]}>
+        <PageHeader title="Discipline" onSettingsPress={() => router.push('/(tabs)/athlete')} onSearchPress={() => router.push('/nutrition/search')} onCartPress={() => router.push('/(tabs)/cart')} />
+        <View style={[styles.fallbackCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+          <MaterialCommunityIcons name="help-circle-outline" size={48} color={theme.subtitleColor} />
+          <Text style={[styles.fallbackTitle, { color: theme.titleColor }]}>Discipline niet gevonden</Text>
+          <Text style={[styles.fallbackText, { color: theme.subtitleColor }]}>Deze discipline bestaat niet of is niet beschikbaar.</Text>
+          <Pressable style={[styles.fallbackButton, { backgroundColor: '#2563EB' }]} onPress={() => router.push('/(tabs)/disciplines')}>
+            <Text style={styles.fallbackButtonText}>Bekijk disciplines</Text>
+          </Pressable>
+        </View>
       </View>
     );
   }
@@ -421,8 +430,40 @@ export default function DisciplineScreen() {
           </LinearGradient>
         </ImageBackground>
 
+        {/* ── SNELLE ACTIES ── */}
+        <View style={[styles.quickActionsRow, { backgroundColor: theme.background }]}>
+          <Pressable
+            style={[styles.quickActionButton, { backgroundColor: theme.card, borderColor: theme.border }]}
+            onPress={() => router.push('/tracker')}
+          >
+            <MaterialCommunityIcons name="play-circle" size={20} color="#2563EB" />
+            <Text style={[styles.quickActionText, { color: theme.titleColor }]}>Start activiteit</Text>
+          </Pressable>
+          <Pressable
+            style={[styles.quickActionButton, { backgroundColor: theme.card, borderColor: theme.border }]}
+            onPress={() => router.push('/workouts')}
+          >
+            <MaterialCommunityIcons name="calendar-check" size={20} color="#059669" />
+            <Text style={[styles.quickActionText, { color: theme.titleColor }]}>Workouts</Text>
+          </Pressable>
+          <Pressable
+            style={[styles.quickActionButton, { backgroundColor: theme.card, borderColor: theme.border }]}
+            onPress={() => router.push('/exercises' as any)}
+          >
+            <MaterialCommunityIcons name="dumbbell" size={20} color="#F59E0B" />
+            <Text style={[styles.quickActionText, { color: theme.titleColor }]}>Oefeningen</Text>
+          </Pressable>
+          <Pressable
+            style={[styles.quickActionButton, { backgroundColor: theme.card, borderColor: theme.border }]}
+            onPress={() => router.push('/challenges' as any)}
+          >
+            <MaterialCommunityIcons name="trophy" size={20} color="#8B5CF6" />
+            <Text style={[styles.quickActionText, { color: theme.titleColor }]}>Challenges</Text>
+          </Pressable>
+        </View>
+
         {/* ── TAB KNOPPEN ── */}
-        <View style={[styles.tabRow, { backgroundColor: theme.background }]}> 
+        <View style={[styles.tabRow, { backgroundColor: theme.background }]}>
           {(['workouts', 'oefeningen', 'programmas'] as const).map((tab) => {
             const isActive = activeTab === tab;
             const label = tab === 'programmas' ? 'Programma\'s' : tab.charAt(0).toUpperCase() + tab.slice(1);
@@ -499,8 +540,9 @@ export default function DisciplineScreen() {
                     { backgroundColor: theme.card, borderColor: theme.border },
                     pressed && styles.cardPressed,
                   ]}
+                  onPress={() => router.push('/tracker')}
                 >
-                  <View style={[styles.workoutIconBox, { backgroundColor: workout.color + '22' }]}> 
+                  <View style={[styles.workoutIconBox, { backgroundColor: workout.color + '22' }]}>
                     <MaterialCommunityIcons name={workout.icon as any} size={26} color={workout.color} />
                   </View>
                   <View style={styles.workoutInfo}>
@@ -527,17 +569,29 @@ export default function DisciplineScreen() {
             </>
           )}
           {activeTab === 'oefeningen' && (
-            <View style={[styles.emptyState, { borderColor: theme.border }]}> 
+            <View style={[styles.emptyState, { borderColor: theme.border }]}>
               <MaterialCommunityIcons name="dumbbell" size={48} color={theme.subtitleColor} />
               <Text style={[styles.emptyTitle, { color: theme.titleColor }]}>Oefeningen</Text>
               <Text style={[styles.emptySubtitle, { color: theme.subtitleColor }]}>Hier komen de oefeningen voor {discipline.title}.</Text>
+              <Pressable
+                style={[styles.emptyCtaButton, { backgroundColor: '#2563EB' }]}
+                onPress={() => router.push('/exercises' as any)}
+              >
+                <Text style={styles.emptyCtaText}>Bekijk oefeningen</Text>
+              </Pressable>
             </View>
           )}
           {activeTab === 'programmas' && (
-            <View style={[styles.emptyState, { borderColor: theme.border }]}> 
+            <View style={[styles.emptyState, { borderColor: theme.border }]}>
               <MaterialCommunityIcons name="clipboard-list-outline" size={48} color={theme.subtitleColor} />
               <Text style={[styles.emptyTitle, { color: theme.titleColor }]}>Programma&apos;s</Text>
               <Text style={[styles.emptySubtitle, { color: theme.subtitleColor }]}>Hier komen de programma&apos;s voor {discipline.title}.</Text>
+              <Pressable
+                style={[styles.emptyCtaButton, { backgroundColor: '#F59E0B' }]}
+                onPress={() => router.push('/workouts')}
+              >
+                <Text style={styles.emptyCtaText}>Bekijk workouts</Text>
+              </Pressable>
             </View>
           )}
         </View>
@@ -563,7 +617,10 @@ const styles = StyleSheet.create({
   heroTextBlock: { gap: 4 },
   heroTitle: { fontSize: 48, fontWeight: '900', letterSpacing: -1.5, lineHeight: 50, color: '#FFFFFF' },
   heroSubtitle: { marginTop: 4, fontSize: 14, fontWeight: '500', letterSpacing: 1, color: 'rgba(255,255,255,0.80)' },
-  tabRow: { flexDirection: 'row', paddingHorizontal: 16, paddingTop: 16, paddingBottom: 4, gap: 10 },
+  quickActionsRow: { flexDirection: 'row', paddingHorizontal: 16, paddingTop: 16, paddingBottom: 12, gap: 10 },
+  quickActionButton: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: 10, borderRadius: 12, borderWidth: 1 },
+  quickActionText: { fontSize: 12, fontWeight: '600' },
+  tabRow: { flexDirection: 'row', paddingHorizontal: 16, paddingTop: 4, paddingBottom: 4, gap: 10 },
   tabButton: { flex: 1, paddingVertical: 10, borderRadius: 12, borderWidth: 1.5, alignItems: 'center' },
   tabLabel: { fontSize: 13, fontWeight: '700' },
   searchSection: { paddingHorizontal: 16, paddingTop: 14, paddingBottom: 4 },
@@ -587,6 +644,13 @@ const styles = StyleSheet.create({
   emptyState: { marginTop: 24, alignItems: 'center', paddingVertical: 56, paddingHorizontal: 24, borderRadius: 20, borderWidth: 1.5, borderStyle: 'dashed', gap: 12 },
   emptyTitle: { fontSize: 18, fontWeight: '700' },
   emptySubtitle: { fontSize: 14, textAlign: 'center', lineHeight: 20 },
+  emptyCtaButton: { paddingHorizontal: 24, paddingVertical: 12, borderRadius: 12, marginTop: 8 },
+  emptyCtaText: { color: '#FFFFFF', fontWeight: '700', fontSize: 15 },
+  fallbackCard: { marginHorizontal: 16, marginTop: 24, padding: 32, borderRadius: 16, borderWidth: 1, alignItems: 'center', gap: 12 },
+  fallbackTitle: { fontSize: 20, fontWeight: '700' },
+  fallbackText: { fontSize: 15, textAlign: 'center', lineHeight: 22 },
+  fallbackButton: { paddingHorizontal: 24, paddingVertical: 14, borderRadius: 12 },
+  fallbackButtonText: { color: '#FFFFFF', fontWeight: '700', fontSize: 16 },
   exerciseCard: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 14, borderRadius: 14, borderWidth: 1, marginBottom: 10 },
   exerciseInfo: { flex: 1 },
   exerciseName: { fontSize: 15, fontWeight: '600', marginBottom: 3 },
