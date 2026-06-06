@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
 import PageHeader from '../components/PageHeader';
@@ -121,7 +122,22 @@ export default function OrderDetailScreen() {
         showSearch={false}
         showSettings={false}
       />
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+        <View style={[styles.heroCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+          <View style={styles.iconContainer}>
+            <MaterialCommunityIcons name="package-variant" size={32} color="#2563EB" />
+          </View>
+          <View style={styles.heroContent}>
+            <Text style={[styles.heroTitle, { color: theme.titleColor }]}>Bestelling {order.id.replace('order-', '')}</Text>
+            <Text style={[styles.heroSubtitle, { color: theme.subtitleColor }]}>
+              {new Date(order.createdAt).toLocaleDateString('nl-NL', { day: 'numeric', month: 'long', year: 'numeric' })}
+            </Text>
+          </View>
+          <View style={[styles.statusBadge, { backgroundColor: getStatusBadgeColor(order.status) }]}>
+            <Text style={styles.statusBadgeText}>{formatStatus(order.status)}</Text>
+          </View>
+        </View>
+
         <View style={[styles.card, { backgroundColor: theme.card, borderColor: theme.border }]}>
           <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Ordergegevens</Text>
           <View style={styles.row}>
@@ -274,6 +290,21 @@ export default function OrderDetailScreen() {
   );
 }
 
+function getStatusBadgeColor(status: CommerceOrder['status']) {
+  switch (status) {
+    case 'draft':
+      return '#F59E0B';
+    case 'pending_payment':
+      return '#F59E0B';
+    case 'paid_placeholder':
+      return '#10B981';
+    case 'sent_to_partners_placeholder':
+      return '#2563EB';
+    default:
+      return '#6B7280';
+  }
+}
+
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
@@ -288,18 +319,18 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 16,
-    paddingBottom: 40,
+    paddingBottom: 24,
   },
   card: {
-    marginBottom: 16,
+    marginBottom: 20,
     borderWidth: 1,
     borderRadius: 16,
-    padding: 16,
+    padding: 20,
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: '800',
-    marginBottom: 12,
+    fontWeight: '700',
+    marginBottom: 16,
   },
   row: {
     flexDirection: 'row',
@@ -310,11 +341,10 @@ const styles = StyleSheet.create({
     marginTop: 8,
     paddingTop: 8,
     borderTopWidth: 1,
-    borderTopColor: '#E5E7EB',
+    borderTopColor: '#E2E8F0',
   },
   label: {
     fontSize: 14,
-    color: '#64748B',
   },
   totalLabel: {
     fontSize: 16,
@@ -325,33 +355,34 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   totalValue: {
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: '800',
   },
   title: {
     fontSize: 20,
-    fontWeight: '800',
+    fontWeight: '700',
     marginBottom: 8,
   },
   description: {
-    fontSize: 14,
-    lineHeight: 20,
-    marginBottom: 12,
+    fontSize: 15,
+    lineHeight: 22,
+    marginBottom: 14,
   },
   button: {
-    borderRadius: 14,
+    borderRadius: 12,
     backgroundColor: '#2563EB',
     paddingVertical: 14,
     alignItems: 'center',
+    marginBottom: 12,
   },
   buttonText: {
-    color: '#fff',
+    color: '#FFFFFF',
     fontWeight: '700',
     fontSize: 16,
   },
   secondaryButton: {
-    borderRadius: 14,
     borderWidth: 1,
+    borderRadius: 12,
     paddingVertical: 14,
     alignItems: 'center',
   },
@@ -361,7 +392,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     gap: 12,
-    marginTop: 8,
+    marginTop: 24,
   },
   itemRow: {
     flexDirection: 'row',
@@ -369,39 +400,76 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     paddingBottom: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
+    borderBottomColor: '#E2E8F0',
   },
   itemInfo: {
     flex: 1,
   },
   itemName: {
-    fontSize: 15,
-    fontWeight: '700',
+    fontSize: 16,
+    fontWeight: '600',
     marginBottom: 4,
   },
   itemMeta: {
     fontSize: 13,
   },
   itemTotal: {
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '700',
   },
   partnerRow: {
     marginBottom: 12,
     paddingBottom: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
+    borderBottomColor: '#E2E8F0',
   },
   partnerName: {
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '700',
     marginBottom: 4,
   },
   partnerMeta: {
     fontSize: 13,
-    marginBottom: 4,
   },
   partnerStatus: {
     fontSize: 13,
+  },
+  heroCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+    padding: 20,
+    borderRadius: 16,
+    borderWidth: 1,
+    marginBottom: 24,
+  },
+  iconContainer: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: 'rgba(37, 99, 235, 0.1)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  heroContent: {
+    flex: 1,
+  },
+  heroTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    marginBottom: 4,
+  },
+  heroSubtitle: {
+    fontSize: 14,
+  },
+  statusBadge: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 999,
+  },
+  statusBadgeText: {
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontWeight: '700',
   },
 });

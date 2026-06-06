@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
 import PageHeader from './components/PageHeader';
@@ -37,18 +38,33 @@ export default function MyOrdersScreen() {
   }, []);
 
   return (
-    <View style={[styles.screen, { backgroundColor: theme.background }]}> 
+    <View style={[styles.screen, { backgroundColor: theme.background }]}>
       <PageHeader
-        title="My Orders"
+        title="Mijn bestellingen"
         onCartPress={() => router.push('/(tabs)/cart')}
         showSearch={false}
         showSettings={false}
       />
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+        <View style={[styles.heroCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+          <View style={styles.iconContainer}>
+            <MaterialCommunityIcons name="package-variant" size={32} color="#2563EB" />
+          </View>
+          <Text style={[styles.heroTitle, { color: theme.titleColor }]}>Mijn bestellingen</Text>
+          <Text style={[styles.heroText, { color: theme.subtitleColor }]}>
+            Bekijk je conceptbestellingen, status en partnerverwerking.
+          </Text>
+        </View>
+
         {orders.length === 0 ? (
-          <View style={[styles.card, { backgroundColor: theme.card, borderColor: theme.border }]}> 
-            <Text style={[styles.title, { color: theme.titleColor }]}>Nog geen bestellingen.</Text>
-            <Text style={[styles.description, { color: theme.subtitleColor }]}>Producten en partnerbestellingen komen binnenkort volledig beschikbaar.</Text>
+          <View style={[styles.emptyCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+            <View style={styles.emptyIconContainer}>
+              <MaterialCommunityIcons name="shopping-outline" size={48} color={theme.subtitleColor} />
+            </View>
+            <Text style={[styles.emptyTitle, { color: theme.titleColor }]}>Nog geen bestellingen</Text>
+            <Text style={[styles.emptyText, { color: theme.subtitleColor }]}>
+              Producten en partnerbestellingen komen binnenkort volledig beschikbaar.
+            </Text>
             <Pressable style={styles.shopButton} onPress={() => router.push('/shop')}>
               <Text style={styles.shopButtonText}>Shop openen</Text>
             </Pressable>
@@ -62,16 +78,20 @@ export default function MyOrdersScreen() {
             >
               <View style={styles.orderHeader}>
                 <Text style={[styles.orderTitle, { color: theme.titleColor }]}>Bestelling {order.id.replace('order-', '')}</Text>
-                <Text style={[styles.orderStatus, { color: theme.titleColor }]}>{formatStatus(order.status)}</Text>
+                <View style={[styles.statusBadge, { backgroundColor: getStatusBadgeColor(order.status) }]}>
+                  <Text style={styles.statusBadgeText}>{formatStatus(order.status)}</Text>
+                </View>
               </View>
               <Text style={[styles.orderMeta, { color: theme.subtitleColor }]}>{new Date(order.createdAt).toLocaleDateString('nl-NL', { day: 'numeric', month: 'long', year: 'numeric' })}</Text>
-              <Text style={[styles.orderMeta, { color: theme.subtitleColor }]}>Totaal: {formatCurrency(order.totalCents / 100)}</Text>
+              <View style={styles.orderFooter}>
+                <Text style={[styles.orderTotal, { color: theme.titleColor }]}>Totaal: {formatCurrency(order.totalCents / 100)}</Text>
+                <Pressable style={styles.viewButton} onPress={() => router.push({ pathname: '/order/[id]', params: { id: order.id } })}>
+                  <Text style={styles.viewButtonText}>Bekijk bestelling</Text>
+                </Pressable>
+              </View>
               {order.appliedInfluencerCode ? (
                 <Text style={[styles.orderMeta, { color: theme.subtitleColor }]}>Code: {order.appliedInfluencerCode}</Text>
               ) : null}
-              <Pressable style={styles.viewButton} onPress={() => router.push({ pathname: '/order/[id]', params: { id: order.id } })}>
-                <Text style={styles.viewButtonText}>Bekijk bestelling</Text>
-              </Pressable>
             </Pressable>
           ))
         )}
@@ -80,76 +100,142 @@ export default function MyOrdersScreen() {
   );
 }
 
+function getStatusBadgeColor(status: CommerceOrder['status']) {
+  switch (status) {
+    case 'draft':
+      return '#F59E0B';
+    case 'pending_payment':
+      return '#F59E0B';
+    case 'paid_placeholder':
+      return '#10B981';
+    case 'sent_to_partners_placeholder':
+      return '#2563EB';
+    default:
+      return '#6B7280';
+  }
+}
+
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
   },
   content: {
     padding: 16,
-    paddingBottom: 40,
+    paddingBottom: 24,
   },
-  card: {
-    marginHorizontal: 16,
-    borderWidth: 1,
-    borderRadius: 20,
+  heroCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
     padding: 20,
-    gap: 10,
+    borderRadius: 16,
+    borderWidth: 1,
+    marginBottom: 24,
   },
-  title: {
-    fontSize: 26,
-    fontWeight: '800',
-    letterSpacing: 0.3,
-    marginBottom: 8,
+  iconContainer: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: 'rgba(37, 99, 235, 0.1)',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  description: {
+  heroTitle: {
+    fontSize: 22,
+    fontWeight: '700',
+    flex: 1,
+  },
+  heroText: {
     fontSize: 15,
     lineHeight: 22,
-    marginBottom: 14,
+  },
+  emptyCard: {
+    padding: 32,
+    borderRadius: 16,
+    borderWidth: 1,
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  emptyIconContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: 'rgba(37, 99, 235, 0.05)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 16,
+  },
+  emptyTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    marginBottom: 8,
+  },
+  emptyText: {
+    fontSize: 15,
+    lineHeight: 22,
+    textAlign: 'center',
+    marginBottom: 20,
   },
   shopButton: {
-    marginTop: 8,
-    borderRadius: 16,
     backgroundColor: '#2563EB',
+    borderRadius: 12,
+    paddingHorizontal: 24,
     paddingVertical: 14,
-    alignItems: 'center',
   },
   shopButtonText: {
-    color: '#fff',
+    color: '#FFFFFF',
     fontWeight: '700',
+    fontSize: 16,
   },
   orderCard: {
     marginBottom: 16,
-    borderRadius: 20,
+    borderRadius: 16,
     borderWidth: 1,
-    padding: 18,
+    padding: 16,
   },
   orderHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 12,
   },
   orderTitle: {
-    fontSize: 17,
-    fontWeight: '800',
+    fontSize: 18,
+    fontWeight: '700',
+    flex: 1,
   },
-  orderStatus: {
-    fontSize: 13,
+  statusBadge: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 999,
+  },
+  statusBadgeText: {
+    color: '#FFFFFF',
+    fontSize: 12,
     fontWeight: '700',
   },
   orderMeta: {
-    fontSize: 13,
+    fontSize: 14,
     marginBottom: 6,
   },
-  viewButton: {
-    marginTop: 8,
-    borderRadius: 12,
-    backgroundColor: '#2563EB',
-    paddingVertical: 10,
+  orderFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
+    marginBottom: 6,
+  },
+  orderTotal: {
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  viewButton: {
+    backgroundColor: '#2563EB',
+    borderRadius: 10,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
   },
   viewButtonText: {
-    color: '#fff',
+    color: '#FFFFFF',
     fontWeight: '700',
     fontSize: 14,
   },
