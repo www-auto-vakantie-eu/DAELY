@@ -436,46 +436,8 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
         </Pressable>
       </View>
 
-      <View style={[styles.sectionCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-        <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Snelle acties</Text>
-        <View style={styles.quickGrid}>
-          <QuickActionTile label="Voeding toevoegen" icon="plus-circle-outline" onPress={() => router.push('/nutrition/add')} />
-          <QuickActionTile label="Voeding vergelijken" icon="scale-balance" onPress={() => router.push('/nutrition/compare')} />
-          <QuickActionTile label="Snel informatie vinden" icon="magnify" onPress={() => router.push('/nutrition/search')} />
-          <QuickActionTile label="Habit tracker" icon="calendar-check-outline" onPress={() => router.push('/habits')} />
-          <QuickActionTile label="Geef feedback" icon="chat-outline" onPress={() => router.push('/feedback')} />
-        </View>
-      </View>
-
       <View style={styles.bottomSpacer} />
     </ScrollView>
-  );
-}
-
-function QuickActionTile({
-  label,
-  icon,
-  onPress,
-  disabled,
-}: {
-  label: string;
-  icon: React.ComponentProps<typeof MaterialCommunityIcons>['name'];
-  onPress?: () => void;
-  disabled?: boolean;
-}) {
-  return (
-    <Pressable
-      style={({ pressed }) => [
-        styles.quickTile,
-        disabled ? styles.quickTileDisabled : null,
-        pressed && !disabled ? styles.quickTilePressed : null,
-      ]}
-      onPress={onPress}
-      disabled={disabled}
-    >
-      <MaterialCommunityIcons name={icon} size={18} color={disabled ? '#94A3B8' : '#2563EB'} />
-      <Text style={[styles.quickTileText, disabled ? styles.quickTileTextDisabled : null]}>{disabled ? `${label} (Binnenkort)` : label}</Text>
-    </Pressable>
   );
 }
 
@@ -853,38 +815,6 @@ const styles = StyleSheet.create({
     color: '#1E3A8A',
     fontWeight: '700',
     fontSize: 13,
-  },
-  quickGrid: {
-    gap: 6,
-  },
-  quickTile: {
-    width: '100%',
-    backgroundColor: '#F8FAFC',
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    paddingHorizontal: 10,
-    paddingVertical: 9,
-    minHeight: 0,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  quickTilePressed: {
-    opacity: 0.8,
-  },
-  quickTileDisabled: {
-    backgroundColor: '#E2E8F0',
-  },
-  quickTileText: {
-    marginTop: 0,
-    marginLeft: 8,
-    flex: 1,
-    color: '#1E293B',
-    fontSize: 13,
-    fontWeight: '600',
-  },
-  quickTileTextDisabled: {
-    color: '#64748B',
   },
   activityStatus: {
     fontSize: 14,
