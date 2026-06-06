@@ -278,6 +278,71 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
           ))}
         </View>
 
+      {/* Nieuw blok: Jouw dag vandaag */}
+      <View style={[styles.sectionCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+        <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Jouw dag vandaag</Text>
+        <View style={styles.dailyStatusRow}>
+          <View style={[styles.dailyStatusItem, { backgroundColor: theme.background, borderColor: theme.border }]}>
+            <MaterialCommunityIcons name="dumbbell" size={20} color="#2563EB" />
+            <View style={styles.dailyStatusContent}>
+              <Text style={[styles.dailyStatusLabel, { color: theme.titleColor }]}>Training</Text>
+              <Text style={[styles.dailyStatusValue, { color: theme.subtitleColor }]}>Nog niet gepland</Text>
+            </View>
+          </View>
+          <View style={[styles.dailyStatusItem, { backgroundColor: theme.background, borderColor: theme.border }]}>
+            <MaterialCommunityIcons name="silverware-fork-knife" size={20} color="#059669" />
+            <View style={styles.dailyStatusContent}>
+              <Text style={[styles.dailyStatusLabel, { color: theme.titleColor }]}>Voeding</Text>
+              <Text style={[styles.dailyStatusValue, { color: theme.subtitleColor }]}>Log je eerste maaltijd</Text>
+            </View>
+          </View>
+          <View style={[styles.dailyStatusItem, { backgroundColor: theme.background, borderColor: theme.border }]}>
+            <MaterialCommunityIcons name="meditation" size={20} color="#8B5CF6" />
+            <View style={styles.dailyStatusContent}>
+              <Text style={[styles.dailyStatusLabel, { color: theme.titleColor }]}>Herstel</Text>
+              <Text style={[styles.dailyStatusValue, { color: theme.subtitleColor }]}>Check hoe je je voelt</Text>
+            </View>
+          </View>
+        </View>
+      </View>
+
+      {/* Nieuw blok: Vandaag afronden */}
+      <View style={[styles.sectionCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+        <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Vandaag afronden</Text>
+        <View style={styles.dailyProgressRow}>
+          <View style={styles.dailyProgressContent}>
+            <Text style={[styles.dailyProgressLabel, { color: theme.titleColor }]}>0 van 3 acties voltooid</Text>
+            <View style={[styles.dailyProgressBar, { backgroundColor: theme.border }]}>
+              <View style={[styles.dailyProgressFill, { width: '0%', backgroundColor: '#2563EB' }]} />
+            </View>
+          </View>
+          <View style={styles.dailyProgressDots}>
+            <View style={[styles.dailyProgressDot, { backgroundColor: theme.border }]} />
+            <View style={[styles.dailyProgressDot, { backgroundColor: theme.border }]} />
+            <View style={[styles.dailyProgressDot, { backgroundColor: theme.border }]} />
+          </View>
+        </View>
+      </View>
+
+      {/* Nieuw blok: Aanbevolen voor vandaag */}
+      <View style={[styles.sectionCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+        <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Aanbevolen voor vandaag</Text>
+        <View style={styles.recommendationGrid}>
+          <Pressable style={[styles.recommendationCard, { backgroundColor: theme.background, borderColor: theme.border }]} onPress={() => router.push('/tracker')}>
+            <MaterialCommunityIcons name="run-fast" size={20} color="#2563EB" />
+            <Text style={[styles.recommendationText, { color: theme.titleColor }]}>Start een korte mobility sessie</Text>
+          </Pressable>
+          <Pressable style={[styles.recommendationCard, { backgroundColor: theme.background, borderColor: theme.border }]} onPress={() => router.push('/tracker')}>
+            <MaterialCommunityIcons name="calendar-check" size={20} color="#059669" />
+            <Text style={[styles.recommendationText, { color: theme.titleColor }]}>Plan je training</Text>
+          </Pressable>
+          <Pressable style={[styles.recommendationCard, { backgroundColor: theme.background, borderColor: theme.border }]} onPress={() => router.push('/nutrition/add')}>
+            <MaterialCommunityIcons name="food-apple" size={20} color="#F59E0B" />
+            <Text style={[styles.recommendationText, { color: theme.titleColor }]}>Bekijk je voedingsdoel</Text>
+          </Pressable>
+        </View>
+      </View>
+
         {showShortcutPicker ? (
           <View style={[styles.shortcutsPickerCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
             <Text style={[styles.shortcutsPickerTitle, { color: theme.titleColor }]}>Kies 3 sneltoetsen</Text>
@@ -853,5 +918,81 @@ const styles = StyleSheet.create({
   },
   bottomSpacer: {
     height: 22,
+  },
+  dailyStatusRow: {
+    marginTop: 12,
+    gap: 12,
+  },
+  dailyStatusItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    padding: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+  },
+  dailyStatusContent: {
+    flex: 1,
+  },
+  dailyStatusLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    marginBottom: 2,
+  },
+  dailyStatusValue: {
+    fontSize: 13,
+    lineHeight: 18,
+  },
+  dailyProgressRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: 12,
+  },
+  dailyProgressContent: {
+    flex: 1,
+  },
+  dailyProgressLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    marginBottom: 8,
+  },
+  dailyProgressBar: {
+    height: 6,
+    borderRadius: 3,
+    overflow: 'hidden',
+  },
+  dailyProgressFill: {
+    height: '100%',
+    borderRadius: 3,
+  },
+  dailyProgressDots: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  dailyProgressDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
+  recommendationGrid: {
+    marginTop: 12,
+    gap: 12,
+  },
+  recommendationCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    padding: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+  },
+  recommendationText: {
+    fontSize: 14,
+    fontWeight: '500',
+    flex: 1,
+    lineHeight: 20,
   },
 });
