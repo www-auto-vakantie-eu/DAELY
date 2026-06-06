@@ -5,72 +5,65 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/use-theme';
 
 // Safe preview data
-const CREATOR_DATA: Record<string, {
+const PARTNER_DATA: Record<string, {
   name: string;
-  type: string;
-  specialty: string;
+  category: string;
   description: string;
   icon: string;
   color: string;
 }> = {
-  'fitness-creator': {
-    name: 'Fitness creator',
-    type: 'Creator',
-    specialty: 'Strength & Hypertrofie',
-    description: 'Expert in krachttraining en spieropbouw',
-    icon: 'arm-flex',
-    color: '#2563EB',
-  },
-  'running-athlete': {
-    name: 'Running athlete',
-    type: 'Athlete',
-    specialty: 'Endurance Training',
-    description: 'Marathon loper en running coach',
-    icon: 'run-fast',
-    color: '#059669',
-  },
-  'mobility-coach': {
-    name: 'Mobility coach',
-    type: 'Coach',
-    specialty: 'Flexibility & Recovery',
-    description: 'Yoga en mobiliteit specialist',
-    icon: 'yoga',
-    color: '#8B5CF6',
-  },
-  'team-captain': {
-    name: 'Team captain',
-    type: 'Team captain',
-    specialty: 'Team Coaching',
-    description: 'Gepassioneerde teamcoach',
-    icon: 'account-group',
-    color: '#EF4444',
-  },
-  'strength-coach': {
-    name: 'Strength coach',
-    type: 'Coach',
-    specialty: 'Personal Training',
-    description: 'Personal trainer en coach',
-    icon: 'dumbbell',
+  'daely-performance': {
+    name: 'DAELY Performance',
+    category: 'Equipment',
+    description: 'Premium sportvoeding en supplementen',
+    icon: 'lightning-bolt',
     color: '#F59E0B',
   },
-  'nutrition-creator': {
-    name: 'Nutrition creator',
-    type: 'Coach',
-    specialty: 'Voedingsadvies',
-    description: 'Voedingscoach en meal planner',
+  'daely-recovery': {
+    name: 'DAELY Recovery',
+    category: 'Overig',
+    description: 'Recovery tools en fysiotherapie',
+    icon: 'heart-pulse',
+    color: '#EF4444',
+  },
+  'daely-essentials': {
+    name: 'DAELY Essentials',
+    category: 'Kleding',
+    description: 'Basis uitrusting en accessoires',
+    icon: 'star',
+    color: '#8B5CF6',
+  },
+  'daely-nutrition': {
+    name: 'DAELY Nutrition',
+    category: 'Nutrition',
+    description: 'Voedingsadvies en maaltijdplannen',
     icon: 'food',
+    color: '#059669',
+  },
+  'daely-supplements': {
+    name: 'DAELY Supplements',
+    category: 'Supplementen',
+    description: 'Premium supplementen en shakes',
+    icon: 'bottle-tonic',
     color: '#10B981',
+  },
+  'daely-gear': {
+    name: 'DAELY Gear',
+    category: 'Equipment',
+    description: 'Sportuitrusting en accessoires',
+    icon: 'weight-lifter',
+    color: '#6366F1',
   },
 };
 
-export default function CreatorDetailScreen() {
+export default function PartnerDetailScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{ id: string }>();
   const theme = useTheme();
-  const creatorId = params.id || 'fitness-creator';
-  const creator = CREATOR_DATA[creatorId];
+  const partnerId = params.id || 'daely-performance';
+  const partner = PARTNER_DATA[partnerId];
 
-  if (!creator) {
+  if (!partner) {
     return (
       <View style={[styles.screen, { backgroundColor: theme.background }]}>
         <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
@@ -78,11 +71,11 @@ export default function CreatorDetailScreen() {
             <Pressable onPress={() => router.back()}>
               <MaterialCommunityIcons name="arrow-left" size={24} color={theme.titleColor} />
             </Pressable>
-            <Text style={[styles.headerTitle, { color: theme.titleColor }]}>Creator</Text>
+            <Text style={[styles.headerTitle, { color: theme.titleColor }]}>Partner</Text>
           </View>
           <View style={[styles.fallbackCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
             <MaterialCommunityIcons name="information" size={48} color={theme.subtitleColor} />
-            <Text style={[styles.fallbackText, { color: theme.titleColor }]}>Creator niet gevonden</Text>
+            <Text style={[styles.fallbackText, { color: theme.titleColor }]}>Partner niet gevonden</Text>
             <Pressable style={[styles.fallbackCta, { backgroundColor: theme.tabBarActive }]} onPress={() => router.push('/(tabs)/community')}>
               <Text style={styles.fallbackCtaText}>Terug naar Community</Text>
             </Pressable>
@@ -99,53 +92,72 @@ export default function CreatorDetailScreen() {
           <Pressable onPress={() => router.back()}>
             <MaterialCommunityIcons name="arrow-left" size={24} color={theme.titleColor} />
           </Pressable>
-          <Text style={[styles.headerTitle, { color: theme.titleColor }]}>Creator</Text>
+          <Text style={[styles.headerTitle, { color: theme.titleColor }]}>Partner</Text>
         </View>
 
         {/* Hero */}
         <View style={[styles.heroCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
           <LinearGradient
-            colors={[`${creator.color}40`, `${creator.color}20`]}
+            colors={[`${partner.color}40`, `${partner.color}20`]}
             style={styles.heroGradient}
           >
-            <View style={styles.avatarContainer}>
-              <View style={[styles.avatar, { backgroundColor: `${creator.color}25`, borderColor: creator.color }]}>
-                <MaterialCommunityIcons name={creator.icon as any} size={48} color={creator.color} />
+            <View style={styles.logoContainer}>
+              <View style={[styles.logo, { backgroundColor: `${partner.color}25`, borderColor: partner.color }]}>
+                <MaterialCommunityIcons name={partner.icon as any} size={48} color={partner.color} />
               </View>
             </View>
           </LinearGradient>
           <View style={styles.heroContent}>
-            <View style={[styles.badge, { backgroundColor: '#F59E0B' }]}>
+            <View style={[styles.badge, { backgroundColor: '#6B7280' }]}>
               <Text style={styles.badgeText}>Samenwerking voorbereid</Text>
             </View>
-            <Text style={[styles.name, { color: theme.titleColor }]}>{creator.name}</Text>
-            <Text style={[styles.type, { color: creator.color }]}>{creator.type}</Text>
-            <Text style={[styles.specialty, { color: theme.subtitleColor }]}>{creator.specialty}</Text>
-            <Text style={[styles.description, { color: theme.subtitleColor }]}>{creator.description}</Text>
+            <Text style={[styles.name, { color: theme.titleColor }]}>{partner.name}</Text>
+            <Text style={[styles.category, { color: partner.color }]}>{partner.category}</Text>
+            <Text style={[styles.description, { color: theme.subtitleColor }]}>{partner.description}</Text>
           </View>
         </View>
 
-        {/* What you'll find */}
+        {/* What this partner adds */}
         <View style={styles.sectionHeader}>
-          <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Wat je hier straks vindt</Text>
+          <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Wat deze partner straks toevoegt</Text>
         </View>
 
         <View style={styles.featuresSection}>
           <View style={[styles.featureCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-            <MaterialCommunityIcons name="dumbbell" size={24} color={creator.color} />
-            <Text style={[styles.featureText, { color: theme.titleColor }]}>Trainingen</Text>
+            <MaterialCommunityIcons name="package-variant" size={24} color={partner.color} />
+            <Text style={[styles.featureText, { color: theme.titleColor }]}>Producten</Text>
           </View>
           <View style={[styles.featureCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-            <MaterialCommunityIcons name="lightbulb" size={24} color={creator.color} />
-            <Text style={[styles.featureText, { color: theme.titleColor }]}>Tips</Text>
+            <MaterialCommunityIcons name="tag" size={24} color={partner.color} />
+            <Text style={[styles.featureText, { color: theme.titleColor }]}>Voordelen</Text>
           </View>
           <View style={[styles.featureCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-            <MaterialCommunityIcons name="trophy" size={24} color={creator.color} />
-            <Text style={[styles.featureText, { color: theme.titleColor }]}>Challenges</Text>
+            <MaterialCommunityIcons name="account-star" size={24} color={partner.color} />
+            <Text style={[styles.featureText, { color: theme.titleColor }]}>Creator samenwerkingen</Text>
           </View>
           <View style={[styles.featureCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-            <MaterialCommunityIcons name="account-group" size={24} color={creator.color} />
-            <Text style={[styles.featureText, { color: theme.titleColor }]}>Community updates</Text>
+            <MaterialCommunityIcons name="trophy" size={24} color={partner.color} />
+            <Text style={[styles.featureText, { color: theme.titleColor }]}>Sportieve ondersteuning</Text>
+          </View>
+        </View>
+
+        {/* Collaborations */}
+        <View style={styles.sectionHeader}>
+          <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Samenwerkingen</Text>
+        </View>
+
+        <View style={styles.collabSection}>
+          <View style={[styles.collabCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+            <MaterialCommunityIcons name="dumbbell" size={20} color={partner.color} />
+            <Text style={[styles.collabText, { color: theme.titleColor }]}>Fitness discipline</Text>
+          </View>
+          <View style={[styles.collabCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+            <MaterialCommunityIcons name="run-fast" size={20} color={partner.color} />
+            <Text style={[styles.collabText, { color: theme.titleColor }]}>Running discipline</Text>
+          </View>
+          <View style={[styles.collabCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+            <MaterialCommunityIcons name="yoga" size={20} color={partner.color} />
+            <Text style={[styles.collabText, { color: theme.titleColor }]}>Mobility discipline</Text>
           </View>
         </View>
 
@@ -155,9 +167,9 @@ export default function CreatorDetailScreen() {
             <MaterialCommunityIcons name="arrow-left" size={24} color={theme.titleColor} />
             <Text style={[styles.ctaText, { color: theme.titleColor }]}>Terug naar Community</Text>
           </Pressable>
-          <Pressable style={[styles.ctaCard, { backgroundColor: theme.card, borderColor: theme.border }]} onPress={() => router.push('/tracker')}>
-            <MaterialCommunityIcons name="run-fast" size={24} color={theme.titleColor} />
-            <Text style={[styles.ctaText, { color: theme.titleColor }]}>Start activiteit</Text>
+          <Pressable style={[styles.ctaCard, { backgroundColor: theme.card, borderColor: theme.border }]} onPress={() => router.push('/shop')}>
+            <MaterialCommunityIcons name="shopping" size={24} color={theme.titleColor} />
+            <Text style={[styles.ctaText, { color: theme.titleColor }]}>Bekijk shop</Text>
           </Pressable>
           <Pressable style={[styles.ctaCard, { backgroundColor: theme.card, borderColor: theme.border }]} onPress={() => router.push('/feedback')}>
             <MaterialCommunityIcons name="chat-outline" size={24} color={theme.titleColor} />
@@ -200,10 +212,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingBottom: 32,
   },
-  avatarContainer: {
+  logoContainer: {
     marginTop: -40,
   },
-  avatar: {
+  logo: {
     width: 80,
     height: 80,
     borderRadius: 40,
@@ -231,14 +243,10 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     marginBottom: 4,
   },
-  type: {
+  category: {
     fontSize: 16,
     fontWeight: '600',
     marginBottom: 8,
-  },
-  specialty: {
-    fontSize: 14,
-    marginBottom: 12,
   },
   description: {
     fontSize: 15,
@@ -266,6 +274,22 @@ const styles = StyleSheet.create({
   },
   featureText: {
     fontSize: 16,
+    fontWeight: '600',
+  },
+  collabSection: {
+    gap: 12,
+    marginBottom: 24,
+  },
+  collabCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    padding: 14,
+    borderRadius: 14,
+    borderWidth: 1,
+  },
+  collabText: {
+    fontSize: 14,
     fontWeight: '600',
   },
   ctaSection: {
