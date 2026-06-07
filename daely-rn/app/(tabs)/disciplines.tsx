@@ -28,9 +28,10 @@ export const DISCIPLINES = [
     subtitle: 'Functioneel & High Intensity',
     slug: 'crossfit',
     images: {
-      man: 'https://cdn.crossfit.com/image/upload/v1704403262/crossfit.com/2026/May/250106/header.jpg',
-      vrouw: 'https://cdn.crossfit.com/image/upload/v1704403262/crossfit.com/2026/May/250106/header.jpg',
+      man: require('../../assets/disciplines/crossfit-male.png'),
+      vrouw: require('../../assets/disciplines/crossfit-female.png'),
     },
+    image: require('../../assets/disciplines/crossfit-neutral.png'),
   },
   {
     id: '3',
@@ -38,9 +39,10 @@ export const DISCIPLINES = [
     subtitle: 'Powerlifting & Gewichtheffen',
     slug: 'zwaargewicht',
     images: {
-      man: 'https://kajabi-storefronts-production.kajabi-cdn.com/kajabi-storefronts-production/blogs/1049/images/pT0gFEswRDiexf79ODkQ_why-lift-heavy-sprint-fat-loss-weights-strength-training-Alex-Fergus-deadlift.jpg',
-      vrouw: 'https://kajabi-storefronts-production.kajabi-cdn.com/kajabi-storefronts-production/blogs/1049/images/pT0gFEswRDiexf79ODkQ_why-lift-heavy-sprint-fat-loss-weights-strength-training-Alex-Fergus-deadlift.jpg',
+      man: require('../../assets/disciplines/zwaargewicht-male.png'),
+      vrouw: require('../../assets/disciplines/zwaargewicht-female.png'),
     },
+    image: require('../../assets/disciplines/zwaargewicht-neutral.png'),
   },
   {
     id: '4',
@@ -48,9 +50,10 @@ export const DISCIPLINES = [
     subtitle: 'Functionele Fitness & Racing',
     slug: 'hyrox',
     images: {
-      man: 'https://www.angelsgym.nl/wp-content/uploads/2026/02/hyrox-training-gym-sportschool.png',
-      vrouw: 'https://www.angelsgym.nl/wp-content/uploads/2026/02/hyrox-training-gym-sportschool.png',
+      man: require('../../assets/disciplines/hyrox-male.png'),
+      vrouw: require('../../assets/disciplines/hyrox-female.png'),
     },
+    image: require('../../assets/disciplines/hyrox-neutral.png'),
   },
   {
     id: '5',
@@ -58,9 +61,10 @@ export const DISCIPLINES = [
     subtitle: 'Flexibiliteit & Mindfulness',
     slug: 'yoga',
     images: {
-      man: 'https://liforme.com/cdn/shop/articles/Navasana_Mission_Jonny_01.png?v=1770914202&width=1920',
-      vrouw: 'https://liforme.com/cdn/shop/articles/Navasana_Mission_Jonny_01.png?v=1770914202&width=1920',
+      man: require('../../assets/disciplines/yoga-male.png'),
+      vrouw: require('../../assets/disciplines/yoga-female.png'),
     },
+    image: require('../../assets/disciplines/yoga-neutral.png'),
   },
   {
     id: '6',
@@ -68,9 +72,10 @@ export const DISCIPLINES = [
     subtitle: 'Core Kracht & Stabiliteit',
     slug: 'pilates',
     images: {
-      man: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=1200&q=80',
-      vrouw: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=1200&q=80',
+      man: require('../../assets/disciplines/pilates-male.png'),
+      vrouw: require('../../assets/disciplines/pilates-female.png'),
     },
+    image: require('../../assets/disciplines/pilates-neutral.png'),
   },
   {
     id: '7',
