@@ -14,7 +14,7 @@ import {
 export default function HeroBackgroundSettingsScreen() {
   const router = useRouter();
   const theme = useTheme();
-  const [heroBackground, setHeroBackground] = useState<HeroBackgroundOptionId>('daelyClassic');
+  const [heroBackground, setHeroBackground] = useState<HeroBackgroundOptionId>('pureMinimal');
 
   useEffect(() => {
     AsyncStorage.getItem(HERO_BACKGROUND_STORAGE_KEY).then((stored) => {
@@ -22,6 +22,9 @@ export default function HeroBackgroundSettingsScreen() {
       const exists = HERO_BACKGROUND_OPTIONS.some((option) => option.id === stored);
       if (exists) {
         setHeroBackground(stored as HeroBackgroundOptionId);
+      } else {
+        // Fallback to default if stored value no longer exists (e.g., daelyClassic was removed)
+        setHeroBackground(HERO_BACKGROUND_OPTIONS[1].id);
       }
     });
   }, []);
@@ -43,11 +46,11 @@ export default function HeroBackgroundSettingsScreen() {
             <Text style={styles.backLabel}>Welkom terug achtergrond</Text>
           </Pressable>
         </View>
-        <Text style={styles.pageSubtitle}>Kies je Today hero theme</Text>
+        <Text style={styles.pageSubtitle}>Kies de achtergrond voor je Welkom terug-blok.</Text>
 
         {/* Hero Background Picker */}
         <View style={styles.heroPickerCard}>
-          <Text style={[styles.heroPickerTitle, { color: theme.titleColor }]}>Kies je thema</Text>
+          <Text style={[styles.heroPickerTitle, { color: theme.titleColor }]}>Kies je achtergrond</Text>
           <View style={styles.heroPickerGrid}>
             {HERO_BACKGROUND_OPTIONS.map((option) => (
               <Pressable

@@ -2,7 +2,7 @@ import { ImageSourcePropType } from 'react-native';
 
 export const HERO_BACKGROUND_STORAGE_KEY = 'daely.today.heroBackground.v1';
 
-export type HeroBackgroundOptionId = 'ownPhoto' | 'daelyClassic' | 'sunriseEnergy' | 'midnightFocus' | 'recoveryFlow' | 'performanceBlue' | 'forestBalance' | 'communityPulse' | 'pureMinimal' | 'badgeWall' | 'streakFire' | 'levelUp' | 'trophyRoom' | 'heroEnergy' | 'raceDay' | 'dataPulse' | 'gymBlackout' | 'footballMatchday' | 'neonNight';
+export type HeroBackgroundOptionId = 'ownPhoto' | 'pureMinimal' | 'badgeWall' | 'streakFire' | 'levelUp' | 'trophyRoom' | 'heroEnergy' | 'raceDay' | 'dataPulse' | 'gymBlackout' | 'footballMatchday' | 'neonNight';
 
 export type HeroBackgroundOption = {
   id: HeroBackgroundOptionId;
@@ -17,13 +17,6 @@ export type HeroBackgroundOption = {
 
 export const HERO_BACKGROUND_OPTIONS: HeroBackgroundOption[] = [
   { id: 'ownPhoto', label: 'Eigen foto (Binnenkort)', disabled: true },
-  { id: 'daelyClassic', label: 'DAELY Classic', source: require('../assets/images/theme-classic.png') },
-  { id: 'sunriseEnergy', label: 'Sunrise Energy', source: require('../assets/images/theme-ember.png') },
-  { id: 'midnightFocus', label: 'Midnight Focus', source: require('../assets/images/theme-rogue.png') },
-  { id: 'recoveryFlow', label: 'Recovery Flow', source: require('../assets/images/theme-zen.ink.png') },
-  { id: 'performanceBlue', label: 'Performance Blue', source: require('../assets/images/theme-pulse.png') },
-  { id: 'forestBalance', label: 'Forest Balance', source: require('../assets/images/theme-forest-breath.png') },
-  { id: 'communityPulse', label: 'Community Pulse', source: require('../assets/images/theme-retro-sport.png') },
   { id: 'pureMinimal', label: 'Pure Minimal' },
   { id: 'badgeWall', label: 'Badge Wall', source: require('../assets/images/theme-badge-wall.png'), unlockLabel: 'Ontgrendel met je eerste badge', category: 'achievements', rarity: 'rare' },
   { id: 'streakFire', label: 'Streak Fire', source: require('../assets/images/theme-streak-fire.png'), unlockLabel: 'Ontgrendel met een 7-daagse streak', category: 'gamification', rarity: 'epic' },

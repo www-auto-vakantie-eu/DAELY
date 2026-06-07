@@ -115,7 +115,7 @@ export default function TodayScreen() {
   const theme = useTheme();
   const { user } = useAppContext();
   const [activities, setActivities] = useState<Activity[]>([]);
-  const [heroBackground, setHeroBackground] = useState<HeroBackgroundOptionId>('daelyClassic');
+  const [heroBackground, setHeroBackground] = useState<HeroBackgroundOptionId>('pureMinimal');
   const [isWhoopConnected, setIsWhoopConnected] = useState(false);
   const [isFitbitConnected, setIsFitbitConnected] = useState(false);
   const [shortcuts, setShortcuts] = useState<ShortcutId[]>(DEFAULT_SHORTCUTS);
