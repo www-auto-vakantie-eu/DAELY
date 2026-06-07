@@ -29,7 +29,7 @@ function resolveRoleFromEmail(email: string): 'standard' | 'admin' {
 
 export default function LoginScreen() {
   const router = useRouter();
-  const { setIsLoggedIn, setAccountType, activeThemeId } = useAppContext();
+  const { setIsLoggedIn, setAccountType, activeThemeId, updateUser, updateAppSettings } = useAppContext();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -162,7 +162,27 @@ export default function LoginScreen() {
     setActiveTab('forgot');
   };
 
-  const handleDevTestLogin = () => {
+  const handleDevTestLoginMan = async () => {
+    await updateUser({
+      gender: 'man',
+      name: 'Test Sporter Man',
+    });
+    await updateAppSettings({
+      photoPreference: 'man',
+    });
+    setAccountType('standard');
+    setIsLoggedIn(true);
+    router.replace('/(tabs)/today');
+  };
+
+  const handleDevTestLoginVrouw = async () => {
+    await updateUser({
+      gender: 'vrouw',
+      name: 'Test Sporter Vrouw',
+    });
+    await updateAppSettings({
+      photoPreference: 'woman',
+    });
     setAccountType('standard');
     setIsLoggedIn(true);
     router.replace('/(tabs)/today');
@@ -280,9 +300,15 @@ export default function LoginScreen() {
 
               {/* Local smoke-test helper: only render in development when explicitly enabled via public env flag. */}
               {isDevTestLoginEnabled ? (
-                <Pressable style={styles.devTestLoginButton} onPress={handleDevTestLogin}>
-                  <Text style={styles.devTestLoginButtonText}>Test login (dev only)</Text>
-                </Pressable>
+                <>
+                  <Text style={styles.devTestLoginLabel}>Test Login (Dev Only)</Text>
+                  <Pressable style={styles.devTestLoginButton} onPress={handleDevTestLoginMan}>
+                    <Text style={styles.devTestLoginButtonText}>Test Login Man</Text>
+                  </Pressable>
+                  <Pressable style={styles.devTestLoginButton} onPress={handleDevTestLoginVrouw}>
+                    <Text style={styles.devTestLoginButtonText}>Test Login Vrouw</Text>
+                  </Pressable>
+                </>
               ) : null}
 
               {/* Create Account */}
@@ -635,13 +661,21 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: -4,
-    marginBottom: 8,
+    marginTop: 0,
+    marginBottom: 6,
   },
   devTestLoginButtonText: {
     color: '#1D4ED8',
     fontSize: 14,
     fontWeight: '700',
+  },
+  devTestLoginLabel: {
+    color: '#666666',
+    fontSize: 12,
+    fontWeight: '600',
+    textAlign: 'center',
+    marginTop: 8,
+    marginBottom: 6,
   },
   linkButton: {
     paddingVertical: 12,
