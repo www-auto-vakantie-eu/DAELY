@@ -1,5 +1,5 @@
 
-import { StyleSheet, ScrollView, View, Text, Pressable, ImageBackground } from 'react-native';
+import { StyleSheet, ScrollView, View, Text, Pressable, ImageBackground, ImageSourcePropType } from 'react-native';
 import GlobalSearchModal from '../components/GlobalSearchModal';
 import { useState } from 'react';
 import { useRouter } from 'expo-router';
@@ -17,9 +17,10 @@ export const DISCIPLINES = [
     subtitle: 'Kracht & Conditie',
     slug: 'fitness',
     images: {
-      man: 'https://media.istockphoto.com/id/1937164504/nl/foto/man-dumbbell-and-weightlifting-in-fitness-workout-or-arm-exercise-on-bench-at-indoor.jpg',
+      man: require('../../assets/disciplines/fitness-male.png'),
       vrouw: 'https://blogscdn.thehut.net/app/uploads/sites/467/2020/12/Blog-Squattingwithbarbell-Female_700x385_1608714645.jpg',
     },
+    image: require('../../assets/disciplines/fitness-neutral.png'),
   },
   {
     id: '2',
@@ -246,8 +247,15 @@ export const DISCIPLINES = [
 
 const DISCIPLINE_FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&q=80';
 
-function getDisciplineImage(item: DisciplineMedia, audience: 'male' | 'female' | 'neutral'): string {
+function getDisciplineImage(item: DisciplineMedia, audience: 'male' | 'female' | 'neutral'): string | ImageSourcePropType {
   return getGenderedDisciplineImage(item, audience, DISCIPLINE_FALLBACK_IMAGE);
+}
+
+function getImageSource(image: string | ImageSourcePropType): ImageSourcePropType {
+  if (typeof image === 'string') {
+    return { uri: image };
+  }
+  return image;
 }
 
 export default function DisciplinesScreen() {
@@ -347,7 +355,7 @@ export default function DisciplinesScreen() {
               onPress={() => handleOpen(item.slug)}
             >
               <ImageBackground
-                source={{ uri: getDisciplineImage(item, audience) }}
+                source={getImageSource(getDisciplineImage(item, audience))}
                 resizeMode="cover"
                 style={styles.cardImage}
                 imageStyle={styles.cardImageStyle}

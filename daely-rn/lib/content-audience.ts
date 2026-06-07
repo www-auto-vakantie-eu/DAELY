@@ -1,4 +1,5 @@
 import type { UserProfile, AppSettings } from '@/contexts/AppContext';
+import type { ImageSourcePropType } from 'react-native';
 
 export type ContentAudience = 'male' | 'female' | 'neutral';
 
@@ -38,10 +39,10 @@ export function resolveContentAudience(user: UserProfile, appSettings: AppSettin
  * Discipline image interface met gender-specific opties
  */
 export interface DisciplineMedia {
-  image?: string; // neutral fallback
+  image?: string | ImageSourcePropType; // neutral fallback
   images?: {
-    man?: string; // male specific
-    vrouw?: string; // female specific
+    man?: string | ImageSourcePropType; // male specific
+    vrouw?: string | ImageSourcePropType; // female specific
   };
 }
 
@@ -58,29 +59,29 @@ export interface DisciplineMedia {
 export function getGenderedDisciplineImage(
   media: DisciplineMedia,
   audience: ContentAudience,
-  fallbackImage: string
-): string {
+  fallbackImage: string | ImageSourcePropType
+): string | ImageSourcePropType {
   // Prioriteit 1: audience-specific image
   if (audience === 'male' && media.images?.man) {
-    return media.images.man.trim();
+    return typeof media.images.man === 'string' ? media.images.man.trim() : media.images.man;
   }
   if (audience === 'female' && media.images?.vrouw) {
-    return media.images.vrouw.trim();
+    return typeof media.images.vrouw === 'string' ? media.images.vrouw.trim() : media.images.vrouw;
   }
 
   // Prioriteit 2: neutral fallback image
   if (media.image) {
-    return media.image.trim();
+    return typeof media.image === 'string' ? media.image.trim() : media.image;
   }
 
   // Prioriteit 3: als neutral audience, probeer man
   if (audience === 'neutral' && media.images?.man) {
-    return media.images.man.trim();
+    return typeof media.images.man === 'string' ? media.images.man.trim() : media.images.man;
   }
 
   // Prioriteit 4: als neutral audience, probeer vrouw
   if (audience === 'neutral' && media.images?.vrouw) {
-    return media.images.vrouw.trim();
+    return typeof media.images.vrouw === 'string' ? media.images.vrouw.trim() : media.images.vrouw;
   }
 
   // Prioriteit 5: default fallback
