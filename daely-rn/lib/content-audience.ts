@@ -51,7 +51,9 @@ export interface DisciplineMedia {
  * Prioriteit:
  * 1. audience-specific image (man/vrouw)
  * 2. neutral fallback image
- * 3. default fallback
+ * 3. fallback naar man als neutral en man beschikbaar
+ * 4. fallback naar vrouw als neutral en vrouw beschikbaar
+ * 5. default fallback
  */
 export function getGenderedDisciplineImage(
   media: DisciplineMedia,
@@ -71,6 +73,16 @@ export function getGenderedDisciplineImage(
     return media.image.trim();
   }
 
-  // Prioriteit 3: default fallback
+  // Prioriteit 3: als neutral audience, probeer man
+  if (audience === 'neutral' && media.images?.man) {
+    return media.images.man.trim();
+  }
+
+  // Prioriteit 4: als neutral audience, probeer vrouw
+  if (audience === 'neutral' && media.images?.vrouw) {
+    return media.images.vrouw.trim();
+  }
+
+  // Prioriteit 5: default fallback
   return fallbackImage;
 }

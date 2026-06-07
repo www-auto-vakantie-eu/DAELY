@@ -2,7 +2,6 @@
 import { StyleSheet, ScrollView, View, Text, Pressable, ImageBackground } from 'react-native';
 import GlobalSearchModal from '../components/GlobalSearchModal';
 import { useState } from 'react';
-import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
 import { useAppContext } from '@/contexts/AppContext';
@@ -349,18 +348,14 @@ export default function DisciplinesScreen() {
             >
               <ImageBackground
                 source={{ uri: getDisciplineImage(item, audience) }}
+                resizeMode="cover"
                 style={styles.cardImage}
                 imageStyle={styles.cardImageStyle}
               >
-                <LinearGradient
-                  colors={['rgba(0,0,0,0.08)', 'rgba(0,0,0,0.78)']}
-                  start={{ x: 0.5, y: 0 }}
-                  end={{ x: 0.5, y: 1 }}
-                  style={styles.cardOverlay}
-                >
+                <View style={styles.cardOverlay}>
                   <Text style={styles.cardTitle}>{item.title}</Text>
                   <Text style={styles.cardSubtitle}>{item.subtitle}</Text>
-                </LinearGradient>
+                </View>
               </ImageBackground>
             </Pressable>
           ))}
@@ -408,7 +403,7 @@ const styles = StyleSheet.create({
   },
   card: {
     width: '100%',
-    height: 160,
+    height: 210,
     borderRadius: 20,
     overflow: 'hidden',
     marginBottom: 14,
@@ -417,13 +412,21 @@ const styles = StyleSheet.create({
     transform: [{ scale: 0.98 }],
     opacity: 0.92,
   },
-  cardImage: { flex: 1 },
+  cardImage: {
+    width: '100%',
+    height: '100%',
+  },
   cardImageStyle: { borderRadius: 20 },
   cardOverlay: {
-    flex: 1,
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    backgroundColor: 'rgba(2,6,23,0.55)',
+    padding: 16,
+    paddingTop: 20,
     justifyContent: 'flex-end',
-    paddingHorizontal: 22,
-    paddingBottom: 18,
   },
   cardTitle: {
     fontSize: 26,
