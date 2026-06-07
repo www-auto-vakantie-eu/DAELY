@@ -1,14 +1,14 @@
 
 import { StyleSheet, ScrollView, View, Text, Pressable, ImageBackground } from 'react-native';
 import GlobalSearchModal from '../components/GlobalSearchModal';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
+import { useAppContext } from '@/contexts/AppContext';
 import { NUTRITION_MEALS } from '@/constants/nutrition-meals';
 import { COMMUNITY_CREATORS } from '@/constants/community-creators';
+import { resolveContentAudience, getGenderedDisciplineImage, type DisciplineMedia } from '@/lib/content-audience';
 import PageHeader from '../components/PageHeader';
 
 export const DISCIPLINES = [
@@ -247,22 +247,14 @@ export const DISCIPLINES = [
 
 const DISCIPLINE_FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&q=80';
 
-function getDisciplineImage(item: { image?: string; images?: { man?: string; vrouw?: string } }): string {
-  const directImage = typeof item.image === 'string' ? item.image.trim() : '';
-  if (directImage) return directImage;
-
-  const manImage = typeof item.images?.man === 'string' ? item.images.man.trim() : '';
-  if (manImage) return manImage;
-
-  const vrouwImage = typeof item.images?.vrouw === 'string' ? item.images.vrouw.trim() : '';
-  if (vrouwImage) return vrouwImage;
-
-  return DISCIPLINE_FALLBACK_IMAGE;
+function getDisciplineImage(item: DisciplineMedia, audience: 'male' | 'female' | 'neutral'): string {
+  return getGenderedDisciplineImage(item, audience, DISCIPLINE_FALLBACK_IMAGE);
 }
 
 export default function DisciplinesScreen() {
+  const { user, appSettings } = useAppContext();
   const [searchVisible, setSearchVisible] = useState(false);
-  const [searchResults, setSearchResults] = useState<Array<{ id: string; label: string; meta?: string; onSelect: () => void }>>([]);
+  const [searchResults, setSearchResults] = useState<{ id: string; label: string; meta?: string; onSelect: () => void }[]>([]);
   const handleSearch = (query: string) => {
     const normalizedQuery = query.trim().toLowerCase();
     if (!normalizedQuery) {
@@ -270,7 +262,7 @@ export default function DisciplinesScreen() {
       return;
     }
 
-    const results: Array<{ id: string; label: string; meta?: string; onSelect: () => void }> = [];
+    const results: { id: string; label: string; meta?: string; onSelect: () => void }[] = [];
     const seen = new Set<string>();
     const addResult = (item: { id: string; label: string; meta?: string; onSelect: () => void }) => {
       if (results.length >= 24) return;
@@ -330,6 +322,9 @@ export default function DisciplinesScreen() {
     router.push({ pathname: '/discipline/[slug]', params: { slug } });
   };
 
+  // Bepaal content audience op basis van user profile en app settings
+  const audience = resolveContentAudience(user, appSettings);
+
   return (
     <View style={{ flex: 1, backgroundColor: theme.background }}>
       <PageHeader
@@ -353,7 +348,7 @@ export default function DisciplinesScreen() {
               onPress={() => handleOpen(item.slug)}
             >
               <ImageBackground
-                source={{ uri: getDisciplineImage(item) }}
+                source={{ uri: getDisciplineImage(item, audience) }}
                 style={styles.cardImage}
                 imageStyle={styles.cardImageStyle}
               >
