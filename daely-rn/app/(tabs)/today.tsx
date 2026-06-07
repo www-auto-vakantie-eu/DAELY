@@ -67,6 +67,7 @@ function getTodayQuote() {
       category: 'mindset',
       sourceType: 'daely_original',
       status: 'safe',
+      author: undefined,
     };
   }
   
@@ -243,7 +244,8 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
                 </View>
                 <View style={styles.heroContent}>
                   <Text style={styles.welcomeTitle}>{heroGreeting}</Text>
-                  <Text style={styles.welcomeSubtitle}>{todayQuote.text}</Text>
+                  <Text style={styles.welcomeSubtitle} numberOfLines={2}>{todayQuote.text}</Text>
+                  {todayQuote.author && <Text style={styles.welcomeAuthor}>— {todayQuote.author}</Text>}
                 </View>
               </View>
             </View>
@@ -257,7 +259,8 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
                 </View>
                 <View style={styles.heroContent}>
                   <Text style={styles.welcomeTitle}>{heroGreeting}</Text>
-                  <Text style={styles.welcomeSubtitle}>{todayQuote.text}</Text>
+                  <Text style={styles.welcomeSubtitle} numberOfLines={2}>{todayQuote.text}</Text>
+                  {todayQuote.author && <Text style={styles.welcomeAuthor}>— {todayQuote.author}</Text>}
                 </View>
               </View>
             </View>
@@ -600,6 +603,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#E2E8F0',
     lineHeight: 20,
+  },
+  welcomeAuthor: {
+    fontSize: 12,
+    color: 'rgba(255,255,255,0.6)',
+    marginTop: 4,
+    fontStyle: 'italic',
   },
   heroDateLabel: {
     fontSize: 13,
