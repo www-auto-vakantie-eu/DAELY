@@ -117,6 +117,15 @@ const MY_DOMAIN_CARDS: MyDomainCard[] = [
     image: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&q=80',
     route: '/(tabs)/today?open=shortcuts',
   },
+  {
+    id: 'community-sharing',
+    title: 'Community delen',
+    description: 'Bepaal wanneer DAELY je vraagt om updates te delen.',
+    category: 'INSTELLINGEN',
+    accent: '#F59E0B',
+    image: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1200&q=80',
+    route: '/(tabs)/community-sharing-settings',
+  },
 ];
 
 export default function MijnScreen() {

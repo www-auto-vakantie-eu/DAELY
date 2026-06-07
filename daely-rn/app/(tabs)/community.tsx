@@ -2,10 +2,26 @@ import { ScrollView, StyleSheet, Text, View, Pressable, TextInput } from 'react-
 import { useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/use-theme';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import PageHeader from '../components/PageHeader';
 
 type Tab = 'feed' | 'creators' | 'partners' | 'events';
+
+// AsyncStorage keys
+const COMMUNITY_POSTS_KEY = 'daely.community.posts.v1';
+
+// Local post type
+type LocalPost = {
+  id: string;
+  name: string;
+  handle: string;
+  time: string;
+  text: string;
+  icon: string;
+  color: string;
+  isOwn: boolean;
+};
 
 // Safe preview data - Feed items (X/Twitter-achtige berichten)
 const FEED_ITEMS = [
@@ -213,6 +229,25 @@ export default function CommunityScreen() {
   const theme = useTheme();
   const [activeTab, setActiveTab] = useState<Tab>('feed');
 
+  // Feed state
+  const [localPosts, setLocalPosts] = useState<LocalPost[]>([]);
+  const [postText, setPostText] = useState('');
+  const [composerExpanded, setComposerExpanded] = useState(false);
+
+  // Load local posts on mount
+  useEffect(() => {
+    AsyncStorage.getItem(COMMUNITY_POSTS_KEY).then((stored) => {
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          setLocalPosts(parsed);
+        } catch {
+          // Ignore parse errors
+        }
+      }
+    });
+  }, []);
+
   // Creators filters
   const [creatorSearch, setCreatorSearch] = useState('');
   const [creatorFilter, setCreatorFilter] = useState('Alles');
@@ -240,6 +275,50 @@ export default function CommunityScreen() {
       return matchesSearch && matchesFilter;
     });
   }, [partnerSearch, partnerFilter]);
+
+  // Handle post submission
+  const handlePost = () => {
+    if (!postText.trim()) return;
+
+    const newPost: LocalPost = {
+      id: Date.now().toString(),
+      name: 'Jij',
+      handle: '@ik',
+      time: 'Zojuist',
+      text: postText.trim(),
+      icon: 'account',
+      color: '#F59E0B',
+      isOwn: true,
+    };
+
+    const updatedPosts = [newPost, ...localPosts];
+    setLocalPosts(updatedPosts);
+    setPostText('');
+    setComposerExpanded(false);
+
+    AsyncStorage.setItem(COMMUNITY_POSTS_KEY, JSON.stringify(updatedPosts));
+  };
+
+  // Handle cancel
+  const handleCancel = () => {
+    setPostText('');
+    setComposerExpanded(false);
+  };
+
+  // Combined feed: local posts first, then preview posts
+  const combinedFeed = useMemo(() => {
+    const localFeedItems = localPosts.map(post => ({
+      id: post.id,
+      name: post.name,
+      handle: post.handle,
+      time: post.time,
+      text: post.text,
+      icon: post.icon,
+      color: post.color,
+      isOwn: post.isOwn,
+    }));
+    return [...localFeedItems, ...FEED_ITEMS];
+  }, [localPosts]);
 
   return (
     <View style={[styles.screen, { backgroundColor: theme.background }]}>
@@ -276,7 +355,68 @@ export default function CommunityScreen() {
         {/* Feed Tab - X/Twitter-achtige berichtenfeed */}
         {activeTab === 'feed' && (
           <View style={styles.tabContent}>
-            {FEED_ITEMS.map((item) => (
+            {/* Compact Composer Trigger */}
+            {!composerExpanded && (
+              <Pressable
+                style={[styles.compactComposerCard, { backgroundColor: theme.card, borderColor: theme.border }]}
+                onPress={() => setComposerExpanded(true)}
+              >
+                <View style={[styles.compactComposerAvatar, { backgroundColor: '#F59E0B20' }]}>
+                  <MaterialCommunityIcons name="account" size={24} color="#F59E0B" />
+                </View>
+                <View style={styles.compactComposerContent}>
+                  <Text style={[styles.compactComposerTitle, { color: theme.titleColor }]}>Deel een update</Text>
+                  <Text style={[styles.compactComposerSubtitle, { color: theme.subtitleColor }]}>Plaats iets op je feed wanneer jij dat wilt.</Text>
+                </View>
+                <MaterialCommunityIcons name="pencil" size={20} color={theme.subtitleColor} />
+              </Pressable>
+            )}
+
+            {/* Expanded Composer */}
+            {composerExpanded && (
+              <View style={[styles.expandedComposerCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+                <View style={styles.expandedComposerHeader}>
+                  <View style={[styles.expandedComposerAvatar, { backgroundColor: '#F59E0B20' }]}>
+                    <MaterialCommunityIcons name="account" size={28} color="#F59E0B" />
+                  </View>
+                  <Text style={[styles.expandedComposerLabel, { color: theme.subtitleColor }]}>Nieuw bericht</Text>
+                  <Pressable onPress={handleCancel}>
+                    <MaterialCommunityIcons name="close" size={24} color={theme.subtitleColor} />
+                  </Pressable>
+                </View>
+                <TextInput
+                  style={[styles.expandedComposerInput, { color: theme.titleColor, borderColor: theme.border }]}
+                  placeholder="Wat wil je delen?"
+                  placeholderTextColor={theme.subtitleColor}
+                  value={postText}
+                  onChangeText={setPostText}
+                  multiline
+                  maxLength={280}
+                  textAlignVertical="top"
+                />
+                <Text style={[styles.expandedComposerHint, { color: theme.subtitleColor }]}>
+                  Je deelt dit bewust op je feed.
+                </Text>
+                <View style={styles.expandedComposerActions}>
+                  <Pressable
+                    style={[styles.expandedComposerButton, styles.expandedComposerButtonCancel, { borderColor: theme.border }]}
+                    onPress={handleCancel}
+                  >
+                    <Text style={[styles.expandedComposerButtonText, { color: theme.subtitleColor }]}>Annuleren</Text>
+                  </Pressable>
+                  <Pressable
+                    style={[styles.expandedComposerButton, { backgroundColor: postText.trim() ? theme.tabBarActive : `${theme.tabBarActive}50` }]}
+                    onPress={handlePost}
+                    disabled={!postText.trim()}
+                  >
+                    <Text style={styles.expandedComposerButtonText}>Plaatsen</Text>
+                  </Pressable>
+                </View>
+              </View>
+            )}
+
+            {/* Feed Posts */}
+            {combinedFeed.map((item) => (
               <View key={item.id} style={[styles.feedPost, { backgroundColor: theme.card, borderColor: theme.border }]}>
                 <View style={styles.feedHeader}>
                   <View style={[styles.feedAvatar, { backgroundColor: `${item.color}20` }]}>
@@ -286,7 +426,14 @@ export default function CommunityScreen() {
                     <Text style={[styles.feedName, { color: theme.titleColor }]}>{item.name}</Text>
                     <Text style={[styles.feedHandle, { color: theme.subtitleColor }]}>{item.handle}</Text>
                   </View>
-                  <Text style={[styles.feedTime, { color: theme.subtitleColor }]}>{item.time}</Text>
+                  <View style={styles.feedHeaderRight}>
+                    <Text style={[styles.feedTime, { color: theme.subtitleColor }]}>{item.time}</Text>
+                    {(item as any).isOwn && (
+                      <View style={[styles.feedBadge, { backgroundColor: '#6B7280' }]}>
+                        <Text style={styles.feedBadgeText}>Privé preview</Text>
+                      </View>
+                    )}
+                  </View>
                 </View>
                 <Text style={[styles.feedText, { color: theme.titleColor }]}>{item.text}</Text>
                 <View style={styles.feedActions}>
@@ -522,6 +669,90 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 20,
   },
+  // Post Composer - Compact Trigger
+  compactComposerCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    padding: 14,
+    borderRadius: 14,
+    borderWidth: 1,
+    marginBottom: 12,
+  },
+  compactComposerAvatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  compactComposerContent: {
+    flex: 1,
+  },
+  compactComposerTitle: {
+    fontSize: 15,
+    fontWeight: '600',
+    marginBottom: 2,
+  },
+  compactComposerSubtitle: {
+    fontSize: 13,
+  },
+  // Post Composer - Expanded
+  expandedComposerCard: {
+    padding: 16,
+    borderRadius: 14,
+    borderWidth: 1,
+    marginBottom: 12,
+  },
+  expandedComposerHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginBottom: 12,
+  },
+  expandedComposerAvatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  expandedComposerLabel: {
+    flex: 1,
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  expandedComposerInput: {
+    minHeight: 100,
+    borderRadius: 10,
+    borderWidth: 1,
+    padding: 12,
+    fontSize: 15,
+    marginBottom: 8,
+  },
+  expandedComposerHint: {
+    fontSize: 12,
+    marginBottom: 12,
+  },
+  expandedComposerActions: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  expandedComposerButton: {
+    flex: 1,
+    paddingVertical: 10,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  expandedComposerButtonCancel: {
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+  },
+  expandedComposerButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#FFFFFF',
+  },
   tabRow: {
     flexDirection: 'row',
     paddingHorizontal: 0,
@@ -545,20 +776,20 @@ const styles = StyleSheet.create({
   },
   // Feed - X/Twitter-achtige berichten
   feedPost: {
-    padding: 14,
+    padding: 16,
     borderRadius: 14,
     borderWidth: 1,
-    marginBottom: 12,
+    marginBottom: 10,
   },
   feedHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 8,
   },
   feedAvatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 10,
@@ -567,23 +798,37 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   feedName: {
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: '600',
   },
   feedHandle: {
-    fontSize: 13,
-  },
-  feedTime: {
     fontSize: 12,
   },
+  feedHeaderRight: {
+    alignItems: 'flex-end',
+    gap: 4,
+  },
+  feedTime: {
+    fontSize: 11,
+  },
+  feedBadge: {
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 999,
+  },
+  feedBadgeText: {
+    color: '#FFFFFF',
+    fontSize: 10,
+    fontWeight: '600',
+  },
   feedText: {
-    fontSize: 15,
-    lineHeight: 22,
-    marginBottom: 12,
+    fontSize: 14,
+    lineHeight: 20,
+    marginBottom: 10,
   },
   feedActions: {
     flexDirection: 'row',
-    gap: 20,
+    gap: 24,
   },
   feedAction: {
     flexDirection: 'row',
@@ -591,7 +836,7 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   feedActionText: {
-    fontSize: 13,
+    fontSize: 12,
   },
   // Search bar
   searchBar: {
