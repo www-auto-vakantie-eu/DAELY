@@ -4,6 +4,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import PageHeader from '../components/PageHeader';
 import { getActivities, deleteActivity, Activity } from 'services/activity-storage';
 import { SPORT_DISCIPLINES } from '../constants/sport-disciplines';
+import ActivityMap from '../../components/ActivityMap';
 
 export default function ActivityDetailScreen() {
   const router = useRouter();
@@ -204,6 +205,11 @@ export default function ActivityDetailScreen() {
             <DetailRow label="Routepunten" value={`${activity.metrics.gps.routePoints.length}`} />
           ) : null}
           {activity.metrics.gps.notes ? <DetailRow label="Notitie" value={activity.metrics.gps.notes} /> : null}
+          {activity.metrics.gps.routePoints && activity.metrics.gps.routePoints.length > 0 ? (
+            <View style={styles.mapContainer}>
+              <ActivityMap routePoints={activity.metrics.gps.routePoints} />
+            </View>
+          ) : null}
         </View>
       ) : null}
       {activity.notes ? (
@@ -380,6 +386,9 @@ const styles = StyleSheet.create({
     fontSize: 15,
     lineHeight: 22,
     color: '#1F2937',
+  },
+  mapContainer: {
+    marginTop: 12,
   },
   placeholderBox: {
     backgroundColor: '#E2E8F0',

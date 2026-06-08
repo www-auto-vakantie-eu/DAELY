@@ -18,6 +18,7 @@ import {
   type GpsRoutePoint,
   type GpsPermissionStatus,
 } from 'services/activity-storage';
+import { getGpsTrackingService, type GpsTrackingState } from 'services/gps-tracking';
 
 const SESSION_STATUS = {
   NOT_STARTED: 'Klaar',
@@ -136,7 +137,17 @@ export default function StartActivityScreen() {
   const isSkillDiscipline = discipline?.trackingType === 'skill';
   const isLapsDiscipline = discipline?.trackingType === 'laps';
   const isGpsDiscipline = discipline?.trackingType === 'gps';
-  const isGpsTrackingAvailable = false;
+  const isGpsTrackingAvailable = isGpsDiscipline;
+  const gpsService = getGpsTrackingService();
+  const [gpsState, setGpsState] = useState<GpsTrackingState>(gpsService.getState());
+  
+  // Subscribe to GPS state changes
+  React.useEffect(() => {
+    const unsubscribe = gpsService.subscribeToState(() => {
+      setGpsState(gpsService.getState());
+    });
+    return unsubscribe;
+  }, [gpsService]);
   const scoreType: ScoreType | undefined = discipline?.id === 'golf' ? 'golf' : discipline?.id === 'racketsporten' ? 'racket' : isScoreDiscipline ? 'other' : undefined;
   const skillType: SkillType | undefined =
     discipline?.id === 'judo'
@@ -221,22 +232,42 @@ export default function StartActivityScreen() {
     }
   };
 
-  const handleStart = () => {
-    if (isGpsDiscipline && !isGpsTrackingAvailable) {
-      setGpsPermissionStatus('unavailable');
+  const handleStart = async () => {
+    if (isGpsDiscipline) {
+      const permission = await gpsService.requestPermission();
+      setGpsPermissionStatus(permission);
+      if (permission === 'granted') {
+        const started = await gpsService.start();
+        if (!started) {
+          Alert.alert('GPS fout', 'Kon GPS tracking niet starten. Controleer je locatie-instellingen.');
+          return;
+        }
+      } else {
+        Alert.alert('Locatie toegang', 'Locatietoegang is vereist voor GPS tracking. Ga naar instellingen om dit toe te staan.');
+        return;
+      }
     }
     setStatus('ACTIVE');
     startTimer();
   };
   const handlePause = () => {
+    if (isGpsDiscipline) {
+      gpsService.pause();
+    }
     setStatus('PAUSED');
     stopTimer();
   };
   const handleResume = () => {
+    if (isGpsDiscipline) {
+      gpsService.resume();
+    }
     setStatus('ACTIVE');
     startTimer();
   };
   const handleStop = () => {
+    if (isGpsDiscipline) {
+      gpsService.stop();
+    }
     setStatus('FINISHED');
     stopTimer();
   };
@@ -356,21 +387,11 @@ export default function StartActivityScreen() {
     const computedLapsDistanceMeters = isLapsDiscipline ? getComputedLapsDistanceMeters() : undefined;
     const enteredLapsDistanceMeters = isLapsDiscipline ? toOptionalNonNegativeNumber(lapsDistanceMeters) : undefined;
     const resolvedLapsDistanceMeters = enteredLapsDistanceMeters ?? computedLapsDistanceMeters;
-    const gpsDistanceMeters = isGpsDiscipline ? calculateRouteDistanceMeters(gpsRoutePoints) : undefined;
-    const gpsAverageSpeedKmh =
-      isGpsDiscipline && gpsDistanceMeters !== undefined && seconds > 0
-        ? (gpsDistanceMeters / seconds) * 3.6
-        : undefined;
-    const gpsMaxSpeedKmh = isGpsDiscipline
-      ? gpsRoutePoints.reduce<number | undefined>((max, point) => {
-          if (point.speedMps === undefined || point.speedMps < 0) return max;
-          const kmh = point.speedMps * 3.6;
-          if (max === undefined || kmh > max) return kmh;
-          return max;
-        }, undefined)
-      : undefined;
+    const gpsDistanceMeters = isGpsDiscipline ? gpsState.distanceMeters : undefined;
+    const gpsAverageSpeedKmh = isGpsDiscipline ? gpsState.averageSpeedKmh : undefined;
+    const gpsMaxSpeedKmh = isGpsDiscipline ? gpsState.maxSpeedKmh : undefined;
     const resolvedGpsPermissionStatus = isGpsDiscipline
-      ? gpsPermissionStatus ?? (isGpsTrackingAvailable ? 'undetermined' : 'unavailable')
+      ? gpsState.permissionStatus
       : undefined;
     const lapsPacePer100mSeconds =
       isLapsDiscipline && resolvedLapsDistanceMeters !== undefined && resolvedLapsDistanceMeters > 0
@@ -470,7 +491,7 @@ export default function StartActivityScreen() {
                       distanceMeters: gpsDistanceMeters,
                       averageSpeedKmh: gpsAverageSpeedKmh,
                       maxSpeedKmh: gpsMaxSpeedKmh,
-                      routePoints: gpsRoutePoints.length > 0 ? gpsRoutePoints : undefined,
+                      routePoints: gpsState.routePoints.length > 0 ? gpsState.routePoints : undefined,
                       locationPermissionStatus: resolvedGpsPermissionStatus,
                       notes: gpsNotes.trim().length > 0 ? gpsNotes.trim() : undefined,
                     }
@@ -499,6 +520,22 @@ export default function StartActivityScreen() {
         </View>
         <Text style={styles.statusSubtitle}>{getStatusSubtitle(status)}</Text>
         <Text style={styles.timer}>{formatTime(seconds)}</Text>
+        {isGpsDiscipline && gpsState.isActive && (
+          <View style={styles.gpsMetricsRow}>
+            <View style={styles.gpsMetric}>
+              <Text style={styles.gpsMetricLabel}>Afstand</Text>
+              <Text style={styles.gpsMetricValue}>{Math.round(gpsState.distanceMeters)} m</Text>
+            </View>
+            <View style={styles.gpsMetric}>
+              <Text style={styles.gpsMetricLabel}>Snelheid</Text>
+              <Text style={styles.gpsMetricValue}>{gpsState.currentSpeedKmh ? `${gpsState.currentSpeedKmh.toFixed(1)} km/u` : '--'}</Text>
+            </View>
+            <View style={styles.gpsMetric}>
+              <Text style={styles.gpsMetricLabel}>Gem. pace</Text>
+              <Text style={styles.gpsMetricValue}>{gpsState.averageSpeedKmh ? `${(60 / gpsState.averageSpeedKmh).toFixed(1)} min/km` : '--'}</Text>
+            </View>
+          </View>
+        )}
       </View>
 
       {isWorkoutDiscipline && (
@@ -1052,6 +1089,25 @@ const styles = StyleSheet.create({
     color: '#0F172A',
     marginBottom: 6,
     textAlign: 'center',
+  },
+  gpsMetricsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: 12,
+    gap: 8,
+  },
+  gpsMetric: {
+    alignItems: 'center',
+  },
+  gpsMetricLabel: {
+    fontSize: 11,
+    color: '#64748B',
+    marginBottom: 2,
+  },
+  gpsMetricValue: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#0F172A',
   },
   buttonRow: {
     flexDirection: 'row',

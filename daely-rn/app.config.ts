@@ -43,6 +43,9 @@ const config: ExpoConfig = {
     supportsTablet: true,
     bundleIdentifier: 'com.daely.app',
     icon: selectedIcon,
+    infoPlist: {
+      NSLocationWhenInUseUsageDescription: 'DAELY gebruikt je locatie om je hardlooproute, afstand en tempo tijdens een activiteit te meten.',
+    },
   },
   android: {
     package: 'com.daely.app',
@@ -54,6 +57,7 @@ const config: ExpoConfig = {
     },
     edgeToEdgeEnabled: true,
     predictiveBackGestureEnabled: false,
+    permissions: ['ACCESS_FINE_LOCATION', 'ACCESS_COARSE_LOCATION'],
   },
   web: {
     output: 'static',
