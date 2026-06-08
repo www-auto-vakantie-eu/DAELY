@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Text, Pressable, ScrollView, Dimensions, StatusBar } from 'react-native';
+import { View, StyleSheet, Text, Pressable, ScrollView, Dimensions, StatusBar, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -13,6 +13,7 @@ export default function ExerciseDetailScreen() {
   const theme = useTheme();
   const [activeMediaIndex, setActiveMediaIndex] = useState(0);
   const screenWidth = Dimensions.get('window').width;
+  const slideWidth = Platform.OS === 'web' ? Math.min(screenWidth, 430) : screenWidth;
 
   const exercise = React.useMemo(() => {
     if (!id) return null;
@@ -170,7 +171,7 @@ export default function ExerciseDetailScreen() {
     const gradientColor = getSlideGradientColor();
 
     return (
-      <View key={item.id} style={[styles.mediaSlide, { width: screenWidth }]}>
+      <View key={item.id} style={[styles.mediaSlide, { width: slideWidth }]}>
         <LinearGradient
           colors={[gradientColor + '88', gradientColor + '44']}
           start={{ x: 0.5, y: 0 }}
@@ -199,41 +200,43 @@ export default function ExerciseDetailScreen() {
   };
 
   return (
-    <ScrollView style={[styles.screen, { backgroundColor: theme.background }]} showsVerticalScrollIndicator={false}>
+    <View style={[styles.screen, { backgroundColor: theme.background }]}>
       <StatusBar barStyle="light-content" />
-      {/* Media Hero Carousel */}
-      <View style={styles.mediaHeader}>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          pagingEnabled
-          snapToInterval={screenWidth}
-          snapToAlignment="start"
-          decelerationRate="fast"
-          onMomentumScrollEnd={(e) => {
-            const index = Math.round(e.nativeEvent.contentOffset.x / screenWidth);
-            setActiveMediaIndex(index);
-          }}
-        >
-          {mediaItems.map((item, index) => renderMediaSlide(item, index))}
-        </ScrollView>
-        <View style={styles.paginationDots}>
-          {mediaItems.map((_, index) => (
-            <View
-              key={index}
-              style={[
-                styles.dot,
-                { backgroundColor: index === activeMediaIndex ? '#FFFFFF' : 'rgba(255,255,255,0.5)' }
-              ]}
-            />
-          ))}
-        </View>
-      </View>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+        <View style={Platform.OS === 'web' ? styles.webContainer : undefined}>
+          {/* Media Hero Carousel */}
+          <View style={styles.mediaHeader}>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              pagingEnabled
+              snapToInterval={slideWidth}
+              snapToAlignment="start"
+              decelerationRate="fast"
+              onMomentumScrollEnd={(e) => {
+                const index = Math.round(e.nativeEvent.contentOffset.x / slideWidth);
+                setActiveMediaIndex(index);
+              }}
+            >
+              {mediaItems.map((item, index) => renderMediaSlide(item, index))}
+            </ScrollView>
+            <View style={styles.paginationDots}>
+              {mediaItems.map((_, index) => (
+                <View
+                  key={index}
+                  style={[
+                    styles.dot,
+                    { backgroundColor: index === activeMediaIndex ? '#FFFFFF' : 'rgba(255,255,255,0.5)' }
+                  ]}
+                />
+              ))}
+            </View>
+          </View>
 
-      <View style={styles.content}>
-        <Pressable onPress={() => router.back()} style={styles.backButton}>
-          <MaterialCommunityIcons name="arrow-left" size={24} color={theme.titleColor} />
-        </Pressable>
+          <View style={styles.content}>
+            <Pressable onPress={() => router.back()} style={styles.backButton}>
+              <MaterialCommunityIcons name="arrow-left" size={24} color={theme.titleColor} />
+            </Pressable>
 
         <Text style={[styles.exerciseName, { color: theme.titleColor }]}>
           {exercise.name}
@@ -310,14 +313,24 @@ export default function ExerciseDetailScreen() {
             ))}
           </View>
         )}
-      </View>
-    </ScrollView>
+          </View>
+        </View>
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 24,
+  },
+  webContainer: {
+    maxWidth: 430,
+    alignSelf: 'center',
+    width: '100%',
   },
   mediaHeader: {
     height: 280,
@@ -327,6 +340,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   mediaCard: {
+    width: '100%',
     height: 280,
   },
   mediaGradient: {

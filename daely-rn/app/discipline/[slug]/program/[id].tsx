@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, Text, Pressable, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { View, StyleSheet, Text, Pressable, ScrollView, TouchableOpacity, Alert, Platform } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/use-theme';
@@ -131,10 +131,11 @@ export default function DisciplineProgramDetailScreen() {
 
   return (
     <ScrollView style={[styles.screen, { backgroundColor: theme.background }]}>
-      <View style={styles.content}>
-        <Pressable onPress={() => router.back()} style={styles.backButton}>
-          <MaterialCommunityIcons name="arrow-left" size={24} color={theme.titleColor} />
-        </Pressable>
+      <View style={Platform.OS === 'web' ? styles.webContainer : undefined}>
+        <View style={styles.content}>
+          <Pressable onPress={() => router.back()} style={styles.backButton}>
+            <MaterialCommunityIcons name="arrow-left" size={24} color={theme.titleColor} />
+          </Pressable>
 
         <View style={[styles.iconBox, { backgroundColor: '#2563EB22' }]}>
           <MaterialCommunityIcons name="calendar-week" size={48} color="#2563EB" />
@@ -283,6 +284,7 @@ export default function DisciplineProgramDetailScreen() {
           </View>
         )}
       </View>
+      </View>
     </ScrollView>
   );
 }
@@ -290,6 +292,11 @@ export default function DisciplineProgramDetailScreen() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
+  },
+  webContainer: {
+    maxWidth: 430,
+    alignSelf: 'center',
+    width: '100%',
   },
   content: {
     padding: 20,
