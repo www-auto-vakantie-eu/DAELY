@@ -66,6 +66,43 @@ export default function ExerciseDetailScreen() {
     );
   }
 
+  const getFallbackInstructions = () => [
+    'Neem een gecontroleerde startpositie aan.',
+    'Voer de beweging rustig en technisch uit.',
+    'Houd spanning op de juiste spiergroep.',
+    'Keer gecontroleerd terug naar de startpositie.',
+  ];
+
+  const getFallbackTechniqueTips = () => [
+    'Focus op juiste houding en techniek boven snelheid.',
+    'Houd je core stabiel tijdens de beweging.',
+    'Adem rustig uit tijdens de inspanning.',
+    'Gebruik een volledige bewegingsuitslag zonder te compenseren.',
+    'Span de doelspiergroep aan tijdens de beweging.',
+  ];
+
+  const getFallbackCommonMistakes = () => [
+    'Te snel uitvoeren ten koste van techniek.',
+    'Slechte houding of compensatiebewegingen.',
+    'Geen controle over de beweging.',
+    'Verkeerde ademhaling of adem inhouden.',
+    'Te zwaar starten zonder goede techniek.',
+  ];
+
+  const getFallbackSafetyNotes = () => [
+    'Stop direct bij scherpe pijn of ongemak.',
+    'Kies een niveau dat je technisch goed kunt uitvoeren.',
+    'Bouw rustig op in gewicht of intensiteit.',
+    'Bij blessure of zwangerschap, raadpleeg een professional.',
+  ];
+
+  const getFallbackEquipment = () => {
+    if (exercise.categorie === 'Bodyweight' || exercise.categorie === 'Calisthenics') {
+      return ['Lichaamsgewicht'];
+    }
+    return ['Geen specifieke benodigdheden'];
+  };
+
   const getDifficultyColor = (level: string) => {
     switch(level) {
       case 'Beginner': return '#10B981';
@@ -142,19 +179,13 @@ export default function ExerciseDetailScreen() {
         )}
 
         {/* Uitvoering */}
-        {exercise.instructions && exercise.instructions.length > 0 && (
-          renderSection('Uitvoering', 'run', renderBulletPoints(exercise.instructions))
-        )}
+        {renderSection('Uitvoering', 'run', renderBulletPoints(exercise.instructions || getFallbackInstructions()))}
 
         {/* Techniekpunten */}
-        {exercise.techniqueTips && exercise.techniqueTips.length > 0 && (
-          renderSection('Waar let je op?', 'eye', renderBulletPoints(exercise.techniqueTips))
-        )}
+        {renderSection('Waar let je op?', 'eye', renderBulletPoints(exercise.techniqueTips || getFallbackTechniqueTips()))}
 
         {/* Veelgemaakte fouten */}
-        {exercise.commonMistakes && exercise.commonMistakes.length > 0 && (
-          renderSection('Veelgemaakte fouten', 'alert-circle', renderBulletPoints(exercise.commonMistakes))
-        )}
+        {renderSection('Veelgemaakte fouten', 'alert-circle', renderBulletPoints(exercise.commonMistakes || getFallbackCommonMistakes()))}
 
         {/* Alternatieven */}
         {alternatives.length > 0 && (
@@ -176,33 +207,16 @@ export default function ExerciseDetailScreen() {
         )}
 
         {/* Veiligheid */}
-        {exercise.safetyNotes && exercise.safetyNotes.length > 0 && (
-          renderSection('Veiligheid & Tips', 'shield-check', renderBulletPoints(exercise.safetyNotes))
-        )}
+        {renderSection('Veiligheid & Tips', 'shield-check', renderBulletPoints(exercise.safetyNotes || getFallbackSafetyNotes()))}
 
         {/* Equipment */}
-        {exercise.equipment && exercise.equipment.length > 0 && (
-          renderSection('Benodigdheden', 'dumbbell',
-            <View style={styles.chipContainer}>
-              {exercise.equipment.map((item, index) => (
-                <View key={index} style={[styles.equipmentChip, { backgroundColor: theme.background, borderColor: theme.border }]}>
-                  <Text style={[styles.equipmentText, { color: theme.subtitleColor }]}>{item}</Text>
-                </View>
-              ))}
-            </View>
-          )
-        )}
-
-        {/* Fallback als geen data */}
-        {!exercise.instructions && !exercise.techniqueTips && !exercise.commonMistakes && alternatives.length === 0 && !exercise.safetyNotes && !exercise.equipment && (
-          <View style={[styles.placeholderContainer, { backgroundColor: theme.card, borderColor: theme.border }]}>
-            <MaterialCommunityIcons name="information-outline" size={48} color={theme.subtitleColor} />
-            <Text style={[styles.placeholderTitle, { color: theme.titleColor }]}>
-              Uitvoering en video-instructies
-            </Text>
-            <Text style={[styles.placeholderText, { color: theme.subtitleColor }]}>
-              Worden later toegevoegd.
-            </Text>
+        {renderSection('Benodigdheden', 'dumbbell',
+          <View style={styles.chipContainer}>
+            {(exercise.equipment || getFallbackEquipment()).map((item, index) => (
+              <View key={index} style={[styles.equipmentChip, { backgroundColor: theme.background, borderColor: theme.border }]}>
+                <Text style={[styles.equipmentText, { color: theme.subtitleColor }]}>{item}</Text>
+              </View>
+            ))}
           </View>
         )}
       </View>
@@ -338,21 +352,5 @@ const styles = StyleSheet.create({
   },
   equipmentText: {
     fontSize: 13,
-  },
-  placeholderContainer: {
-    borderRadius: 12,
-    padding: 32,
-    alignItems: 'center',
-    borderWidth: 1,
-  },
-  placeholderTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginTop: 16,
-    marginBottom: 8,
-  },
-  placeholderText: {
-    fontSize: 14,
-    textAlign: 'center',
   },
 });
