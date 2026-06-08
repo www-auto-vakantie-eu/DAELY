@@ -128,7 +128,8 @@ function calculateRouteDistanceMeters(points: GpsRoutePoint[]): number | undefin
 }
 
 export default function StartActivityScreen() {
-  const { disciplineId, programId, week, day, workoutId } = useLocalSearchParams<{ 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- Program params received but not yet used in UI
+const { disciplineId, programId, week, day, workoutId } = useLocalSearchParams<{ 
     disciplineId: string;
     programId?: string;
     week?: string;
