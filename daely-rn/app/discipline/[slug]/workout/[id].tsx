@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, Text, Pressable, ScrollView, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Text, Pressable, ScrollView, TouchableOpacity, Platform } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/use-theme';
@@ -53,6 +53,7 @@ export default function DisciplineWorkoutDetailScreen() {
 
   return (
     <ScrollView style={[styles.screen, { backgroundColor: theme.background }]}>
+      <View style={Platform.OS === 'web' ? styles.webContainer : undefined}>
         <View style={styles.content}>
           <Pressable onPress={() => router.back()} style={styles.backButton}>
             <MaterialCommunityIcons name="arrow-left" size={24} color={theme.titleColor} />
@@ -119,6 +120,7 @@ export default function DisciplineWorkoutDetailScreen() {
           </Text>
         </View>
       </View>
+      </View>
     </ScrollView>
   );
 }
@@ -126,6 +128,11 @@ export default function DisciplineWorkoutDetailScreen() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
+  },
+  webContainer: {
+    maxWidth: 430,
+    alignSelf: 'center',
+    width: '100%',
   },
   content: {
     padding: 20,

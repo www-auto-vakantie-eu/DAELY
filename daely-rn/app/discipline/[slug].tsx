@@ -7,6 +7,7 @@ import {
   ImageBackground,
   StatusBar,
   TextInput,
+  Platform,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -332,8 +333,9 @@ export default function DisciplineScreen() {
     <View style={[styles.screen, { backgroundColor: theme.background }]}> 
       <StatusBar barStyle="light-content" />
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-        {/* ── HERO HEADER ── */}
-        <ImageBackground source={{ uri: discipline.heroImage }} style={styles.hero}>
+        <View style={Platform.OS === 'web' ? styles.webContainer : undefined}>
+          {/* ── HERO HEADER ── */}
+          <ImageBackground source={{ uri: discipline.heroImage }} style={styles.hero}>
           <LinearGradient
             colors={['rgba(0,0,0,0.25)', 'rgba(0,0,0,0.80)']}
             start={{ x: 0.5, y: 0 }}
@@ -592,6 +594,7 @@ export default function DisciplineScreen() {
           )}
         </View>
         <View style={styles.bottomSpacer} />
+        </View>
       </ScrollView>
     </View>
   );
@@ -600,6 +603,11 @@ export default function DisciplineScreen() {
 const styles = StyleSheet.create({
   screen: { flex: 1 },
   scrollContent: { paddingBottom: 0 },
+  webContainer: {
+    maxWidth: 430,
+    alignSelf: 'center',
+    width: '100%',
+  },
   hero: { width: '100%', height: 280 },
   heroGradient: {
     flex: 1,
