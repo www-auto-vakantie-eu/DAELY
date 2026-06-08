@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text, ScrollView, Pressable, ImageBackground } from 'react-native';
+import { StyleSheet, View, Text, ScrollView, Pressable, ImageBackground, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useMemo, useState } from 'react';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -121,12 +121,14 @@ export default function NutritionMealScreen() {
 
   if (!meal) {
     return (
-      <View style={[styles.screen, { backgroundColor: theme.background }]}> 
-        <Pressable style={styles.backButtonPlain} onPress={() => router.back()}>
-          <MaterialCommunityIcons name="chevron-left" size={26} color={theme.titleColor} />
-          <Text style={[styles.backPlainLabel, { color: theme.titleColor }]}>Terug</Text>
-        </Pressable>
-        <Text style={[styles.notFoundTitle, { color: theme.titleColor }]}>Gerecht niet gevonden</Text>
+      <View style={[styles.screen, { backgroundColor: theme.background }]}>
+        <View style={Platform.OS === 'web' ? styles.webContainer : undefined}>
+          <Pressable style={styles.backButtonPlain} onPress={() => router.back()}>
+            <MaterialCommunityIcons name="chevron-left" size={26} color={theme.titleColor} />
+            <Text style={[styles.backPlainLabel, { color: theme.titleColor }]}>Terug</Text>
+          </Pressable>
+          <Text style={[styles.notFoundTitle, { color: theme.titleColor }]}>Gerecht niet gevonden</Text>
+        </View>
       </View>
     );
   }
@@ -138,11 +140,12 @@ export default function NutritionMealScreen() {
   return (
     <View style={[styles.screen, { backgroundColor: theme.background }]}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={styles.topArea}>
-          <Pressable style={[styles.backButtonPlain, { borderColor: theme.border, backgroundColor: theme.card }]} onPress={() => router.back()}>
-            <MaterialCommunityIcons name="chevron-left" size={22} color={theme.titleColor} />
-            <Text style={[styles.backPlainLabel, { color: theme.titleColor }]}>Voeding</Text>
-          </Pressable>
+        <View style={Platform.OS === 'web' ? styles.webContainer : undefined}>
+          <View style={styles.topArea}>
+            <Pressable style={[styles.backButtonPlain, { borderColor: theme.border, backgroundColor: theme.card }]} onPress={() => router.back()}>
+              <MaterialCommunityIcons name="chevron-left" size={22} color={theme.titleColor} />
+              <Text style={[styles.backPlainLabel, { color: theme.titleColor }]}>Voeding</Text>
+            </Pressable>
 
           <ImageBackground source={{ uri: meal.image }} style={styles.hero} imageStyle={styles.heroImage}>
             <LinearGradient colors={['rgba(0,0,0,0.02)', 'rgba(0,0,0,0.82)']} style={styles.heroOverlay}>
@@ -189,6 +192,7 @@ export default function NutritionMealScreen() {
         </View>
 
         <View style={styles.bottomSpacer} />
+        </View>
       </ScrollView>
     </View>
   );
@@ -196,6 +200,11 @@ export default function NutritionMealScreen() {
 
 const styles = StyleSheet.create({
   screen: { flex: 1 },
+  webContainer: {
+    maxWidth: 430,
+    alignSelf: 'center',
+    width: '100%',
+  },
   topArea: {
     paddingHorizontal: 16,
     paddingTop: 24,
