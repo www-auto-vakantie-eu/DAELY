@@ -59,6 +59,10 @@ export default function ExerciseDetailScreen() {
           <MaterialCommunityIcons name="arrow-left" size={24} color={theme.titleColor} />
         </Pressable>
 
+        <View style={[styles.iconBox, { backgroundColor: '#10B98122' }]}>
+          <MaterialCommunityIcons name="human" size={48} color="#10B981" />
+        </View>
+
         <Text style={[styles.exerciseName, { color: theme.titleColor }]}>
           {exercise.name}
         </Text>
@@ -130,6 +134,14 @@ const styles = StyleSheet.create({
   message: {
     fontSize: 16,
     textAlign: 'center',
+  },
+  iconBox: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 20,
   },
   exerciseName: {
     fontSize: 28,
