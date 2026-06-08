@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Text, Pressable, ScrollView, Dimensions } from 'react-native';
+import { View, StyleSheet, Text, Pressable, ScrollView, Dimensions, StatusBar } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -60,9 +60,9 @@ export default function ExerciseDetailScreen() {
     }
     // Fallback: always show 3 placeholder slides
     return [
-      { id: 'demo', type: 'demo_video' as const, title: 'Voorbeeld', description: 'Visualisatie wordt voorbereid' },
-      { id: 'muscle', type: 'muscle_highlight' as const, title: 'Spieren', description: `${exercise.spiergroep}` },
-      { id: 'illustration', type: 'illustration' as const, title: 'Tekening', description: 'Techniektekening wordt voorbereid' },
+      { id: 'demo', type: 'demo_video' as const, title: 'Voorbeeld', description: 'Bekijk de beweging stap voor stap' },
+      { id: 'muscle', type: 'muscle_highlight' as const, title: 'Spierfocus', description: `Zie welke spieren vooral actief zijn` },
+      { id: 'illustration', type: 'illustration' as const, title: 'Techniektekening', description: 'Bekijk de oefening in eenvoudige stappen' },
     ];
   }, [exercise]);
 
@@ -158,7 +158,7 @@ export default function ExerciseDetailScreen() {
       }
     };
 
-    const getSlideColor = () => {
+    const getSlideGradientColor = () => {
       switch(item.type) {
         case 'demo_video': return '#2563EB';
         case 'muscle_highlight': return '#10B981';
@@ -167,72 +167,73 @@ export default function ExerciseDetailScreen() {
       }
     };
 
+    const gradientColor = getSlideGradientColor();
+
     return (
       <View key={item.id} style={[styles.mediaSlide, { width: screenWidth }]}>
-        <View style={[styles.mediaCard, { backgroundColor: theme.card }]}>
-          <LinearGradient
-            colors={[getSlideColor() + '33', getSlideColor() + '11']}
-            style={styles.mediaGradient}
-          />
-          <View style={styles.mediaContent}>
-            <View style={[styles.mediaIconContainer, { backgroundColor: getSlideColor() + '22' }]}>
-              <MaterialCommunityIcons name={getSlideIcon() as any} size={64} color={getSlideColor()} />
+        <LinearGradient
+          colors={[gradientColor + '88', gradientColor + '44']}
+          start={{ x: 0.5, y: 0 }}
+          end={{ x: 0.5, y: 1 }}
+          style={styles.mediaCard}
+        >
+          <View style={styles.mediaGradient}>
+            <View style={styles.mediaIconContainer}>
+              <MaterialCommunityIcons name={getSlideIcon() as any} size={72} color="#FFFFFF" />
             </View>
-            <View style={styles.mediaBadge}>
-              <Text style={styles.mediaBadgeText}>{item.title}</Text>
-            </View>
-            <Text style={[styles.mediaTitle, { color: theme.titleColor }]}>{item.description}</Text>
             {item.type === 'demo_video' && (
-              <View style={[styles.playBadge, { backgroundColor: getSlideColor() }]}>
-                <MaterialCommunityIcons name="play" size={24} color="#FFFFFF" />
+              <View style={styles.playBadge}>
+                <MaterialCommunityIcons name="play" size={32} color="#FFFFFF" />
               </View>
             )}
           </View>
-        </View>
+          <View style={styles.mediaTextBlock}>
+            <View style={styles.mediaBadge}>
+              <Text style={styles.mediaBadgeText}>{item.title}</Text>
+            </View>
+            <Text style={styles.mediaDescription}>{item.description}</Text>
+          </View>
+        </LinearGradient>
       </View>
     );
   };
 
   return (
-    <ScrollView style={[styles.screen, { backgroundColor: theme.background }]}>
+    <ScrollView style={[styles.screen, { backgroundColor: theme.background }]} showsVerticalScrollIndicator={false}>
+      <StatusBar barStyle="light-content" />
+      {/* Media Hero Carousel */}
+      <View style={styles.mediaHeader}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          pagingEnabled
+          snapToInterval={screenWidth}
+          snapToAlignment="start"
+          decelerationRate="fast"
+          onMomentumScrollEnd={(e) => {
+            const index = Math.round(e.nativeEvent.contentOffset.x / screenWidth);
+            setActiveMediaIndex(index);
+          }}
+        >
+          {mediaItems.map((item, index) => renderMediaSlide(item, index))}
+        </ScrollView>
+        <View style={styles.paginationDots}>
+          {mediaItems.map((_, index) => (
+            <View
+              key={index}
+              style={[
+                styles.dot,
+                { backgroundColor: index === activeMediaIndex ? '#FFFFFF' : 'rgba(255,255,255,0.5)' }
+              ]}
+            />
+          ))}
+        </View>
+      </View>
+
       <View style={styles.content}>
         <Pressable onPress={() => router.back()} style={styles.backButton}>
           <MaterialCommunityIcons name="arrow-left" size={24} color={theme.titleColor} />
         </Pressable>
-
-        {/* Media Hero Carousel */}
-        <View style={styles.mediaHeader}>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            pagingEnabled
-            snapToInterval={screenWidth}
-            snapToAlignment="start"
-            decelerationRate="fast"
-            onMomentumScrollEnd={(e) => {
-              const index = Math.round(e.nativeEvent.contentOffset.x / screenWidth);
-              setActiveMediaIndex(index);
-            }}
-          >
-            {mediaItems.map((item, index) => renderMediaSlide(item, index))}
-          </ScrollView>
-          <View style={styles.paginationDots}>
-            {mediaItems.map((_, index) => (
-              <View
-                key={index}
-                style={[
-                  styles.dot,
-                  { backgroundColor: index === activeMediaIndex ? '#FFFFFF' : 'rgba(255,255,255,0.4)' }
-                ]}
-              />
-            ))}
-          </View>
-        </View>
-
-        {/* Premium Header */}
-        <View style={[styles.iconBox, { backgroundColor: '#10B98122' }]}>
-          <MaterialCommunityIcons name="human" size={48} color="#10B981" />
-        </View>
 
         <Text style={[styles.exerciseName, { color: theme.titleColor }]}>
           {exercise.name}
@@ -318,87 +319,63 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
   },
-  content: {
-    padding: 20,
-    paddingTop: 60,
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 20,
-  },
   mediaHeader: {
-    marginBottom: 24,
+    height: 280,
+    position: 'relative',
   },
   mediaSlide: {
     alignItems: 'center',
   },
   mediaCard: {
-    width: '100%',
     height: 280,
-    position: 'relative',
-    overflow: 'hidden',
   },
   mediaGradient: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-  },
-  mediaContent: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 24,
+    paddingTop: 56,
+    paddingHorizontal: 16,
+    justifyContent: 'space-between',
+    paddingBottom: 28,
   },
   mediaIconContainer: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 20,
   },
-  mediaBadge: {
-    paddingHorizontal: 16,
-    paddingVertical: 6,
-    borderRadius: 16,
-    backgroundColor: 'rgba(255,255,255,0.9)',
-    marginBottom: 16,
-  },
-  mediaBadgeText: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#1F2937',
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  mediaTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-    marginBottom: 8,
-    textAlign: 'center',
-  },
-  mediaDescription: {
-    fontSize: 14,
-    textAlign: 'center',
-  },
   playBadge: {
     position: 'absolute',
     bottom: 32,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
+    right: 32,
+    width: 64,
+    height: 64,
+    borderRadius: 32,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
+    backgroundColor: 'rgba(255,255,255,0.3)',
+    borderWidth: 2,
+    borderColor: '#FFFFFF',
+  },
+  mediaTextBlock: {
+    gap: 4,
+  },
+  mediaBadge: {
+    alignSelf: 'flex-start',
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 12,
+    backgroundColor: 'rgba(255,255,255,0.25)',
+    marginBottom: 8,
+  },
+  mediaBadgeText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#FFFFFF',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  mediaDescription: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#FFFFFF',
   },
   paginationDots: {
     flexDirection: 'row',
@@ -414,6 +391,16 @@ const styles = StyleSheet.create({
     height: 8,
     borderRadius: 4,
   },
+  content: {
+    padding: 20,
+  },
+  backButton: {
+    width: 40,
+    height: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 20,
+  },
   title: {
     fontSize: 24,
     fontWeight: '700',
@@ -422,14 +409,6 @@ const styles = StyleSheet.create({
   message: {
     fontSize: 16,
     textAlign: 'center',
-  },
-  iconBox: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 20,
   },
   exerciseName: {
     fontSize: 28,
