@@ -331,7 +331,7 @@ export default function CommunityScreen() {
         />
 
         {/* Tabs */}
-        <View style={[styles.tabRow, { backgroundColor: theme.background }]}>
+        <View style={styles.tabRow}>
           {(['feed', 'creators', 'partners', 'events'] as Tab[]).map((tab) => {
             const isActive = activeTab === tab;
             return (
@@ -339,12 +339,12 @@ export default function CommunityScreen() {
                 key={tab}
                 style={[
                   styles.tabButton,
-                  { borderColor: theme.border },
+                  { backgroundColor: theme.card, borderColor: theme.border },
                   isActive && { backgroundColor: theme.tabBarActive, borderColor: theme.tabBarActive },
                 ]}
                 onPress={() => setActiveTab(tab)}
               >
-                <Text style={[styles.tabLabel, { color: isActive ? '#FFFFFF' : theme.subtitleColor }]}>
+                <Text style={[styles.tabLabel, { color: isActive ? '#FFFFFF' : theme.titleColor }]}>
                   {tab.charAt(0).toUpperCase() + tab.slice(1)}
                 </Text>
               </Pressable>
@@ -755,20 +755,22 @@ const styles = StyleSheet.create({
   },
   tabRow: {
     flexDirection: 'row',
-    paddingHorizontal: 0,
-    paddingTop: 16,
-    paddingBottom: 8,
+    flexWrap: 'wrap',
     gap: 8,
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    marginBottom: 8,
   },
   tabButton: {
-    flex: 1,
-    paddingVertical: 10,
-    borderRadius: 10,
-    borderWidth: 1.5,
+    width: '48.5%',
+    paddingVertical: 12,
+    paddingHorizontal: 12,
+    borderRadius: 14,
+    borderWidth: 1,
     alignItems: 'center',
   },
   tabLabel: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '700',
   },
   tabContent: {
