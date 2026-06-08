@@ -1,5 +1,4 @@
 import { StyleSheet, ScrollView, View, Text, Pressable, ImageBackground } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '@/hooks/use-theme';
 import { useRouter } from 'expo-router';
@@ -33,12 +32,8 @@ export default function MindScreen() {
               end={{ x: 0, y: 1 }}
               style={styles.cardOverlay}
             >
-              <MaterialCommunityIcons name="weather-windy" size={32} color="#fff" />
               <Text style={styles.cardTitle}>Ademhaling</Text>
               <Text style={styles.cardDescription}>Ademhalingsoefeningen voor focus en ontspanning</Text>
-              <View style={styles.cardBadge}>
-                <Text style={styles.cardBadgeText}>Binnenkort</Text>
-              </View>
             </LinearGradient>
           </ImageBackground>
         </Pressable>
@@ -58,12 +53,8 @@ export default function MindScreen() {
               end={{ x: 0, y: 1 }}
               style={styles.cardOverlay}
             >
-              <MaterialCommunityIcons name="brain" size={32} color="#fff" />
               <Text style={styles.cardTitle}>Focus</Text>
               <Text style={styles.cardDescription}>Focusoefeningen voor mentale scherpte</Text>
-              <View style={styles.cardBadge}>
-                <Text style={styles.cardBadgeText}>Binnenkort</Text>
-              </View>
             </LinearGradient>
           </ImageBackground>
         </Pressable>
@@ -83,12 +74,8 @@ export default function MindScreen() {
               end={{ x: 0, y: 1 }}
               style={styles.cardOverlay}
             >
-              <MaterialCommunityIcons name="hand-okay" size={32} color="#fff" />
               <Text style={styles.cardTitle}>Tapping</Text>
               <Text style={styles.cardDescription}>Tapping-sessies voor stressreductie en emotionele balans</Text>
-              <View style={styles.cardBadge}>
-                <Text style={styles.cardBadgeText}>Binnenkort</Text>
-              </View>
             </LinearGradient>
           </ImageBackground>
         </Pressable>
@@ -108,12 +95,8 @@ export default function MindScreen() {
               end={{ x: 0, y: 1 }}
               style={styles.cardOverlay}
             >
-              <MaterialCommunityIcons name="battery-charging" size={32} color="#fff" />
               <Text style={styles.cardTitle}>Herstel</Text>
               <Text style={styles.cardDescription}>Herstelroutines voor beter slapen en regeneratie</Text>
-              <View style={styles.cardBadge}>
-                <Text style={styles.cardBadgeText}>Binnenkort</Text>
-              </View>
             </LinearGradient>
           </ImageBackground>
         </Pressable>
@@ -174,19 +157,6 @@ const styles = StyleSheet.create({
   cardDescription: {
     fontSize: 14,
     color: 'rgba(255, 255, 255, 0.9)',
-    marginBottom: 12,
-  },
-  cardBadge: {
-    backgroundColor: 'rgba(255, 255, 255, 0.25)',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 999,
-    alignSelf: 'flex-start',
-  },
-  cardBadgeText: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#fff',
   },
   buttonRow: {
     gap: 12,
