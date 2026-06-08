@@ -142,12 +142,13 @@ export default function StartActivityScreen() {
   const [gpsState, setGpsState] = useState<GpsTrackingState>(gpsService.getState());
   
   // Subscribe to GPS state changes
+  // Note: gpsService is singleton, so dependency array is intentionally empty
   React.useEffect(() => {
     const unsubscribe = gpsService.subscribeToState(() => {
       setGpsState(gpsService.getState());
     });
     return unsubscribe;
-  }, [gpsService]);
+  }, []);
   const scoreType: ScoreType | undefined = discipline?.id === 'golf' ? 'golf' : discipline?.id === 'racketsporten' ? 'racket' : isScoreDiscipline ? 'other' : undefined;
   const skillType: SkillType | undefined =
     discipline?.id === 'judo'
@@ -528,11 +529,11 @@ export default function StartActivityScreen() {
             </View>
             <View style={styles.gpsMetric}>
               <Text style={styles.gpsMetricLabel}>Snelheid</Text>
-              <Text style={styles.gpsMetricValue}>{gpsState.currentSpeedKmh ? `${gpsState.currentSpeedKmh.toFixed(1)} km/u` : '--'}</Text>
+              <Text style={styles.gpsMetricValue}>{gpsState.currentSpeedKmh !== null && !isNaN(gpsState.currentSpeedKmh) ? `${gpsState.currentSpeedKmh.toFixed(1)} km/u` : '--'}</Text>
             </View>
             <View style={styles.gpsMetric}>
               <Text style={styles.gpsMetricLabel}>Gem. pace</Text>
-              <Text style={styles.gpsMetricValue}>{gpsState.averageSpeedKmh ? `${(60 / gpsState.averageSpeedKmh).toFixed(1)} min/km` : '--'}</Text>
+              <Text style={styles.gpsMetricValue}>{gpsState.averageSpeedKmh !== null && gpsState.averageSpeedKmh > 0 && !isNaN(gpsState.averageSpeedKmh) ? `${(60 / gpsState.averageSpeedKmh).toFixed(1)} min/km` : '--'}</Text>
             </View>
           </View>
         )}

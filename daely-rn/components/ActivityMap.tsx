@@ -55,6 +55,9 @@ export default function ActivityMap({ routePoints }: ActivityMapProps) {
     );
   }
 
+  // Only render polyline if we have at least 2 points
+  const hasValidPolyline = polylineCoordinates.length >= 2;
+
   return (
     <View style={styles.container}>
       <MapView
@@ -65,11 +68,13 @@ export default function ActivityMap({ routePoints }: ActivityMapProps) {
         rotateEnabled
         pitchEnabled
       >
-        <Polyline
-          coordinates={polylineCoordinates}
-          strokeColor="#2563EB"
-          strokeWidth={4}
-        />
+        {hasValidPolyline && (
+          <Polyline
+            coordinates={polylineCoordinates}
+            strokeColor="#2563EB"
+            strokeWidth={4}
+          />
+        )}
       </MapView>
     </View>
   );

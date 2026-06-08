@@ -127,9 +127,10 @@ class GpsTrackingService {
   private processLocationUpdate(location: Location.LocationObject) {
     if (this.state.isPaused) return;
 
-    // Check accuracy
-    if (this.config.minAccuracy && location.coords.accuracy > this.config.minAccuracy) {
-      console.log('Location accuracy too low:', location.coords.accuracy);
+    // Check accuracy - safely handle null/undefined
+    const accuracy = location.coords.accuracy;
+    if (this.config.minAccuracy && accuracy !== null && accuracy !== undefined && accuracy > this.config.minAccuracy) {
+      console.log('Location accuracy too low:', accuracy);
       return;
     }
 
@@ -156,6 +157,8 @@ class GpsTrackingService {
       // Only update if moved enough
       if (distance >= (this.config.minDistanceBetweenUpdates ?? 0)) {
         this.state.distanceMeters += distance;
+        this.state.lastLocation = location;
+        this.state.routePoints.push(routePoint);
 
         // Update speed metrics
         if (speedMps !== undefined && speedMps >= 0) {
@@ -167,10 +170,11 @@ class GpsTrackingService {
           }
         }
       }
+    } else {
+      // First point - always add
+      this.state.lastLocation = location;
+      this.state.routePoints.push(routePoint);
     }
-
-    this.state.lastLocation = location;
-    this.state.routePoints.push(routePoint);
 
     // Calculate average speed
     if (this.state.startTime) {

@@ -198,8 +198,8 @@ export default function ActivityDetailScreen() {
         <View style={styles.metricCard}>
           <Text style={styles.metricTitle}>GPS</Text>
           {activity.metrics.gps.distanceMeters !== undefined ? <DetailRow label="Afstand" value={`${Math.round(activity.metrics.gps.distanceMeters)} m`} /> : null}
-          {activity.metrics.gps.averageSpeedKmh !== undefined ? <DetailRow label="Gemiddelde snelheid" value={`${activity.metrics.gps.averageSpeedKmh.toFixed(1)} km/u`} /> : null}
-          {activity.metrics.gps.maxSpeedKmh !== undefined ? <DetailRow label="Max snelheid" value={`${activity.metrics.gps.maxSpeedKmh.toFixed(1)} km/u`} /> : null}
+          {activity.metrics.gps.averageSpeedKmh !== undefined && !isNaN(activity.metrics.gps.averageSpeedKmh) ? <DetailRow label="Gemiddelde snelheid" value={`${activity.metrics.gps.averageSpeedKmh.toFixed(1)} km/u`} /> : null}
+          {activity.metrics.gps.maxSpeedKmh !== undefined && !isNaN(activity.metrics.gps.maxSpeedKmh) ? <DetailRow label="Max snelheid" value={`${activity.metrics.gps.maxSpeedKmh.toFixed(1)} km/u`} /> : null}
           {activity.metrics.gps.locationPermissionStatus ? <DetailRow label="Locatie permissie" value={activity.metrics.gps.locationPermissionStatus} /> : null}
           {activity.metrics.gps.routePoints && activity.metrics.gps.routePoints.length > 0 ? (
             <DetailRow label="Routepunten" value={`${activity.metrics.gps.routePoints.length}`} />
