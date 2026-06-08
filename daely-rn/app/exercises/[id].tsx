@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Text, Pressable, ScrollView } from 'react-native';
+import { View, StyleSheet, Text, Pressable, ScrollView, Dimensions } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/use-theme';
@@ -11,6 +12,7 @@ export default function ExerciseDetailScreen() {
   const router = useRouter();
   const theme = useTheme();
   const [activeMediaIndex, setActiveMediaIndex] = useState(0);
+  const screenWidth = Dimensions.get('window').width;
 
   const exercise = React.useMemo(() => {
     if (!id) return null;
@@ -166,18 +168,26 @@ export default function ExerciseDetailScreen() {
     };
 
     return (
-      <View key={item.id} style={[styles.mediaSlide, { width: 350, marginHorizontal: 8 }]}>
-        <View style={[styles.mediaCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <View style={[styles.mediaIconContainer, { backgroundColor: getSlideColor() + '22' }]}>
-            <MaterialCommunityIcons name={getSlideIcon() as any} size={48} color={getSlideColor()} />
-          </View>
-          <Text style={[styles.mediaTitle, { color: theme.titleColor }]}>{item.title}</Text>
-          <Text style={[styles.mediaDescription, { color: theme.subtitleColor }]}>{item.description}</Text>
-          {item.type === 'demo_video' && (
-            <View style={[styles.playBadge, { backgroundColor: getSlideColor() }]}>
-              <MaterialCommunityIcons name="play" size={16} color="#FFFFFF" />
+      <View key={item.id} style={[styles.mediaSlide, { width: screenWidth }]}>
+        <View style={[styles.mediaCard, { backgroundColor: theme.card }]}>
+          <LinearGradient
+            colors={[getSlideColor() + '33', getSlideColor() + '11']}
+            style={styles.mediaGradient}
+          />
+          <View style={styles.mediaContent}>
+            <View style={[styles.mediaIconContainer, { backgroundColor: getSlideColor() + '22' }]}>
+              <MaterialCommunityIcons name={getSlideIcon() as any} size={64} color={getSlideColor()} />
             </View>
-          )}
+            <View style={styles.mediaBadge}>
+              <Text style={styles.mediaBadgeText}>{item.title}</Text>
+            </View>
+            <Text style={[styles.mediaTitle, { color: theme.titleColor }]}>{item.description}</Text>
+            {item.type === 'demo_video' && (
+              <View style={[styles.playBadge, { backgroundColor: getSlideColor() }]}>
+                <MaterialCommunityIcons name="play" size={24} color="#FFFFFF" />
+              </View>
+            )}
+          </View>
         </View>
       </View>
     );
@@ -190,14 +200,17 @@ export default function ExerciseDetailScreen() {
           <MaterialCommunityIcons name="arrow-left" size={24} color={theme.titleColor} />
         </Pressable>
 
-        {/* Media Swipe Header */}
+        {/* Media Hero Carousel */}
         <View style={styles.mediaHeader}>
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
             pagingEnabled
+            snapToInterval={screenWidth}
+            snapToAlignment="start"
+            decelerationRate="fast"
             onMomentumScrollEnd={(e) => {
-              const index = Math.round(e.nativeEvent.contentOffset.x / 350);
+              const index = Math.round(e.nativeEvent.contentOffset.x / screenWidth);
               setActiveMediaIndex(index);
             }}
           >
@@ -209,7 +222,7 @@ export default function ExerciseDetailScreen() {
                 key={index}
                 style={[
                   styles.dot,
-                  { backgroundColor: index === activeMediaIndex ? theme.tabBarActive : theme.border }
+                  { backgroundColor: index === activeMediaIndex ? '#FFFFFF' : 'rgba(255,255,255,0.4)' }
                 ]}
               />
             ))}
@@ -323,27 +336,51 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   mediaCard: {
-    width: 350,
-    height: 200,
-    borderRadius: 16,
-    borderWidth: 1,
+    width: '100%',
+    height: 280,
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  mediaGradient: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+  mediaContent: {
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     padding: 24,
-    position: 'relative',
   },
   mediaIconContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+    width: 100,
+    height: 100,
+    borderRadius: 50,
     alignItems: 'center',
     justifyContent: 'center',
+    marginBottom: 20,
+  },
+  mediaBadge: {
+    paddingHorizontal: 16,
+    paddingVertical: 6,
+    borderRadius: 16,
+    backgroundColor: 'rgba(255,255,255,0.9)',
     marginBottom: 16,
   },
+  mediaBadgeText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#1F2937',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
   mediaTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: '700',
     marginBottom: 8,
+    textAlign: 'center',
   },
   mediaDescription: {
     fontSize: 14,
@@ -351,20 +388,26 @@ const styles = StyleSheet.create({
   },
   playBadge: {
     position: 'absolute',
-    bottom: 16,
-    right: 16,
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    bottom: 32,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
     alignItems: 'center',
     justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
   },
   paginationDots: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 12,
+    marginTop: -28,
+    marginBottom: 24,
     gap: 8,
+    zIndex: 10,
   },
   dot: {
     width: 8,
