@@ -191,9 +191,6 @@ export default function NutritionScreen() {
         </View>
       )}
 
-      {/* Resultaten */}
-      <Text style={[styles.resultsText, { color: theme.subtitleColor }]}>{filteredMeals.length} gerechten gevonden</Text>
-
       {/* Meal cards */}
       {filteredMeals.map(meal => (
         <Pressable
@@ -382,11 +379,6 @@ const styles = StyleSheet.create({
   resetButtonText: {
     fontSize: 11,
     fontWeight: '700',
-  },
-  resultsText: {
-    marginBottom: 10,
-    fontSize: 13,
-    fontWeight: '600',
   },
   activeFiltersBlock: {
     marginBottom: 12,
