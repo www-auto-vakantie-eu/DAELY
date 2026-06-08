@@ -12,7 +12,6 @@ export default function ThemasScreen() {
   const theme = useTheme();
 
   const visibleThemes = [
-    'default',
     'classic',
     'zen-ink',
     'forest-breath',

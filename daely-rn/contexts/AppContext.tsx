@@ -255,7 +255,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [showWorkoutComplete, setShowWorkoutComplete] = useState(false);
   
   // Theme
-  const [activeThemeIdState, setActiveThemeIdState] = useState('default');
+  const [activeThemeIdState, setActiveThemeIdState] = useState('classic');
   
   // Disciplines
   const [selectedDiscipline, setSelectedDiscipline] = useState('All');
@@ -301,7 +301,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         ]);
 
         if (savedThemeId) {
-          setActiveThemeIdState(savedThemeId);
+          // Fallback: if saved theme is 'default', use 'classic' instead
+          const normalizedThemeId = savedThemeId === 'default' ? 'classic' : savedThemeId;
+          setActiveThemeIdState(normalizedThemeId);
         }
 
         if (savedIsLoggedIn) {
@@ -352,9 +354,11 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   }, []);
 
   const setActiveThemeId = useCallback(async (themeId: string) => {
-    setActiveThemeIdState(themeId);
+    // Fallback: if 'default' is selected, use 'classic' instead
+    const normalizedThemeId = themeId === 'default' ? 'classic' : themeId;
+    setActiveThemeIdState(normalizedThemeId);
     try {
-      await AsyncStorage.setItem(STORAGE_KEYS.activeThemeId, themeId);
+      await AsyncStorage.setItem(STORAGE_KEYS.activeThemeId, normalizedThemeId);
     } catch (error) {
       console.error('Error saving theme preference:', error);
     }
