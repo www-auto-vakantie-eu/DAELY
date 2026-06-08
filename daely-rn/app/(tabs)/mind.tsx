@@ -4,6 +4,13 @@ import { useTheme } from '@/hooks/use-theme';
 import { useRouter } from 'expo-router';
 import PageHeader from '../components/PageHeader';
 
+const MIND_ACTIONS = [
+  { key: 'start', title: 'Sessie starten', subtitle: 'Kies een meditatie', route: '/(tabs)/mind' as any },
+  { key: 'routine', title: 'Routine maken', subtitle: 'Bouw je schema', route: '/(tabs)/mijn' as any },
+  { key: 'search', title: 'Mind zoeken', subtitle: 'Vind oefeningen', route: '/(tabs)/mind' as any },
+  { key: 'sessions', title: 'Mijn sessies', subtitle: 'Geschiedenis', route: '/(tabs)/mijn' as any },
+];
+
 export default function MindScreen() {
   const theme = useTheme();
   const router = useRouter();
@@ -16,6 +23,23 @@ export default function MindScreen() {
         onSettingsPress={() => router.push('/(tabs)/athlete')}
         onCartPress={() => router.push('/(tabs)/cart')}
       />
+
+      <View style={styles.quickActionsBlock}>
+        <View style={styles.quickActionsRow}>
+          {MIND_ACTIONS.map((action) => (
+            <Pressable
+              key={action.key}
+              style={[styles.quickActionButton, { backgroundColor: theme.card, borderColor: theme.border }]}
+              onPress={() => router.push(action.route)}
+            >
+              <View style={styles.quickActionTextWrap}>
+                <Text style={[styles.quickActionText, { color: theme.titleColor }]}>{action.title}</Text>
+                <Text style={[styles.quickActionSubText, { color: theme.subtitleColor }]}>{action.subtitle}</Text>
+              </View>
+            </Pressable>
+          ))}
+        </View>
+      </View>
 
       <View style={styles.content}>
         <Pressable
@@ -251,5 +275,35 @@ const styles = StyleSheet.create({
   },
   bottomSpacer: {
     height: 80,
+  },
+  quickActionsBlock: {
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    marginBottom: 8,
+  },
+  quickActionsRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginBottom: 8,
+  },
+  quickActionButton: {
+    width: '48.5%',
+    borderRadius: 14,
+    paddingVertical: 12,
+    paddingHorizontal: 12,
+    borderWidth: 1,
+  },
+  quickActionTextWrap: {
+    flex: 1,
+  },
+  quickActionText: {
+    fontSize: 14,
+    fontWeight: '700',
+    marginBottom: 2,
+  },
+  quickActionSubText: {
+    fontSize: 11,
+    fontWeight: '500',
   },
 });
