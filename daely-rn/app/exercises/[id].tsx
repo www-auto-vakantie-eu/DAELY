@@ -36,6 +36,20 @@ export default function ExerciseDetailScreen() {
     return SPORT_DISCIPLINES.find(d => d.id === disciplineSlug);
   }, [disciplineSlug]);
 
+  const alternatives = React.useMemo(() => {
+    if (!exercise || !disciplineSlug) return [];
+    
+    const disciplineContent = DISCIPLINE_CONTENT[disciplineSlug as keyof typeof DISCIPLINE_CONTENT];
+    if (!disciplineContent?.exercises) return [];
+    
+    return disciplineContent.exercises
+      .filter((e: any) => 
+        e.id !== exercise.id && 
+        (e.spiergroep === exercise.spiergroep || e.categorie === exercise.categorie)
+      )
+      .slice(0, 3);
+  }, [exercise, disciplineSlug]);
+
   if (!exercise) {
     return (
       <View style={[styles.screen, { backgroundColor: theme.background }]}>
@@ -52,6 +66,35 @@ export default function ExerciseDetailScreen() {
     );
   }
 
+  const getDifficultyColor = (level: string) => {
+    switch(level) {
+      case 'Beginner': return '#10B981';
+      case 'Gemiddeld': return '#F59E0B';
+      case 'Gevorderd': return '#EF4444';
+      default: return '#6B7280';
+    }
+  };
+
+  const renderSection = (title: string, icon: string, children: React.ReactNode) => (
+    <View style={[styles.section, { backgroundColor: theme.card, borderColor: theme.border }]}>
+      <View style={styles.sectionHeader}>
+        <MaterialCommunityIcons name={icon as any} size={20} color={theme.titleColor} />
+        <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>{title}</Text>
+      </View>
+      {children}
+    </View>
+  );
+
+  const renderBulletPoints = (items: string[] | undefined) => {
+    if (!items || items.length === 0) return null;
+    return items.map((item, index) => (
+      <View key={index} style={styles.bulletItem}>
+        <View style={[styles.bullet, { backgroundColor: theme.border }]} />
+        <Text style={[styles.bulletText, { color: theme.subtitleColor }]}>{item}</Text>
+      </View>
+    ));
+  };
+
   return (
     <ScrollView style={[styles.screen, { backgroundColor: theme.background }]}>
       <View style={styles.content}>
@@ -59,6 +102,7 @@ export default function ExerciseDetailScreen() {
           <MaterialCommunityIcons name="arrow-left" size={24} color={theme.titleColor} />
         </Pressable>
 
+        {/* Premium Header */}
         <View style={[styles.iconBox, { backgroundColor: '#10B98122' }]}>
           <MaterialCommunityIcons name="human" size={48} color="#10B981" />
         </View>
@@ -81,8 +125,8 @@ export default function ExerciseDetailScreen() {
             </Text>
           </View>
           <View style={[styles.metaChip, { backgroundColor: theme.card, borderColor: theme.border }]}>
-            <MaterialCommunityIcons name="lightning-bolt" size={16} color={'#F59E0B'} />
-            <Text style={[styles.metaText, { color: '#F59E0B' }]}>
+            <MaterialCommunityIcons name="lightning-bolt" size={16} color={getDifficultyColor(exercise.moeilijkheid)} />
+            <Text style={[styles.metaText, { color: getDifficultyColor(exercise.moeilijkheid) }]}>
               {exercise.moeilijkheid}
             </Text>
           </View>
@@ -97,15 +141,70 @@ export default function ExerciseDetailScreen() {
           </View>
         )}
 
-        <View style={[styles.placeholderContainer, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <MaterialCommunityIcons name="information-outline" size={48} color={theme.subtitleColor} />
-          <Text style={[styles.placeholderTitle, { color: theme.titleColor }]}>
-            Uitvoering en video-instructies
-          </Text>
-          <Text style={[styles.placeholderText, { color: theme.subtitleColor }]}>
-            Worden later toegevoegd.
-          </Text>
-        </View>
+        {/* Uitvoering */}
+        {exercise.instructions && exercise.instructions.length > 0 && (
+          renderSection('Uitvoering', 'run', renderBulletPoints(exercise.instructions))
+        )}
+
+        {/* Techniekpunten */}
+        {exercise.techniqueTips && exercise.techniqueTips.length > 0 && (
+          renderSection('Waar let je op?', 'eye', renderBulletPoints(exercise.techniqueTips))
+        )}
+
+        {/* Veelgemaakte fouten */}
+        {exercise.commonMistakes && exercise.commonMistakes.length > 0 && (
+          renderSection('Veelgemaakte fouten', 'alert-circle', renderBulletPoints(exercise.commonMistakes))
+        )}
+
+        {/* Alternatieven */}
+        {alternatives.length > 0 && (
+          renderSection('Alternatieven', 'swap-horizontal', 
+            alternatives.map((alt: any) => (
+              <Pressable 
+                key={alt.id}
+                style={[styles.altItem, { backgroundColor: theme.background, borderColor: theme.border }]}
+                onPress={() => router.push({
+                  pathname: '/exercises/[id]',
+                  params: { id: alt.id, disciplineSlug }
+                })}
+              >
+                <Text style={[styles.altName, { color: theme.titleColor }]}>{alt.name}</Text>
+                <MaterialCommunityIcons name="chevron-right" size={20} color={theme.subtitleColor} />
+              </Pressable>
+            ))
+          )
+        )}
+
+        {/* Veiligheid */}
+        {exercise.safetyNotes && exercise.safetyNotes.length > 0 && (
+          renderSection('Veiligheid & Tips', 'shield-check', renderBulletPoints(exercise.safetyNotes))
+        )}
+
+        {/* Equipment */}
+        {exercise.equipment && exercise.equipment.length > 0 && (
+          renderSection('Benodigdheden', 'dumbbell',
+            <View style={styles.chipContainer}>
+              {exercise.equipment.map((item, index) => (
+                <View key={index} style={[styles.equipmentChip, { backgroundColor: theme.background, borderColor: theme.border }]}>
+                  <Text style={[styles.equipmentText, { color: theme.subtitleColor }]}>{item}</Text>
+                </View>
+              ))}
+            </View>
+          )
+        )}
+
+        {/* Fallback als geen data */}
+        {!exercise.instructions && !exercise.techniqueTips && !exercise.commonMistakes && alternatives.length === 0 && !exercise.safetyNotes && !exercise.equipment && (
+          <View style={[styles.placeholderContainer, { backgroundColor: theme.card, borderColor: theme.border }]}>
+            <MaterialCommunityIcons name="information-outline" size={48} color={theme.subtitleColor} />
+            <Text style={[styles.placeholderTitle, { color: theme.titleColor }]}>
+              Uitvoering en video-instructies
+            </Text>
+            <Text style={[styles.placeholderText, { color: theme.subtitleColor }]}>
+              Worden later toegevoegd.
+            </Text>
+          </View>
+        )}
       </View>
     </ScrollView>
   );
@@ -179,6 +278,66 @@ const styles = StyleSheet.create({
   disciplineName: {
     fontSize: 16,
     fontWeight: '600',
+  },
+  section: {
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+    borderWidth: 1,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 12,
+  },
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  bulletItem: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 8,
+  },
+  bullet: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    marginTop: 6,
+    marginRight: 12,
+  },
+  bulletText: {
+    flex: 1,
+    fontSize: 14,
+    lineHeight: 20,
+  },
+  altItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 12,
+    borderRadius: 8,
+    borderWidth: 1,
+    marginBottom: 8,
+  },
+  altName: {
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  chipContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  equipmentChip: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    borderWidth: 1,
+  },
+  equipmentText: {
+    fontSize: 13,
   },
   placeholderContainer: {
     borderRadius: 12,

@@ -18,6 +18,12 @@ export interface Exercise {
   spiergroep: string;
   categorie: string;
   moeilijkheid: 'Beginner' | 'Gemiddeld' | 'Gevorderd';
+  instructions?: string[];
+  techniqueTips?: string[];
+  commonMistakes?: string[];
+  alternatives?: string[];
+  safetyNotes?: string[];
+  equipment?: string[];
 }
 
 export interface Program {
