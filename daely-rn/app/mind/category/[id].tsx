@@ -18,6 +18,8 @@ export default function MindCategoryScreen() {
       recovery: 'Herstel',
       meditation: 'Meditatie',
       mindset: 'Mindset',
+      meditations: 'Bekende meditaties',
+      sleep: 'Slaap',
     };
     return categoryNames[id] || 'Mind';
   };
@@ -60,6 +62,76 @@ export default function MindCategoryScreen() {
               <View style={styles.themeItem}>
                 <View style={[styles.themeDot, { backgroundColor: '#8B5CF6' }]} />
                 <Text style={[styles.themeText, { color: theme.subtitleColor }]}>Rust</Text>
+              </View>
+            </View>
+          </>
+        ) : categoryId === 'meditations' ? (
+          <>
+            <View style={[styles.introCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+              <Text style={[styles.introTitle, { color: theme.titleColor }]}>Over Bekende meditaties</Text>
+              <Text style={[styles.introText, { color: theme.subtitleColor }]}>
+                Deze meditaties zijn gebaseerd op bekende principes voor ademhaling, focus en mentale activatie.
+              </Text>
+            </View>
+
+            <View style={[styles.themesCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+              <Text style={[styles.themesTitle, { color: theme.titleColor }]}>Vormen</Text>
+              <View style={styles.themeItem}>
+                <View style={[styles.themeDot, { backgroundColor: '#2563EB' }]} />
+                <Text style={[styles.themeText, { color: theme.subtitleColor }]}>Ademfocus</Text>
+              </View>
+              <View style={styles.themeItem}>
+                <View style={[styles.themeDot, { backgroundColor: '#059669' }]} />
+                <Text style={[styles.themeText, { color: theme.subtitleColor }]}>Visualisatie</Text>
+              </View>
+              <View style={styles.themeItem}>
+                <View style={[styles.themeDot, { backgroundColor: '#F59E0B' }]} />
+                <Text style={[styles.themeText, { color: theme.subtitleColor }]}>Dankbaarheid</Text>
+              </View>
+              <View style={styles.themeItem}>
+                <View style={[styles.themeDot, { backgroundColor: '#8B5CF6' }]} />
+                <Text style={[styles.themeText, { color: theme.subtitleColor }]}>Body scan</Text>
+              </View>
+              <View style={styles.themeItem}>
+                <View style={[styles.themeDot, { backgroundColor: '#EC4899' }]} />
+                <Text style={[styles.themeText, { color: theme.subtitleColor }]}>Focus reset</Text>
+              </View>
+              <View style={styles.themeItem}>
+                <View style={[styles.themeDot, { backgroundColor: '#10B981' }]} />
+                <Text style={[styles.themeText, { color: theme.subtitleColor }]}>Energie activatie</Text>
+              </View>
+            </View>
+          </>
+        ) : categoryId === 'sleep' ? (
+          <>
+            <View style={[styles.introCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+              <Text style={[styles.introTitle, { color: theme.titleColor }]}>Over Slaap</Text>
+              <Text style={[styles.introText, { color: theme.subtitleColor }]}>
+                Goede slaap is essentieel voor herstel, focus en prestaties. Bouw een routine die voor jou werkt.
+              </Text>
+            </View>
+
+            <View style={[styles.themesCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+              <Text style={[styles.themesTitle, { color: theme.titleColor }]}>Onderdelen</Text>
+              <View style={styles.themeItem}>
+                <View style={[styles.themeDot, { backgroundColor: '#2563EB' }]} />
+                <Text style={[styles.themeText, { color: theme.subtitleColor }]}>Avondrust</Text>
+              </View>
+              <View style={styles.themeItem}>
+                <View style={[styles.themeDot, { backgroundColor: '#059669' }]} />
+                <Text style={[styles.themeText, { color: theme.subtitleColor }]}>Ademhaling voor slaap</Text>
+              </View>
+              <View style={styles.themeItem}>
+                <View style={[styles.themeDot, { backgroundColor: '#F59E0B' }]} />
+                <Text style={[styles.themeText, { color: theme.subtitleColor }]}>Body scan</Text>
+              </View>
+              <View style={styles.themeItem}>
+                <View style={[styles.themeDot, { backgroundColor: '#8B5CF6' }]} />
+                <Text style={[styles.themeText, { color: theme.subtitleColor }]}>Slaaproutine</Text>
+              </View>
+              <View style={styles.themeItem}>
+                <View style={[styles.themeDot, { backgroundColor: '#EC4899' }]} />
+                <Text style={[styles.themeText, { color: theme.subtitleColor }]}>Nacht reset</Text>
               </View>
             </View>
           </>

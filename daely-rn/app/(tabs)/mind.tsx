@@ -123,6 +123,48 @@ export default function MindScreen() {
           </ImageBackground>
         </Pressable>
 
+        <Pressable
+          style={styles.card}
+          onPress={() => router.push('/mind/category/meditations')}
+        >
+          <ImageBackground
+            source={{ uri: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=800&q=80' }}
+            style={styles.cardImage}
+            imageStyle={styles.cardImageStyle}
+          >
+            <LinearGradient
+              colors={['rgba(0,0,0,0.3)', 'rgba(0,0,0,0.7)']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 0, y: 1 }}
+              style={styles.cardOverlay}
+            >
+              <Text style={styles.cardTitle}>Bekende meditaties</Text>
+              <Text style={styles.cardDescription}>Ademfocus, visualisatie, dankbaarheid en meer</Text>
+            </LinearGradient>
+          </ImageBackground>
+        </Pressable>
+
+        <Pressable
+          style={styles.card}
+          onPress={() => router.push('/mind/category/sleep')}
+        >
+          <ImageBackground
+            source={{ uri: 'https://images.unsplash.com/photo-1511296923631-18b8bbcebe34?auto=format&fit=crop&w=800&q=80' }}
+            style={styles.cardImage}
+            imageStyle={styles.cardImageStyle}
+          >
+            <LinearGradient
+              colors={['rgba(0,0,0,0.3)', 'rgba(0,0,0,0.7)']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 0, y: 1 }}
+              style={styles.cardOverlay}
+            >
+              <Text style={styles.cardTitle}>Slaap</Text>
+              <Text style={styles.cardDescription}>Avondrust, ademhaling en nachtreset</Text>
+            </LinearGradient>
+          </ImageBackground>
+        </Pressable>
+
         <View style={styles.buttonRow}>
           <Pressable style={styles.primaryButton} onPress={() => router.push('/(tabs)/mijn')}>
             <Text style={styles.primaryButtonText}>Terug naar Mijn</Text>
