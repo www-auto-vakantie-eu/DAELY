@@ -37,10 +37,10 @@ export function ThemeImageBannerCard({ theme, isActive, onPress }: ThemeImageBan
       <ImageBackground
         source={bannerImage}
         style={styles.imageBackground}
-        resizeMode="cover"
+        resizeMode="stretch"
         imageStyle={styles.imageStyle}
       >
-        {/* Selected state - check and glow */}
+        {/* Selected state - check only, no large glow */}
         {isActive && (
           <View style={styles.selectedOverlay}>
             <View style={[styles.checkRing, { borderColor: theme.tabBarActive }]}>
@@ -51,11 +51,6 @@ export function ThemeImageBannerCard({ theme, isActive, onPress }: ThemeImageBan
           </View>
         )}
       </ImageBackground>
-
-      {/* Selected ambient glow */}
-      {isActive && (
-        <View style={[styles.selectedGlow, { backgroundColor: theme.tabBarActive }]} />
-      )}
     </Pressable>
   );
 }
@@ -65,12 +60,12 @@ const styles = StyleSheet.create({
     width: '100%',
     aspectRatio: 1600 / 560,
     borderRadius: 32,
-    marginBottom: 14,
+    marginBottom: 16,
     position: 'relative',
     overflow: 'hidden',
   },
   cardActive: {
-    transform: [{ scale: 1.02 }],
+    transform: [{ scale: 1.01 }],
   },
   imageBackground: {
     width: '100%',
@@ -90,9 +85,11 @@ const styles = StyleSheet.create({
     height: 32,
     borderRadius: 16,
     borderWidth: 2,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.9)',
+    backgroundColor: 'rgba(255,255,255,0.95)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
   },
   checkCircle: {
     width: 24,
@@ -100,14 +97,5 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  selectedGlow: {
-    position: 'absolute',
-    top: -2,
-    left: -2,
-    right: -2,
-    bottom: -2,
-    borderRadius: 34,
-    opacity: 0.4,
   },
 });
