@@ -168,7 +168,7 @@ export default function DisciplineProgramDetailScreen() {
           </View>
         ) : (
           <View style={styles.weeksContainer}>
-            {weeklyPlan.slice(0, 21).map((item) => {
+            {weeklyPlan.map((item) => {
               if (!item || !item.workout) return null;
               return (
                 <View
@@ -205,11 +205,6 @@ export default function DisciplineProgramDetailScreen() {
                 </View>
               );
             })}
-            {weeklyPlan.length > 21 && (
-              <Text style={[styles.moreText, { color: theme.subtitleColor }]}>
-                + {weeklyPlan.length - 21} dagen over
-              </Text>
-            )}
           </View>
         )}
       </View>
@@ -367,10 +362,5 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 14,
     fontWeight: '600',
-  },
-  moreText: {
-    fontSize: 14,
-    textAlign: 'center',
-    marginTop: 8,
   },
 });

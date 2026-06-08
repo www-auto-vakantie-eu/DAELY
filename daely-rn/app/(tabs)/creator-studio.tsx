@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View, Image } from 'react-native';
-import { Platform } from 'react-native';
+import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View, Image , Platform } from 'react-native';
+
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 

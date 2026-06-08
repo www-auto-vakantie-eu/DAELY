@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { View, Text, StyleSheet, Button, Alert } from 'react-native';
-import { Platform } from 'react-native';
+import { View, Text, StyleSheet, Button, Alert , Platform } from 'react-native';
+
+import { useAppContext } from '@/contexts/AppContext';
 let Picker: typeof import('@react-native-picker/picker').Picker | undefined;
 if (Platform.OS !== 'web') {
   Picker = require('@react-native-picker/picker').Picker;
 }
-import { useAppContext } from '@/contexts/AppContext';
 
 const LEVELS = [
   { label: 'Beginner', value: 'beginner' },

@@ -1,9 +1,9 @@
-import { ScrollView, View, Text, Switch } from 'react-native';
+import { ScrollView, View, Text, Switch , Pressable } from 'react-native';
 import { useAppContext } from '@/contexts/AppContext';
 import { useTheme } from '@/hooks/use-theme';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { Pressable } from 'react-native';
+
 import { DISCIPLINES } from './disciplines';
 
 export default function DisciplineVisibilitySettingsScreen() {

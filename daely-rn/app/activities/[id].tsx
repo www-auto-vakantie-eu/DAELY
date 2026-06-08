@@ -4,6 +4,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import PageHeader from '../components/PageHeader';
 import { getActivities, deleteActivity, Activity } from 'services/activity-storage';
 import { SPORT_DISCIPLINES } from '../constants/sport-disciplines';
+/* eslint-disable import/no-unresolved -- Platform split (ActivityMap.tsx/native.tsx/web.tsx) */
 // @ts-ignore - Platform split (ActivityMap.tsx/native.tsx/web.tsx)
 import ActivityMap from '@/components/ActivityMap';
 

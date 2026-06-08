@@ -67,7 +67,7 @@ const NUTRITION_ACTIONS = [
 
 export default function NutritionScreen() {
   const [searchVisible, setSearchVisible] = useState(false);
-  const [searchResults, setSearchResults] = useState<Array<{ id: string; label: string; meta?: string; onSelect: () => void }>>([]);
+  const [searchResults, setSearchResults] = useState<{ id: string; label: string; meta?: string; onSelect: () => void }[]>([]);
   const handleSearch = (query: string) => {
     const normalizedQuery = query.trim().toLowerCase();
     if (!normalizedQuery) {
@@ -75,7 +75,7 @@ export default function NutritionScreen() {
       return;
     }
 
-    const results: Array<{ id: string; label: string; meta?: string; onSelect: () => void }> = [];
+    const results: { id: string; label: string; meta?: string; onSelect: () => void }[] = [];
     const seen = new Set<string>();
     const addResult = (item: { id: string; label: string; meta?: string; onSelect: () => void }) => {
       if (results.length >= 24) return;

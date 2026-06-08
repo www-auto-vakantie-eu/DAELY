@@ -9,7 +9,7 @@ import { CONNECTED_DEVICES, WHOOP_TOKEN_STORAGE_KEY } from '../constants/connect
 
 type TrackingTypeKey = 'workout' | 'session' | 'match' | 'score' | 'skill' | 'laps' | 'gps';
 
-const TRACKING_TYPE_ORDER: Array<{ key: TrackingTypeKey; label: string }> = [
+const TRACKING_TYPE_ORDER: { key: TrackingTypeKey; label: string }[] = [
   { key: 'workout', label: 'Workout' },
   { key: 'session', label: 'Session' },
   { key: 'match', label: 'Match' },

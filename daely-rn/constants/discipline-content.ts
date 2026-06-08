@@ -1181,6 +1181,10 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         duration: '4 weken',
         level: 'Beginner',
         weeks: 4,
+        description: 'Begin met mobiliteitstraining voor dagelijkse bewegingsvrijheid.',
+        goal: 'Basis mobiliteit opbouwen',
+        daysPerWeek: 3,
+        workoutIds: ['mob-morning', 'mob-full', 'mob-shoulder'],
       },
       {
         id: 'mob-prog-full',

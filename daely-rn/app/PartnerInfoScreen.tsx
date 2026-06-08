@@ -1,9 +1,9 @@
 import React from 'react';
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, StyleSheet , Image } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { PARTNERS } from '@/constants/partners';
 import { PARTNER_LOGO_ASSETS } from '@/constants/partner-logo-assets';
-import { Image } from 'react-native';
+
 
 export default function PartnerInfoScreen() {
   const { id } = useLocalSearchParams();
