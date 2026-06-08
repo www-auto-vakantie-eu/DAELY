@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import MapView, { Polyline } from 'react-native-maps';
 import type { GpsRoutePoint } from 'services/activity-storage';
 
@@ -21,13 +21,13 @@ export default function ActivityMap({ routePoints }: ActivityMapProps) {
 
     const latitude = (minLat + maxLat) / 2;
     const longitude = (minLon + maxLon) / 2;
-    const latitudeDelta = (maxLat - minLat) * 1.2; // 20% padding
+    const latitudeDelta = (maxLat - minLat) * 1.2;
     const longitudeDelta = (maxLon - minLon) * 1.2;
 
     return {
       latitude,
       longitude,
-      latitudeDelta: Math.max(latitudeDelta, 0.001), // Minimum zoom
+      latitudeDelta: Math.max(latitudeDelta, 0.001),
       longitudeDelta: Math.max(longitudeDelta, 0.001),
     };
   }, [routePoints]);
@@ -40,22 +40,13 @@ export default function ActivityMap({ routePoints }: ActivityMapProps) {
   }, [routePoints]);
 
   if (routePoints.length === 0) {
-    return (
-      <View style={styles.emptyContainer}>
-        <Text style={styles.emptyText}>Geen routegegevens beschikbaar</Text>
-      </View>
-    );
+    return null;
   }
 
   if (!mapRegion) {
-    return (
-      <View style={styles.emptyContainer}>
-        <Text style={styles.emptyText}>Kaart niet beschikbaar</Text>
-      </View>
-    );
+    return null;
   }
 
-  // Only render polyline if we have at least 2 points
   const hasValidPolyline = polylineCoordinates.length >= 2;
 
   return (
@@ -90,16 +81,5 @@ const styles = StyleSheet.create({
   map: {
     width: '100%',
     height: '100%',
-  },
-  emptyContainer: {
-    height: 300,
-    borderRadius: 12,
-    backgroundColor: '#E2E8F0',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  emptyText: {
-    color: '#64748B',
-    fontSize: 14,
   },
 });
