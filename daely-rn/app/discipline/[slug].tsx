@@ -405,6 +405,8 @@ export default function DisciplineScreen() {
   // Use DISCIPLINE_CONTENT for workouts, with fallback to WORKOUTS_BY_SLUG for backward compatibility
   const disciplineContent = DISCIPLINE_CONTENT[slug ?? ''];
   const workoutsForDiscipline = disciplineContent?.workouts ?? WORKOUTS_BY_SLUG[slug ?? ''] ?? DEFAULT_WORKOUTS;
+  const exercisesForDiscipline = disciplineContent?.exercises ?? [];
+  const programsForDiscipline = disciplineContent?.programs ?? [];
   const filterOptions =
     slug === 'kegel-oefeningen'
       ? ['Alles', 'Man', 'Vrouw']
