@@ -296,87 +296,6 @@ const DISCIPLINE_DATA: Record<string, DisciplineDetail> = {
   },
 };
 
-type WorkoutCard = {
-  id: string;
-  name: string;
-  muscle: string;
-  duration: string;
-  level: string;
-  icon: string;
-  color: string;
-  exercises: number;
-};
-
-const WORKOUTS_BY_SLUG: Record<string, WorkoutCard[]> = {
-  hardlopen: [
-    {
-      id: 'hr-end-1',
-      name: 'Endurance Base Run',
-      muscle: 'Uithoudingsvermogen · Zone 2',
-      duration: '45 min',
-      level: 'Beginner',
-      icon: 'run',
-      color: '#2563EB',
-      exercises: 4,
-    },
-    {
-      id: 'hr-end-2',
-      name: 'Tempo Progression',
-      muscle: 'Tempo · Aerobe drempel',
-      duration: '55 min',
-      level: 'Gemiddeld',
-      icon: 'speedometer',
-      color: '#0EA5E9',
-      exercises: 5,
-    },
-  ],
-  'hardlopen-agility': [
-    {
-      id: 'hr-agi-1',
-      name: 'Agility Ladder Flow',
-      muscle: 'Voetwerk · Wendbaarheid',
-      duration: '30 min',
-      level: 'Beginner',
-      icon: 'stairs',
-      color: '#F97316',
-      exercises: 6,
-    },
-    {
-      id: 'hr-agi-2',
-      name: 'Sprint & Cut Intervals',
-      muscle: 'Explosiviteit · Richtingswissel',
-      duration: '35 min',
-      level: 'Gevorderd',
-      icon: 'run-fast',
-      color: '#EF4444',
-      exercises: 7,
-    },
-    {
-      id: 'hr-agi-3',
-      name: 'Reaction Cone Drills',
-      muscle: 'Reactiesnelheid · Coördinatie',
-      duration: '28 min',
-      level: 'Gemiddeld',
-      icon: 'gesture-double-tap',
-      color: '#8B5CF6',
-      exercises: 5,
-    },
-  ],
-};
-
-const DEFAULT_WORKOUTS: WorkoutCard[] = [
-  {
-    id: 'default-1',
-    name: 'Voorbeeld Workout',
-    muscle: 'Borst · Schouders · Triceps',
-    duration: '60 min',
-    level: 'Gemiddeld',
-    icon: 'arm-flex',
-    color: '#2563EB',
-    exercises: 8,
-  },
-];
-
 export default function DisciplineScreen() {
   const { slug } = useLocalSearchParams<{ slug: string }>();
   const router = useRouter();
@@ -402,9 +321,9 @@ export default function DisciplineScreen() {
     );
   }
 
-  // Use DISCIPLINE_CONTENT for workouts, with fallback to WORKOUTS_BY_SLUG for backward compatibility
+  // Use DISCIPLINE_CONTENT for workouts
   const disciplineContent = DISCIPLINE_CONTENT[slug ?? ''];
-  const workoutsForDiscipline = disciplineContent?.workouts ?? WORKOUTS_BY_SLUG[slug ?? ''] ?? DEFAULT_WORKOUTS;
+  const workoutsForDiscipline = disciplineContent?.workouts ?? [];
   const exercisesForDiscipline = disciplineContent?.exercises ?? [];
   const programsForDiscipline = disciplineContent?.programs ?? [];
   const filterOptions =
