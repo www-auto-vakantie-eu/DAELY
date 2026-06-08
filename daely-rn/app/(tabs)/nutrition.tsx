@@ -101,7 +101,8 @@ export default function NutritionScreen() {
       showsVerticalScrollIndicator={false}
     >
       <PageHeader
-        title="Voeding"
+        title="Voeding."
+        subtitle="Beter eten, gezonder leven."
         onSettingsPress={() => router.push('/(tabs)/athlete')}
         onCartPress={() => router.push('/(tabs)/cart')}
       />

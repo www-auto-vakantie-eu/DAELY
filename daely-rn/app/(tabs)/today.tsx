@@ -227,7 +227,8 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
   return (
     <ScrollView style={[styles.screen, { backgroundColor: theme.background }]} contentContainerStyle={styles.content}>
       <PageHeader
-        title="Vandaag"
+        title="Vandaag."
+        subtitle="Jouw dag begint hier."
         onSettingsPress={() => router.push('/(tabs)/athlete')}
         onCartPress={() => router.push('/(tabs)/cart')}
       />

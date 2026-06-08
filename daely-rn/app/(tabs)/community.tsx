@@ -324,7 +324,8 @@ export default function CommunityScreen() {
     <View style={[styles.screen, { backgroundColor: theme.background }]}>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <PageHeader
-          title="Community"
+          title="Community."
+          subtitle="Atleet tot atleet."
           onSettingsPress={() => router.push('/(tabs)/athlete')}
           onCartPress={() => router.push('/(tabs)/cart')}
         />

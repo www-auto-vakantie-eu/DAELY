@@ -403,7 +403,8 @@ export default function DisciplinesScreen() {
   return (
     <View style={{ flex: 1, backgroundColor: theme.background }}>
       <PageHeader
-        title="Bibliotheek"
+        title="Bibliotheek."
+        subtitle="Verbeter je oefeningen."
         onSettingsPress={() => router.push('/(tabs)/athlete')}
         onCartPress={() => router.push('/(tabs)/cart')}
       />

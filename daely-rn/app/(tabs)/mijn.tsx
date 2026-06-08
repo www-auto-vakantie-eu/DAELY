@@ -149,7 +149,8 @@ export default function MijnScreen() {
     <View style={[styles.screen, { backgroundColor: theme.background }]}>
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         <PageHeader
-          title="Mijn"
+          title="Mijn."
+          subtitle="Alles op één plek."
           onSettingsPress={() => router.push('/(tabs)/athlete')}
           onCartPress={() => router.push('/(tabs)/cart')}
         />

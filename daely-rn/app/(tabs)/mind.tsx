@@ -11,7 +11,8 @@ export default function MindScreen() {
   return (
     <ScrollView style={[styles.container, { backgroundColor: theme.background }]} showsVerticalScrollIndicator={false}>
       <PageHeader
-        title="Mind"
+        title="Mind."
+        subtitle="Sterke geest, sterk lichaam."
         onSettingsPress={() => router.push('/(tabs)/athlete')}
         onCartPress={() => router.push('/(tabs)/cart')}
       />

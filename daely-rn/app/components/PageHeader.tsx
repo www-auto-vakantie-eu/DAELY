@@ -5,6 +5,7 @@ import { useTheme } from '@/hooks/use-theme';
 
 type PageHeaderProps = {
   title: string;
+  subtitle?: string;
   showSettings?: boolean;
   showSearch?: boolean;
   showCart?: boolean;
@@ -15,6 +16,7 @@ type PageHeaderProps = {
 
 export default function PageHeader({
   title,
+  subtitle,
   showSettings = true,
   showSearch,
   showCart = true,
@@ -26,7 +28,10 @@ export default function PageHeader({
 
   return (
     <View style={styles.headerRow}>
-      <Text style={[styles.title, { color: theme.titleColor }]}>{title}</Text>
+      <View style={styles.titleContainer}>
+        <Text style={[styles.title, { color: theme.titleColor }]}>{title}</Text>
+        {subtitle && <Text style={[styles.subtitle, { color: theme.subtitleColor }]}>{subtitle}</Text>}
+      </View>
       <View style={styles.actionsRow}>
         {showSettings ? (
           <Pressable
@@ -53,17 +58,25 @@ const styles = StyleSheet.create({
   headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     marginBottom: 16,
     marginTop: 16,
     paddingHorizontal: 16,
+  },
+  titleContainer: {
+    flexShrink: 1,
   },
   title: {
     fontSize: 28,
     lineHeight: 34,
     fontWeight: '700',
     letterSpacing: -0.5,
-    flexShrink: 1,
+  },
+  subtitle: {
+    fontSize: 14,
+    lineHeight: 18,
+    fontWeight: '500',
+    marginTop: 2,
   },
   actionsRow: {
     flexDirection: 'row',
