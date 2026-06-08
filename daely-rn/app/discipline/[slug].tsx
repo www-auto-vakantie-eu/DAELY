@@ -542,50 +542,128 @@ export default function DisciplineScreen() {
             </>
           )}
           {activeTab === 'oefeningen' && (
-            <View style={[styles.emptyState, { borderColor: theme.border }]}>
-              <MaterialCommunityIcons name="dumbbell" size={48} color={theme.subtitleColor} />
-              <Text style={[styles.emptyTitle, { color: theme.titleColor }]}>Oefeningen voor {discipline.title}</Text>
-              <Text style={[styles.emptySubtitle, { color: theme.subtitleColor }]}>
-                Oefeningen voor {discipline.title} komen binnenkort beschikbaar.
+            <>
+              <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Oefeningen</Text>
+              <Text style={[styles.sectionSubtitle, { color: theme.subtitleColor }]}>
+                {exercisesForDiscipline.length} oefening{exercisesForDiscipline.length === 1 ? '' : 'en'} beschikbaar
               </Text>
-              <View style={styles.emptyActionsRow}>
-                <Pressable
-                  style={[styles.emptyCtaButton, { backgroundColor: '#2563EB' }]}
-                  onPress={() => router.push('/tracker')}
-                >
-                  <Text style={styles.emptyCtaText}>Start activiteit</Text>
-                </Pressable>
-                <Pressable
-                  style={[styles.emptyCtaButton, { backgroundColor: theme.card, borderColor: theme.border }]}
-                  onPress={() => router.push('/exercises' as any)}
-                >
-                  <Text style={[styles.emptyCtaTextSecondary, { color: theme.titleColor }]}>Alle oefeningen</Text>
-                </Pressable>
-              </View>
-            </View>
+              {exercisesForDiscipline.length > 0 ? (
+                exercisesForDiscipline.map((exercise) => (
+                  <Pressable
+                    key={exercise.id}
+                    style={({ pressed }) => [
+                      styles.exerciseCard,
+                      { backgroundColor: theme.card, borderColor: theme.border },
+                      pressed && styles.cardPressed,
+                    ]}
+                    onPress={() => router.push('/tracker')}
+                  >
+                    <View style={styles.exerciseInfo}>
+                      <Text style={[styles.exerciseName, { color: theme.titleColor }]}>{exercise.name}</Text>
+                      <View style={styles.exerciseMeta}>
+                        <View style={styles.metaChip}>
+                          <MaterialCommunityIcons name="human" size={12} color={theme.subtitleColor} />
+                          <Text style={[styles.metaText, { color: theme.subtitleColor }]}>{exercise.spiergroep}</Text>
+                        </View>
+                        <View style={styles.metaChip}>
+                          <MaterialCommunityIcons name="tag" size={12} color={theme.subtitleColor} />
+                          <Text style={[styles.metaText, { color: theme.subtitleColor }]}>{exercise.categorie}</Text>
+                        </View>
+                        <View style={styles.metaChip}>
+                          <MaterialCommunityIcons name="lightning-bolt" size={12} color={'#F59E0B'} />
+                          <Text style={[styles.metaText, { color: '#F59E0B' }]}>{exercise.moeilijkheid}</Text>
+                        </View>
+                      </View>
+                    </View>
+                    <MaterialCommunityIcons name="chevron-right" size={22} color={theme.subtitleColor} />
+                  </Pressable>
+                ))
+              ) : (
+                <View style={[styles.emptyState, { borderColor: theme.border }]}>
+                  <MaterialCommunityIcons name="dumbbell" size={48} color={theme.subtitleColor} />
+                  <Text style={[styles.emptyTitle, { color: theme.titleColor }]}>Oefeningen voor {discipline.title}</Text>
+                  <Text style={[styles.emptySubtitle, { color: theme.subtitleColor }]}>
+                    Oefeningen voor {discipline.title} komen binnenkort beschikbaar.
+                  </Text>
+                  <View style={styles.emptyActionsRow}>
+                    <Pressable
+                      style={[styles.emptyCtaButton, { backgroundColor: '#2563EB' }]}
+                      onPress={() => router.push('/tracker')}
+                    >
+                      <Text style={styles.emptyCtaText}>Start activiteit</Text>
+                    </Pressable>
+                    <Pressable
+                      style={[styles.emptyCtaButton, { backgroundColor: theme.card, borderColor: theme.border }]}
+                      onPress={() => router.push('/exercises' as any)}
+                    >
+                      <Text style={[styles.emptyCtaTextSecondary, { color: theme.titleColor }]}>Alle oefeningen</Text>
+                    </Pressable>
+                  </View>
+                </View>
+              )}
+            </>
           )}
           {activeTab === 'programmas' && (
-            <View style={[styles.emptyState, { borderColor: theme.border }]}>
-              <MaterialCommunityIcons name="clipboard-list-outline" size={48} color={theme.subtitleColor} />
-              <Text style={[styles.emptyTitle, { color: theme.titleColor }]}>Programma&apos;s voor {discipline.title}</Text>
-              <Text style={[styles.emptySubtitle, { color: theme.subtitleColor }]}>
-                Programma&apos;s voor {discipline.title} komen binnenkort beschikbaar.
+            <>
+              <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Programma&apos;s</Text>
+              <Text style={[styles.sectionSubtitle, { color: theme.subtitleColor }]}>
+                {programsForDiscipline.length} programma{programsForDiscipline.length === 1 ? '' : '&apos;s'} beschikbaar
               </Text>
-              <View style={styles.emptyActionsRow}>
-                <Pressable
-                  style={[styles.emptyCtaButton, { backgroundColor: '#F59E0B' }]}
-                  onPress={() => router.push('/tracker')}
-                >
-                  <Text style={styles.emptyCtaText}>Start activiteit</Text>
-                </Pressable>
-                <Pressable
-                  style={[styles.emptyCtaButton, { backgroundColor: theme.card, borderColor: theme.border }]}
-                  onPress={() => router.push('/workouts')}
-                >
-                  <Text style={[styles.emptyCtaTextSecondary, { color: theme.titleColor }]}>Bekijk workouts</Text>
-                </Pressable>
-              </View>
-            </View>
+              {programsForDiscipline.length > 0 ? (
+                programsForDiscipline.map((program) => (
+                  <Pressable
+                    key={program.id}
+                    style={({ pressed }) => [
+                      styles.exerciseCard,
+                      { backgroundColor: theme.card, borderColor: theme.border },
+                      pressed && styles.cardPressed,
+                    ]}
+                    onPress={() => router.push('/tracker')}
+                  >
+                    <View style={styles.exerciseInfo}>
+                      <Text style={[styles.exerciseName, { color: theme.titleColor }]}>{program.name}</Text>
+                      <View style={styles.exerciseMeta}>
+                        <View style={styles.metaChip}>
+                          <MaterialCommunityIcons name="clock-outline" size={12} color={theme.subtitleColor} />
+                          <Text style={[styles.metaText, { color: theme.subtitleColor }]}>{program.duration}</Text>
+                        </View>
+                        <View style={styles.metaChip}>
+                          <MaterialCommunityIcons name="lightning-bolt" size={12} color={'#F59E0B'} />
+                          <Text style={[styles.metaText, { color: '#F59E0B' }]}>{program.level}</Text>
+                        </View>
+                        <View style={styles.metaChip}>
+                          <MaterialCommunityIcons name="calendar-week" size={12} color={theme.subtitleColor} />
+                          <Text style={[styles.metaText, { color: theme.subtitleColor }]}>{program.weeks} weken</Text>
+                        </View>
+                      </View>
+                    </View>
+                    <MaterialCommunityIcons name="chevron-right" size={22} color={theme.subtitleColor} />
+                  </Pressable>
+                ))
+              ) : (
+                <View style={[styles.emptyState, { borderColor: theme.border }]}>
+                  <MaterialCommunityIcons name="clipboard-list-outline" size={48} color={theme.subtitleColor} />
+                  <Text style={[styles.emptyTitle, { color: theme.titleColor }]}>Programma&apos;s voor {discipline.title}</Text>
+                  <Text style={[styles.emptySubtitle, { color: theme.subtitleColor }]}>
+                    Programma&apos;s voor {discipline.title} komen binnenkort beschikbaar.
+                  </Text>
+                  <View style={styles.emptyActionsRow}>
+                    <Pressable
+                      style={[styles.emptyCtaButton, { backgroundColor: '#F59E0B' }]}
+                      onPress={() => router.push('/tracker')}
+                    >
+                      <Text style={styles.emptyCtaText}>Start activiteit</Text>
+                    </Pressable>
+                    <Pressable
+                      style={[styles.emptyCtaButton, { backgroundColor: theme.card, borderColor: theme.border }]}
+                      onPress={() => router.push('/workouts')}
+                    >
+                      <Text style={[styles.emptyCtaTextSecondary, { color: theme.titleColor }]}>Bekijk workouts</Text>
+                    </Pressable>
+                  </View>
+                </View>
+              )}
+            </>
           )}
         </View>
         <View style={styles.bottomSpacer} />
@@ -648,6 +726,7 @@ const styles = StyleSheet.create({
   exerciseName: { fontSize: 15, fontWeight: '600', marginBottom: 3 },
   exerciseMuscle: { fontSize: 12 },
   exerciseSets: { fontSize: 13, fontWeight: '700' },
+  exerciseMeta: { flexDirection: 'row', gap: 10, flexWrap: 'wrap' },
   errorText: { textAlign: 'center', marginTop: 40, fontSize: 16 },
   bottomSpacer: { height: 120 },
 });
