@@ -144,19 +144,21 @@ const styles = StyleSheet.create({
   },
   cardOverlay: {
     flex: 1,
-    justifyContent: 'center',
-    padding: 20,
+    justifyContent: 'flex-end',
+    padding: 16,
+    paddingTop: 20,
   },
   cardTitle: {
     fontSize: 26,
     fontWeight: '900',
     color: '#fff',
-    marginTop: 8,
-    marginBottom: 4,
+    letterSpacing: -0.6,
   },
   cardDescription: {
-    fontSize: 14,
-    color: 'rgba(255, 255, 255, 0.9)',
+    fontSize: 13,
+    color: 'rgba(255,255,255,0.75)',
+    marginTop: 3,
+    fontWeight: '500',
   },
   buttonRow: {
     gap: 12,
