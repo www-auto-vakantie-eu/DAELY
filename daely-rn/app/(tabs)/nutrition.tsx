@@ -204,7 +204,7 @@ export default function NutritionScreen() {
               style={styles.mealOverlay}
             >
               <Text
-                style={[styles.mealTitle, { fontSize: 24 }]}
+                style={[styles.mealTitle, { fontSize: 26 }]}
                 numberOfLines={2}
                 adjustsFontSizeToFit
                 minimumFontScale={0.7}
