@@ -1,10 +1,11 @@
 import React from 'react';
-import { View, StyleSheet, Text, Pressable, ScrollView, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Text, Pressable, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/use-theme';
 import { DISCIPLINE_CONTENT, Workout, Program } from '@/constants/discipline-content';
 import { SPORT_DISCIPLINES } from '../../../constants/sport-disciplines';
+import { enrollInProgram, isProgramOwned } from '@/services/user-programs-storage';
 
 interface WeekDayWorkout {
   week: number;
@@ -53,6 +54,51 @@ export default function DisciplineProgramDetailScreen() {
     }
     return plan;
   }, [program, workouts]);
+
+  const [isEnrolled, setIsEnrolled] = React.useState(false);
+  const [isCheckingEnrollment, setIsCheckingEnrollment] = React.useState(true);
+
+  React.useEffect(() => {
+    const checkEnrollment = async () => {
+      if (!program || !slug) return;
+      const owned = await isProgramOwned(program.id, slug);
+      setIsEnrolled(owned);
+      setIsCheckingEnrollment(false);
+    };
+    checkEnrollment();
+  }, [program, slug]);
+
+  const handleEnrollInProgram = async () => {
+    if (!program || !slug) return;
+
+    try {
+      const accessType = program.accessType || 'included';
+      const sourceType = program.sourceType || 'daely';
+
+      await enrollInProgram(program, slug, sourceType, accessType);
+      setIsEnrolled(true);
+
+      if (accessType === 'paid') {
+        Alert.alert(
+          'Programma ontgrendeld',
+          'Je volgt nu dit programma. Betaling wordt later gekoppeld.',
+          [{ text: 'OK' }]
+        );
+      } else {
+        Alert.alert(
+          'Programma gestart',
+          'Je volgt nu dit programma.',
+          [{ text: 'OK' }]
+        );
+      }
+    } catch {
+      Alert.alert(
+        'Fout',
+        'Er ging iets mis bij het starten van het programma.',
+        [{ text: 'OK' }]
+      );
+    }
+  };
 
   const handleStartWorkout = (workoutId: string, week: number, day: number) => {
     router.push({
@@ -126,6 +172,35 @@ export default function DisciplineProgramDetailScreen() {
             </View>
           )}
         </View>
+
+        {!isCheckingEnrollment && (
+          <View style={styles.enrollmentSection}>
+            {isEnrolled ? (
+              <View style={[styles.enrolledStatus, { backgroundColor: theme.card, borderColor: theme.border }]}>
+                <MaterialCommunityIcons name="check-circle" size={20} color="#10B981" />
+                <Text style={[styles.enrolledText, { color: theme.titleColor }]}>
+                  Je volgt dit programma
+                </Text>
+              </View>
+            ) : (
+              <TouchableOpacity
+                style={[styles.enrollButton, { backgroundColor: program.accessType === 'paid' ? '#F59E0B' : '#2563EB' }]}
+                onPress={handleEnrollInProgram}
+                activeOpacity={0.8}
+              >
+                <MaterialCommunityIcons name={program.accessType === 'paid' ? 'lock-open' : 'play-circle'} size={20} color="#FFFFFF" />
+                <Text style={styles.enrollButtonText}>
+                  {program.accessType === 'paid' ? 'Ontgrendel programma' : 'Volg programma'}
+                </Text>
+              </TouchableOpacity>
+            )}
+            {program.accessType === 'paid' && !isEnrolled && (
+              <Text style={[styles.paymentPlaceholder, { color: theme.subtitleColor }]}>
+                Betaling wordt later gekoppeld.
+              </Text>
+            )}
+          </View>
+        )}
 
         {discipline && (
           <View style={styles.disciplineContainer}>
@@ -267,6 +342,42 @@ const styles = StyleSheet.create({
   metaText: {
     fontSize: 14,
     fontWeight: '500',
+  },
+  enrollmentSection: {
+    marginBottom: 24,
+  },
+  enrolledStatus: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    borderWidth: 1,
+    gap: 8,
+  },
+  enrolledText: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  enrollButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 14,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+    gap: 8,
+  },
+  enrollButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  paymentPlaceholder: {
+    fontSize: 12,
+    textAlign: 'center',
+    marginTop: 8,
+    fontStyle: 'italic',
   },
   disciplineContainer: {
     marginBottom: 24,

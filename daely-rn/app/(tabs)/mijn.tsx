@@ -37,6 +37,15 @@ const MY_DOMAIN_CARDS: MyDomainCard[] = [
     route: '/workouts',
   },
   {
+    id: 'my-programs',
+    title: 'Mijn Programma\'s',
+    description: 'Actieve en voltooide trainingsschema\'s.',
+    category: 'TRAINING',
+    accent: '#2563EB',
+    image: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1200&q=80',
+    route: '/my-programs',
+  },
+  {
     id: 'nutrition',
     title: 'Voeding',
     description: 'Weekgemiddelden, macro\'s en adherence op doel.',
@@ -193,6 +202,7 @@ export default function MijnScreen() {
                       styles.heroTitle,
                       card.id === 'progress' && { color: card.accent },
                       card.id === 'workouts' && { color: '#2563EB' },
+                      card.id === 'my-programs' && { color: '#2563EB' },
                       card.id === 'nutrition' && { color: '#EF4444' },
                       card.id === 'mind' && { color: '#8B5CF6' },
                       card.id === 'stats' && { color: '#10B981' },
