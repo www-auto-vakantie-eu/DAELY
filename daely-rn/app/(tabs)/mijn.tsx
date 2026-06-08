@@ -153,20 +153,6 @@ export default function MijnScreen() {
           onSettingsPress={() => router.push('/(tabs)/athlete')}
           onCartPress={() => router.push('/(tabs)/cart')}
         />
-        
-        <Pressable
-          style={styles.startActivityButton}
-          onPress={() => router.push('/tracker')}
-        >
-          <Text style={styles.startActivityText}>Start activiteit</Text>
-        </Pressable>
-
-        <Pressable
-          style={[styles.secondaryButton, { backgroundColor: theme.card, borderColor: theme.border }]}
-          onPress={() => router.push('/activities')}
-        >
-          <Text style={[styles.secondaryButtonText, { color: theme.titleColor }]}>Activiteiten</Text>
-        </Pressable>
 
         <View style={styles.cardsWrap}>
           {MY_DOMAIN_CARDS.map((card) => (
@@ -232,19 +218,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  startActivityButton: {
-    marginHorizontal: 16,
-    marginVertical: 16,
-    backgroundColor: '#2563EB',
-    borderRadius: 14,
-    paddingVertical: 16,
-    alignItems: 'center',
-  },
-  startActivityText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '800',
-  },
   cardsWrap: {
     padding: 16,
     gap: 14,
@@ -287,17 +260,5 @@ const styles = StyleSheet.create({
     fontSize: 13,
     lineHeight: 18,
     color: '#E5E7EB',
-  },
-  secondaryButton: {
-    marginHorizontal: 16,
-    marginBottom: 16,
-    borderRadius: 14,
-    paddingVertical: 16,
-    alignItems: 'center',
-    borderWidth: 1,
-  },
-  secondaryButtonText: {
-    fontSize: 16,
-    fontWeight: '800',
   },
 });
