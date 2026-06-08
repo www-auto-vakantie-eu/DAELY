@@ -4,7 +4,8 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import PageHeader from '../components/PageHeader';
 import { getActivities, deleteActivity, Activity } from 'services/activity-storage';
 import { SPORT_DISCIPLINES } from '../constants/sport-disciplines';
-import ActivityMap from '../../components/ActivityMap';
+// @ts-ignore - Platform split (ActivityMap.tsx/native.tsx/web.tsx)
+import ActivityMap from '@/components/ActivityMap';
 
 export default function ActivityDetailScreen() {
   const router = useRouter();

@@ -26,6 +26,10 @@ export interface Program {
   duration: string;
   level: string;
   weeks: number;
+  description?: string;
+  goal?: string;
+  daysPerWeek?: number;
+  workoutIds?: string[];
 }
 
 export interface DisciplineContent {
@@ -358,6 +362,10 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         duration: '4 weken',
         level: 'Beginner',
         weeks: 4,
+        description: 'Perfect voor beginners om te starten met krachttraining.',
+        goal: 'Bouw een sterke basis',
+        daysPerWeek: 3,
+        workoutIds: ['4', '6', '1'],
       },
       {
         id: 'fitness-spieropbouw-basis',
@@ -365,6 +373,10 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         duration: '8 weken',
         level: 'Beginner',
         weeks: 8,
+        description: 'Focus op spiergroei met een gebalanceerd schema.',
+        goal: 'Spieropbouw',
+        daysPerWeek: 3,
+        workoutIds: ['1', '2', '3'],
       },
       {
         id: 'fitness-full-body-fit',
@@ -372,6 +384,10 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         duration: '6 weken',
         level: 'Gemiddeld',
         weeks: 6,
+        description: 'Full body workouts voor algehele conditie.',
+        goal: 'Algehele fitheid',
+        daysPerWeek: 4,
+        workoutIds: ['4', '1', '2', '3'],
       },
       {
         id: 'fitness-upper-body-power',
@@ -379,6 +395,10 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         duration: '6 weken',
         level: 'Gemiddeld',
         weeks: 6,
+        description: 'Focus op bovenlichaam kracht en power.',
+        goal: 'Bovenlichaam kracht',
+        daysPerWeek: 3,
+        workoutIds: ['5', '1', '2'],
       },
       {
         id: 'fitness-lower-body-core',
@@ -386,6 +406,10 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         duration: '6 weken',
         level: 'Beginner',
         weeks: 6,
+        description: 'Focus op benen, billen en core stabiliteit.',
+        goal: 'Onderlichaam en core',
+        daysPerWeek: 3,
+        workoutIds: ['3', '6', '4'],
       },
       {
         id: 'fitness-fit-lean',
@@ -393,6 +417,10 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         duration: '8 weken',
         level: 'Gemiddeld',
         weeks: 8,
+        description: 'Combineer kracht en cardio voor een fit en lean lichaam.',
+        goal: 'Fit en lean worden',
+        daysPerWeek: 4,
+        workoutIds: ['4', '1', '2', '3'],
       },
     ],
   },
@@ -782,6 +810,10 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         duration: '4 weken',
         level: 'Beginner',
         weeks: 4,
+        description: 'Begin met calisthenics basisoefeningen.',
+        goal: 'Calisthenics basis',
+        daysPerWeek: 3,
+        workoutIds: ['cal-beginner', 'cal-core', 'cal-legs'],
       },
       {
         id: 'cal-prog-pushup',
@@ -789,6 +821,10 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         duration: '6 weken',
         level: 'Beginner',
         weeks: 6,
+        description: 'Bouw je push-up kracht op.',
+        goal: 'Meer push-ups',
+        daysPerWeek: 3,
+        workoutIds: ['cal-push', 'cal-beginner', 'cal-core'],
       },
       {
         id: 'cal-prog-pullup',
@@ -796,6 +832,10 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         duration: '8 weken',
         level: 'Gemiddeld',
         weeks: 8,
+        description: 'Bouw je pull-up kracht op.',
+        goal: 'Eerste pull-up',
+        daysPerWeek: 3,
+        workoutIds: ['cal-pull', 'cal-core', 'cal-skill'],
       },
       {
         id: 'cal-prog-core',
@@ -803,6 +843,10 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         duration: '6 weken',
         level: 'Gemiddeld',
         weeks: 6,
+        description: 'Focus op core stabiliteit en controle.',
+        goal: 'Sterke core',
+        daysPerWeek: 3,
+        workoutIds: ['cal-core', 'cal-mobility', 'cal-beginner'],
       },
       {
         id: 'cal-prog-fullbody',
@@ -810,6 +854,10 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         duration: '8 weken',
         level: 'Gemiddeld',
         weeks: 8,
+        description: 'Full body calisthenics training.',
+        goal: 'Full body kracht',
+        daysPerWeek: 3,
+        workoutIds: ['cal-full', 'cal-push', 'cal-pull', 'cal-legs'],
       },
       {
         id: 'cal-prog-skills',
@@ -817,6 +865,10 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         duration: '8 weken',
         level: 'Gemiddeld',
         weeks: 8,
+        description: 'Leer basis calisthenics skills.',
+        goal: 'Basis skills',
+        daysPerWeek: 3,
+        workoutIds: ['cal-skill', 'cal-core', 'cal-mobility'],
       },
     ],
   },
@@ -1136,6 +1188,10 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         duration: '6 weken',
         level: 'Beginner',
         weeks: 6,
+        description: 'Bouw een basis voor volledige lichaamsmobiliteit.',
+        goal: 'Volledige mobiliteit',
+        daysPerWeek: 3,
+        workoutIds: ['mob-full', 'mob-hip', 'mob-shoulder'],
       },
       {
         id: 'mob-prog-runner',
@@ -1143,6 +1199,10 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         duration: '6 weken',
         level: 'Gemiddeld',
         weeks: 6,
+        description: 'Verbeter je mobiliteit voor hardlopen.',
+        goal: 'Hardloop mobiliteit',
+        daysPerWeek: 3,
+        workoutIds: ['mob-runner', 'mob-hip', 'mob-recovery'],
       },
       {
         id: 'mob-prog-desk',
@@ -1150,6 +1210,10 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         duration: '4 weken',
         level: 'Beginner',
         weeks: 4,
+        description: 'Reset je lichaam na lange uren achter een bureau.',
+        goal: 'Bureau herstel',
+        daysPerWeek: 5,
+        workoutIds: ['mob-desk', 'mob-shoulder', 'mob-morning', 'mob-hip', 'mob-full'],
       },
       {
         id: 'mob-prog-deep',
@@ -1157,6 +1221,10 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         duration: '8 weken',
         level: 'Gemiddeld',
         weeks: 8,
+        description: 'Werken aan diepe posities en flexibiliteit.',
+        goal: 'Diepe flexibiliteit',
+        daysPerWeek: 3,
+        workoutIds: ['mob-deep', 'mob-hip', 'mob-shoulder'],
       },
       {
         id: 'mob-prog-recovery',
@@ -1164,6 +1232,10 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         duration: '6 weken',
         level: 'Gemiddeld',
         weeks: 6,
+        description: 'Focus op herstel en mobiliteit.',
+        goal: 'Herstel verbeteren',
+        daysPerWeek: 3,
+        workoutIds: ['mob-recovery', 'mob-full', 'mob-morning'],
       },
     ],
   },
@@ -1474,6 +1546,10 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         duration: '4 weken',
         level: 'Beginner',
         weeks: 4,
+        description: 'Begin met hardlopen met een veilig opbouwschema.',
+        goal: 'Starten met hardlopen',
+        daysPerWeek: 3,
+        workoutIds: ['hr-rec-1', 'hr-strides-1', 'hr-end-1'],
       },
       {
         id: 'hr-prog-5k-base',
@@ -1481,6 +1557,10 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         duration: '6 weken',
         level: 'Beginner',
         weeks: 6,
+        description: 'Bouw een basis voor 5KM hardlopen.',
+        goal: '5KM kunnen hardlopen',
+        daysPerWeek: 3,
+        workoutIds: ['hr-end-1', 'hr-rec-1', 'hr-long-1'],
       },
       {
         id: 'hr-prog-5k-fast',
@@ -1488,6 +1568,10 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         duration: '8 weken',
         level: 'Gemiddeld',
         weeks: 8,
+        description: 'Verbeter je 5KM tijd met tempo en interval training.',
+        goal: 'Snellere 5KM tijd',
+        daysPerWeek: 3,
+        workoutIds: ['hr-int-1', 'hr-end-2', 'hr-5k-1'],
       },
       {
         id: 'hr-prog-10k',
@@ -1495,6 +1579,10 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         duration: '8 weken',
         level: 'Gemiddeld',
         weeks: 8,
+        description: 'Bouw op naar 10KM duurvermogen.',
+        goal: '10KM kunnen hardlopen',
+        daysPerWeek: 3,
+        workoutIds: ['hr-long-1', 'hr-end-2', 'hr-rec-1'],
       },
       {
         id: 'hr-prog-interval',
@@ -1502,6 +1590,10 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         duration: '6 weken',
         level: 'Gemiddeld',
         weeks: 6,
+        description: 'Focus op interval en snelheidstraining.',
+        goal: 'Snelheid verbeteren',
+        daysPerWeek: 3,
+        workoutIds: ['hr-int-1', 'hr-hill-1', 'hr-5k-1'],
       },
       {
         id: 'hr-prog-endurance',
@@ -1509,6 +1601,10 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         duration: '10 weken',
         level: 'Gemiddeld',
         weeks: 10,
+        description: 'Bouw je duurvermogen op met lange runs.',
+        goal: 'Duurvermogen opbouwen',
+        daysPerWeek: 3,
+        workoutIds: ['hr-long-1', 'hr-end-1', 'hr-rec-1'],
       },
     ],
   },

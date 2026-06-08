@@ -432,7 +432,10 @@ export default function DisciplineScreen() {
                     { backgroundColor: theme.card, borderColor: theme.border },
                     pressed && styles.cardPressed,
                   ]}
-                  onPress={() => router.push('/tracker')}
+                  onPress={() => router.push({
+                    pathname: '/discipline/[slug]/workout/[id]',
+                    params: { slug, id: workout.id },
+                  })}
                 >
                   <View style={[styles.workoutIconBox, { backgroundColor: workout.color + '22' }]}>
                     <MaterialCommunityIcons name={workout.icon as any} size={26} color={workout.color} />
@@ -475,7 +478,10 @@ export default function DisciplineScreen() {
                       { backgroundColor: theme.card, borderColor: theme.border },
                       pressed && styles.cardPressed,
                     ]}
-                    onPress={() => router.push('/tracker')}
+                    onPress={() => router.push({
+                      pathname: '/exercises/[id]',
+                      params: { id: exercise.id, disciplineSlug: slug },
+                    })}
                   >
                     <View style={styles.exerciseInfo}>
                       <Text style={[styles.exerciseName, { color: theme.titleColor }]}>{exercise.name}</Text>
@@ -537,7 +543,10 @@ export default function DisciplineScreen() {
                       { backgroundColor: theme.card, borderColor: theme.border },
                       pressed && styles.cardPressed,
                     ]}
-                    onPress={() => router.push('/tracker')}
+                    onPress={() => router.push({
+                      pathname: '/discipline/[slug]/program/[id]',
+                      params: { slug, id: program.id },
+                    })}
                   >
                     <View style={styles.exerciseInfo}>
                       <Text style={[styles.exerciseName, { color: theme.titleColor }]}>{program.name}</Text>
