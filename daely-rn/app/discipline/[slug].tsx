@@ -16,6 +16,7 @@ import { useTheme } from '@/hooks/use-theme';
 import { useState } from 'react';
 import PageHeader from '../components/PageHeader';
 import { DISCIPLINE_CONTENT } from '@/constants/discipline-content';
+import SharedBottomNav from '../../components/SharedBottomNav';
 
 type DisciplineDetail = {
   title: string;
@@ -330,7 +331,7 @@ export default function DisciplineScreen() {
       : ['Alles', 'Borst', 'Biceps', 'Triceps', 'Schouders', 'Bovenrug', 'Onderrug', 'Buik', 'Billen', 'Benen'];
 
   return (
-    <View style={[styles.screen, { backgroundColor: theme.background }]}> 
+    <View style={[styles.screen, { backgroundColor: theme.background }]}>
       <StatusBar barStyle="light-content" />
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
         <View style={Platform.OS === 'web' ? styles.webContainer : undefined}>
@@ -342,10 +343,6 @@ export default function DisciplineScreen() {
             end={{ x: 0.5, y: 1 }}
             style={styles.heroGradient}
           >
-            <Pressable style={styles.backButton} onPress={() => router.back()}>
-              <MaterialCommunityIcons name="chevron-left" size={28} color="#FFFFFF" />
-              <Text style={styles.backLabel}>Bibliotheek</Text>
-            </Pressable>
             <View style={styles.heroTextBlock}>
               <Text style={styles.heroTitle}>{discipline.title.toUpperCase()}</Text>
               <Text style={styles.heroSubtitle}>{discipline.subtitle}</Text>
@@ -596,19 +593,20 @@ export default function DisciplineScreen() {
         <View style={styles.bottomSpacer} />
         </View>
       </ScrollView>
+      <SharedBottomNav activeTab="disciplines" />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   screen: { flex: 1 },
-  scrollContent: { paddingBottom: 0 },
+  scrollContent: { paddingBottom: 80 },
   webContainer: {
     maxWidth: 430,
     alignSelf: 'center',
     width: '100%',
   },
-  hero: { width: '100%', height: 280 },
+  hero: { width: '100%', height: 220 },
   heroGradient: {
     flex: 1,
     paddingTop: 56,
@@ -616,8 +614,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingBottom: 28,
   },
-  backButton: { flexDirection: 'row', alignItems: 'center', gap: 2, alignSelf: 'flex-start' },
-  backLabel: { fontSize: 16, fontWeight: '500', color: '#FFFFFF' },
   heroTextBlock: { gap: 4 },
   heroTitle: { fontSize: 48, fontWeight: '900', letterSpacing: -1.5, lineHeight: 50, color: '#FFFFFF' },
   heroSubtitle: { marginTop: 4, fontSize: 14, fontWeight: '500', letterSpacing: 1, color: 'rgba(255,255,255,0.80)' },
