@@ -1167,8 +1167,6 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
       },
     ],
   },
-  vechttraining: { workouts: [], exercises: [], programs: [] },
-  zwangerschap: { workouts: [], exercises: [], programs: [] },
   'kegel-oefeningen': {
     workouts: [
       {

@@ -179,7 +179,7 @@ function getMetricsSummary(a: Activity) {
     return `${a.metrics.laps.distanceMeters !== undefined ? `${Math.round(a.metrics.laps.distanceMeters)} m` : 'Laps'}${a.metrics.laps.laps !== undefined ? ` · ${Math.round(a.metrics.laps.laps)} banen` : ''}${a.metrics.laps.strokeType ? ` · ${a.metrics.laps.strokeType}` : ''}`;
   }
   if (a.metrics?.gps) {
-    return `${a.metrics.gps.distanceMeters !== undefined ? `${Math.round(a.metrics.gps.distanceMeters)} m` : 'GPS activiteit'}${a.metrics.gps.averageSpeedKmh !== undefined ? ` · ${a.metrics.gps.averageSpeedKmh.toFixed(1)} km/u gem.` : ''}${a.metrics.gps.maxSpeedKmh !== undefined ? ` · max ${a.metrics.gps.maxSpeedKmh.toFixed(1)} km/u` : ''}`;
+    return `${a.metrics.gps.distanceMeters !== undefined ? `${Math.round(a.metrics.gps.distanceMeters)} m` : 'GPS activiteit'}${a.metrics.gps.averageSpeedKmh !== undefined && a.metrics.gps.averageSpeedKmh !== null ? ` · ${a.metrics.gps.averageSpeedKmh.toFixed(1)} km/u gem.` : ''}${a.metrics.gps.maxSpeedKmh !== undefined && a.metrics.gps.maxSpeedKmh !== null ? ` · max ${a.metrics.gps.maxSpeedKmh.toFixed(1)} km/u` : ''}`;
   }
   return 'Geen metrics beschikbaar';
 }

@@ -138,17 +138,18 @@ export default function StartActivityScreen() {
   const isLapsDiscipline = discipline?.trackingType === 'laps';
   const isGpsDiscipline = discipline?.trackingType === 'gps';
   const isGpsTrackingAvailable = isGpsDiscipline;
-  const gpsService = getGpsTrackingService();
+  const gpsServiceRef = React.useRef(getGpsTrackingService());
+  const gpsService = gpsServiceRef.current;
   const [gpsState, setGpsState] = useState<GpsTrackingState>(gpsService.getState());
   
   // Subscribe to GPS state changes
-  // Note: gpsService is singleton, so dependency array is intentionally empty
+  // gpsService is stable (singleton via useRef), dependency is safe
   React.useEffect(() => {
     const unsubscribe = gpsService.subscribeToState(() => {
       setGpsState(gpsService.getState());
     });
     return unsubscribe;
-  }, []);
+  }, [gpsService]);
   const scoreType: ScoreType | undefined = discipline?.id === 'golf' ? 'golf' : discipline?.id === 'racketsporten' ? 'racket' : isScoreDiscipline ? 'other' : undefined;
   const skillType: SkillType | undefined =
     discipline?.id === 'judo'

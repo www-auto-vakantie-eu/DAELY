@@ -88,8 +88,8 @@ export interface LapsMetrics {
 
 export interface GpsMetrics {
   distanceMeters?: number;
-  averageSpeedKmh?: number;
-  maxSpeedKmh?: number;
+  averageSpeedKmh?: number | null;
+  maxSpeedKmh?: number | null;
   routePoints?: GpsRoutePoint[];
   locationPermissionStatus?: GpsPermissionStatus;
   notes?: string;
