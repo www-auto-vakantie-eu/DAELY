@@ -18,16 +18,6 @@ export default function MindScreen() {
       />
 
       <View style={styles.content}>
-        <View style={[styles.heroCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <View style={styles.iconContainer}>
-            <MaterialCommunityIcons name="meditation" size={48} color="#8B5CF6" />
-          </View>
-          <Text style={[styles.heroTitle, { color: theme.titleColor }]}>Mind komt binnenkort naar DAELY.</Text>
-          <Text style={[styles.heroText, { color: theme.subtitleColor }]}>
-            Hier vind je straks ademhaling, focus, herstel en mentale routines.
-          </Text>
-        </View>
-
         <Pressable
           style={styles.card}
           onPress={() => router.push('/mind/category/breathing')}
@@ -154,33 +144,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 16,
     paddingBottom: 24,
-  },
-  heroCard: {
-    borderWidth: 1,
-    borderRadius: 20,
-    padding: 24,
-    marginBottom: 16,
-    alignItems: 'center',
-  },
-  iconContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: 'rgba(139, 92, 246, 0.1)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 16,
-  },
-  heroTitle: {
-    fontSize: 22,
-    fontWeight: '800',
-    textAlign: 'center',
-    marginBottom: 8,
-  },
-  heroText: {
-    fontSize: 15,
-    lineHeight: 22,
-    textAlign: 'center',
   },
   card: {
     height: 210,
