@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { useAppContext } from '@/contexts/AppContext';
 import { useTheme } from '@/hooks/use-theme';
 import { ThemePremiumBannerCard } from '@/components/ThemePremiumBannerCard';
+import { ThemeImageBannerCard } from '@/components/ThemeImageBannerCard';
 import { THEMES } from '@/constants/themes';
 
 export default function ThemasScreen() {
@@ -25,6 +26,15 @@ export default function ThemasScreen() {
     'dune',
     'ember',
   ] as const;
+
+// Themes that have image banner assets
+const themesWithImageBanners = [
+  'force',
+  'forest-breath',
+  'innovation',
+  'pastel-calm',
+  'pure-luxury',
+] as const;
 
   return (
     <View style={[styles.screen, { backgroundColor: theme.background }]}>
@@ -49,7 +59,16 @@ export default function ThemasScreen() {
           const themeData = THEMES[themeId];
           if (!themeData) return null;
 
-          return (
+          const hasImageBanner = themesWithImageBanners.includes(themeId as any);
+
+          return hasImageBanner ? (
+            <ThemeImageBannerCard
+              key={themeId}
+              theme={themeData}
+              isActive={activeThemeId === themeId}
+              onPress={() => setActiveThemeId(themeId)}
+            />
+          ) : (
             <ThemePremiumBannerCard
               key={themeId}
               theme={themeData}
