@@ -44,44 +44,40 @@ export function ThemePremiumBannerCard({ theme, isActive, onPress }: ThemePremiu
           end={{ x: 0, y: 1 }}
         />
 
-        {/* Layer 2: Atmosphere - ambient glow */}
-        {renderAtmosphereGlow(theme.id, themeStyle)}
+        {/* Layer 3: Material texture simulation */}
+        {renderMaterialLayer(theme.id, themeStyle)}
 
-        {/* Layer 3: Motif - theme-specific shapes that match meaning */}
+        {/* Layer 4: Depth gradient layer */}
+        {renderDepthLayer(theme.id, themeStyle)}
+
+        {/* Layer 5: Theme-specific motifs */}
         {renderMotifLayer(theme.id, themeStyle)}
 
-        {/* Layer 4: Motion/detail - lines, curves, particles, strokes */}
+        {/* Layer 6: Motion and detail layer */}
         {renderMotionLayer(theme.id, themeStyle)}
 
-        {/* Layer 4: Material/texture simulation */}
-        {renderTextureLayer(theme.id, themeStyle)}
+        {/* Layer 7: Micro details */}
+        {renderMicroDetails(theme.id, themeStyle)}
 
-        {/* Layer 5: Lighting - theme-specific light effects */}
+        {/* Layer 8: Lighting effects */}
         {renderLightingLayer(theme.id, themeStyle)}
 
-        {/* Layer 5: UI polish - title */}
+        {/* Layer 9: Edge highlights */}
+        {renderEdgeHighlight(theme.id, themeStyle)}
+
+        {/* Layer 10: UI polish - title */}
         <Text style={[styles.title, { color: themeStyle.titleColor, textShadowColor: themeStyle.textShadowColor, textShadowOffset: themeStyle.textShadowOffset, textShadowRadius: themeStyle.textShadowRadius }]}>
           {theme.name}
         </Text>
 
-        {/* Layer 5: UI polish - accent line */}
-        <View style={styles.accentLineContainer}>
-          <View style={[styles.accentLineBase, { backgroundColor: themeStyle.lineBaseColor }]} />
-          <View style={[styles.accentLineFill, { backgroundColor: theme.tabBarActive }]} />
-          <View style={[styles.accentLineGlow, { backgroundColor: themeStyle.accentGlowColor }]} />
-        </View>
+        {/* Layer 10: UI polish - accent line */}
+        {renderAccentLine(theme.id, themeStyle, theme)}
 
-        {/* Layer 5: UI polish - inner border */}
+        {/* Layer 10: UI polish - inner border */}
         {renderInnerBorder(theme.id, themeStyle)}
 
-        {/* Layer 5: UI polish - selected state */}
-        {isActive && (
-          <View style={[styles.checkRing, { borderColor: theme.tabBarActive, backgroundColor: themeStyle.checkBg }]}>
-            <View style={[styles.checkCircle, { backgroundColor: theme.tabBarActive }]}>
-              <MaterialCommunityIcons name="check" size={16} color={themeStyle.checkColor} />
-            </View>
-          </View>
-        )}
+        {/* Layer 11: Selected state */}
+        {renderSelectedState(theme.id, themeStyle, isActive, theme)}
       </LinearGradient>
 
       {/* Premium outer shadow */}
@@ -117,6 +113,12 @@ function getThemeStyle(themeId: string) {
       borderColor: 'rgba(37, 99, 235, 0.25)',
       lightingColor: 'rgba(255,255,255,0.4)',
       accentGlowColor: 'rgba(16, 185, 129, 0.3)',
+      // New layer properties
+      materialColor: 'rgba(37, 99, 235, 0.03)',
+      depthColor1: 'rgba(16, 185, 129, 0.05)',
+      depthColor2: 'rgba(37, 99, 235, 0.08)',
+      microColor: 'rgba(37, 99, 235, 0.15)',
+      edgeColor: 'rgba(16, 185, 129, 0.2)',
     },
     'classic': {
       // Base material: deep navy performance with blue glow
@@ -138,6 +140,12 @@ function getThemeStyle(themeId: string) {
       borderColor: 'rgba(96, 165, 250, 0.5)',
       lightingColor: 'rgba(147, 197, 253, 0.3)',
       accentGlowColor: 'rgba(59, 130, 246, 0.5)',
+      // New layer properties
+      materialColor: 'rgba(59, 130, 246, 0.08)',
+      depthColor1: 'rgba(96, 165, 250, 0.1)',
+      depthColor2: 'rgba(59, 130, 246, 0.15)',
+      microColor: 'rgba(147, 197, 253, 0.25)',
+      edgeColor: 'rgba(96, 165, 250, 0.35)',
     },
     'zen-ink': {
       // Base material: off-white paper with ink texture
@@ -159,6 +167,12 @@ function getThemeStyle(themeId: string) {
       borderColor: 'rgba(0,0,0,0.15)',
       lightingColor: 'rgba(255,255,255,0.5)',
       accentGlowColor: 'rgba(0,0,0,0.15)',
+      // New layer properties
+      materialColor: 'rgba(0,0,0,0.02)',
+      depthColor1: 'rgba(0,0,0,0.04)',
+      depthColor2: 'rgba(0,0,0,0.06)',
+      microColor: 'rgba(0,0,0,0.08)',
+      edgeColor: 'rgba(0,0,0,0.1)',
     },
     'forest-breath': {
       // Base material: organic green with mist and depth
@@ -180,6 +194,12 @@ function getThemeStyle(themeId: string) {
       borderColor: 'rgba(5, 150, 105, 0.4)',
       lightingColor: 'rgba(167, 243, 208, 0.4)',
       accentGlowColor: 'rgba(52, 211, 153, 0.35)',
+      // New layer properties
+      materialColor: 'rgba(5, 150, 105, 0.06)',
+      depthColor1: 'rgba(52, 211, 153, 0.08)',
+      depthColor2: 'rgba(5, 150, 105, 0.12)',
+      microColor: 'rgba(167, 243, 208, 0.2)',
+      edgeColor: 'rgba(52, 211, 153, 0.3)',
     },
     'force': {
       // Base material: dark performance surface with red accents
@@ -201,6 +221,12 @@ function getThemeStyle(themeId: string) {
       borderColor: 'rgba(220, 38, 38, 0.5)',
       lightingColor: 'rgba(248, 113, 113, 0.2)',
       accentGlowColor: 'rgba(220, 38, 38, 0.5)',
+      // New layer properties
+      materialColor: 'rgba(220, 38, 38, 0.1)',
+      depthColor1: 'rgba(248, 113, 113, 0.12)',
+      depthColor2: 'rgba(220, 38, 38, 0.18)',
+      microColor: 'rgba(248, 113, 113, 0.3)',
+      edgeColor: 'rgba(248, 113, 113, 0.4)',
     },
     'pure-luxury': {
       // Base material: matte black with brushed gold
@@ -222,6 +248,12 @@ function getThemeStyle(themeId: string) {
       borderColor: 'rgba(201, 168, 76, 0.45)',
       lightingColor: 'rgba(252, 211, 77, 0.25)',
       accentGlowColor: 'rgba(201, 168, 76, 0.5)',
+      // New layer properties
+      materialColor: 'rgba(201, 168, 76, 0.1)',
+      depthColor1: 'rgba(252, 211, 77, 0.12)',
+      depthColor2: 'rgba(201, 168, 76, 0.18)',
+      microColor: 'rgba(252, 211, 77, 0.3)',
+      edgeColor: 'rgba(252, 211, 77, 0.4)',
     },
     'innovation': {
       // Base material: dark tech surface with cyan glow
@@ -243,6 +275,12 @@ function getThemeStyle(themeId: string) {
       borderColor: 'rgba(0, 245, 160, 0.45)',
       lightingColor: 'rgba(56, 189, 248, 0.2)',
       accentGlowColor: 'rgba(0, 245, 160, 0.5)',
+      // New layer properties
+      materialColor: 'rgba(0, 245, 160, 0.08)',
+      depthColor1: 'rgba(56, 189, 248, 0.1)',
+      depthColor2: 'rgba(0, 245, 160, 0.15)',
+      microColor: 'rgba(56, 189, 248, 0.25)',
+      edgeColor: 'rgba(0, 245, 160, 0.35)',
     },
     'pastel-calm': {
       // Base material: soft pastel with airy feel
@@ -264,6 +302,12 @@ function getThemeStyle(themeId: string) {
       borderColor: 'rgba(139, 92, 246, 0.35)',
       lightingColor: 'rgba(196, 181, 253, 0.4)',
       accentGlowColor: 'rgba(139, 92, 246, 0.3)',
+      // New layer properties
+      materialColor: 'rgba(139, 92, 246, 0.05)',
+      depthColor1: 'rgba(196, 181, 253, 0.08)',
+      depthColor2: 'rgba(139, 92, 246, 0.12)',
+      microColor: 'rgba(196, 181, 253, 0.2)',
+      edgeColor: 'rgba(196, 181, 253, 0.25)',
     },
     'retro-sport': {
       // Base material: vintage cream with navy/red
@@ -285,6 +329,12 @@ function getThemeStyle(themeId: string) {
       borderColor: 'rgba(27, 46, 107, 0.3)',
       lightingColor: 'rgba(255,255,255,0.4)',
       accentGlowColor: 'rgba(192, 57, 43, 0.25)',
+      // New layer properties
+      materialColor: 'rgba(27, 46, 107, 0.05)',
+      depthColor1: 'rgba(192, 57, 43, 0.08)',
+      depthColor2: 'rgba(27, 46, 107, 0.12)',
+      microColor: 'rgba(192, 57, 43, 0.15)',
+      edgeColor: 'rgba(27, 46, 107, 0.2)',
     },
     'pulse': {
       // Base material: dark glass with lime energy
@@ -306,6 +356,12 @@ function getThemeStyle(themeId: string) {
       borderColor: 'rgba(127, 255, 0, 0.5)',
       lightingColor: 'rgba(163, 230, 53, 0.2)',
       accentGlowColor: 'rgba(127, 255, 0, 0.5)',
+      // New layer properties
+      materialColor: 'rgba(127, 255, 0, 0.1)',
+      depthColor1: 'rgba(163, 230, 53, 0.15)',
+      depthColor2: 'rgba(127, 255, 0, 0.2)',
+      microColor: 'rgba(163, 230, 53, 0.3)',
+      edgeColor: 'rgba(163, 230, 53, 0.4)',
     },
     'rogue': {
       // Base material: dark charcoal with orange aggression
@@ -327,6 +383,12 @@ function getThemeStyle(themeId: string) {
       borderColor: 'rgba(255, 106, 0, 0.55)',
       lightingColor: 'rgba(251, 146, 60, 0.2)',
       accentGlowColor: 'rgba(255, 106, 0, 0.5)',
+      // New layer properties
+      materialColor: 'rgba(255, 106, 0, 0.12)',
+      depthColor1: 'rgba(251, 146, 60, 0.15)',
+      depthColor2: 'rgba(255, 106, 0, 0.22)',
+      microColor: 'rgba(251, 146, 60, 0.35)',
+      edgeColor: 'rgba(251, 146, 60, 0.45)',
     },
     'ember': {
       // Base material: warm dark with glowing embers
@@ -348,6 +410,12 @@ function getThemeStyle(themeId: string) {
       borderColor: 'rgba(255, 140, 0, 0.5)',
       lightingColor: 'rgba(251, 146, 60, 0.2)',
       accentGlowColor: 'rgba(255, 140, 0, 0.5)',
+      // New layer properties
+      materialColor: 'rgba(255, 140, 0, 0.1)',
+      depthColor1: 'rgba(251, 146, 60, 0.12)',
+      depthColor2: 'rgba(255, 140, 0, 0.18)',
+      microColor: 'rgba(251, 146, 60, 0.3)',
+      edgeColor: 'rgba(251, 146, 60, 0.4)',
     },
     'dune': {
       // Base material: warm sand with sun glow
@@ -369,39 +437,119 @@ function getThemeStyle(themeId: string) {
       borderColor: 'rgba(200, 155, 114, 0.4)',
       lightingColor: 'rgba(252, 211, 77, 0.3)',
       accentGlowColor: 'rgba(200, 155, 114, 0.35)',
+      // New layer properties
+      materialColor: 'rgba(200, 155, 114, 0.06)',
+      depthColor1: 'rgba(252, 211, 77, 0.1)',
+      depthColor2: 'rgba(200, 155, 114, 0.14)',
+      microColor: 'rgba(252, 211, 77, 0.22)',
+      edgeColor: 'rgba(200, 155, 114, 0.3)',
     },
   };
   return styles[themeId] || styles['default'];
 }
 
-function renderAtmosphereGlow(themeId: string, style: any) {
+function renderMaterialLayer(themeId: string, style: any) {
   switch (themeId) {
     case 'default':
-      return <View style={[styles.atmosphereGlow, { backgroundColor: style.atmosphereColor, top: -20, left: 20 }]} />;
+      return <View style={[styles.glassMaterial, { backgroundColor: style.materialColor }]} />;
     case 'classic':
-      return <View style={[styles.atmosphereGlow, { backgroundColor: style.atmosphereColor, bottom: -25, right: -15 }]} />;
+      return <View style={[styles.sportMaterial, { backgroundColor: style.materialColor }]} />;
     case 'zen-ink':
-      return null;
+      return <View style={[styles.paperMaterial, { backgroundColor: style.materialColor }]} />;
     case 'forest-breath':
-      return <View style={[styles.atmosphereGlow, { backgroundColor: style.atmosphereColor, top: -15, left: -10 }]} />;
+      return <View style={[styles.organicMaterial, { backgroundColor: style.materialColor }]} />;
     case 'force':
-      return <View style={[styles.atmosphereGlow, { backgroundColor: style.atmosphereColor, bottom: -30, left: -20 }]} />;
+      return <View style={[styles.performanceMaterial, { backgroundColor: style.materialColor }]} />;
     case 'pure-luxury':
-      return <View style={[styles.atmosphereGlow, { backgroundColor: style.atmosphereColor, top: -25, right: -20 }]} />;
+      return <View style={[styles.luxuryMaterial, { backgroundColor: style.materialColor }]} />;
     case 'innovation':
-      return <View style={[styles.atmosphereGlow, { backgroundColor: style.atmosphereColor, bottom: -20, right: -15 }]} />;
+      return <View style={[styles.techMaterial, { backgroundColor: style.materialColor }]} />;
     case 'pastel-calm':
-      return <View style={[styles.atmosphereGlow, { backgroundColor: style.atmosphereColor, top: -15, right: -10 }]} />;
+      return <View style={[styles.softMaterial, { backgroundColor: style.materialColor }]} />;
     case 'retro-sport':
-      return null;
+      return <View style={[styles.vintageMaterial, { backgroundColor: style.materialColor }]} />;
     case 'pulse':
-      return <View style={[styles.atmosphereGlow, { backgroundColor: style.atmosphereColor, bottom: -25, left: -15 }]} />;
+      return <View style={[styles.energyMaterial, { backgroundColor: style.materialColor }]} />;
     case 'rogue':
-      return <View style={[styles.atmosphereGlow, { backgroundColor: style.atmosphereColor, bottom: -30, right: -20 }]} />;
+      return <View style={[styles.aggressiveMaterial, { backgroundColor: style.materialColor }]} />;
     case 'ember':
-      return <View style={[styles.atmosphereGlow, { backgroundColor: style.atmosphereColor, bottom: -25, right: -18 }]} />;
+      return <View style={[styles.warmMaterial, { backgroundColor: style.materialColor }]} />;
     case 'dune':
-      return <View style={[styles.atmosphereGlow, { backgroundColor: style.atmosphereColor, top: -20, right: -15 }]} />;
+      return <View style={[styles.sandMaterial, { backgroundColor: style.materialColor }]} />;
+    default:
+      return null;
+  }
+}
+
+function renderDepthLayer(themeId: string, style: any) {
+  switch (themeId) {
+    case 'default':
+      return (
+        <>
+          <LinearGradient colors={[style.depthColor1, 'transparent']} style={styles.depthGradientTop} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} />
+          <LinearGradient colors={['transparent', style.depthColor2]} style={styles.depthGradientBottom} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} />
+        </>
+      );
+    case 'classic':
+      return (
+        <>
+          <LinearGradient colors={[style.depthColor1, 'transparent']} style={styles.depthGradientTop} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} />
+          <LinearGradient colors={['transparent', style.depthColor2]} style={styles.depthGradientBottom} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} />
+        </>
+      );
+    case 'zen-ink':
+      return (
+        <LinearGradient colors={[style.depthColor1, 'transparent', style.depthColor2]} style={styles.depthGradientFull} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
+      );
+    case 'forest-breath':
+      return (
+        <>
+          <LinearGradient colors={[style.depthColor1, 'transparent']} style={styles.depthGradientTop} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} />
+          <LinearGradient colors={['transparent', style.depthColor2]} style={styles.depthGradientBottom} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} />
+        </>
+      );
+    case 'force':
+      return (
+        <LinearGradient colors={[style.depthColor1, style.depthColor2, 'transparent']} style={styles.depthGradientDiagonal} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
+      );
+    case 'pure-luxury':
+      return (
+        <LinearGradient colors={[style.depthColor1, 'transparent', style.depthColor2]} style={styles.depthGradientFull} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
+      );
+    case 'innovation':
+      return (
+        <LinearGradient colors={[style.depthColor1, style.depthColor2, 'transparent']} style={styles.depthGradientDiagonal} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
+      );
+    case 'pastel-calm':
+      return (
+        <LinearGradient colors={[style.depthColor1, 'transparent', style.depthColor2]} style={styles.depthGradientFull} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
+      );
+    case 'retro-sport':
+      return (
+        <>
+          <LinearGradient colors={[style.depthColor1, 'transparent']} style={styles.depthGradientTop} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} />
+          <LinearGradient colors={['transparent', style.depthColor2]} style={styles.depthGradientBottom} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} />
+        </>
+      );
+    case 'pulse':
+      return (
+        <LinearGradient colors={[style.depthColor1, style.depthColor2, 'transparent']} style={styles.depthGradientDiagonal} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
+      );
+    case 'rogue':
+      return (
+        <LinearGradient colors={[style.depthColor1, style.depthColor2, 'transparent']} style={styles.depthGradientDiagonal} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
+      );
+    case 'ember':
+      return (
+        <LinearGradient colors={['transparent', style.depthColor1, style.depthColor2]} style={styles.depthGradientBottom} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} />
+      );
+    case 'dune':
+      return (
+        <>
+          <LinearGradient colors={[style.depthColor1, 'transparent']} style={styles.depthGradientTop} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} />
+          <LinearGradient colors={['transparent', style.depthColor2]} style={styles.depthGradientBottom} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} />
+        </>
+      );
     default:
       return null;
   }
@@ -627,135 +775,421 @@ function renderMotionLayer(themeId: string, style: any) {
   }
 }
 
-function renderTextureLayer(themeId: string, style: any) {
-  switch (themeId) {
-    case 'default':
-      return <View style={[styles.glassTexture, { backgroundColor: style.textureColor }]} />;
-    case 'classic':
-      return <View style={[styles.sportTexture, { backgroundColor: style.textureColor }]} />;
-    case 'zen-ink':
-      return <View style={[styles.paperTexture, { backgroundColor: style.textureColor }]} />;
-    case 'forest-breath':
-      return <View style={[styles.leafTexture, { backgroundColor: style.textureColor }]} />;
-    case 'force':
-      return <View style={[styles.gritTexture, { backgroundColor: style.textureColor }]} />;
-    case 'pure-luxury':
-      return <View style={[styles.metallicTexture, { backgroundColor: style.textureColor }]} />;
-    case 'innovation':
-      return <View style={[styles.gridTexture, { backgroundColor: style.textureColor }]} />;
-    case 'pastel-calm':
-      return <View style={[styles.pearlTexture, { backgroundColor: style.textureColor }]} />;
-    case 'retro-sport':
-      return <View style={[styles.fabricTexture, { backgroundColor: style.textureColor }]} />;
-    case 'pulse':
-      return <View style={[styles.glassDarkTexture, { backgroundColor: style.textureColor }]} />;
-    case 'rogue':
-      return <View style={[styles.metallicDarkTexture, { backgroundColor: style.textureColor }]} />;
-    case 'ember':
-      return <View style={[styles.smokeTexture, { backgroundColor: style.textureColor }]} />;
-    case 'dune':
-      return <View style={[styles.grainTexture, { backgroundColor: style.textureColor }]} />;
-    default:
-      return null;
-  }
-}
-
 function renderLightingLayer(themeId: string, style: any) {
   switch (themeId) {
     case 'default':
       return (
         <>
-          <View style={[styles.diagonalLight, { backgroundColor: style.lightingColor }]} />
-          <View style={[styles.topLightGlow, { backgroundColor: style.lightingColor }]} />
+          <View style={[styles.lightRay1, { backgroundColor: style.lightingColor }]} />
+          <View style={[styles.lightRay2, { backgroundColor: style.lightingColor }]} />
         </>
       );
     case 'classic':
       return (
         <>
-          <View style={[styles.blueLightGlow, { backgroundColor: style.lightingColor }]} />
-          <View style={[styles.edgeLight, { backgroundColor: style.lightingColor }]} />
+          <View style={[styles.stadiumLight1, { backgroundColor: style.lightingColor }]} />
+          <View style={[styles.stadiumLight2, { backgroundColor: style.lightingColor }]} />
         </>
       );
     case 'zen-ink':
       return (
-        <>
-          <View style={[styles.paperLightGlow, { backgroundColor: style.lightingColor }]} />
-          <View style={[styles.subtleLightEdge, { backgroundColor: style.lightingColor }]} />
-        </>
+        <View style={[styles.paperLight, { backgroundColor: style.lightingColor }]} />
       );
     case 'forest-breath':
       return (
         <>
-          <View style={[styles.greenLightGlow, { backgroundColor: style.lightingColor }]} />
-          <View style={[styles.leafLight, { backgroundColor: style.lightingColor }]} />
+          <View style={[styles.sunRay1, { backgroundColor: style.lightingColor }]} />
+          <View style={[styles.sunRay2, { backgroundColor: style.lightingColor }]} />
         </>
       );
     case 'force':
       return (
         <>
-          <View style={[styles.redLightGlow, { backgroundColor: style.lightingColor }]} />
-          <View style={[styles.powerLight, { backgroundColor: style.lightingColor }]} />
+          <View style={[styles.impactLight1, { backgroundColor: style.lightingColor }]} />
+          <View style={[styles.impactLight2, { backgroundColor: style.lightingColor }]} />
         </>
       );
     case 'pure-luxury':
       return (
         <>
-          <View style={[styles.goldLightGlow, { backgroundColor: style.lightingColor }]} />
-          <View style={[styles.shimmerEffect, { backgroundColor: style.lightingColor }]} />
+          <View style={[styles.goldShine1, { backgroundColor: style.lightingColor }]} />
+          <View style={[styles.goldShine2, { backgroundColor: style.lightingColor }]} />
         </>
       );
     case 'innovation':
       return (
         <>
-          <View style={[styles.cyanLightGlow, { backgroundColor: style.lightingColor }]} />
-          <View style={[styles.techLight, { backgroundColor: style.lightingColor }]} />
+          <View style={[styles.techLight1, { backgroundColor: style.lightingColor }]} />
+          <View style={[styles.techLight2, { backgroundColor: style.lightingColor }]} />
         </>
       );
     case 'pastel-calm':
       return (
         <>
-          <View style={[styles.pastelLightGlow, { backgroundColor: style.lightingColor }]} />
-          <View style={[styles.softLight, { backgroundColor: style.lightingColor }]} />
+          <View style={[styles.softLight1, { backgroundColor: style.lightingColor }]} />
+          <View style={[styles.softLight2, { backgroundColor: style.lightingColor }]} />
         </>
       );
     case 'retro-sport':
       return (
-        <>
-          <View style={[styles.vintageLightGlow, { backgroundColor: style.lightingColor }]} />
-          <View style={[styles.stripeLight, { backgroundColor: style.lightingColor }]} />
-        </>
+        <View style={[styles.vintageLight, { backgroundColor: style.lightingColor }]} />
       );
     case 'pulse':
       return (
         <>
-          <View style={[styles.limeLightGlow, { backgroundColor: style.lightingColor }]} />
-          <View style={[styles.energyLight, { backgroundColor: style.lightingColor }]} />
+          <View style={[styles.energyLight1, { backgroundColor: style.lightingColor }]} />
+          <View style={[styles.energyLight2, { backgroundColor: style.lightingColor }]} />
         </>
       );
     case 'rogue':
       return (
         <>
-          <View style={[styles.orangeLightGlow, { backgroundColor: style.lightingColor }]} />
-          <View style={[styles.fireLight, { backgroundColor: style.lightingColor }]} />
+          <View style={[styles.fireLight1, { backgroundColor: style.lightingColor }]} />
+          <View style={[styles.fireLight2, { backgroundColor: style.lightingColor }]} />
         </>
       );
     case 'ember':
       return (
         <>
-          <View style={[styles.warmLightGlow, { backgroundColor: style.lightingColor }]} />
-          <View style={[styles.heatLight, { backgroundColor: style.lightingColor }]} />
+          <View style={[styles.emberLight1, { backgroundColor: style.lightingColor }]} />
+          <View style={[styles.emberLight2, { backgroundColor: style.lightingColor }]} />
         </>
       );
     case 'dune':
       return (
         <>
-          <View style={[styles.sunLightGlow, { backgroundColor: style.lightingColor }]} />
-          <View style={[styles.sandLight, { backgroundColor: style.lightingColor }]} />
+          <View style={[styles.sunLight1, { backgroundColor: style.lightingColor }]} />
+          <View style={[styles.sunLight2, { backgroundColor: style.lightingColor }]} />
         </>
       );
     default:
       return null;
   }
+}
+
+function renderMicroDetails(themeId: string, style: any) {
+  switch (themeId) {
+    case 'default':
+      return (
+        <>
+          <View style={[styles.microDot1, { backgroundColor: style.microColor }]} />
+          <View style={[styles.microDot2, { backgroundColor: style.microColor }]} />
+          <View style={[styles.microLine1, { backgroundColor: style.microColor }]} />
+        </>
+      );
+    case 'classic':
+      return (
+        <>
+          <View style={[styles.microDotClassic1, { backgroundColor: style.microColor }]} />
+          <View style={[styles.microDotClassic2, { backgroundColor: style.microColor }]} />
+          <View style={[styles.microLineClassic, { backgroundColor: style.microColor }]} />
+        </>
+      );
+    case 'zen-ink':
+      return (
+        <>
+          <View style={[styles.microDotZen1, { backgroundColor: style.microColor }]} />
+          <View style={[styles.microLineZen, { backgroundColor: style.microColor }]} />
+        </>
+      );
+    case 'forest-breath':
+      return (
+        <>
+          <View style={[styles.microDotForest1, { backgroundColor: style.microColor }]} />
+          <View style={[styles.microDotForest2, { backgroundColor: style.microColor }]} />
+          <View style={[styles.microCurveForest, { backgroundColor: style.microColor }]} />
+        </>
+      );
+    case 'force':
+      return (
+        <>
+          <View style={[styles.microSlash1, { backgroundColor: style.microColor }]} />
+          <View style={[styles.microSlash2, { backgroundColor: style.microColor }]} />
+          <View style={[styles.microDotForce, { backgroundColor: style.microColor }]} />
+        </>
+      );
+    case 'pure-luxury':
+      return (
+        <>
+          <View style={[styles.microGoldLine1, { backgroundColor: style.microColor }]} />
+          <View style={[styles.microGoldLine2, { backgroundColor: style.microColor }]} />
+          <View style={[styles.microDotLuxury, { backgroundColor: style.microColor }]} />
+        </>
+      );
+    case 'innovation':
+      return (
+        <>
+          <View style={[styles.microNode1, { backgroundColor: style.microColor }]} />
+          <View style={[styles.microNode2, { backgroundColor: style.microColor }]} />
+          <View style={[styles.microCircuitLine, { backgroundColor: style.microColor }]} />
+        </>
+      );
+    case 'pastel-calm':
+      return (
+        <>
+          <View style={[styles.microBubble1, { backgroundColor: style.microColor }]} />
+          <View style={[styles.microBubble2, { backgroundColor: style.microColor }]} />
+          <View style={[styles.microSoftCurve, { backgroundColor: style.microColor }]} />
+        </>
+      );
+    case 'retro-sport':
+      return (
+        <>
+          <View style={[styles.microDotRetro1, { backgroundColor: style.microColor }]} />
+          <View style={[styles.microDotRetro2, { backgroundColor: style.microColor }]} />
+          <View style={[styles.microRetroLine, { backgroundColor: style.microColor }]} />
+        </>
+      );
+    case 'pulse':
+      return (
+        <>
+          <View style={[styles.microPulseDot1, { backgroundColor: style.microColor }]} />
+          <View style={[styles.microPulseDot2, { backgroundColor: style.microColor }]} />
+          <View style={[styles.microPulseLine, { backgroundColor: style.microColor }]} />
+        </>
+      );
+    case 'rogue':
+      return (
+        <>
+          <View style={[styles.microRogueSlash1, { backgroundColor: style.microColor }]} />
+          <View style={[styles.microRogueSlash2, { backgroundColor: style.microColor }]} />
+          <View style={[styles.microSpark, { backgroundColor: style.microColor }]} />
+        </>
+      );
+    case 'ember':
+      return (
+        <>
+          <View style={[styles.microEmberDot1, { backgroundColor: style.microColor }]} />
+          <View style={[styles.microEmberDot2, { backgroundColor: style.microColor }]} />
+          <View style={[styles.microEmberTrail, { backgroundColor: style.microColor }]} />
+        </>
+      );
+    case 'dune':
+      return (
+        <>
+          <View style={[styles.microSandDot1, { backgroundColor: style.microColor }]} />
+          <View style={[styles.microSandDot2, { backgroundColor: style.microColor }]} />
+          <View style={[styles.microSandCurve, { backgroundColor: style.microColor }]} />
+        </>
+      );
+    default:
+      return null;
+  }
+}
+
+function renderEdgeHighlight(themeId: string, style: any) {
+  switch (themeId) {
+    case 'default':
+      return (
+        <>
+          <View style={[styles.edgeHighlightTop, { backgroundColor: style.edgeColor }]} />
+          <View style={[styles.edgeHighlightRight, { backgroundColor: style.edgeColor }]} />
+        </>
+      );
+    case 'classic':
+      return (
+        <>
+          <View style={[styles.edgeHighlightTop, { backgroundColor: style.edgeColor }]} />
+          <View style={[styles.edgeHighlightBottom, { backgroundColor: style.edgeColor }]} />
+        </>
+      );
+    case 'zen-ink':
+      return (
+        <View style={[styles.edgeHighlightLeft, { backgroundColor: style.edgeColor }]} />
+      );
+    case 'forest-breath':
+      return (
+        <>
+          <View style={[styles.edgeHighlightTop, { backgroundColor: style.edgeColor }]} />
+          <View style={[styles.edgeHighlightLeft, { backgroundColor: style.edgeColor }]} />
+        </>
+      );
+    case 'force':
+      return (
+        <>
+          <View style={[styles.edgeHighlightDiagonal1, { backgroundColor: style.edgeColor }]} />
+          <View style={[styles.edgeHighlightDiagonal2, { backgroundColor: style.edgeColor }]} />
+        </>
+      );
+    case 'pure-luxury':
+      return (
+        <>
+          <View style={[styles.edgeHighlightTop, { backgroundColor: style.edgeColor }]} />
+          <View style={[styles.edgeHighlightRight, { backgroundColor: style.edgeColor }]} />
+        </>
+      );
+    case 'innovation':
+      return (
+        <>
+          <View style={[styles.edgeHighlightTop, { backgroundColor: style.edgeColor }]} />
+          <View style={[styles.edgeHighlightRight, { backgroundColor: style.edgeColor }]} />
+        </>
+      );
+    case 'pastel-calm':
+      return (
+        <View style={[styles.edgeHighlightTop, { backgroundColor: style.edgeColor }]} />
+      );
+    case 'retro-sport':
+      return (
+        <>
+          <View style={[styles.edgeHighlightTop, { backgroundColor: style.edgeColor }]} />
+          <View style={[styles.edgeHighlightBottom, { backgroundColor: style.edgeColor }]} />
+        </>
+      );
+    case 'pulse':
+      return (
+        <>
+          <View style={[styles.edgeHighlightLeft, { backgroundColor: style.edgeColor }]} />
+          <View style={[styles.edgeHighlightRight, { backgroundColor: style.edgeColor }]} />
+        </>
+      );
+    case 'rogue':
+      return (
+        <>
+          <View style={[styles.edgeHighlightDiagonal1, { backgroundColor: style.edgeColor }]} />
+          <View style={[styles.edgeHighlightDiagonal2, { backgroundColor: style.edgeColor }]} />
+        </>
+      );
+    case 'ember':
+      return (
+        <View style={[styles.edgeHighlightBottom, { backgroundColor: style.edgeColor }]} />
+      );
+    case 'dune':
+      return (
+        <>
+          <View style={[styles.edgeHighlightTop, { backgroundColor: style.edgeColor }]} />
+          <View style={[styles.edgeHighlightRight, { backgroundColor: style.edgeColor }]} />
+        </>
+      );
+    default:
+      return null;
+  }
+}
+
+function renderAccentLine(themeId: string, style: any, theme: AppTheme) {
+  switch (themeId) {
+    case 'default':
+      return (
+        <View style={styles.accentLineContainer}>
+          <View style={[styles.accentLineBase, { backgroundColor: style.lineBaseColor }]} />
+          <View style={[styles.accentLineFill, { backgroundColor: theme.tabBarActive }]} />
+          <View style={[styles.accentLineGlow, { backgroundColor: style.accentGlowColor }]} />
+        </View>
+      );
+    case 'classic':
+      return (
+        <View style={styles.accentLineContainer}>
+          <View style={[styles.accentLineBase, { backgroundColor: style.lineBaseColor }]} />
+          <View style={[styles.accentLineFill, { backgroundColor: theme.tabBarActive }]} />
+          <View style={[styles.accentLineGlow, { backgroundColor: style.accentGlowColor }]} />
+        </View>
+      );
+    case 'zen-ink':
+      return (
+        <View style={styles.accentLineContainer}>
+          <View style={[styles.accentLineBase, { backgroundColor: style.lineBaseColor }]} />
+          <View style={[styles.accentLineFill, { backgroundColor: theme.tabBarActive }]} />
+        </View>
+      );
+    case 'forest-breath':
+      return (
+        <View style={styles.accentLineContainer}>
+          <View style={[styles.accentLineBase, { backgroundColor: style.lineBaseColor }]} />
+          <View style={[styles.accentLineFill, { backgroundColor: theme.tabBarActive }]} />
+          <View style={[styles.accentLineGlow, { backgroundColor: style.accentGlowColor }]} />
+        </View>
+      );
+    case 'force':
+      return (
+        <View style={styles.accentLineContainer}>
+          <View style={[styles.accentLineBase, { backgroundColor: style.lineBaseColor }]} />
+          <View style={[styles.accentLineFill, { backgroundColor: theme.tabBarActive }]} />
+          <View style={[styles.accentLineGlow, { backgroundColor: style.accentGlowColor }]} />
+        </View>
+      );
+    case 'pure-luxury':
+      return (
+        <View style={styles.accentLineContainer}>
+          <View style={[styles.accentLineBase, { backgroundColor: style.lineBaseColor }]} />
+          <View style={[styles.accentLineFill, { backgroundColor: theme.tabBarActive }]} />
+          <View style={[styles.accentLineGlow, { backgroundColor: style.accentGlowColor }]} />
+        </View>
+      );
+    case 'innovation':
+      return (
+        <View style={styles.accentLineContainer}>
+          <View style={[styles.accentLineBase, { backgroundColor: style.lineBaseColor }]} />
+          <View style={[styles.accentLineFill, { backgroundColor: theme.tabBarActive }]} />
+          <View style={[styles.accentLineGlow, { backgroundColor: style.accentGlowColor }]} />
+        </View>
+      );
+    case 'pastel-calm':
+      return (
+        <View style={styles.accentLineContainer}>
+          <View style={[styles.accentLineBase, { backgroundColor: style.lineBaseColor }]} />
+          <View style={[styles.accentLineFill, { backgroundColor: theme.tabBarActive }]} />
+          <View style={[styles.accentLineGlow, { backgroundColor: style.accentGlowColor }]} />
+        </View>
+      );
+    case 'retro-sport':
+      return (
+        <View style={styles.accentLineContainer}>
+          <View style={[styles.accentLineBase, { backgroundColor: style.lineBaseColor }]} />
+          <View style={[styles.accentLineFill, { backgroundColor: theme.tabBarActive }]} />
+        </View>
+      );
+    case 'pulse':
+      return (
+        <View style={styles.accentLineContainer}>
+          <View style={[styles.accentLineBase, { backgroundColor: style.lineBaseColor }]} />
+          <View style={[styles.accentLineFill, { backgroundColor: theme.tabBarActive }]} />
+          <View style={[styles.accentLineGlow, { backgroundColor: style.accentGlowColor }]} />
+        </View>
+      );
+    case 'rogue':
+      return (
+        <View style={styles.accentLineContainer}>
+          <View style={[styles.accentLineBase, { backgroundColor: style.lineBaseColor }]} />
+          <View style={[styles.accentLineFill, { backgroundColor: theme.tabBarActive }]} />
+          <View style={[styles.accentLineGlow, { backgroundColor: style.accentGlowColor }]} />
+        </View>
+      );
+    case 'ember':
+      return (
+        <View style={styles.accentLineContainer}>
+          <View style={[styles.accentLineBase, { backgroundColor: style.lineBaseColor }]} />
+          <View style={[styles.accentLineFill, { backgroundColor: theme.tabBarActive }]} />
+          <View style={[styles.accentLineGlow, { backgroundColor: style.accentGlowColor }]} />
+        </View>
+      );
+    case 'dune':
+      return (
+        <View style={styles.accentLineContainer}>
+          <View style={[styles.accentLineBase, { backgroundColor: style.lineBaseColor }]} />
+          <View style={[styles.accentLineFill, { backgroundColor: theme.tabBarActive }]} />
+          <View style={[styles.accentLineGlow, { backgroundColor: style.accentGlowColor }]} />
+        </View>
+      );
+    default:
+      return (
+        <View style={styles.accentLineContainer}>
+          <View style={[styles.accentLineBase, { backgroundColor: style.lineBaseColor }]} />
+          <View style={[styles.accentLineFill, { backgroundColor: theme.tabBarActive }]} />
+        </View>
+      );
+  }
+}
+
+function renderSelectedState(themeId: string, style: any, isActive: boolean, theme: AppTheme) {
+  if (!isActive) return null;
+  
+  return (
+    <View style={[styles.checkRing, { borderColor: theme.tabBarActive, backgroundColor: style.checkBg }]}>
+      <View style={[styles.checkCircle, { backgroundColor: theme.tabBarActive }]}>
+        <MaterialCommunityIcons name="check" size={16} color={style.checkColor} />
+      </View>
+    </View>
+  );
 }
 
 function renderInnerBorder(themeId: string, style: any) {
@@ -797,9 +1231,9 @@ const styles = StyleSheet.create({
     borderRadius: 32,
   },
   title: {
-    fontSize: 31,
+    fontSize: 32,
     fontWeight: '900',
-    letterSpacing: 2,
+    letterSpacing: 3,
     textTransform: 'uppercase',
     zIndex: 10,
   },
@@ -1569,235 +2003,668 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     opacity: 0.28,
   },
-  // Lighting effects
-  diagonalLight: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: 120,
-    height: 2,
-    transform: [{ rotate: '-25deg' }],
-    opacity: 0.6,
-  },
-  topLightGlow: {
-    position: 'absolute',
-    top: -10,
-    left: 20,
-    width: 80,
-    height: 40,
-    borderRadius: 20,
+  // New material layers
+  glassMaterial: {
+    ...StyleSheet.absoluteFillObject,
     opacity: 0.4,
   },
-  blueLightGlow: {
-    position: 'absolute',
-    bottom: -15,
-    right: -10,
-    width: 100,
-    height: 100,
-    borderRadius: 50,
+  sportMaterial: {
+    ...StyleSheet.absoluteFillObject,
+    opacity: 0.25,
+  },
+  paperMaterial: {
+    ...StyleSheet.absoluteFillObject,
     opacity: 0.5,
   },
-  edgeLight: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    width: 3,
-    height: '100%',
-    opacity: 0.4,
+  organicMaterial: {
+    ...StyleSheet.absoluteFillObject,
+    opacity: 0.35,
   },
-  paperLightGlow: {
-    position: 'absolute',
-    top: -8,
-    left: -8,
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+  performanceMaterial: {
+    ...StyleSheet.absoluteFillObject,
     opacity: 0.3,
   },
-  subtleLightEdge: {
+  luxuryMaterial: {
+    ...StyleSheet.absoluteFillObject,
+    opacity: 0.25,
+  },
+  techMaterial: {
+    ...StyleSheet.absoluteFillObject,
+    opacity: 0.2,
+  },
+  softMaterial: {
+    ...StyleSheet.absoluteFillObject,
+    opacity: 0.4,
+  },
+  vintageMaterial: {
+    ...StyleSheet.absoluteFillObject,
+    opacity: 0.35,
+  },
+  energyMaterial: {
+    ...StyleSheet.absoluteFillObject,
+    opacity: 0.3,
+  },
+  aggressiveMaterial: {
+    ...StyleSheet.absoluteFillObject,
+    opacity: 0.3,
+  },
+  warmMaterial: {
+    ...StyleSheet.absoluteFillObject,
+    opacity: 0.3,
+  },
+  sandMaterial: {
+    ...StyleSheet.absoluteFillObject,
+    opacity: 0.35,
+  },
+  // Depth gradient layers
+  depthGradientTop: {
     position: 'absolute',
     top: 0,
     left: 0,
-    width: 2,
-    height: '100%',
-    opacity: 0.2,
+    right: 0,
+    height: 60,
+    opacity: 0.6,
   },
-  greenLightGlow: {
+  depthGradientBottom: {
     position: 'absolute',
-    top: -12,
-    left: -12,
-    width: 90,
-    height: 90,
-    borderRadius: 45,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 60,
+    opacity: 0.6,
+  },
+  depthGradientFull: {
+    ...StyleSheet.absoluteFillObject,
     opacity: 0.5,
   },
-  leafLight: {
+  depthGradientDiagonal: {
+    ...StyleSheet.absoluteFillObject,
+    opacity: 0.5,
+  },
+  // Micro details
+  microDot1: {
     position: 'absolute',
-    bottom: 15,
-    right: 15,
+    top: 25,
+    left: 30,
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    opacity: 0.6,
+  },
+  microDot2: {
+    position: 'absolute',
+    top: 40,
+    right: 35,
+    width: 3,
+    height: 3,
+    borderRadius: 1.5,
+    opacity: 0.4,
+  },
+  microLine1: {
+    position: 'absolute',
+    top: 55,
+    left: 45,
     width: 25,
-    height: 25,
-    borderRadius: 13,
-    opacity: 0.4,
-  },
-  redLightGlow: {
-    position: 'absolute',
-    bottom: -20,
-    left: -15,
-    width: 110,
-    height: 110,
-    borderRadius: 55,
+    height: 1,
     opacity: 0.5,
   },
-  powerLight: {
+  microDotClassic1: {
     position: 'absolute',
-    top: 20,
-    right: 20,
+    top: 22,
+    left: 25,
+    width: 5,
+    height: 5,
+    borderRadius: 2.5,
+    opacity: 0.7,
+  },
+  microDotClassic2: {
+    position: 'absolute',
+    bottom: 30,
+    right: 30,
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    opacity: 0.5,
+  },
+  microLineClassic: {
+    position: 'absolute',
+    top: 45,
+    right: 45,
     width: 30,
-    height: 30,
-    borderRadius: 15,
-    opacity: 0.4,
-  },
-  goldLightGlow: {
-    position: 'absolute',
-    top: -18,
-    right: -18,
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    opacity: 0.4,
-  },
-  shimmerEffect: {
-    position: 'absolute',
-    top: 10,
-    left: 15,
-    width: 60,
     height: 1,
     opacity: 0.6,
   },
-  cyanLightGlow: {
-    position: 'absolute',
-    bottom: -15,
-    right: -12,
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    opacity: 0.5,
-  },
-  techLight: {
-    position: 'absolute',
-    top: 25,
-    left: 25,
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    opacity: 0.4,
-  },
-  pastelLightGlow: {
-    position: 'absolute',
-    top: -10,
-    right: -10,
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    opacity: 0.5,
-  },
-  softLight: {
-    position: 'absolute',
-    bottom: 20,
-    left: 20,
-    width: 35,
-    height: 35,
-    borderRadius: 18,
-    opacity: 0.4,
-  },
-  vintageLightGlow: {
-    position: 'absolute',
-    top: -12,
-    left: -12,
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-    opacity: 0.4,
-  },
-  stripeLight: {
+  microDotZen1: {
     position: 'absolute',
     top: 35,
-    left: 25,
-    width: 40,
-    height: 2,
-    opacity: 0.5,
-  },
-  limeLightGlow: {
-    position: 'absolute',
-    bottom: -18,
-    left: -15,
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    opacity: 0.5,
-  },
-  energyLight: {
-    position: 'absolute',
-    top: 30,
-    right: 30,
-    width: 25,
-    height: 25,
-    borderRadius: 13,
-    opacity: 0.5,
-  },
-  orangeLightGlow: {
-    position: 'absolute',
-    bottom: -20,
-    right: -18,
-    width: 110,
-    height: 110,
-    borderRadius: 55,
-    opacity: 0.5,
-  },
-  fireLight: {
-    position: 'absolute',
-    top: 25,
-    left: 25,
-    width: 28,
-    height: 28,
-    borderRadius: 14,
+    right: 35,
+    width: 6,
+    height: 6,
+    borderRadius: 3,
     opacity: 0.4,
   },
-  warmLightGlow: {
+  microLineZen: {
     position: 'absolute',
-    bottom: -15,
-    right: -15,
-    width: 95,
-    height: 95,
-    borderRadius: 48,
+    bottom: 40,
+    left: 40,
+    width: 20,
+    height: 1,
+    opacity: 0.3,
+  },
+  microDotForest1: {
+    position: 'absolute',
+    top: 20,
+    left: 28,
+    width: 5,
+    height: 5,
+    borderRadius: 2.5,
+    opacity: 0.6,
+  },
+  microDotForest2: {
+    position: 'absolute',
+    bottom: 35,
+    right: 32,
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    opacity: 0.4,
+  },
+  microCurveForest: {
+    position: 'absolute',
+    top: 50,
+    right: 40,
+    width: 30,
+    height: 15,
+    borderTopLeftRadius: 15,
+    borderTopRightRadius: 15,
     opacity: 0.5,
   },
-  heatLight: {
+  microSlash1: {
+    position: 'absolute',
+    top: 30,
+    left: 35,
+    width: 40,
+    height: 2,
+    transform: [{ rotate: '35deg' }],
+    opacity: 0.7,
+  },
+  microSlash2: {
+    position: 'absolute',
+    bottom: 40,
+    right: 40,
+    width: 35,
+    height: 2,
+    transform: [{ rotate: '-25deg' }],
+    opacity: 0.5,
+  },
+  microDotForce: {
+    position: 'absolute',
+    top: 25,
+    right: 25,
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    opacity: 0.6,
+  },
+  microGoldLine1: {
+    position: 'absolute',
+    top: 35,
+    left: 30,
+    width: 35,
+    height: 1,
+    opacity: 0.5,
+  },
+  microGoldLine2: {
+    position: 'absolute',
+    bottom: 35,
+    right: 35,
+    width: 25,
+    height: 1,
+    opacity: 0.4,
+  },
+  microDotLuxury: {
     position: 'absolute',
     top: 28,
     right: 28,
-    width: 22,
-    height: 22,
-    borderRadius: 11,
-    opacity: 0.4,
+    width: 5,
+    height: 5,
+    borderRadius: 2.5,
+    opacity: 0.6,
   },
-  sunLightGlow: {
+  microNode1: {
     position: 'absolute',
-    top: -15,
-    right: -12,
-    width: 85,
-    height: 85,
-    borderRadius: 43,
+    top: 22,
+    left: 32,
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    opacity: 0.7,
+  },
+  microNode2: {
+    position: 'absolute',
+    bottom: 32,
+    right: 32,
+    width: 4,
+    height: 4,
+    borderRadius: 2,
     opacity: 0.5,
   },
-  sandLight: {
+  microCircuitLine: {
+    position: 'absolute',
+    top: 45,
+    left: 40,
+    width: 28,
+    height: 1,
+    opacity: 0.6,
+  },
+  microBubble1: {
+    position: 'absolute',
+    top: 25,
+    left: 35,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    opacity: 0.4,
+  },
+  microBubble2: {
+    position: 'absolute',
+    bottom: 30,
+    right: 30,
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    opacity: 0.3,
+  },
+  microSoftCurve: {
+    position: 'absolute',
+    top: 50,
+    right: 45,
+    width: 25,
+    height: 12,
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
+    opacity: 0.4,
+  },
+  microDotRetro1: {
+    position: 'absolute',
+    top: 28,
+    left: 28,
+    width: 5,
+    height: 5,
+    borderRadius: 2.5,
+    opacity: 0.5,
+  },
+  microDotRetro2: {
+    position: 'absolute',
+    bottom: 32,
+    right: 32,
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    opacity: 0.4,
+  },
+  microRetroLine: {
+    position: 'absolute',
+    top: 42,
+    left: 35,
+    width: 30,
+    height: 2,
+    opacity: 0.5,
+  },
+  microPulseDot1: {
+    position: 'absolute',
+    top: 22,
+    left: 30,
+    width: 5,
+    height: 5,
+    borderRadius: 2.5,
+    opacity: 0.7,
+  },
+  microPulseDot2: {
+    position: 'absolute',
+    bottom: 28,
+    right: 28,
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    opacity: 0.5,
+  },
+  microPulseLine: {
+    position: 'absolute',
+    top: 38,
+    right: 35,
+    width: 25,
+    height: 2,
+    opacity: 0.6,
+  },
+  microRogueSlash1: {
+    position: 'absolute',
+    top: 28,
+    left: 32,
+    width: 45,
+    height: 2,
+    transform: [{ rotate: '40deg' }],
+    opacity: 0.7,
+  },
+  microRogueSlash2: {
+    position: 'absolute',
+    bottom: 35,
+    right: 35,
+    width: 38,
+    height: 2,
+    transform: [{ rotate: '-30deg' }],
+    opacity: 0.5,
+  },
+  microSpark: {
+    position: 'absolute',
+    top: 32,
+    right: 32,
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    opacity: 0.6,
+  },
+  microEmberDot1: {
+    position: 'absolute',
+    top: 25,
+    left: 28,
+    width: 5,
+    height: 5,
+    borderRadius: 2.5,
+    opacity: 0.6,
+  },
+  microEmberDot2: {
+    position: 'absolute',
+    bottom: 30,
+    right: 30,
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    opacity: 0.4,
+  },
+  microEmberTrail: {
     position: 'absolute',
     bottom: 25,
-    left: 25,
-    width: 30,
-    height: 30,
-    borderRadius: 15,
+    right: 35,
+    width: 20,
+    height: 2,
+    opacity: 0.5,
+  },
+  microSandDot1: {
+    position: 'absolute',
+    top: 30,
+    left: 35,
+    width: 5,
+    height: 5,
+    borderRadius: 2.5,
+    opacity: 0.5,
+  },
+  microSandDot2: {
+    position: 'absolute',
+    bottom: 35,
+    right: 35,
+    width: 4,
+    height: 4,
+    borderRadius: 2,
     opacity: 0.4,
+  },
+  microSandCurve: {
+    position: 'absolute',
+    bottom: 20,
+    left: 20,
+    width: 40,
+    height: 20,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    opacity: 0.4,
+  },
+  // Light layer elements
+  lightRay1: {
+    position: 'absolute',
+    top: 10,
+    left: 15,
+    width: 80,
+    height: 1,
+    opacity: 0.4,
+  },
+  lightRay2: {
+    position: 'absolute',
+    bottom: 15,
+    right: 20,
+    width: 60,
+    height: 1,
+    opacity: 0.3,
+  },
+  stadiumLight1: {
+    position: 'absolute',
+    top: 15,
+    left: 20,
+    width: 70,
+    height: 2,
+    opacity: 0.5,
+  },
+  stadiumLight2: {
+    position: 'absolute',
+    bottom: 20,
+    right: 25,
+    width: 55,
+    height: 2,
+    opacity: 0.4,
+  },
+  paperLight: {
+    position: 'absolute',
+    top: -5,
+    left: -5,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    opacity: 0.3,
+  },
+  sunRay1: {
+    position: 'absolute',
+    top: 10,
+    left: 20,
+    width: 2,
+    height: 50,
+    opacity: 0.4,
+  },
+  sunRay2: {
+    position: 'absolute',
+    top: 20,
+    left: 35,
+    width: 2,
+    height: 35,
+    opacity: 0.3,
+  },
+  sunLight1: {
+    position: 'absolute',
+    top: 10,
+    left: 20,
+    width: 2,
+    height: 50,
+    opacity: 0.4,
+  },
+  sunLight2: {
+    position: 'absolute',
+    top: 20,
+    left: 35,
+    width: 2,
+    height: 35,
+    opacity: 0.3,
+  },
+  impactLight1: {
+    position: 'absolute',
+    top: 20,
+    left: 25,
+    width: 60,
+    height: 2,
+    transform: [{ rotate: '45deg' }],
+    opacity: 0.6,
+  },
+  impactLight2: {
+    position: 'absolute',
+    bottom: 25,
+    right: 30,
+    width: 50,
+    height: 2,
+    transform: [{ rotate: '-35deg' }],
+    opacity: 0.4,
+  },
+  goldShine1: {
+    position: 'absolute',
+    top: 12,
+    left: 18,
+    width: 75,
+    height: 1,
+    opacity: 0.5,
+  },
+  goldShine2: {
+    position: 'absolute',
+    bottom: 18,
+    right: 22,
+    width: 55,
+    height: 1,
+    opacity: 0.4,
+  },
+  techLight1: {
+    position: 'absolute',
+    top: 18,
+    left: 22,
+    width: 65,
+    height: 1,
+    opacity: 0.5,
+  },
+  techLight2: {
+    position: 'absolute',
+    bottom: 22,
+    right: 28,
+    width: 45,
+    height: 1,
+    opacity: 0.4,
+  },
+  softLight1: {
+    position: 'absolute',
+    top: 15,
+    left: 25,
+    width: 55,
+    height: 1,
+    opacity: 0.4,
+  },
+  softLight2: {
+    position: 'absolute',
+    bottom: 20,
+    right: 30,
+    width: 40,
+    height: 1,
+    opacity: 0.3,
+  },
+  vintageLight: {
+    position: 'absolute',
+    top: 20,
+    left: 30,
+    width: 50,
+    height: 2,
+    opacity: 0.4,
+  },
+  energyLight1: {
+    position: 'absolute',
+    top: 22,
+    left: 28,
+    width: 70,
+    height: 1,
+    opacity: 0.6,
+  },
+  energyLight2: {
+    position: 'absolute',
+    bottom: 28,
+    right: 32,
+    width: 55,
+    height: 1,
+    opacity: 0.5,
+  },
+  fireLight1: {
+    position: 'absolute',
+    top: 25,
+    left: 30,
+    width: 60,
+    height: 2,
+    transform: [{ rotate: '40deg' }],
+    opacity: 0.6,
+  },
+  fireLight2: {
+    position: 'absolute',
+    bottom: 30,
+    right: 35,
+    width: 50,
+    height: 2,
+    transform: [{ rotate: '-30deg' }],
+    opacity: 0.4,
+  },
+  emberLight1: {
+    position: 'absolute',
+    top: 20,
+    left: 25,
+    width: 55,
+    height: 1,
+    opacity: 0.5,
+  },
+  emberLight2: {
+    position: 'absolute',
+    bottom: 25,
+    right: 30,
+    width: 45,
+    height: 1,
+    opacity: 0.4,
+  },
+  // Edge highlights
+  edgeHighlightTop: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 2,
+    opacity: 0.4,
+  },
+  edgeHighlightBottom: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 2,
+    opacity: 0.4,
+  },
+  edgeHighlightLeft: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    width: 2,
+    opacity: 0.3,
+  },
+  edgeHighlightRight: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    width: 2,
+    opacity: 0.3,
+  },
+  edgeHighlightDiagonal1: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: 120,
+    height: 2,
+    transform: [{ rotate: '45deg' }],
+    opacity: 0.4,
+  },
+  edgeHighlightDiagonal2: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    width: 100,
+    height: 2,
+    transform: [{ rotate: '45deg' }],
+    opacity: 0.3,
   },
 });
