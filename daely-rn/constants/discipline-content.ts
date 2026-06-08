@@ -24,6 +24,14 @@ export interface Exercise {
   alternatives?: string[];
   safetyNotes?: string[];
   equipment?: string[];
+  mediaItems?: Array<{
+    id: string;
+    type: 'demo_video' | 'muscle_highlight' | 'illustration';
+    title: string;
+    description?: string;
+    asset?: string;
+    thumbnail?: string;
+  }>;
 }
 
 export interface Program {

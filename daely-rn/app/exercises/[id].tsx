@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet, Text, Pressable, ScrollView } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -10,6 +10,7 @@ export default function ExerciseDetailScreen() {
   const { id, disciplineSlug } = useLocalSearchParams<{ id: string; disciplineSlug?: string }>();
   const router = useRouter();
   const theme = useTheme();
+  const [activeMediaIndex, setActiveMediaIndex] = useState(0);
 
   const exercise = React.useMemo(() => {
     if (!id) return null;
@@ -49,6 +50,19 @@ export default function ExerciseDetailScreen() {
       )
       .slice(0, 3);
   }, [exercise, disciplineSlug]);
+
+  const mediaItems = React.useMemo(() => {
+    if (!exercise) return [];
+    if (exercise.mediaItems && exercise.mediaItems.length > 0) {
+      return exercise.mediaItems;
+    }
+    // Fallback: always show 3 placeholder slides
+    return [
+      { id: 'demo', type: 'demo_video' as const, title: 'Voorbeeld', description: 'Visualisatie wordt voorbereid' },
+      { id: 'muscle', type: 'muscle_highlight' as const, title: 'Spieren', description: `${exercise.spiergroep}` },
+      { id: 'illustration', type: 'illustration' as const, title: 'Tekening', description: 'Techniektekening wordt voorbereid' },
+    ];
+  }, [exercise]);
 
   if (!exercise) {
     return (
@@ -132,12 +146,75 @@ export default function ExerciseDetailScreen() {
     ));
   };
 
+  const renderMediaSlide = (item: any, index: number) => {
+    const getSlideIcon = () => {
+      switch(item.type) {
+        case 'demo_video': return 'play-circle';
+        case 'muscle_highlight': return 'human';
+        case 'illustration': return 'drawing';
+        default: return 'image';
+      }
+    };
+
+    const getSlideColor = () => {
+      switch(item.type) {
+        case 'demo_video': return '#2563EB';
+        case 'muscle_highlight': return '#10B981';
+        case 'illustration': return '#7C3AED';
+        default: return '#6B7280';
+      }
+    };
+
+    return (
+      <View key={item.id} style={[styles.mediaSlide, { width: 350, marginHorizontal: 8 }]}>
+        <View style={[styles.mediaCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+          <View style={[styles.mediaIconContainer, { backgroundColor: getSlideColor() + '22' }]}>
+            <MaterialCommunityIcons name={getSlideIcon() as any} size={48} color={getSlideColor()} />
+          </View>
+          <Text style={[styles.mediaTitle, { color: theme.titleColor }]}>{item.title}</Text>
+          <Text style={[styles.mediaDescription, { color: theme.subtitleColor }]}>{item.description}</Text>
+          {item.type === 'demo_video' && (
+            <View style={[styles.playBadge, { backgroundColor: getSlideColor() }]}>
+              <MaterialCommunityIcons name="play" size={16} color="#FFFFFF" />
+            </View>
+          )}
+        </View>
+      </View>
+    );
+  };
+
   return (
     <ScrollView style={[styles.screen, { backgroundColor: theme.background }]}>
       <View style={styles.content}>
         <Pressable onPress={() => router.back()} style={styles.backButton}>
           <MaterialCommunityIcons name="arrow-left" size={24} color={theme.titleColor} />
         </Pressable>
+
+        {/* Media Swipe Header */}
+        <View style={styles.mediaHeader}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            pagingEnabled
+            onMomentumScrollEnd={(e) => {
+              const index = Math.round(e.nativeEvent.contentOffset.x / 350);
+              setActiveMediaIndex(index);
+            }}
+          >
+            {mediaItems.map((item, index) => renderMediaSlide(item, index))}
+          </ScrollView>
+          <View style={styles.paginationDots}>
+            {mediaItems.map((_, index) => (
+              <View
+                key={index}
+                style={[
+                  styles.dot,
+                  { backgroundColor: index === activeMediaIndex ? theme.tabBarActive : theme.border }
+                ]}
+              />
+            ))}
+          </View>
+        </View>
 
         {/* Premium Header */}
         <View style={[styles.iconBox, { backgroundColor: '#10B98122' }]}>
@@ -238,6 +315,61 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 20,
+  },
+  mediaHeader: {
+    marginBottom: 24,
+  },
+  mediaSlide: {
+    alignItems: 'center',
+  },
+  mediaCard: {
+    width: 350,
+    height: 200,
+    borderRadius: 16,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 24,
+    position: 'relative',
+  },
+  mediaIconContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 16,
+  },
+  mediaTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    marginBottom: 8,
+  },
+  mediaDescription: {
+    fontSize: 14,
+    textAlign: 'center',
+  },
+  playBadge: {
+    position: 'absolute',
+    bottom: 16,
+    right: 16,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  paginationDots: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 12,
+    gap: 8,
+  },
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
   },
   title: {
     fontSize: 24,
