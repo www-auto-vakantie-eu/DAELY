@@ -351,7 +351,50 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
       },
     ],
     exercises: FITNESS_EXERCISES,
-    programs: [],
+    programs: [
+      {
+        id: 'fitness-start-sterk',
+        name: 'Start Sterk',
+        duration: '4 weken',
+        level: 'Beginner',
+        weeks: 4,
+      },
+      {
+        id: 'fitness-spieropbouw-basis',
+        name: 'Spieropbouw Basis',
+        duration: '8 weken',
+        level: 'Beginner',
+        weeks: 8,
+      },
+      {
+        id: 'fitness-full-body-fit',
+        name: 'Full Body Fit',
+        duration: '6 weken',
+        level: 'Gemiddeld',
+        weeks: 6,
+      },
+      {
+        id: 'fitness-upper-body-power',
+        name: 'Upper Body Power',
+        duration: '6 weken',
+        level: 'Gemiddeld',
+        weeks: 6,
+      },
+      {
+        id: 'fitness-lower-body-core',
+        name: 'Lower Body & Core',
+        duration: '6 weken',
+        level: 'Beginner',
+        weeks: 6,
+      },
+      {
+        id: 'fitness-fit-lean',
+        name: 'Fit & Lean',
+        duration: '8 weken',
+        level: 'Gemiddeld',
+        weeks: 8,
+      },
+    ],
   },
 
   // All other disciplines with empty content for now
