@@ -128,7 +128,13 @@ function calculateRouteDistanceMeters(points: GpsRoutePoint[]): number | undefin
 }
 
 export default function StartActivityScreen() {
-  const { disciplineId } = useLocalSearchParams<{ disciplineId: string }>();
+  const { disciplineId, programId, week, day, workoutId } = useLocalSearchParams<{ 
+    disciplineId: string;
+    programId?: string;
+    week?: string;
+    day?: string;
+    workoutId?: string;
+  }>();
   const discipline = SPORT_DISCIPLINES.find((d) => d.id === disciplineId);
   const isWorkoutDiscipline = discipline?.trackingType === 'workout';
   const isSessionDiscipline = discipline?.trackingType === 'session';
