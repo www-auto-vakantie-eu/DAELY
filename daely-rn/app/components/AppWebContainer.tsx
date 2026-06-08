@@ -19,6 +19,7 @@ export default function AppWebContainer({ children }: AppWebContainerProps) {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     width: '100%',
     maxWidth: 430,
     alignSelf: 'center',

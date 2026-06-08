@@ -97,7 +97,6 @@ export default function TabLayout() {
 
 const styles = StyleSheet.create({
   webContainer: {
-    flex: 1,
     maxWidth: 430,
     alignSelf: 'center',
     width: '100%',
