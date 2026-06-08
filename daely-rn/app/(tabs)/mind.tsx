@@ -183,9 +183,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   card: {
-    height: 140,
+    height: 210,
     borderRadius: 20,
-    marginBottom: 12,
+    marginBottom: 14,
     overflow: 'hidden',
   },
   cardImage: {

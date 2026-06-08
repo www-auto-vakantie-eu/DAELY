@@ -408,20 +408,20 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   mealCardWrap: {
-    marginBottom: 16,
+    marginBottom: 14,
   },
   mealCard: {
-    height: 290,
+    height: 210,
     justifyContent: 'flex-end',
   },
   mealImage: {
-    borderRadius: 40,
+    borderRadius: 20,
   },
   mealOverlay: {
-    borderRadius: 40,
+    borderRadius: 20,
     paddingHorizontal: 18,
     paddingBottom: 20,
-    paddingTop: 70,
+    paddingTop: 50,
   },
   mealTitle: {
     color: '#FFFFFF',
