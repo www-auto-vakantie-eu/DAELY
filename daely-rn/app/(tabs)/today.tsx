@@ -17,7 +17,7 @@ import { TODAY_QUOTES } from '@/constants/today-quotes';
 
 const SHORTCUTS_STORAGE_KEY = 'daely.today.shortcuts.v1';
 
-type ShortcutId = 'nutrition' | 'habits' | 'stats' | 'tracker' | 'activities' | 'shop' | 'feedback';
+type ShortcutId = 'nutrition' | 'habits' | 'stats' | 'tracker' | 'activities' | 'shop' | 'feedback' | 'find-coach';
 
 type ShortcutOption = {
   id: ShortcutId;
@@ -34,6 +34,7 @@ const SHORTCUT_OPTIONS: ShortcutOption[] = [
   { id: 'activities', label: 'Activiteiten', icon: 'history', route: '/activities' },
   { id: 'shop', label: 'Shop', icon: 'shopping-outline', route: '/shop' },
   { id: 'feedback', label: 'Feedback', icon: 'chat-outline', route: '/feedback' },
+  { id: 'find-coach', label: 'Vind Coach', icon: 'account-tie', route: '/find-coach' },
 ];
 
 const DEFAULT_SHORTCUTS: ShortcutId[] = ['nutrition', 'habits', 'stats'];
