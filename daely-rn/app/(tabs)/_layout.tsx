@@ -2,7 +2,7 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Tabs, useRouter } from 'expo-router';
 import React, { useEffect } from 'react';
-import { Platform, View } from 'react-native';
+import { Platform, View, StyleSheet } from 'react-native';
 import { CustomTabBar } from '@/components/custom-tab-bar';
 import { HapticTab } from '@/components/haptic-tab';
 import { useAppContext } from '@/contexts/AppContext';
@@ -22,7 +22,7 @@ export default function TabLayout() {
   }, [isAppHydrated, isLoggedIn, router]);
 
   return (
-    <View style={{ flex: 1, maxWidth: 430, alignSelf: 'center', width: '100%' }}>
+    <View style={Platform.OS === 'web' ? styles.webContainer : undefined}>
       <GlobalCartButton />
       <Tabs
         initialRouteName="index"
@@ -94,3 +94,12 @@ export default function TabLayout() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  webContainer: {
+    flex: 1,
+    maxWidth: 430,
+    alignSelf: 'center',
+    width: '100%',
+  },
+});

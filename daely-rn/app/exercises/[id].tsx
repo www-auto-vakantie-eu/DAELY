@@ -197,9 +197,8 @@ export default function ExerciseDetailScreen() {
     <View style={[styles.screen, { backgroundColor: theme.background }]}>
       <StatusBar barStyle="light-content" />
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-        <View style={Platform.OS === 'web' ? styles.webContainer : undefined}>
-          {/* Media Hero Carousel */}
-          <View style={styles.mediaHeader}>
+        {/* Media Hero Carousel */}
+        <View style={styles.mediaHeader}>
             <ScrollView
               horizontal
               showsHorizontalScrollIndicator={false}
@@ -296,7 +295,6 @@ export default function ExerciseDetailScreen() {
           </View>
         )}
           </View>
-        </View>
       </ScrollView>
     </View>
   );
@@ -308,11 +306,6 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingBottom: 24,
-  },
-  webContainer: {
-    maxWidth: 430,
-    alignSelf: 'center',
-    width: '100%',
   },
   mediaHeader: {
     height: 280,

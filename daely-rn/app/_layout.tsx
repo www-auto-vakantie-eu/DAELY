@@ -6,6 +6,7 @@ import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { AppProvider, useAppContext } from '@/contexts/AppContext';
+import AppWebContainer from './components/AppWebContainer';
 
 function RootLayoutContent() {
   const colorScheme = useColorScheme();
@@ -21,15 +22,17 @@ function RootLayoutContent() {
 
   return (
     <ThemeProvider value={appSettings.darkMode || colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack screenOptions={{ headerShown: false }}>
-        {!isLoggedIn ? (
-          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-        ) : (
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        )}
-        <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-      </Stack>
-      <StatusBar style="auto" />
+      <AppWebContainer>
+        <Stack screenOptions={{ headerShown: false }}>
+          {!isLoggedIn ? (
+            <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+          ) : (
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          )}
+          <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
+        </Stack>
+        <StatusBar style="auto" />
+      </AppWebContainer>
     </ThemeProvider>
   );
 }
