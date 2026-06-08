@@ -326,7 +326,6 @@ export default function CommunityScreen() {
         <PageHeader
           title="Community"
           onSettingsPress={() => router.push('/(tabs)/athlete')}
-          onSearchPress={() => router.push('/nutrition/search')}
           onCartPress={() => router.push('/(tabs)/cart')}
         />
 

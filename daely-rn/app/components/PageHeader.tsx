@@ -16,7 +16,7 @@ type PageHeaderProps = {
 export default function PageHeader({
   title,
   showSettings = true,
-  showSearch = true,
+  showSearch,
   showCart = true,
   onSettingsPress,
   onSearchPress,
@@ -34,14 +34,6 @@ export default function PageHeader({
             onPress={onSettingsPress}
           >
             <MaterialCommunityIcons name="cog-outline" size={22} color={theme.titleColor} />
-          </Pressable>
-        ) : null}
-        {showSearch ? (
-          <Pressable
-            style={[styles.iconButton, { backgroundColor: theme.card, borderColor: theme.border }]}
-            onPress={onSearchPress}
-          >
-            <MaterialCommunityIcons name="magnify" size={22} color={theme.titleColor} />
           </Pressable>
         ) : null}
         {showCart ? (
@@ -67,10 +59,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   title: {
-    fontSize: 68,
-    lineHeight: 72,
-    fontWeight: '900',
-    letterSpacing: -2,
+    fontSize: 26,
+    lineHeight: 32,
+    fontWeight: '700',
+    letterSpacing: -0.5,
     flexShrink: 1,
   },
   actionsRow: {

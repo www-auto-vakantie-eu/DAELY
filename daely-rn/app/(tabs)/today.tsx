@@ -229,7 +229,6 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
       <PageHeader
         title="Vandaag"
         onSettingsPress={() => router.push('/(tabs)/athlete')}
-        onSearchPress={() => router.push('/nutrition/search')}
         onCartPress={() => router.push('/(tabs)/cart')}
       />
 

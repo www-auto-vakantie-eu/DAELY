@@ -3,15 +3,12 @@
 
 
 import React, { useState, useMemo } from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, Pressable, ImageBackground } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, ImageBackground } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '@/hooks/use-theme';
 import { NUTRITION_MEALS } from '@/constants/nutrition-meals';
 import { useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import GlobalSearchModal from '../components/GlobalSearchModal';
-import { DISCIPLINES } from './disciplines';
-import { COMMUNITY_CREATORS } from '@/constants/community-creators';
 import PageHeader from '../components/PageHeader';
 
 
@@ -66,68 +63,6 @@ const NUTRITION_ACTIONS = [
 
 
 export default function NutritionScreen() {
-  const [searchVisible, setSearchVisible] = useState(false);
-  const [searchResults, setSearchResults] = useState<{ id: string; label: string; meta?: string; onSelect: () => void }[]>([]);
-  const handleSearch = (query: string) => {
-    const normalizedQuery = query.trim().toLowerCase();
-    if (!normalizedQuery) {
-      setSearchResults([]);
-      return;
-    }
-
-    const results: { id: string; label: string; meta?: string; onSelect: () => void }[] = [];
-    const seen = new Set<string>();
-    const addResult = (item: { id: string; label: string; meta?: string; onSelect: () => void }) => {
-      if (results.length >= 24) return;
-      if (seen.has(item.id)) return;
-      seen.add(item.id);
-      results.push(item);
-    };
-
-    NUTRITION_MEALS.forEach((meal) => {
-      const haystack = `${meal.title} ${meal.mealType} ${meal.description}`.toLowerCase();
-      if (!haystack.includes(normalizedQuery)) return;
-      addResult({
-        id: `meal-${meal.id}`,
-        label: meal.title,
-        meta: `Gerecht · ${meal.mealType}`,
-        onSelect: () => {
-          setSearchVisible(false);
-          router.push({ pathname: '/nutrition/[id]', params: { id: meal.id } });
-        },
-      });
-    });
-
-    DISCIPLINES.forEach((discipline) => {
-      const haystack = `${discipline.title} ${discipline.subtitle}`.toLowerCase();
-      if (!haystack.includes(normalizedQuery)) return;
-      addResult({
-        id: `discipline-${discipline.id}`,
-        label: discipline.title,
-        meta: 'Discipline',
-        onSelect: () => {
-          setSearchVisible(false);
-          router.push({ pathname: '/discipline/[slug]', params: { slug: discipline.slug } });
-        },
-      });
-    });
-
-    COMMUNITY_CREATORS.forEach((creator) => {
-      const haystack = `${creator.name} ${creator.specialty || ''}`.toLowerCase();
-      if (!haystack.includes(normalizedQuery)) return;
-      addResult({
-        id: `creator-${creator.id}`,
-        label: creator.name,
-        meta: 'Persoon · Community',
-        onSelect: () => {
-          setSearchVisible(false);
-          router.push({ pathname: '/community/creator/[id]', params: { id: creator.id } });
-        },
-      });
-    });
-
-    setSearchResults(results);
-  };
   const theme = useTheme();
   const router = useRouter();
   const [activeFilterCategory, setActiveFilterCategory] = useState<FilterKey | null>(null);
@@ -168,7 +103,6 @@ export default function NutritionScreen() {
       <PageHeader
         title="Voeding"
         onSettingsPress={() => router.push('/(tabs)/athlete')}
-        onSearchPress={() => setSearchVisible(true)}
         onCartPress={() => router.push('/(tabs)/cart')}
       />
       <View style={{ height: 16 }} />
@@ -192,12 +126,6 @@ export default function NutritionScreen() {
         </View>
       </View>
 
-      <GlobalSearchModal
-        visible={searchVisible}
-        onClose={() => setSearchVisible(false)}
-        onSearch={handleSearch}
-        results={searchResults}
-      />
       {/* Filterbalk */}
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 12 }}>
         {FILTER_CATEGORIES.map(category => {
@@ -323,12 +251,6 @@ const styles = StyleSheet.create({
   headerTextBlock: {
     flex: 1,
     paddingRight: 12,
-  },
-  title: {
-    fontSize: 68,
-    lineHeight: 72,
-    fontWeight: '900',
-    letterSpacing: -2,
   },
   subtitle: {
     fontSize: 18,

@@ -1,12 +1,8 @@
 
 import { StyleSheet, ScrollView, View, Text, Pressable, ImageBackground, ImageSourcePropType } from 'react-native';
-import GlobalSearchModal from '../components/GlobalSearchModal';
-import { useState } from 'react';
 import { useRouter } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
 import { useAppContext } from '@/contexts/AppContext';
-import { NUTRITION_MEALS } from '@/constants/nutrition-meals';
-import { COMMUNITY_CREATORS } from '@/constants/community-creators';
 import { resolveContentAudience, getGenderedDisciplineImage, type DisciplineMedia } from '@/lib/content-audience';
 import PageHeader from '../components/PageHeader';
 
@@ -358,68 +354,6 @@ function getImageSource(image: string | ImageSourcePropType): ImageSourcePropTyp
 
 export default function DisciplinesScreen() {
   const { user, appSettings } = useAppContext();
-  const [searchVisible, setSearchVisible] = useState(false);
-  const [searchResults, setSearchResults] = useState<{ id: string; label: string; meta?: string; onSelect: () => void }[]>([]);
-  const handleSearch = (query: string) => {
-    const normalizedQuery = query.trim().toLowerCase();
-    if (!normalizedQuery) {
-      setSearchResults([]);
-      return;
-    }
-
-    const results: { id: string; label: string; meta?: string; onSelect: () => void }[] = [];
-    const seen = new Set<string>();
-    const addResult = (item: { id: string; label: string; meta?: string; onSelect: () => void }) => {
-      if (results.length >= 24) return;
-      if (seen.has(item.id)) return;
-      seen.add(item.id);
-      results.push(item);
-    };
-
-    DISCIPLINES.forEach((discipline) => {
-      const haystack = `${discipline.title} ${discipline.subtitle}`.toLowerCase();
-      if (!haystack.includes(normalizedQuery)) return;
-      addResult({
-        id: `discipline-${discipline.id}`,
-        label: discipline.title,
-        meta: 'Discipline',
-        onSelect: () => {
-          setSearchVisible(false);
-          router.push({ pathname: '/discipline/[slug]', params: { slug: discipline.slug } });
-        },
-      });
-    });
-
-    NUTRITION_MEALS.forEach((meal) => {
-      const haystack = `${meal.title} ${meal.mealType} ${meal.description}`.toLowerCase();
-      if (!haystack.includes(normalizedQuery)) return;
-      addResult({
-        id: `meal-${meal.id}`,
-        label: meal.title,
-        meta: `Gerecht · ${meal.mealType}`,
-        onSelect: () => {
-          setSearchVisible(false);
-          router.push({ pathname: '/nutrition/[id]', params: { id: meal.id } });
-        },
-      });
-    });
-
-    COMMUNITY_CREATORS.forEach((creator) => {
-      const haystack = `${creator.name} ${creator.specialty || ''}`.toLowerCase();
-      if (!haystack.includes(normalizedQuery)) return;
-      addResult({
-        id: `creator-${creator.id}`,
-        label: creator.name,
-        meta: 'Persoon · Community',
-        onSelect: () => {
-          setSearchVisible(false);
-          router.push({ pathname: '/community/creator/[id]', params: { id: creator.id } });
-        },
-      });
-    });
-
-    setSearchResults(results);
-  };
   const theme = useTheme();
   const router = useRouter();
   const visibleDisciplines = DISCIPLINES;
@@ -435,14 +369,7 @@ export default function DisciplinesScreen() {
       <PageHeader
         title="Bibliotheek"
         onSettingsPress={() => router.push('/(tabs)/athlete')}
-        onSearchPress={() => setSearchVisible(true)}
         onCartPress={() => router.push('/(tabs)/cart')}
-      />
-      <GlobalSearchModal
-        visible={searchVisible}
-        onClose={() => setSearchVisible(false)}
-        onSearch={handleSearch}
-        results={searchResults}
       />
       <ScrollView style={[styles.container, { backgroundColor: theme.background }]} showsVerticalScrollIndicator={false}>
         <View style={styles.content}>
@@ -483,12 +410,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     marginBottom: 22,
-  },
-  title: {
-    fontSize: 68,
-    lineHeight: 72,
-    fontWeight: '900',
-    letterSpacing: -2,
   },
   subtitle: {
     fontSize: 18,

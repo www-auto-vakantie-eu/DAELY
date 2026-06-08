@@ -14,7 +14,6 @@ export default function MindScreen() {
       <PageHeader
         title="Mind"
         onSettingsPress={() => router.push('/(tabs)/athlete')}
-        onSearchPress={() => router.push('/nutrition/search')}
         onCartPress={() => router.push('/(tabs)/cart')}
       />
 

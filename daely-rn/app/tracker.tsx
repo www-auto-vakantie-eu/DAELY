@@ -53,7 +53,6 @@ export default function TrackerScreen() {
       <PageHeader
         title="DAELY Tracker"
         onSettingsPress={() => router.push('/(tabs)/athlete')}
-        onSearchPress={() => router.push('/nutrition/search')}
         onCartPress={() => router.push('/(tabs)/cart')}
       />
 
