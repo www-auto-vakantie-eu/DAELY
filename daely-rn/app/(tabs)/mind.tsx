@@ -101,6 +101,27 @@ export default function MindScreen() {
           </ImageBackground>
         </Pressable>
 
+        <Pressable
+          style={styles.card}
+          onPress={() => router.push('/mind/category/mindset')}
+        >
+          <ImageBackground
+            source={{ uri: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=800&q=80' }}
+            style={styles.cardImage}
+            imageStyle={styles.cardImageStyle}
+          >
+            <LinearGradient
+              colors={['rgba(0,0,0,0.3)', 'rgba(0,0,0,0.7)']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 0, y: 1 }}
+              style={styles.cardOverlay}
+            >
+              <Text style={styles.cardTitle}>Mindset</Text>
+              <Text style={styles.cardDescription}>Focus, discipline, zelfvertrouwen en rust</Text>
+            </LinearGradient>
+          </ImageBackground>
+        </Pressable>
+
         <View style={styles.buttonRow}>
           <Pressable style={styles.primaryButton} onPress={() => router.push('/(tabs)/mijn')}>
             <Text style={styles.primaryButtonText}>Terug naar Mijn</Text>

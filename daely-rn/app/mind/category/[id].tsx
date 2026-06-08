@@ -17,6 +17,7 @@ export default function MindCategoryScreen() {
       focus: 'Focus',
       recovery: 'Herstel',
       meditation: 'Meditatie',
+      mindset: 'Mindset',
     };
     return categoryNames[id] || 'Mind';
   };
@@ -33,25 +34,58 @@ export default function MindCategoryScreen() {
       />
 
       <View style={styles.content}>
-        <View style={[styles.heroCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <View style={styles.iconContainer}>
-            <MaterialCommunityIcons name="meditation" size={48} color="#8B5CF6" />
-          </View>
-          <Text style={[styles.heroTitle, { color: theme.titleColor }]}>Binnenkort beschikbaar</Text>
-          <Text style={[styles.heroText, { color: theme.subtitleColor }]}>
-            Oefeningen in deze categorie worden later toegevoegd.
-          </Text>
-          <View style={styles.statusBadge}>
-            <Text style={styles.statusText}>Binnenkort</Text>
-          </View>
-        </View>
+        {categoryId === 'mindset' ? (
+          <>
+            <View style={[styles.introCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+              <Text style={[styles.introTitle, { color: theme.titleColor }]}>Over Mindset</Text>
+              <Text style={[styles.introText, { color: theme.subtitleColor }]}>
+                Jouw mindset is de basis voor alles wat je doet. Het bepaalt hoe je omgaat met uitdagingen, hoe je jouw doelen nastreeft en hoe je terugkomt na tegenslagen.
+              </Text>
+            </View>
 
-        <View style={[styles.infoCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <Text style={[styles.infoTitle, { color: theme.titleColor }]}>Wat kun je verwachten?</Text>
-          <Text style={[styles.infoText, { color: theme.subtitleColor }]}>
-            In deze categorie vind je straks oefeningen en routines die je helpen om je mentale gezondheid te verbeteren.
-          </Text>
-        </View>
+            <View style={[styles.themesCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+              <Text style={[styles.themesTitle, { color: theme.titleColor }]}>Themas</Text>
+              <View style={styles.themeItem}>
+                <View style={[styles.themeDot, { backgroundColor: '#2563EB' }]} />
+                <Text style={[styles.themeText, { color: theme.subtitleColor }]}>Focus</Text>
+              </View>
+              <View style={styles.themeItem}>
+                <View style={[styles.themeDot, { backgroundColor: '#059669' }]} />
+                <Text style={[styles.themeText, { color: theme.subtitleColor }]}>Discipline</Text>
+              </View>
+              <View style={styles.themeItem}>
+                <View style={[styles.themeDot, { backgroundColor: '#F59E0B' }]} />
+                <Text style={[styles.themeText, { color: theme.subtitleColor }]}>Zelfvertrouwen</Text>
+              </View>
+              <View style={styles.themeItem}>
+                <View style={[styles.themeDot, { backgroundColor: '#8B5CF6' }]} />
+                <Text style={[styles.themeText, { color: theme.subtitleColor }]}>Rust</Text>
+              </View>
+            </View>
+          </>
+        ) : (
+          <>
+            <View style={[styles.heroCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+              <View style={styles.iconContainer}>
+                <MaterialCommunityIcons name="meditation" size={48} color="#8B5CF6" />
+              </View>
+              <Text style={[styles.heroTitle, { color: theme.titleColor }]}>Binnenkort beschikbaar</Text>
+              <Text style={[styles.heroText, { color: theme.subtitleColor }]}>
+                Oefeningen in deze categorie worden later toegevoegd.
+              </Text>
+              <View style={styles.statusBadge}>
+                <Text style={styles.statusText}>Binnenkort</Text>
+              </View>
+            </View>
+
+            <View style={[styles.infoCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+              <Text style={[styles.infoTitle, { color: theme.titleColor }]}>Wat kun je verwachten?</Text>
+              <Text style={[styles.infoText, { color: theme.subtitleColor }]}>
+                In deze categorie vind je straks oefeningen en routines die je helpen om je mentale gezondheid te verbeteren.
+              </Text>
+            </View>
+          </>
+        )}
 
         <View style={styles.buttonRow}>
           <Pressable style={styles.primaryButton} onPress={() => router.push('/(tabs)/mind')}>
@@ -131,6 +165,47 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   infoText: {
+    fontSize: 14,
+    lineHeight: 20,
+  },
+  introCard: {
+    borderWidth: 1,
+    borderRadius: 20,
+    padding: 20,
+    marginBottom: 16,
+  },
+  introTitle: {
+    fontSize: 18,
+    fontWeight: '800',
+    marginBottom: 12,
+  },
+  introText: {
+    fontSize: 14,
+    lineHeight: 20,
+  },
+  themesCard: {
+    borderWidth: 1,
+    borderRadius: 20,
+    padding: 20,
+    marginBottom: 16,
+  },
+  themesTitle: {
+    fontSize: 18,
+    fontWeight: '800',
+    marginBottom: 16,
+  },
+  themeItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  themeDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginRight: 12,
+  },
+  themeText: {
     fontSize: 14,
     lineHeight: 20,
   },
