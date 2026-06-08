@@ -5,6 +5,42 @@ import { useTheme } from '@/hooks/use-theme';
 import { useAppContext } from '@/contexts/AppContext';
 import { resolveContentAudience, getGenderedDisciplineImage, type DisciplineMedia } from '@/lib/content-audience';
 import PageHeader from '../components/PageHeader';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+
+const LIBRARY_ACTIONS = [
+  {
+    key: 'search',
+    title: 'Oefening zoeken',
+    subtitle: 'Zoek in alle oefeningen',
+    icon: 'text-search' as const,
+    style: 'quickActionSearch' as const,
+    route: '/exercises/search' as const,
+  },
+  {
+    key: 'workout',
+    title: 'Workout maken',
+    subtitle: 'Maak je eigen workout',
+    icon: 'plus-circle-outline' as const,
+    style: 'quickActionPrimary' as const,
+    route: '/workout/create' as const,
+  },
+  {
+    key: 'goal',
+    title: 'Doel trainen',
+    subtitle: 'Train op je doel',
+    icon: 'target' as const,
+    style: 'quickActionTertiary' as const,
+    route: '/goals' as const,
+  },
+  {
+    key: 'recommended',
+    title: 'Aanbevolen',
+    subtitle: 'Persoonlijke suggesties',
+    icon: 'star' as const,
+    style: 'quickActionSecondary' as const,
+    route: '/recommended' as const,
+  },
+];
 
 export const DISCIPLINES = [
   {
@@ -373,6 +409,27 @@ export default function DisciplinesScreen() {
       />
       <ScrollView style={[styles.container, { backgroundColor: theme.background }]} showsVerticalScrollIndicator={false}>
         <View style={styles.content}>
+          {/* Quick Actions */}
+          <View style={styles.quickActionsBlock}>
+            <View style={styles.quickActionsRow}>
+              {LIBRARY_ACTIONS.map((action) => (
+                <Pressable
+                  key={action.key}
+                  style={[styles.quickActionButton, styles[action.style]]}
+                  onPress={() => router.push(action.route as any)}
+                >
+                  <View style={styles.quickActionIconBubble}>
+                    <MaterialCommunityIcons name={action.icon} size={18} color="#FFFFFF" />
+                  </View>
+                  <View style={styles.quickActionTextWrap}>
+                    <Text style={styles.quickActionText}>{action.title}</Text>
+                    <Text style={styles.quickActionSubText}>{action.subtitle}</Text>
+                  </View>
+                </Pressable>
+              ))}
+            </View>
+          </View>
+
           {visibleDisciplines.map((item) => (
             <Pressable
               key={item.id}
@@ -404,6 +461,59 @@ const styles = StyleSheet.create({
   content: {
     paddingHorizontal: 16,
     paddingTop: 24,
+  },
+  quickActionsBlock: {
+    marginBottom: 8,
+    gap: 4,
+  },
+  quickActionsRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginBottom: 10,
+  },
+  quickActionButton: {
+    width: '48.5%',
+    borderRadius: 14,
+    paddingVertical: 12,
+    paddingHorizontal: 12,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 8,
+  },
+  quickActionIconBubble: {
+    width: 28,
+    height: 28,
+    borderRadius: 999,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 1,
+  },
+  quickActionTextWrap: {
+    flex: 1,
+    gap: 2,
+  },
+  quickActionText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#FFFFFF',
+  },
+  quickActionSubText: {
+    fontSize: 11,
+    color: 'rgba(255,255,255,0.8)',
+  },
+  quickActionPrimary: {
+    backgroundColor: '#2563EB',
+  },
+  quickActionSecondary: {
+    backgroundColor: '#059669',
+  },
+  quickActionTertiary: {
+    backgroundColor: '#DC2626',
+  },
+  quickActionSearch: {
+    backgroundColor: '#7C3AED',
   },
   header: {
     flexDirection: 'row',
