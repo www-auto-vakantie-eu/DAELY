@@ -13,7 +13,7 @@ const LIBRARY_ACTIONS = [
     title: 'Oefening zoeken',
     subtitle: 'Zoek in alle oefeningen',
     icon: 'text-search' as const,
-    style: 'quickActionSearch' as const,
+    style: 'quickActionDarkRed' as const,
     route: '/exercises/search' as const,
   },
   {
@@ -21,7 +21,7 @@ const LIBRARY_ACTIONS = [
     title: 'Workout maken',
     subtitle: 'Maak je eigen workout',
     icon: 'plus-circle-outline' as const,
-    style: 'quickActionPrimary' as const,
+    style: 'quickActionDarkRed' as const,
     route: '/workout/create' as const,
   },
   {
@@ -29,7 +29,7 @@ const LIBRARY_ACTIONS = [
     title: 'Doel trainen',
     subtitle: 'Train op je doel',
     icon: 'target' as const,
-    style: 'quickActionTertiary' as const,
+    style: 'quickActionDarkRed' as const,
     route: '/goals' as const,
   },
   {
@@ -37,7 +37,7 @@ const LIBRARY_ACTIONS = [
     title: 'Aanbevolen',
     subtitle: 'Persoonlijke suggesties',
     icon: 'star' as const,
-    style: 'quickActionSecondary' as const,
+    style: 'quickActionDarkRed' as const,
     route: '/recommended' as const,
   },
 ];
@@ -515,6 +515,9 @@ const styles = StyleSheet.create({
   },
   quickActionSearch: {
     backgroundColor: '#7C3AED',
+  },
+  quickActionDarkRed: {
+    backgroundColor: '#7F1D1D',
   },
   header: {
     flexDirection: 'row',
