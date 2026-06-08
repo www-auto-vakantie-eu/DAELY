@@ -15,6 +15,7 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
 import { useState } from 'react';
 import PageHeader from '../components/PageHeader';
+import { DISCIPLINE_CONTENT } from '@/constants/discipline-content';
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -401,7 +402,9 @@ export default function DisciplineScreen() {
     );
   }
 
-  const workoutsForDiscipline = WORKOUTS_BY_SLUG[slug ?? ''] ?? DEFAULT_WORKOUTS;
+  // Use DISCIPLINE_CONTENT for workouts, with fallback to WORKOUTS_BY_SLUG for backward compatibility
+  const disciplineContent = DISCIPLINE_CONTENT[slug ?? ''];
+  const workoutsForDiscipline = disciplineContent?.workouts ?? WORKOUTS_BY_SLUG[slug ?? ''] ?? DEFAULT_WORKOUTS;
   const filterOptions =
     slug === 'kegel-oefeningen'
       ? ['Alles', 'Man', 'Vrouw']
