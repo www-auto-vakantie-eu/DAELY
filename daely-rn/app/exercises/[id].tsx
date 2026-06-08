@@ -5,7 +5,6 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/use-theme';
 import { DISCIPLINE_CONTENT } from '@/constants/discipline-content';
-import { SPORT_DISCIPLINES } from '../constants/sport-disciplines';
 
 export default function ExerciseDetailScreen() {
   const { id, disciplineSlug } = useLocalSearchParams<{ id: string; disciplineSlug?: string }>();
@@ -34,11 +33,6 @@ export default function ExerciseDetailScreen() {
     }
     return null;
   }, [id, disciplineSlug]);
-
-  const discipline = React.useMemo(() => {
-    if (!disciplineSlug) return null;
-    return SPORT_DISCIPLINES.find(d => d.id === disciplineSlug);
-  }, [disciplineSlug]);
 
   const alternatives = React.useMemo(() => {
     if (!exercise || !disciplineSlug) return [];
@@ -238,39 +232,27 @@ export default function ExerciseDetailScreen() {
               <MaterialCommunityIcons name="arrow-left" size={24} color={theme.titleColor} />
             </Pressable>
 
-        <Text style={[styles.exerciseName, { color: theme.titleColor }]}>
-          {exercise.name}
-        </Text>
-
-        <View style={styles.metaContainer}>
-          <View style={[styles.metaChip, { backgroundColor: theme.card, borderColor: theme.border }]}>
-            <MaterialCommunityIcons name="human" size={16} color={theme.subtitleColor} />
-            <Text style={[styles.metaText, { color: theme.subtitleColor }]}>
-              {exercise.spiergroep}
-            </Text>
-          </View>
-          <View style={[styles.metaChip, { backgroundColor: theme.card, borderColor: theme.border }]}>
-            <MaterialCommunityIcons name="tag" size={16} color={theme.subtitleColor} />
-            <Text style={[styles.metaText, { color: theme.subtitleColor }]}>
-              {exercise.categorie}
-            </Text>
-          </View>
-          <View style={[styles.metaChip, { backgroundColor: theme.card, borderColor: theme.border }]}>
-            <MaterialCommunityIcons name="lightning-bolt" size={16} color={getDifficultyColor(exercise.moeilijkheid)} />
-            <Text style={[styles.metaText, { color: getDifficultyColor(exercise.moeilijkheid) }]}>
-              {exercise.moeilijkheid}
-            </Text>
-          </View>
-        </View>
-
-        {discipline && (
-          <View style={styles.disciplineContainer}>
-            <Text style={[styles.label, { color: theme.subtitleColor }]}>Discipline</Text>
-            <Text style={[styles.disciplineName, { color: theme.titleColor }]}>
-              {discipline.name}
-            </Text>
-          </View>
-        )}
+            {/* Premium Title Card */}
+            <View style={[styles.titleCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+              <Text style={[styles.exerciseName, { color: theme.titleColor }]}>
+                {exercise.name}
+              </Text>
+              <Text style={[styles.focusText, { color: theme.subtitleColor }]}>
+                Focus op {exercise.spiergroep} • {exercise.categorie}
+              </Text>
+              <View style={styles.badgesRow}>
+                <View style={[styles.badge, { backgroundColor: getDifficultyColor(exercise.moeilijkheid) + '22' }]}>
+                  <Text style={[styles.badgeText, { color: getDifficultyColor(exercise.moeilijkheid) }]}>
+                    {exercise.moeilijkheid}
+                  </Text>
+                </View>
+                <View style={[styles.badge, { backgroundColor: theme.border }]}>
+                  <Text style={[styles.badgeText, { color: theme.subtitleColor }]}>
+                    {exercise.categorie}
+                  </Text>
+                </View>
+              </View>
+            </View>
 
         {/* Uitvoering */}
         {renderSection('Uitvoering', 'run', renderBulletPoints(exercise.instructions || getFallbackInstructions()))}
@@ -427,38 +409,31 @@ const styles = StyleSheet.create({
   exerciseName: {
     fontSize: 28,
     fontWeight: '700',
-    marginBottom: 24,
+    marginBottom: 8,
   },
-  metaContainer: {
+  titleCard: {
+    borderRadius: 20,
+    padding: 24,
+    marginBottom: 24,
+    borderWidth: 1,
+  },
+  focusText: {
+    fontSize: 16,
+    fontWeight: '500',
+    marginBottom: 16,
+  },
+  badgesRow: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
     gap: 8,
-    marginBottom: 24,
+    flexWrap: 'wrap',
   },
-  metaChip: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  badge: {
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 20,
-    borderWidth: 1,
-    gap: 6,
+    borderRadius: 12,
   },
-  metaText: {
-    fontSize: 14,
-    fontWeight: '500',
-  },
-  disciplineContainer: {
-    marginBottom: 24,
-  },
-  label: {
-    fontSize: 12,
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-    marginBottom: 4,
-  },
-  disciplineName: {
-    fontSize: 16,
+  badgeText: {
+    fontSize: 13,
     fontWeight: '600',
   },
   section: {
