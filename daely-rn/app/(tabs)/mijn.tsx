@@ -220,12 +220,12 @@ const styles = StyleSheet.create({
   },
   cardsWrap: {
     padding: 16,
-    gap: 14,
   },
   verticalCard: {
-    borderRadius: 16,
+    borderRadius: 20,
     overflow: 'hidden',
-    height: 140,
+    height: 210,
+    marginBottom: 14,
   },
   slideCardPressed: {
     transform: [{ scale: 0.98 }],
