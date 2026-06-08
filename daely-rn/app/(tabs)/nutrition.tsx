@@ -108,9 +108,6 @@ export default function NutritionScreen() {
       <View style={{ height: 16 }} />
 
       <View style={styles.quickActionsBlock}>
-        <Text style={[styles.quickActionsTitle, { color: theme.titleColor }]}>Nutrition acties</Text>
-        <Text style={[styles.quickActionsSubtitle, { color: theme.subtitleColor }]}>Kies de snelste route voor je volgende log.</Text>
-
         <View style={styles.quickActionsRow}>
           {NUTRITION_ACTIONS.map((action) => (
             <Pressable key={action.key} style={[styles.quickActionButton, styles[action.style]]} onPress={() => router.push(action.route)}>
@@ -279,16 +276,6 @@ const styles = StyleSheet.create({
   quickActionsBlock: {
     marginBottom: 8,
     gap: 4,
-  },
-  quickActionsTitle: {
-    fontSize: 16,
-    fontWeight: '900',
-    letterSpacing: -0.3,
-  },
-  quickActionsSubtitle: {
-    marginBottom: 6,
-    fontSize: 12,
-    fontWeight: '600',
   },
   quickActionButton: {
     width: '48.5%',
