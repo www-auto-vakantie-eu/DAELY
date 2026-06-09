@@ -298,45 +298,65 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
           ))}
         </View>
 
-      {/* Nieuw blok: Jouw dag vandaag */}
+      {/* Volgende training */}
+      {nextWorkout ? (
+        <View style={[styles.sectionCard, styles.nextWorkoutCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+          <View style={styles.nextWorkoutHeader}>
+            <Text style={[styles.nextWorkoutLabel, { color: theme.subtitleColor }]}>VOLGENDE TRAINING</Text>
+            <Text style={[styles.nextWorkoutProgram, { color: theme.titleColor }]}>{nextWorkout.program.name}</Text>
+            <Text style={[styles.nextWorkoutWeekDay, { color: theme.subtitleColor }]}>Week {nextWorkout.week} · Dag {nextWorkout.day}</Text>
+          </View>
+          <View style={styles.nextWorkoutBody}>
+            <Text style={[styles.nextWorkoutWorkoutName, { color: theme.titleColor }]}>{nextWorkout.workout?.name || 'Volgende training'}</Text>
+            {nextWorkout.workout?.duration && (
+              <Text style={[styles.nextWorkoutMeta, { color: theme.subtitleColor }]}>
+                {nextWorkout.workout.duration} · {nextWorkout.workout.level}
+              </Text>
+            )}
+            <Text style={[styles.nextWorkoutProgress, { color: theme.subtitleColor }]}>
+              {nextWorkout.completedCount} van {nextWorkout.totalPlannedWorkouts} trainingen voltooid
+            </Text>
+          </View>
+          <Pressable
+            style={[styles.nextWorkoutButton, { backgroundColor: '#2563EB' }]}
+            onPress={() => router.push({
+              pathname: '/tracker/[disciplineId]/start',
+              params: {
+                disciplineId: nextWorkout.disciplineSlug,
+                workoutId: nextWorkout.workout?.id,
+                programId: nextWorkout.program.id,
+                week: String(nextWorkout.week),
+                day: String(nextWorkout.day),
+              },
+            })}
+          >
+            <MaterialCommunityIcons name="arrow-right" size={20} color="#FFFFFF" />
+            <Text style={styles.nextWorkoutButtonText}>Start training</Text>
+          </Pressable>
+        </View>
+      ) : (
+        <View style={[styles.sectionCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+          <View style={styles.dailyStatusRow}>
+            <View style={[styles.dailyStatusItem, { backgroundColor: theme.background, borderColor: theme.border }]}>
+              <MaterialCommunityIcons name="dumbbell" size={20} color="#2563EB" />
+              <View style={styles.dailyStatusContent}>
+                <Text style={[styles.dailyStatusLabel, { color: theme.titleColor }]}>Training</Text>
+                <Text style={[styles.dailyStatusValue, { color: theme.subtitleColor }]}>Nog niet gepland</Text>
+              </View>
+            </View>
+            <Pressable
+              style={[styles.startTrainingButton, { backgroundColor: '#E2E8F0' }]}
+              onPress={() => router.push('/my-programs')}
+            >
+              <Text style={[styles.startTrainingButtonText, { color: '#1E3A8A' }]}>Bekijk programma&apos;s</Text>
+            </Pressable>
+          </View>
+        </View>
+      )}
+
+      {/* Jouw dag vandaag - andere items */}
       <View style={[styles.sectionCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
         <View style={styles.dailyStatusRow}>
-          <View style={[styles.dailyStatusItem, { backgroundColor: theme.background, borderColor: theme.border }]}>
-            <MaterialCommunityIcons name="dumbbell" size={20} color="#2563EB" />
-            <View style={styles.dailyStatusContent}>
-              <Text style={[styles.dailyStatusLabel, { color: theme.titleColor }]}>Training</Text>
-              {nextWorkout ? (
-                <>
-                  <Text style={[styles.dailyStatusValue, { color: theme.subtitleColor }]}>{nextWorkout.workout?.name || 'Volgende training'}</Text>
-                  <Text style={[styles.dailyStatusSub, { color: theme.subtitleColor }]}>
-                    {nextWorkout.program.name} · Week {nextWorkout.week} · Dag {nextWorkout.day}
-                  </Text>
-                  <Text style={[styles.dailyStatusProgress, { color: theme.subtitleColor }]}>
-                    {nextWorkout.completedCount} van {nextWorkout.totalPlannedWorkouts} trainingen voltooid
-                  </Text>
-                </>
-              ) : (
-                <Text style={[styles.dailyStatusValue, { color: theme.subtitleColor }]}>Nog niet gepland</Text>
-              )}
-            </View>
-          </View>
-          {nextWorkout && (
-            <Pressable
-              style={[styles.startTrainingButton, { backgroundColor: '#2563EB' }]}
-              onPress={() => router.push({
-                pathname: '/tracker/[disciplineId]/start',
-                params: {
-                  disciplineId: nextWorkout.disciplineSlug,
-                  workoutId: nextWorkout.workout?.id,
-                  programId: nextWorkout.program.id,
-                  week: String(nextWorkout.week),
-                  day: String(nextWorkout.day),
-                },
-              })}
-            >
-              <Text style={styles.startTrainingButtonText}>Start training</Text>
-            </Pressable>
-          )}
           <View style={[styles.dailyStatusItem, { backgroundColor: theme.background, borderColor: theme.border }]}>
             <MaterialCommunityIcons name="silverware-fork-knife" size={20} color="#059669" />
             <View style={styles.dailyStatusContent}>
@@ -998,5 +1018,56 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontWeight: '700',
     fontSize: 14,
+  },
+  nextWorkoutCard: {
+    padding: 16,
+  },
+  nextWorkoutHeader: {
+    marginBottom: 12,
+  },
+  nextWorkoutLabel: {
+    fontSize: 11,
+    fontWeight: '700',
+    letterSpacing: 1,
+    marginBottom: 4,
+    textTransform: 'uppercase',
+  },
+  nextWorkoutProgram: {
+    fontSize: 16,
+    fontWeight: '800',
+    marginBottom: 2,
+  },
+  nextWorkoutWeekDay: {
+    fontSize: 13,
+  },
+  nextWorkoutBody: {
+    marginBottom: 16,
+  },
+  nextWorkoutWorkoutName: {
+    fontSize: 20,
+    fontWeight: '700',
+    marginBottom: 4,
+  },
+  nextWorkoutMeta: {
+    fontSize: 13,
+    marginBottom: 8,
+  },
+  nextWorkoutProgress: {
+    fontSize: 13,
+    color: '#10B981',
+  },
+  nextWorkoutButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 14,
+    paddingHorizontal: 24,
+    borderRadius: 12,
+    gap: 8,
+  },
+  nextWorkoutButtonText: {
+    color: '#FFFFFF',
+    fontWeight: '700',
+    fontSize: 15,
   },
 });
