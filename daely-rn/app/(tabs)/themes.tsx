@@ -3,7 +3,6 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useAppContext } from '@/contexts/AppContext';
 import { useTheme } from '@/hooks/use-theme';
-import { ThemePremiumBannerCard } from '@/components/ThemePremiumBannerCard';
 import { ThemeImageBannerCard } from '@/components/ThemeImageBannerCard';
 import { THEMES } from '@/constants/themes';
 
@@ -29,12 +28,6 @@ export default function ThemasScreen() {
     'wave',
   ] as const;
 
-// Themes that have image banner assets
-const themesWithImageBanners = [
-  'force',
-  'pastelCalm',
-] as const;
-
   return (
     <View style={[styles.screen, { backgroundColor: theme.background }]}>
       <ScrollView
@@ -58,17 +51,8 @@ const themesWithImageBanners = [
           const themeData = THEMES[themeId];
           if (!themeData) return null;
 
-          const hasImageBanner = themesWithImageBanners.includes(themeId as any);
-
-          return hasImageBanner ? (
+          return (
             <ThemeImageBannerCard
-              key={themeId}
-              theme={themeData}
-              isActive={activeThemeId === themeId}
-              onPress={() => setActiveThemeId(themeId)}
-            />
-          ) : (
-            <ThemePremiumBannerCard
               key={themeId}
               theme={themeData}
               isActive={activeThemeId === themeId}

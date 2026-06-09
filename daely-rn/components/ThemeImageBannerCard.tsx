@@ -10,9 +10,20 @@ interface ThemeImageBannerCardProps {
 
 // Static asset mappings for themes that have image banners
 const THEME_BANNER_IMAGES: Record<string, any> = {
-  'force': require('@/assets/theme-banners/force-banner.png'),
-  'pastelCalm': require('@/assets/theme-banners/pastel-calm-banner.png'),
-  // Note: Other themes use ThemePremiumBannerCard gradient fallback
+  'force': require('@/assets/Thema\'s/force.png'),
+  'pastelCalm': require('@/assets/Thema\'s/pastel_calm.png'),
+  'retroSport': require('@/assets/Thema\'s/retro_sport.png'),
+  'saharaDune': require('@/assets/Thema\'s/sahara_dune.png'),
+  'zenInk': require('@/assets/Thema\'s/zen_ink.png'),
+  'aurora': require('@/assets/Thema\'s/aurora.png'),
+  'ruby': require('@/assets/Thema\'s/ruby.png'),
+  'coralBloom': require('@/assets/Thema\'s/coral_bloom.png'),
+  'marble': require('@/assets/Thema\'s/marble.png'),
+  'sapphire': require('@/assets/Thema\'s/sapphire.png'),
+  'purpleStorm': require('@/assets/Thema\'s/purple_storm.png'),
+  'volcanicAsh': require('@/assets/Thema\'s/volcanic_ash.png'),
+  'venom': require('@/assets/Thema\'s/venom.png'),
+  'wave': require('@/assets/Thema\'s/wave.png'),
 };
 
 export function ThemeImageBannerCard({ theme, isActive, onPress }: ThemeImageBannerCardProps) {
