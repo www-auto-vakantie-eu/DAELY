@@ -319,6 +319,19 @@ export default function StartActivityScreen() {
     return 'mixed';
   };
 
+  // Helper: Get exercise data from discipline content
+  const getExerciseData = (exerciseId: string) => {
+    if (!exerciseId) return null;
+    for (const disciplineKey in DISCIPLINE_CONTENT) {
+      const disciplineContent = DISCIPLINE_CONTENT[disciplineKey as keyof typeof DISCIPLINE_CONTENT];
+      if (disciplineContent?.exercises) {
+        const exercise = disciplineContent.exercises.find((e: any) => e.id === exerciseId);
+        if (exercise) return exercise;
+      }
+    }
+    return null;
+  };
+
   // Reset guided flow state when workout changes
   React.useEffect(() => {
     if (workoutExercises.length > 0) {
@@ -1184,6 +1197,24 @@ export default function StartActivityScreen() {
                   {exerciseLogs[currentExerciseIndex].lastPerformance.lastSet?.durationSeconds ? `${exerciseLogs[currentExerciseIndex].lastPerformance.lastSet.durationSeconds} sec` : ''}
                 </Text>
               )}
+
+              {(() => {
+                const currentExerciseId = exerciseLogs[currentExerciseIndex].exerciseId;
+                if (!currentExerciseId) return null;
+                const exercise = getExerciseData(currentExerciseId);
+                if (exercise?.instructions && Array.isArray(exercise.instructions) && exercise.instructions.length > 0) {
+                  const displayLines = exercise.instructions.slice(0, 2);
+                  return (
+                    <View style={styles.guidedFlowInstructions}>
+                      <Text style={styles.guidedFlowInstructionsLabel}>Uitvoering</Text>
+                      {displayLines.map((line, idx) => (
+                        <Text key={idx} style={styles.guidedFlowInstructionsText}>{line}</Text>
+                      ))}
+                    </View>
+                  );
+                }
+                return null;
+              })()}
 
               {!isResting && exerciseLogs[currentExerciseIndex].sets && exerciseLogs[currentExerciseIndex].sets.length > 0 && (
                 <View>
@@ -2426,6 +2457,23 @@ const styles = StyleSheet.create({
     color: '#3B82F6',
     fontStyle: 'italic',
     marginBottom: 12,
+  },
+  guidedFlowInstructions: {
+    backgroundColor: '#F8FAFC',
+    borderRadius: 8,
+    padding: 10,
+    marginBottom: 12,
+  },
+  guidedFlowInstructionsLabel: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#475569',
+    marginBottom: 4,
+  },
+  guidedFlowInstructionsText: {
+    fontSize: 13,
+    color: '#64748B',
+    lineHeight: 18,
   },
   guidedFlowSetInput: {
     flexDirection: 'row',
