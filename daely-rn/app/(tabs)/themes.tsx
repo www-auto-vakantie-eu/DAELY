@@ -33,18 +33,6 @@ export default function ThemasScreen() {
 const themesWithImageBanners = [
   'force',
   'pastelCalm',
-  'retroSport',
-  'saharaDune',
-  'zenInk',
-  'aurora',
-  'ruby',
-  'coralBloom',
-  'marble',
-  'sapphire',
-  'purpleStorm',
-  'volcanicAsh',
-  'venom',
-  'wave',
 ] as const;
 
   return (
