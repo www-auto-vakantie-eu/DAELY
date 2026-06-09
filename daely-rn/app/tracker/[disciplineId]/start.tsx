@@ -156,10 +156,26 @@ export default function StartActivityScreen() {
     const disciplineContent = DISCIPLINE_CONTENT[disciplineId as keyof typeof DISCIPLINE_CONTENT];
     if (!disciplineContent?.exercises) return [];
 
+    // Priority 1: Use workoutExercises if available
+    if (workout.workoutExercises && workout.workoutExercises.length > 0) {
+      const exerciseMap = new Map(disciplineContent.exercises.map(e => [e.id, e]));
+      return workout.workoutExercises
+        .map(we => exerciseMap.get(we.exerciseId))
+        .filter((e): e is NonNullable<typeof e> => e !== undefined);
+    }
+
+    // Priority 2: Use exerciseIds if available
+    if (workout.exerciseIds && workout.exerciseIds.length > 0) {
+      const exerciseMap = new Map(disciplineContent.exercises.map(e => [e.id, e]));
+      return workout.exerciseIds
+        .map(id => exerciseMap.get(id))
+        .filter((e): e is NonNullable<typeof e> => e !== undefined);
+    }
+
+    // Priority 3: Fallback to first X exercises from discipline (for backward compatibility)
     const exerciseCount = typeof workout.exercises === 'number' ? workout.exercises : 0;
     if (exerciseCount === 0) return [];
 
-    // For MVP: use first X exercises from discipline as temporary workout list
     return disciplineContent.exercises.slice(0, Math.min(exerciseCount, disciplineContent.exercises.length));
   }, [workout, disciplineId]);
 

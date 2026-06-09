@@ -10,6 +10,15 @@ export interface Workout {
   icon: string;
   color: string;
   exercises: number;
+  exerciseIds?: string[];
+  workoutExercises?: {
+    exerciseId: string;
+    plannedSets?: number;
+    targetReps?: string;
+    targetDurationSeconds?: number;
+    restSeconds?: number;
+    notes?: string;
+  }[];
 }
 
 export interface Exercise {
@@ -323,6 +332,7 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'arm-flex',
         color: '#2563EB',
         exercises: 8,
+        exerciseIds: ['1-1', '1-2', '1-3', '4-1', '4-2', '4-3', '3-1', '3-2'],
       },
       {
         id: '2',
@@ -333,6 +343,7 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'human-handsup',
         color: '#7C3AED',
         exercises: 7,
+        exerciseIds: ['5-1', '5-2', '5-3', '5-4', '2-1', '2-2', '2-3'],
       },
       {
         id: '3',
@@ -343,6 +354,7 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'human-male',
         color: '#DC2626',
         exercises: 9,
+        exerciseIds: ['9-1', '9-2', '9-3', '9-4', '9-5', '8-1', '8-2', '8-3', '8-4'],
       },
       {
         id: '4',
@@ -353,6 +365,7 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'dumbbell',
         color: '#059669',
         exercises: 10,
+        exerciseIds: ['1-1', '5-1', '9-1', '4-1', '2-1', '3-1', '9-2', '1-2', '5-2', '7-1'],
       },
       {
         id: '5',
@@ -363,6 +376,7 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'weight-lifter',
         color: '#D97706',
         exercises: 6,
+        exerciseIds: ['1-1', '1-2', '5-1', '5-2', '4-1', '4-2'],
       },
       {
         id: '6',
@@ -373,6 +387,7 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'human-female-dance',
         color: '#0891B2',
         exercises: 8,
+        exerciseIds: ['7-1', '7-2', '7-3', '7-4', '6-1', '6-2', '8-1', '8-2'],
       },
     ],
     exercises: FITNESS_EXERCISES,
@@ -1555,6 +1570,7 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'human-handsup',
         color: '#10B981',
         exercises: 6,
+        exerciseIds: ['cal-ex-1', 'cal-ex-2', 'cal-ex-9', 'cal-ex-17', 'cal-ex-25', 'cal-ex-30'],
       },
       {
         id: 'cal-push',
@@ -1565,6 +1581,7 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'arm-flex',
         color: '#EF4444',
         exercises: 5,
+        exerciseIds: ['cal-ex-3', 'cal-ex-5', 'cal-ex-6', 'cal-ex-4', 'cal-ex-8'],
       },
       {
         id: 'cal-pull',
@@ -1575,6 +1592,7 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'human-handsup',
         color: '#3B82F6',
         exercises: 5,
+        exerciseIds: ['cal-ex-11', 'cal-ex-12', 'cal-ex-10', 'cal-ex-9', 'cal-ex-15'],
       },
       {
         id: 'cal-core',
@@ -1585,6 +1603,7 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'meditation',
         color: '#8B5CF6',
         exercises: 5,
+        exerciseIds: ['cal-ex-17', 'cal-ex-18', 'cal-ex-19', 'cal-ex-20', 'cal-ex-21'],
       },
       {
         id: 'cal-legs',
@@ -1595,6 +1614,7 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'human-male',
         color: '#F59E0B',
         exercises: 6,
+        exerciseIds: ['cal-ex-25', 'cal-ex-27', 'cal-ex-29', 'cal-ex-30', 'cal-ex-32', 'cal-ex-33'],
       },
       {
         id: 'cal-skill',
@@ -1605,6 +1625,7 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'hand-okay',
         color: '#06B6D4',
         exercises: 4,
+        exerciseIds: ['cal-ex-34', 'cal-ex-35', 'cal-ex-36', 'cal-ex-37'],
       },
       {
         id: 'cal-full',
@@ -1615,6 +1636,7 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'dumbbell',
         color: '#7C3AED',
         exercises: 7,
+        exerciseIds: ['cal-ex-3', 'cal-ex-11', 'cal-ex-25', 'cal-ex-19', 'cal-ex-6', 'cal-ex-17', 'cal-ex-22'],
       },
       {
         id: 'cal-mobility',
@@ -1625,6 +1647,7 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'human-female-dance',
         color: '#14B8A6',
         exercises: 6,
+        exerciseIds: ['cal-ex-13', 'cal-ex-14', 'cal-ex-19', 'cal-ex-20', 'cal-ex-38', 'cal-ex-41'],
       },
     ],
     exercises: [
@@ -2008,6 +2031,7 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'weather-sunrise',
         color: '#F59E0B',
         exercises: 6,
+        exerciseIds: ['mob-ex-1', 'mob-ex-4', 'mob-ex-6', 'mob-ex-11', 'mob-ex-17', 'mob-ex-22'],
       },
       {
         id: 'mob-full',
@@ -2018,6 +2042,7 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'human-female-dance',
         color: '#10B981',
         exercises: 8,
+        exerciseIds: ['mob-ex-1', 'mob-ex-4', 'mob-ex-7', 'mob-ex-11', 'mob-ex-18', 'mob-ex-22', 'mob-ex-27', 'mob-ex-28'],
       },
       {
         id: 'mob-hip',
@@ -2028,6 +2053,7 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'human-handsup',
         color: '#8B5CF6',
         exercises: 7,
+        exerciseIds: ['mob-ex-4', 'mob-ex-10', 'mob-ex-16', 'mob-ex-18', 'mob-ex-19', 'mob-ex-20', 'mob-ex-21'],
       },
       {
         id: 'mob-shoulder',
@@ -2038,6 +2064,7 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'arm-flex',
         color: '#3B82F6',
         exercises: 6,
+        exerciseIds: ['mob-ex-3', 'mob-ex-5', 'mob-ex-6', 'mob-ex-7', 'mob-ex-8', 'mob-ex-12'],
       },
       {
         id: 'mob-runner',
@@ -2048,6 +2075,7 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'run',
         color: '#06B6D4',
         exercises: 7,
+        exerciseIds: ['mob-ex-11', 'mob-ex-18', 'mob-ex-22', 'mob-ex-24', 'mob-ex-27', 'mob-ex-28', 'mob-ex-31'],
       },
       {
         id: 'mob-desk',
@@ -2058,6 +2086,7 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'desk',
         color: '#EF4444',
         exercises: 5,
+        exerciseIds: ['mob-ex-1', 'mob-ex-2', 'mob-ex-6', 'mob-ex-4', 'mob-ex-17'],
       },
       {
         id: 'mob-deep',
@@ -2068,6 +2097,7 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'meditation',
         color: '#7C3AED',
         exercises: 10,
+        exerciseIds: ['mob-ex-3', 'mob-ex-5', 'mob-ex-11', 'mob-ex-16', 'mob-ex-19', 'mob-ex-20', 'mob-ex-21', 'mob-ex-25', 'mob-ex-26', 'mob-ex-31'],
       },
       {
         id: 'mob-recovery',
@@ -2078,6 +2108,7 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'restore',
         color: '#14B8A6',
         exercises: 8,
+        exerciseIds: ['mob-ex-4', 'mob-ex-10', 'mob-ex-13', 'mob-ex-14', 'mob-ex-15', 'mob-ex-18', 'mob-ex-22', 'mob-ex-28'],
       },
     ],
     exercises: [
@@ -4343,6 +4374,7 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'run',
         color: '#2563EB',
         exercises: 4,
+        exerciseIds: ['hl-ex-17', 'hl-ex-18', 'hl-ex-20', 'hl-ex-22'],
       },
       {
         id: 'hr-end-2',
@@ -4353,6 +4385,7 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'speedometer',
         color: '#0EA5E9',
         exercises: 5,
+        exerciseIds: ['hl-ex-13', 'hl-ex-14', 'hl-ex-15', 'hl-ex-17', 'hl-ex-23'],
       },
       {
         id: 'hr-rec-1',
@@ -4363,6 +4396,7 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'run-slow',
         color: '#10B981',
         exercises: 3,
+        exerciseIds: ['hl-ex-17', 'hl-ex-20', 'hl-ex-24'],
       },
       {
         id: 'hr-int-1',
@@ -4373,6 +4407,7 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'timer',
         color: '#F59E0B',
         exercises: 4,
+        exerciseIds: ['hl-ex-1', 'hl-ex-13', 'hl-ex-14', 'hl-ex-16'],
       },
       {
         id: 'hr-long-1',
@@ -4383,6 +4418,7 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'clock-outline',
         color: '#8B5CF6',
         exercises: 3,
+        exerciseIds: ['hl-ex-18', 'hl-ex-20', 'hl-ex-21'],
       },
       {
         id: 'hr-hill-1',
@@ -4393,6 +4429,7 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'trending-up',
         color: '#EF4444',
         exercises: 4,
+        exerciseIds: ['hl-ex-16', 'hl-ex-17', 'hl-ex-18', 'hl-ex-19'],
       },
       {
         id: 'hr-5k-1',
@@ -4403,6 +4440,7 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'speedometer',
         color: '#3B82F6',
         exercises: 4,
+        exerciseIds: ['hl-ex-13', 'hl-ex-14', 'hl-ex-15', 'hl-ex-6'],
       },
       {
         id: 'hr-strides-1',
@@ -4413,6 +4451,7 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'foot-print',
         color: '#06B6D4',
         exercises: 5,
+        exerciseIds: ['hl-ex-1', 'hl-ex-2', 'hl-ex-3', 'hl-ex-13', 'hl-ex-15'],
       },
     ],
     exercises: [
