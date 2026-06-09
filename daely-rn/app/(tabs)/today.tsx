@@ -1,6 +1,6 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { ScrollView, StyleSheet, Text, View, Pressable, ImageBackground } from 'react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useRouter, useLocalSearchParams, useFocusEffect } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/use-theme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -127,6 +127,20 @@ export default function TodayScreen() {
 
   const todayQuote = useMemo(() => getTodayQuote(), []);
 
+  const loadNextWorkout = useCallback(() => {
+    getNextProgramWorkout().then(setNextWorkout);
+  }, []);
+
+  useEffect(() => {
+    loadNextWorkout();
+  }, [loadNextWorkout]);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadNextWorkout();
+    }, [loadNextWorkout])
+  );
+
   useEffect(() => {
     if (params.open === 'shortcuts') {
       setShowShortcutPicker(true);
@@ -139,10 +153,6 @@ export default function TodayScreen() {
       const sorted = [...items].sort((a, b) => new Date(b.endedAt).getTime() - new Date(a.endedAt).getTime());
       setActivities(sorted);
     });
-  }, []);
-
-  useEffect(() => {
-    getNextProgramWorkout().then(setNextWorkout);
   }, []);
 
   useEffect(() => {
