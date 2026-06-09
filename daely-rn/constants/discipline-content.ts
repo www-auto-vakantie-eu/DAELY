@@ -560,6 +560,13 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'timer',
         color: '#EF4444',
         exercises: 5,
+        workoutExercises: [
+          { exerciseId: 'crossfit-exercise-thruster', plannedSets: 4, targetDurationSeconds: 45, restSeconds: 60 },
+          { exerciseId: 'crossfit-exercise-boxjump', plannedSets: 4, targetDurationSeconds: 30, restSeconds: 60 },
+          { exerciseId: 'crossfit-exercise-burpee', plannedSets: 4, targetDurationSeconds: 45, restSeconds: 60 },
+          { exerciseId: 'crossfit-exercise-kbswing', plannedSets: 4, targetDurationSeconds: 45, restSeconds: 60 },
+          { exerciseId: 'crossfit-exercise-row', plannedSets: 4, targetDurationSeconds: 45, restSeconds: 60 },
+        ],
       },
       {
         id: 'crossfit-workout-strength',
@@ -570,6 +577,14 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'weight-lifter',
         color: '#F59E0B',
         exercises: 6,
+        workoutExercises: [
+          { exerciseId: 'crossfit-exercise-dup', plannedSets: 5, targetReps: '5-8', restSeconds: 120 },
+          { exerciseId: 'crossfit-exercise-thruster', plannedSets: 4, targetReps: '6-10', restSeconds: 120 },
+          { exerciseId: 'crossfit-exercise-ohs', plannedSets: 4, targetReps: '5-8', restSeconds: 120 },
+          { exerciseId: 'crossfit-exercise-pullup', plannedSets: 4, targetReps: '6-10', restSeconds: 120 },
+          { exerciseId: 'crossfit-exercise-wallball', plannedSets: 4, targetReps: '8-10', restSeconds: 120 },
+          { exerciseId: 'crossfit-exercise-kbswing', plannedSets: 4, targetReps: '10-12', restSeconds: 120 },
+        ],
       },
       {
         id: 'crossfit-workout-emom',
@@ -580,6 +595,12 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'speedometer',
         color: '#3B82F6',
         exercises: 4,
+        workoutExercises: [
+          { exerciseId: 'crossfit-exercise-burpee', plannedSets: 6, targetDurationSeconds: 25, restSeconds: 30 },
+          { exerciseId: 'crossfit-exercise-dubbelunder', plannedSets: 6, targetDurationSeconds: 30, restSeconds: 30 },
+          { exerciseId: 'crossfit-exercise-boxjump', plannedSets: 6, targetDurationSeconds: 20, restSeconds: 30 },
+          { exerciseId: 'crossfit-exercise-row', plannedSets: 6, targetDurationSeconds: 30, restSeconds: 30 },
+        ],
       },
       {
         id: 'crossfit-workout-hybrid',
@@ -590,6 +611,15 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'dumbbell',
         color: '#10B981',
         exercises: 7,
+        workoutExercises: [
+          { exerciseId: 'crossfit-exercise-thruster', plannedSets: 4, targetReps: '8-10', restSeconds: 90 },
+          { exerciseId: 'crossfit-exercise-pullup', plannedSets: 4, targetReps: '8-12', restSeconds: 90 },
+          { exerciseId: 'crossfit-exercise-ttb', plannedSets: 3, targetDurationSeconds: 45, restSeconds: 90 },
+          { exerciseId: 'crossfit-exercise-hspu', plannedSets: 3, targetReps: '6-8', restSeconds: 90 },
+          { exerciseId: 'crossfit-exercise-kbswing', plannedSets: 4, targetDurationSeconds: 45, restSeconds: 90 },
+          { exerciseId: 'crossfit-exercise-wallball', plannedSets: 4, targetReps: '10-12', restSeconds: 90 },
+          { exerciseId: 'crossfit-exercise-dup', plannedSets: 3, targetReps: '8-10', restSeconds: 90 },
+        ],
       },
     ],
     exercises: [
@@ -738,6 +768,13 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'human-male',
         color: '#EF4444',
         exercises: 5,
+        workoutExercises: [
+          { exerciseId: 'zwaargewicht-exercise-backsquat', plannedSets: 5, targetReps: '3-6', restSeconds: 180 },
+          { exerciseId: 'zwaargewicht-exercise-frontsquat', plannedSets: 4, targetReps: '3-6', restSeconds: 180 },
+          { exerciseId: 'zwaargewicht-exercise-pausedsquat', plannedSets: 3, targetReps: '5-6', restSeconds: 180 },
+          { exerciseId: 'zwaargewicht-exercise-rdl', plannedSets: 4, targetReps: '5-6', restSeconds: 180 },
+          { exerciseId: 'zwaargewicht-exercise-goodmorning', plannedSets: 3, targetReps: '5-6', restSeconds: 180 },
+        ],
       },
       {
         id: 'zwaargewicht-workout-bench',
@@ -748,6 +785,13 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'arm-flex',
         color: '#3B82F6',
         exercises: 5,
+        workoutExercises: [
+          { exerciseId: 'zwaargewicht-exercise-benchpress', plannedSets: 5, targetReps: '3-6', restSeconds: 180 },
+          { exerciseId: 'zwaargewicht-exercise-ohp', plannedSets: 4, targetReps: '3-6', restSeconds: 180 },
+          { exerciseId: 'zwaargewicht-exercise-powerclean', plannedSets: 3, targetReps: '5-6', restSeconds: 180 },
+          { exerciseId: 'zwaargewicht-exercise-jerk', plannedSets: 3, targetReps: '5-6', restSeconds: 180 },
+          { exerciseId: 'zwaargewicht-exercise-snatch', plannedSets: 3, targetReps: '5-6', restSeconds: 180 },
+        ],
       },
       {
         id: 'zwaargewicht-workout-deadlift',
@@ -758,6 +802,12 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'weight-lifter',
         color: '#F59E0B',
         exercises: 4,
+        workoutExercises: [
+          { exerciseId: 'zwaargewicht-exercise-deadlift', plannedSets: 5, targetReps: '3-6', restSeconds: 180 },
+          { exerciseId: 'zwaargewicht-exercise-rdl', plannedSets: 4, targetReps: '3-6', restSeconds: 180 },
+          { exerciseId: 'zwaargewicht-exercise-deficitdl', plannedSets: 3, targetReps: '5-6', restSeconds: 180 },
+          { exerciseId: 'zwaargewicht-exercise-goodmorning', plannedSets: 4, targetReps: '5-6', restSeconds: 180 },
+        ],
       },
       {
         id: 'zwaargewicht-workout-ohp',
@@ -768,6 +818,13 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'human-handsup',
         color: '#10B981',
         exercises: 5,
+        workoutExercises: [
+          { exerciseId: 'zwaargewicht-exercise-ohp', plannedSets: 5, targetReps: '3-6', restSeconds: 180 },
+          { exerciseId: 'zwaargewicht-exercise-benchpress', plannedSets: 4, targetReps: '3-6', restSeconds: 180 },
+          { exerciseId: 'zwaargewicht-exercise-powerclean', plannedSets: 4, targetReps: '5-6', restSeconds: 180 },
+          { exerciseId: 'zwaargewicht-exercise-jerk', plannedSets: 3, targetReps: '5-6', restSeconds: 180 },
+          { exerciseId: 'zwaargewicht-exercise-snatch', plannedSets: 3, targetReps: '5-6', restSeconds: 180 },
+        ],
       },
     ],
     exercises: [
@@ -916,6 +973,12 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'run',
         color: '#3B82F6',
         exercises: 4,
+        workoutExercises: [
+          { exerciseId: 'hyrox-exercise-skierg', plannedSets: 5, targetDurationSeconds: 30, restSeconds: 45 },
+          { exerciseId: 'hyrox-exercise-skierg', plannedSets: 5, targetDurationSeconds: 45, restSeconds: 45 },
+          { exerciseId: 'hyrox-exercise-skierg', plannedSets: 5, targetDurationSeconds: 30, restSeconds: 45 },
+          { exerciseId: 'hyrox-exercise-skierg', plannedSets: 5, targetDurationSeconds: 45, restSeconds: 45 },
+        ],
       },
       {
         id: 'hyrox-workout-sled',
@@ -926,6 +989,13 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'human-male',
         color: '#EF4444',
         exercises: 5,
+        workoutExercises: [
+          { exerciseId: 'hyrox-exercise-sledpush', plannedSets: 4, targetDurationSeconds: 30, restSeconds: 60 },
+          { exerciseId: 'hyrox-exercise-sledpull', plannedSets: 4, targetDurationSeconds: 30, restSeconds: 60 },
+          { exerciseId: 'hyrox-exercise-sledpush', plannedSets: 4, targetDurationSeconds: 45, restSeconds: 60 },
+          { exerciseId: 'hyrox-exercise-sledpull', plannedSets: 4, targetDurationSeconds: 45, restSeconds: 60 },
+          { exerciseId: 'hyrox-exercise-sledpush', plannedSets: 4, targetDurationSeconds: 60, restSeconds: 60 },
+        ],
       },
       {
         id: 'hyrox-workout-rope',
@@ -936,6 +1006,13 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'stairs',
         color: '#F59E0B',
         exercises: 5,
+        workoutExercises: [
+          { exerciseId: 'hyrox-exercise-ropewall', plannedSets: 5, targetDurationSeconds: 30, restSeconds: 45 },
+          { exerciseId: 'hyrox-exercise-walking', plannedSets: 5, targetDurationSeconds: 30, restSeconds: 45 },
+          { exerciseId: 'hyrox-exercise-ropewall', plannedSets: 5, targetDurationSeconds: 45, restSeconds: 45 },
+          { exerciseId: 'hyrox-exercise-walking', plannedSets: 5, targetDurationSeconds: 45, restSeconds: 45 },
+          { exerciseId: 'hyrox-exercise-ropewall', plannedSets: 5, targetDurationSeconds: 30, restSeconds: 45 },
+        ],
       },
       {
         id: 'hyrox-workout-hybrid',
@@ -946,6 +1023,14 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'timer',
         color: '#10B981',
         exercises: 6,
+        workoutExercises: [
+          { exerciseId: 'hyrox-exercise-burpees', plannedSets: 5, targetReps: '8-12', restSeconds: 60 },
+          { exerciseId: 'hyrox-exercise-rowing', plannedSets: 5, targetDurationSeconds: 30, restSeconds: 60 },
+          { exerciseId: 'hyrox-exercise-wallball', plannedSets: 5, targetReps: '8-12', restSeconds: 60 },
+          { exerciseId: 'hyrox-exercise-farmers', plannedSets: 5, targetDurationSeconds: 45, restSeconds: 60 },
+          { exerciseId: 'hyrox-exercise-boxjump', plannedSets: 5, targetReps: '8-12', restSeconds: 60 },
+          { exerciseId: 'hyrox-exercise-sandbag', plannedSets: 5, targetDurationSeconds: 60, restSeconds: 60 },
+        ],
       },
     ],
     exercises: [
@@ -1094,6 +1179,14 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'weather-sunrise',
         color: '#F59E0B',
         exercises: 6,
+        workoutExercises: [
+          { exerciseId: 'yoga-exercise-catcow', plannedSets: 4, targetDurationSeconds: 45, restSeconds: 15, notes: 'Gentle flow - focus op ademhaling' },
+          { exerciseId: 'yoga-exercise-downdog', plannedSets: 4, targetDurationSeconds: 45, restSeconds: 15, notes: 'Full body stretch' },
+          { exerciseId: 'yoga-exercise-warrior1', plannedSets: 3, targetDurationSeconds: 40, restSeconds: 15, notes: 'Krachtige houding' },
+          { exerciseId: 'yoga-exercise-warrior2', plannedSets: 3, targetDurationSeconds: 40, restSeconds: 15, notes: 'Balans en stabiliteit' },
+          { exerciseId: 'yoga-exercise-tree', plannedSets: 3, targetDurationSeconds: 30, restSeconds: 15, notes: 'Balans oefening' },
+          { exerciseId: 'yoga-exercise-child', plannedSets: 4, targetDurationSeconds: 45, restSeconds: 15, notes: 'Rust en herstel' },
+        ],
       },
       {
         id: 'yoga-workout-strength',
@@ -1104,6 +1197,15 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'human-handsup',
         color: '#EF4444',
         exercises: 7,
+        workoutExercises: [
+          { exerciseId: 'yoga-exercise-plank', plannedSets: 4, targetDurationSeconds: 45, restSeconds: 15, notes: 'Core kracht' },
+          { exerciseId: 'yoga-exercise-warrior', plannedSets: 4, targetDurationSeconds: 50, restSeconds: 15, notes: 'Krachtige houding' },
+          { exerciseId: 'yoga-exercise-warrior1', plannedSets: 4, targetDurationSeconds: 50, restSeconds: 15, notes: 'Been kracht' },
+          { exerciseId: 'yoga-exercise-warrior2', plannedSets: 4, targetDurationSeconds: 50, restSeconds: 15, notes: 'Stabiliteit' },
+          { exerciseId: 'yoga-exercise-bridge', plannedSets: 4, targetDurationSeconds: 45, restSeconds: 15, notes: 'Heup kracht' },
+          { exerciseId: 'yoga-exercise-triangle', plannedSets: 3, targetDurationSeconds: 40, restSeconds: 15, notes: 'Side body stretch' },
+          { exerciseId: 'yoga-exercise-downdog', plannedSets: 4, targetDurationSeconds: 45, restSeconds: 15, notes: 'Full body kracht' },
+        ],
       },
       {
         id: 'yoga-workout-stretch',
@@ -1114,6 +1216,16 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'human-female-dance',
         color: '#3B82F6',
         exercises: 8,
+        workoutExercises: [
+          { exerciseId: 'yoga-exercise-catcow', plannedSets: 4, targetDurationSeconds: 60, restSeconds: 20, notes: 'Warming up de rug' },
+          { exerciseId: 'yoga-exercise-downdog', plannedSets: 4, targetDurationSeconds: 75, restSeconds: 20, notes: 'Full body stretch' },
+          { exerciseId: 'yoga-exercise-pigeon', plannedSets: 4, targetDurationSeconds: 90, restSeconds: 20, notes: 'Heup openers' },
+          { exerciseId: 'yoga-exercise-triangle', plannedSets: 4, targetDurationSeconds: 60, restSeconds: 20, notes: 'Side body stretch' },
+          { exerciseId: 'yoga-exercise-bridge', plannedSets: 4, targetDurationSeconds: 60, restSeconds: 20, notes: 'Heup stretch' },
+          { exerciseId: 'yoga-exercise-child', plannedSets: 4, targetDurationSeconds: 75, restSeconds: 20, notes: 'Rustige stretch' },
+          { exerciseId: 'yoga-exercise-cobra', plannedSets: 4, targetDurationSeconds: 60, restSeconds: 20, notes: 'Rug extensie' },
+          { exerciseId: 'yoga-exercise-updog', plannedSets: 4, targetDurationSeconds: 60, restSeconds: 20, notes: 'Borst opening' },
+        ],
       },
       {
         id: 'yoga-workout-relax',
@@ -1124,6 +1236,14 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'meditation',
         color: '#8B5CF6',
         exercises: 6,
+        workoutExercises: [
+          { exerciseId: 'yoga-exercise-child', plannedSets: 4, targetDurationSeconds: 60, restSeconds: 15, notes: 'Rust en ontspanning' },
+          { exerciseId: 'yoga-exercise-catcow', plannedSets: 4, targetDurationSeconds: 45, restSeconds: 15, notes: 'Gentle flow - ademhaling' },
+          { exerciseId: 'yoga-exercise-downdog', plannedSets: 3, targetDurationSeconds: 45, restSeconds: 15, notes: 'Lichte stretch' },
+          { exerciseId: 'yoga-exercise-bridge', plannedSets: 3, targetDurationSeconds: 45, restSeconds: 15, notes: 'Gentle heup opener' },
+          { exerciseId: 'yoga-exercise-cobra', plannedSets: 4, targetDurationSeconds: 30, restSeconds: 15, notes: 'Zachte rug extensie' },
+          { exerciseId: 'yoga-exercise-tree', plannedSets: 3, targetDurationSeconds: 30, restSeconds: 15, notes: 'Rustige balans' },
+        ],
       },
     ],
     exercises: [
@@ -1272,6 +1392,14 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'human-female-dance',
         color: '#8B5CF6',
         exercises: 6,
+        workoutExercises: [
+          { exerciseId: 'pilates-exercise-hundred', plannedSets: 4, targetDurationSeconds: 60, restSeconds: 30 },
+          { exerciseId: 'pilates-exercise-plank', plannedSets: 3, targetDurationSeconds: 45, restSeconds: 30 },
+          { exerciseId: 'pilates-exercise-double', plannedSets: 3, targetReps: '10-12', restSeconds: 30 },
+          { exerciseId: 'pilates-exercise-scissor', plannedSets: 3, targetReps: '10-12', restSeconds: 30 },
+          { exerciseId: 'pilates-exercise-bridge', plannedSets: 3, targetReps: '10-12', restSeconds: 30 },
+          { exerciseId: 'pilates-exercise-rollup', plannedSets: 3, targetReps: '8-10', restSeconds: 30 },
+        ],
       },
       {
         id: 'pilates-workout-full',
@@ -1282,6 +1410,15 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'human-handsup',
         color: '#3B82F6',
         exercises: 7,
+        workoutExercises: [
+          { exerciseId: 'pilates-exercise-hundred', plannedSets: 4, targetDurationSeconds: 60, restSeconds: 30 },
+          { exerciseId: 'pilates-exercise-legcircle', plannedSets: 3, targetReps: '10-12', restSeconds: 30 },
+          { exerciseId: 'pilates-exercise-kick', plannedSets: 3, targetReps: '10-12', restSeconds: 30 },
+          { exerciseId: 'pilates-exercise-side', plannedSets: 3, targetReps: '10-12', restSeconds: 30 },
+          { exerciseId: 'pilates-exercise-swan', plannedSets: 3, targetReps: '8-10', restSeconds: 30 },
+          { exerciseId: 'pilates-exercise-bridge', plannedSets: 3, targetReps: '10-12', restSeconds: 30 },
+          { exerciseId: 'pilates-exercise-plank', plannedSets: 3, targetDurationSeconds: 45, restSeconds: 30 },
+        ],
       },
       {
         id: 'pilates-workout-stretch',
@@ -1292,6 +1429,16 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'arm-flex',
         color: '#10B981',
         exercises: 8,
+        workoutExercises: [
+          { exerciseId: 'pilates-exercise-rollup', plannedSets: 4, targetReps: '8-10', restSeconds: 30 },
+          { exerciseId: 'pilates-exercise-rolling', plannedSets: 3, targetReps: '8-10', restSeconds: 30 },
+          { exerciseId: 'pilates-exercise-legcircle', plannedSets: 3, targetDurationSeconds: 45, restSeconds: 30 },
+          { exerciseId: 'pilates-exercise-saw', plannedSets: 3, targetReps: '8-10', restSeconds: 30 },
+          { exerciseId: 'pilates-exercise-swan', plannedSets: 3, targetReps: '8-10', restSeconds: 30 },
+          { exerciseId: 'pilates-exercise-side', plannedSets: 3, targetReps: '10-12', restSeconds: 30 },
+          { exerciseId: 'pilates-exercise-bridge', plannedSets: 3, targetDurationSeconds: 45, restSeconds: 30 },
+          { exerciseId: 'pilates-exercise-double', plannedSets: 3, targetReps: '10-12', restSeconds: 30 },
+        ],
       },
       {
         id: 'pilates-workout-advanced',
@@ -1302,6 +1449,16 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'dumbbell',
         color: '#F59E0B',
         exercises: 8,
+        workoutExercises: [
+          { exerciseId: 'pilates-exercise-hundred', plannedSets: 4, targetDurationSeconds: 60, restSeconds: 30 },
+          { exerciseId: 'pilates-exercise-teaser', plannedSets: 4, targetReps: '8-10', restSeconds: 30 },
+          { exerciseId: 'pilates-exercise-rollup', plannedSets: 3, targetReps: '8-10', restSeconds: 30 },
+          { exerciseId: 'pilates-exercise-double', plannedSets: 3, targetReps: '10-12', restSeconds: 30 },
+          { exerciseId: 'pilates-exercise-scissor', plannedSets: 3, targetReps: '10-12', restSeconds: 30 },
+          { exerciseId: 'pilates-exercise-kick', plannedSets: 3, targetReps: '10-12', restSeconds: 30 },
+          { exerciseId: 'pilates-exercise-side', plannedSets: 3, targetReps: '10-12', restSeconds: 30 },
+          { exerciseId: 'pilates-exercise-plank', plannedSets: 3, targetDurationSeconds: 60, restSeconds: 30 },
+        ],
       },
     ],
     exercises: [
@@ -1450,6 +1607,14 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'run',
         color: '#EF4444',
         exercises: 6,
+        workoutExercises: [
+          { exerciseId: 'vechttraining-exercise-skip', plannedSets: 5, targetDurationSeconds: 45, restSeconds: 30 },
+          { exerciseId: 'vechttraining-exercise-sprint', plannedSets: 5, targetDurationSeconds: 40, restSeconds: 30 },
+          { exerciseId: 'vechttraining-exercise-shadow', plannedSets: 5, targetDurationSeconds: 45, restSeconds: 30 },
+          { exerciseId: 'vechttraining-exercise-footwork', plannedSets: 5, targetDurationSeconds: 40, restSeconds: 30 },
+          { exerciseId: 'vechttraining-exercise-jab', plannedSets: 5, targetDurationSeconds: 35, restSeconds: 30 },
+          { exerciseId: 'vechttraining-exercise-cross', plannedSets: 5, targetDurationSeconds: 35, restSeconds: 30 },
+        ],
       },
       {
         id: 'vechttraining-workout-tech',
@@ -1460,6 +1625,13 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'human-handsup',
         color: '#3B82F6',
         exercises: 5,
+        workoutExercises: [
+          { exerciseId: 'vechttraining-exercise-jab', plannedSets: 4, targetDurationSeconds: 45, restSeconds: 30 },
+          { exerciseId: 'vechttraining-exercise-cross', plannedSets: 4, targetDurationSeconds: 45, restSeconds: 30 },
+          { exerciseId: 'vechttraining-exercise-hook', plannedSets: 4, targetDurationSeconds: 40, restSeconds: 30 },
+          { exerciseId: 'vechttraining-exercise-speed', plannedSets: 4, targetDurationSeconds: 50, restSeconds: 30 },
+          { exerciseId: 'vechttraining-exercise-defensive', plannedSets: 4, targetDurationSeconds: 40, restSeconds: 30 },
+        ],
       },
       {
         id: 'vechttraining-workout-bag',
@@ -1470,6 +1642,15 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'arm-flex',
         color: '#F59E0B',
         exercises: 7,
+        workoutExercises: [
+          { exerciseId: 'vechttraining-exercise-bag', plannedSets: 5, targetDurationSeconds: 45, restSeconds: 45 },
+          { exerciseId: 'vechttraining-exercise-jab', plannedSets: 5, targetDurationSeconds: 40, restSeconds: 45 },
+          { exerciseId: 'vechttraining-exercise-cross', plannedSets: 5, targetDurationSeconds: 40, restSeconds: 45 },
+          { exerciseId: 'vechttraining-exercise-hook', plannedSets: 5, targetDurationSeconds: 35, restSeconds: 45 },
+          { exerciseId: 'vechttraining-exercise-uppercut', plannedSets: 5, targetDurationSeconds: 35, restSeconds: 45 },
+          { exerciseId: 'vechttraining-exercise-shadow', plannedSets: 5, targetDurationSeconds: 45, restSeconds: 45 },
+          { exerciseId: 'vechttraining-exercise-footwork', plannedSets: 5, targetDurationSeconds: 40, restSeconds: 45 },
+        ],
       },
       {
         id: 'vechttraining-workout-core',
@@ -1480,6 +1661,13 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'human-female-dance',
         color: '#8B5CF6',
         exercises: 5,
+        workoutExercises: [
+          { exerciseId: 'vechttraining-exercise-core', plannedSets: 4, targetDurationSeconds: 45, restSeconds: 30 },
+          { exerciseId: 'vechttraining-exercise-twist', plannedSets: 4, targetReps: '10-12', restSeconds: 30 },
+          { exerciseId: 'vechttraining-exercise-defensive', plannedSets: 4, targetDurationSeconds: 40, restSeconds: 30 },
+          { exerciseId: 'vechttraining-exercise-footwork', plannedSets: 4, targetDurationSeconds: 50, restSeconds: 30 },
+          { exerciseId: 'vechttraining-exercise-shadow', plannedSets: 4, targetDurationSeconds: 45, restSeconds: 30 },
+        ],
       },
     ],
     exercises: [
