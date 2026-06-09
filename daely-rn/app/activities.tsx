@@ -96,7 +96,7 @@ export default function ActivitiesScreen() {
                   <View style={styles.itemIconContainer}>
                     <MaterialCommunityIcons name="dumbbell" size={20} color="#2563EB" />
                   </View>
-                  <Text style={[styles.name, { color: theme.titleColor }]}>{a.disciplineName}</Text>
+                  <Text style={[styles.name, { color: theme.titleColor }]}>{a.workoutName || a.disciplineName}</Text>
                   <View style={[styles.statusBadge, { backgroundColor: '#DCFCE7' }]}>
                     <Text style={styles.statusText}>{a.status}</Text>
                   </View>
@@ -111,6 +111,16 @@ export default function ActivitiesScreen() {
                   </View>
                   <Text style={[styles.metaText, { color: theme.subtitleColor }]}>{formatDate(a.endedAt)}</Text>
                 </View>
+
+                {a.programId && a.programWeek !== undefined && a.programDay !== undefined && (
+                  <View style={styles.programBadgeRow}>
+                    <View style={[styles.programBadge, { backgroundColor: '#FEF3C7' }]}>
+                      <Text style={[styles.programBadgeText, { color: '#92400E' }]}>
+                        Week {a.programWeek} · Dag {a.programDay}
+                      </Text>
+                    </View>
+                  </View>
+                )}
 
                 <View style={styles.durationRow}>
                   <MaterialCommunityIcons name="clock-outline" size={16} color={theme.subtitleColor} />
@@ -155,7 +165,16 @@ function trackingTypeCode(trackingType: string) {
 
 function getMetricsSummary(a: Activity) {
   if (a.metrics?.workout) {
-    return `${a.metrics.workout.exercises?.length ?? 0} oefeningen${a.metrics.workout.totalVolumeKg !== undefined ? ` · ${Math.round(a.metrics.workout.totalVolumeKg)} kg volume` : ''}`;
+    const parts: string[] = [];
+    if (a.metrics.workout.completedExercisesCount !== undefined && a.metrics.workout.totalExercisesCount !== undefined) {
+      parts.push(`${a.metrics.workout.completedExercisesCount}/${a.metrics.workout.totalExercisesCount} oefeningen`);
+    } else if (a.metrics.workout.exercises && a.metrics.workout.exercises.length > 0) {
+      parts.push(`${a.metrics.workout.exercises.length} oefeningen`);
+    }
+    if (a.metrics.workout.totalVolumeKg !== undefined) {
+      parts.push(`${Math.round(a.metrics.workout.totalVolumeKg)} kg volume`);
+    }
+    return parts.length > 0 ? parts.join(' · ') : 'Workout';
   }
   if (a.metrics?.session) {
     return `${a.metrics.session.intensity ? `Intensiteit ${a.metrics.session.intensity}` : 'Session'}${a.metrics.session.focusAreas && a.metrics.session.focusAreas.length > 0 ? ` · ${a.metrics.session.focusAreas.join(', ')}` : ''}`;
@@ -179,7 +198,17 @@ function getMetricsSummary(a: Activity) {
     return `${a.metrics.laps.distanceMeters !== undefined ? `${Math.round(a.metrics.laps.distanceMeters)} m` : 'Laps'}${a.metrics.laps.laps !== undefined ? ` · ${Math.round(a.metrics.laps.laps)} banen` : ''}${a.metrics.laps.strokeType ? ` · ${a.metrics.laps.strokeType}` : ''}`;
   }
   if (a.metrics?.gps) {
-    return `${a.metrics.gps.distanceMeters !== undefined ? `${Math.round(a.metrics.gps.distanceMeters)} m` : 'GPS activiteit'}${a.metrics.gps.averageSpeedKmh !== undefined && a.metrics.gps.averageSpeedKmh !== null ? ` · ${a.metrics.gps.averageSpeedKmh.toFixed(1)} km/u gem.` : ''}${a.metrics.gps.maxSpeedKmh !== undefined && a.metrics.gps.maxSpeedKmh !== null ? ` · max ${a.metrics.gps.maxSpeedKmh.toFixed(1)} km/u` : ''}`;
+    const parts: string[] = [];
+    if (a.metrics.gps.distanceMeters !== undefined) {
+      parts.push(`${Math.round(a.metrics.gps.distanceMeters)} m`);
+    }
+    if (a.metrics.gps.averageSpeedKmh !== undefined && a.metrics.gps.averageSpeedKmh !== null) {
+      parts.push(`${a.metrics.gps.averageSpeedKmh.toFixed(1)} km/u gem.`);
+    }
+    if (a.metrics.gps.maxSpeedKmh !== undefined && a.metrics.gps.maxSpeedKmh !== null) {
+      parts.push(`max ${a.metrics.gps.maxSpeedKmh.toFixed(1)} km/u`);
+    }
+    return parts.length > 0 ? parts.join(' · ') : 'GPS activiteit';
   }
   return 'Geen metrics beschikbaar';
 }
@@ -385,6 +414,19 @@ const styles = StyleSheet.create({
   },
   metaText: {
     fontSize: 14,
+  },
+  programBadgeRow: {
+    marginBottom: 12,
+  },
+  programBadge: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 999,
+    alignSelf: 'flex-start',
+  },
+  programBadgeText: {
+    fontSize: 12,
+    fontWeight: '600',
   },
   durationRow: {
     flexDirection: 'row',
