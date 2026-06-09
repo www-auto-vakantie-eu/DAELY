@@ -23,6 +23,13 @@ import {
 import { completeProgramWorkout } from '@/services/user-programs-storage';
 import { getLastExercisePerformance } from '@/services/exercise-history';
 import { getGpsTrackingService, type GpsTrackingState } from 'services/gps-tracking';
+import {
+  saveWorkoutDraft,
+  getWorkoutDraft,
+  clearDraftForWorkout,
+  markDraftAsCompleted,
+  type WorkoutDraft,
+} from '@/services/workout-draft-storage';
 
 const SESSION_STATUS = {
   NOT_STARTED: 'Klaar',
@@ -266,6 +273,7 @@ export default function StartActivityScreen() {
   const [restSecondsRemaining, setRestSecondsRemaining] = React.useState(0);
   const [isExerciseFlowComplete, setIsExerciseFlowComplete] = React.useState(false);
   const [isSavingActivity, setIsSavingActivity] = React.useState(false);
+  const [draftLoaded, setDraftLoaded] = React.useState(false);
 
   // Reset guided flow state when workout changes
   React.useEffect(() => {
@@ -296,6 +304,82 @@ export default function StartActivityScreen() {
       if (interval) clearInterval(interval);
     };
   }, [isResting, restSecondsRemaining]);
+
+  // Autosave workout draft
+  React.useEffect(() => {
+    if (!workoutId || !disciplineId || exerciseLogs.length === 0) return;
+
+    const draft: WorkoutDraft = {
+      id: `draft-${disciplineId}-${workoutId}-${programId || 'none'}`,
+      disciplineId,
+      workoutId,
+      workoutName: workout?.name,
+      programId,
+      programWeek: week ? parseInt(week, 10) : undefined,
+      programDay: day ? parseInt(day, 10) : undefined,
+      currentExerciseIndex,
+      currentSetIndex,
+      isResting,
+      restSecondsRemaining,
+      isExerciseFlowComplete,
+      exerciseLogs,
+      startedAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      status: 'active',
+    };
+
+    saveWorkoutDraft(draft);
+  }, [
+    workoutId,
+    disciplineId,
+    programId,
+    week,
+    day,
+    currentExerciseIndex,
+    currentSetIndex,
+    isResting,
+    restSecondsRemaining,
+    isExerciseFlowComplete,
+    exerciseLogs,
+  ]);
+
+  // Restore draft on mount
+  React.useEffect(() => {
+    const restoreDraft = async () => {
+      if (!workoutId || !disciplineId || draftLoaded) return;
+
+      const draft = await getWorkoutDraft(disciplineId, workoutId, programId);
+      if (!draft) {
+        setDraftLoaded(true);
+        return;
+      }
+
+      Alert.alert(
+        'Workout hervatten?',
+        'Je hebt nog een workout openstaan. Wil je doorgaan?',
+        [
+          { text: 'Opnieuw beginnen', style: 'destructive', onPress: async () => {
+            await clearDraftForWorkout(disciplineId, workoutId, programId);
+            setDraftLoaded(true);
+          }},
+          { text: 'Doorgaan', style: 'default', onPress: () => {
+            // Restore state safely
+            if (draft.exerciseLogs && draft.exerciseLogs.length === exerciseLogs.length) {
+              setExerciseLogs(draft.exerciseLogs);
+              setCurrentExerciseIndex(Math.min(draft.currentExerciseIndex, exerciseLogs.length - 1));
+              setCurrentSetIndex(Math.min(draft.currentSetIndex, (draft.exerciseLogs[draft.currentExerciseIndex]?.sets?.length || 1) - 1));
+              setIsResting(draft.isResting);
+              setRestSecondsRemaining(draft.restSecondsRemaining);
+              setIsExerciseFlowComplete(draft.isExerciseFlowComplete);
+            }
+            setDraftLoaded(true);
+          }},
+        ]
+      );
+    };
+
+    restoreDraft();
+  }, [workoutId, disciplineId, programId, exerciseLogs.length, draftLoaded]);
 
   // Handler: Complete current set
   const handleSetComplete = () => {
@@ -523,7 +607,7 @@ export default function StartActivityScreen() {
         {
           text: 'Stoppen zonder opslaan',
           style: 'destructive',
-          onPress: () => {
+          onPress: async () => {
             if (isGpsDiscipline) {
               gpsService.stop();
             }
@@ -531,6 +615,11 @@ export default function StartActivityScreen() {
             stopTimer();
             setIsResting(false);
             setRestSecondsRemaining(0);
+            
+            // Clear draft when stopping without saving
+            if (workoutId && disciplineId) {
+              await clearDraftForWorkout(disciplineId, workoutId, programId);
+            }
           },
         },
       ]
@@ -804,6 +893,11 @@ export default function StartActivityScreen() {
 
       setSaved(true);
       Alert.alert('Opgeslagen', 'Activiteit succesvol opgeslagen.');
+      
+      // Clear draft after successful save
+      if (workoutId && disciplineId) {
+        await clearDraftForWorkout(disciplineId, workoutId, programId);
+      }
     } catch {
       Alert.alert('Fout', 'Opslaan mislukt. Probeer opnieuw.');
     } finally {
