@@ -389,36 +389,37 @@ export default function StartActivityScreen() {
     if (!currentLog.sets) return;
 
     // Mark current set as completed
-    currentLog.sets[currentSetIndex].completed = true;
+    markCurrentSetCompleted();
 
-    const totalSets = currentLog.sets.length;
-    const isLastSet = currentSetIndex === totalSets - 1;
+    // Find next not-completed set
+    const nextNotCompletedIndex = currentLog.sets.findIndex((set, index) => index > currentSetIndex && !set.completed);
 
-    if (isLastSet) {
-      // Mark exercise as completed
-      currentLog.completed = true;
-      const isLastExercise = currentExerciseIndex === exerciseLogs.length - 1;
-
-      if (isLastExercise) {
-        setIsExerciseFlowComplete(true);
-        setExerciseLogs(updated);
-        return;
-      }
-
-      // Move to next exercise
-      setCurrentExerciseIndex((prev) => prev + 1);
-      setCurrentSetIndex(0);
-      setExerciseLogs(updated);
-    } else {
-      // Move to next set
+    if (nextNotCompletedIndex !== -1) {
+      // Move to next not-completed set
       const planning = currentLog.planning;
       const restSeconds = planning?.restSeconds;
       if (restSeconds && restSeconds > 0) {
         setIsResting(true);
         setRestSecondsRemaining(restSeconds);
       }
-      setCurrentSetIndex((prev) => prev + 1);
+      setCurrentSetIndex(nextNotCompletedIndex);
+    } else {
+      // All sets completed, mark exercise as completed
+      currentLog.completed = true;
       setExerciseLogs(updated);
+
+      const isLastExercise = currentExerciseIndex === exerciseLogs.length - 1;
+
+      if (isLastExercise) {
+        setIsExerciseFlowComplete(true);
+        return;
+      }
+
+      // Move to next exercise
+      setCurrentExerciseIndex((prev) => prev + 1);
+      setCurrentSetIndex(0);
+      setIsResting(false);
+      setRestSecondsRemaining(0);
     }
   };
 
@@ -453,6 +454,75 @@ export default function StartActivityScreen() {
   const handleSkipRest = () => {
     setIsResting(false);
     setRestSecondsRemaining(0);
+  };
+
+  // Helper: Update current exercise set with patch
+  const updateCurrentExerciseSet = (setIndex: number, patch: Partial<{ reps?: number; weightKg?: number; completed?: boolean }>) => {
+    const updated = [...exerciseLogs];
+    const currentLog = updated[currentExerciseIndex];
+    if (!currentLog.sets) return;
+    currentLog.sets[setIndex] = { ...currentLog.sets[setIndex], ...patch };
+    setExerciseLogs(updated);
+  };
+
+  // Helper: Add a new set to current exercise
+  const addSetToCurrentExercise = () => {
+    const updated = [...exerciseLogs];
+    const currentLog = updated[currentExerciseIndex];
+    if (!currentLog.sets) return;
+
+    const lastSet = currentLog.sets[currentLog.sets.length - 1];
+    currentLog.sets.push({
+      setNumber: currentLog.sets.length + 1,
+      reps: lastSet?.reps,
+      weightKg: lastSet?.weightKg,
+      completed: false,
+    });
+    setExerciseLogs(updated);
+  };
+
+  // Helper: Copy previous set to current exercise
+  const copyPreviousSetToCurrentExercise = () => {
+    const updated = [...exerciseLogs];
+    const currentLog = updated[currentExerciseIndex];
+    if (!currentLog.sets || currentLog.sets.length === 0) return;
+
+    const lastSet = currentLog.sets[currentLog.sets.length - 1];
+    currentLog.sets.push({
+      setNumber: currentLog.sets.length + 1,
+      reps: lastSet?.reps,
+      weightKg: lastSet?.weightKg,
+      completed: false,
+    });
+    setExerciseLogs(updated);
+  };
+
+  // Helper: Remove a set from current exercise
+  const removeSetFromCurrentExercise = (setIndex: number) => {
+    const updated = [...exerciseLogs];
+    const currentLog = updated[currentExerciseIndex];
+    if (!currentLog.sets || currentLog.sets.length <= 1) return;
+
+    currentLog.sets.splice(setIndex, 1);
+    // Renumber sets
+    currentLog.sets.forEach((set, index) => {
+      set.setNumber = index + 1;
+    });
+    // Adjust current set index if needed
+    if (currentSetIndex >= currentLog.sets.length) {
+      setCurrentSetIndex(currentLog.sets.length - 1);
+    }
+    setExerciseLogs(updated);
+  };
+
+  // Helper: Mark current set as completed
+  const markCurrentSetCompleted = () => {
+    const updated = [...exerciseLogs];
+    const currentLog = updated[currentExerciseIndex];
+    if (!currentLog.sets) return;
+
+    currentLog.sets[currentSetIndex].completed = true;
+    setExerciseLogs(updated);
   };
 
   const isWorkoutDiscipline = discipline?.trackingType === 'workout';
@@ -984,29 +1054,73 @@ export default function StartActivityScreen() {
               )}
 
               {!isResting && exerciseLogs[currentExerciseIndex].sets && exerciseLogs[currentExerciseIndex].sets.length > 0 && (
-                <View style={styles.guidedFlowSetInput}>
-                  <TextInput
-                    style={styles.guidedFlowInput}
-                    placeholder="Reps"
-                    keyboardType="number-pad"
-                    value={exerciseLogs[currentExerciseIndex].sets[currentSetIndex].reps?.toString() || ''}
-                    onChangeText={(text) => {
-                      const updated = [...exerciseLogs];
-                      updated[currentExerciseIndex].sets![currentSetIndex].reps = text ? parseInt(text, 10) : undefined;
-                      setExerciseLogs(updated);
-                    }}
-                  />
-                  <TextInput
-                    style={styles.guidedFlowInput}
-                    placeholder="Kg"
-                    keyboardType="number-pad"
-                    value={exerciseLogs[currentExerciseIndex].sets[currentSetIndex].weightKg?.toString() || ''}
-                    onChangeText={(text) => {
-                      const updated = [...exerciseLogs];
-                      updated[currentExerciseIndex].sets![currentSetIndex].weightKg = text ? parseInt(text, 10) : undefined;
-                      setExerciseLogs(updated);
-                    }}
-                  />
+                <View>
+                  {exerciseLogs[currentExerciseIndex].sets.map((set, setIndex) => {
+                    const isCurrentSet = setIndex === currentSetIndex;
+                    return (
+                      <View
+                        key={set.setNumber}
+                        style={[
+                          styles.guidedFlowSetRow,
+                          isCurrentSet && styles.guidedFlowSetRowCurrent,
+                        ]}
+                      >
+                        <View style={styles.guidedFlowSetNumber}>
+                          <Text style={[styles.guidedFlowSetNumberText, isCurrentSet && styles.guidedFlowSetNumberTextCurrent]}>
+                            {set.setNumber}
+                          </Text>
+                          {set.completed && (
+                            <MaterialCommunityIcons name="check-circle" size={16} color="#10B981" />
+                          )}
+                        </View>
+                        <TextInput
+                          style={[styles.guidedFlowInput, isCurrentSet && styles.guidedFlowInputCurrent]}
+                          placeholder="Reps"
+                          keyboardType="number-pad"
+                          value={set.reps?.toString() || ''}
+                          onChangeText={(text) => {
+                            updateCurrentExerciseSet(setIndex, { reps: text ? parseInt(text, 10) : undefined });
+                          }}
+                        />
+                        <TextInput
+                          style={[styles.guidedFlowInput, isCurrentSet && styles.guidedFlowInputCurrent]}
+                          placeholder="Kg"
+                          keyboardType="number-pad"
+                          value={set.weightKg?.toString() || ''}
+                          onChangeText={(text) => {
+                            updateCurrentExerciseSet(setIndex, { weightKg: text ? parseInt(text, 10) : undefined });
+                          }}
+                        />
+                        <TouchableOpacity
+                          style={styles.guidedFlowSetDeleteButton}
+                          onPress={() => removeSetFromCurrentExercise(setIndex)}
+                          disabled={exerciseLogs[currentExerciseIndex].sets!.length <= 1}
+                        >
+                          <MaterialCommunityIcons
+                            name="close"
+                            size={20}
+                            color={exerciseLogs[currentExerciseIndex].sets!.length <= 1 ? '#D1D5DB' : '#EF4444'}
+                          />
+                        </TouchableOpacity>
+                      </View>
+                    );
+                  })}
+                  <View style={styles.guidedFlowSetManagementButtons}>
+                    <TouchableOpacity
+                      style={styles.guidedFlowSetManagementButton}
+                      onPress={addSetToCurrentExercise}
+                    >
+                      <MaterialCommunityIcons name="plus" size={18} color="#3B82F6" />
+                      <Text style={styles.guidedFlowSetManagementButtonText}>+ Set</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.guidedFlowSetManagementButton}
+                      onPress={copyPreviousSetToCurrentExercise}
+                    >
+                      <MaterialCommunityIcons name="content-copy" size={18} color="#3B82F6" />
+                      <Text style={styles.guidedFlowSetManagementButtonText}>Kopieer vorige set</Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
               )}
 
@@ -2109,6 +2223,61 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 12,
     marginBottom: 16,
+  },
+  guidedFlowSetRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 8,
+    padding: 8,
+    backgroundColor: '#F9FAFB',
+    borderRadius: 8,
+  },
+  guidedFlowSetRowCurrent: {
+    backgroundColor: '#EFF6FF',
+    borderWidth: 1,
+    borderColor: '#3B82F6',
+  },
+  guidedFlowSetNumber: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    minWidth: 30,
+  },
+  guidedFlowSetNumberText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#6B7280',
+  },
+  guidedFlowSetNumberTextCurrent: {
+    color: '#3B82F6',
+  },
+  guidedFlowInputCurrent: {
+    backgroundColor: '#FFFFFF',
+    borderColor: '#3B82F6',
+  },
+  guidedFlowSetDeleteButton: {
+    padding: 4,
+  },
+  guidedFlowSetManagementButtons: {
+    flexDirection: 'row',
+    gap: 8,
+    marginTop: 8,
+    marginBottom: 16,
+  },
+  guidedFlowSetManagementButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: '#EFF6FF',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 6,
+  },
+  guidedFlowSetManagementButtonText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#3B82F6',
   },
   guidedFlowInput: {
     flex: 1,
