@@ -2837,6 +2837,14 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'weight-lifter',
         color: '#DC2626',
         exercises: 8,
+        workoutExercises: [
+          { exerciseId: 'rugby-ex-1', plannedSets: 4, targetReps: '8-12', restSeconds: 90 },
+          { exerciseId: 'rugby-ex-2', plannedSets: 4, targetReps: '8-12', restSeconds: 90 },
+          { exerciseId: 'rugby-ex-3', plannedSets: 3, targetReps: '8-12', restSeconds: 90 },
+          { exerciseId: 'rugby-ex-8', plannedSets: 3, targetReps: '8-12', restSeconds: 90 },
+          { exerciseId: 'rugby-ex-11', plannedSets: 3, targetReps: '8-12', restSeconds: 90 },
+          { exerciseId: 'rugby-ex-9', plannedSets: 3, targetDurationSeconds: 45, restSeconds: 90 },
+        ],
       },
       {
         id: 'rugby-conditioning',
@@ -2847,6 +2855,14 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'run',
         color: '#2563EB',
         exercises: 10,
+        workoutExercises: [
+          { exerciseId: 'rugby-ex-6', plannedSets: 6, targetDurationSeconds: 30, restSeconds: 45 },
+          { exerciseId: 'rugby-ex-5', plannedSets: 5, targetDurationSeconds: 30, restSeconds: 45 },
+          { exerciseId: 'rugby-ex-11', plannedSets: 5, targetReps: '15-20', restSeconds: 45 },
+          { exerciseId: 'rugby-ex-1', plannedSets: 4, targetReps: '12-15', restSeconds: 45 },
+          { exerciseId: 'rugby-ex-12', plannedSets: 4, targetReps: '10-12', restSeconds: 45 },
+          { exerciseId: 'rugby-ex-9', plannedSets: 4, targetDurationSeconds: 45, restSeconds: 45 },
+        ],
       },
       {
         id: 'rugby-agility',
@@ -2857,6 +2873,14 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'speedometer',
         color: '#F59E0B',
         exercises: 9,
+        workoutExercises: [
+          { exerciseId: 'rugby-ex-7', plannedSets: 6, targetDurationSeconds: 20, restSeconds: 30 },
+          { exerciseId: 'rugby-ex-5', plannedSets: 5, targetDurationSeconds: 25, restSeconds: 30 },
+          { exerciseId: 'rugby-ex-11', plannedSets: 5, targetReps: '10-12', restSeconds: 30 },
+          { exerciseId: 'rugby-ex-12', plannedSets: 4, targetReps: '8-10', restSeconds: 30 },
+          { exerciseId: 'rugby-ex-4', plannedSets: 4, targetReps: '5-8', restSeconds: 30 },
+          { exerciseId: 'rugby-ex-9', plannedSets: 4, targetDurationSeconds: 30, restSeconds: 30 },
+        ],
       },
       {
         id: 'rugby-contact',
@@ -2867,6 +2891,14 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'shield',
         color: '#7C3AED',
         exercises: 7,
+        workoutExercises: [
+          { exerciseId: 'rugby-ex-8', plannedSets: 4, targetReps: '8-10', restSeconds: 30 },
+          { exerciseId: 'rugby-ex-10', plannedSets: 4, targetReps: '6-8', restSeconds: 30 },
+          { exerciseId: 'rugby-ex-9', plannedSets: 4, targetDurationSeconds: 45, restSeconds: 30 },
+          { exerciseId: 'rugby-ex-11', plannedSets: 4, targetReps: '10-12', restSeconds: 30 },
+          { exerciseId: 'rugby-ex-1', plannedSets: 3, targetReps: '8-10', restSeconds: 30 },
+          { exerciseId: 'rugby-ex-3', plannedSets: 3, targetReps: '8-10', restSeconds: 30 },
+        ],
       },
     ],
     exercises: [
@@ -3007,7 +3039,15 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         level: 'Gemiddeld',
         icon: 'tennis',
         color: '#059669',
-        exercises: 8,
+        exercises: 6,
+        workoutExercises: [
+          { exerciseId: 'racket-ex-1', plannedSets: 4, targetReps: '10-15', restSeconds: 60 },
+          { exerciseId: 'racket-ex-2', plannedSets: 3, targetReps: '10-15', restSeconds: 60 },
+          { exerciseId: 'racket-ex-5', plannedSets: 4, targetReps: '10-15', restSeconds: 60 },
+          { exerciseId: 'racket-ex-8', plannedSets: 3, targetReps: '10-15', restSeconds: 60 },
+          { exerciseId: 'racket-ex-11', plannedSets: 3, targetReps: '10-15', restSeconds: 60 },
+          { exerciseId: 'racket-ex-12', plannedSets: 4, targetReps: '10-15', restSeconds: 60 },
+        ],
       },
       {
         id: 'racket-agility',
@@ -3017,7 +3057,15 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         level: 'Gemiddeld',
         icon: 'speedometer',
         color: '#2563EB',
-        exercises: 10,
+        exercises: 6,
+        workoutExercises: [
+          { exerciseId: 'racket-ex-4', plannedSets: 6, targetDurationSeconds: 20, restSeconds: 30 },
+          { exerciseId: 'racket-ex-7', plannedSets: 5, targetDurationSeconds: 25, restSeconds: 30 },
+          { exerciseId: 'racket-ex-3', plannedSets: 5, targetDurationSeconds: 25, restSeconds: 30 },
+          { exerciseId: 'racket-ex-1', plannedSets: 4, targetDurationSeconds: 30, restSeconds: 30 },
+          { exerciseId: 'racket-ex-9', plannedSets: 6, targetDurationSeconds: 20, restSeconds: 30 },
+          { exerciseId: 'racket-ex-5', plannedSets: 4, targetDurationSeconds: 30, restSeconds: 30 },
+        ],
       },
       {
         id: 'racket-endurance',
@@ -3027,7 +3075,15 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         level: 'Gemiddeld',
         icon: 'run',
         color: '#DC2626',
-        exercises: 9,
+        exercises: 6,
+        workoutExercises: [
+          { exerciseId: 'racket-ex-9', plannedSets: 6, targetDurationSeconds: 30, restSeconds: 45 },
+          { exerciseId: 'racket-ex-3', plannedSets: 5, targetDurationSeconds: 35, restSeconds: 45 },
+          { exerciseId: 'racket-ex-7', plannedSets: 5, targetDurationSeconds: 35, restSeconds: 45 },
+          { exerciseId: 'racket-ex-10', plannedSets: 4, targetDurationSeconds: 45, restSeconds: 45 },
+          { exerciseId: 'racket-ex-6', plannedSets: 4, targetDurationSeconds: 45, restSeconds: 45 },
+          { exerciseId: 'racket-ex-1', plannedSets: 5, targetDurationSeconds: 35, restSeconds: 45 },
+        ],
       },
       {
         id: 'racket-shoulder',
@@ -3037,7 +3093,15 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         level: 'Licht',
         icon: 'arm-flex',
         color: '#7C3AED',
-        exercises: 7,
+        exercises: 6,
+        workoutExercises: [
+          { exerciseId: 'racket-ex-2', plannedSets: 3, targetDurationSeconds: 30, restSeconds: 30 },
+          { exerciseId: 'racket-ex-6', plannedSets: 3, targetDurationSeconds: 45, restSeconds: 30 },
+          { exerciseId: 'racket-ex-8', plannedSets: 3, targetDurationSeconds: 30, restSeconds: 30 },
+          { exerciseId: 'racket-ex-10', plannedSets: 3, targetDurationSeconds: 45, restSeconds: 30 },
+          { exerciseId: 'racket-ex-11', plannedSets: 3, targetDurationSeconds: 30, restSeconds: 30 },
+          { exerciseId: 'racket-ex-3', plannedSets: 3, targetDurationSeconds: 35, restSeconds: 30 },
+        ],
       },
     ],
     exercises: [
@@ -6162,6 +6226,16 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'soccer',
         color: '#10B981',
         exercises: 8,
+        workoutExercises: [
+          { exerciseId: 'voetbal-ex-1', plannedSets: 3, targetDurationSeconds: 45, restSeconds: 30 },
+          { exerciseId: 'voetbal-ex-2', plannedSets: 3, targetDurationSeconds: 45, restSeconds: 30 },
+          { exerciseId: 'voetbal-ex-3', plannedSets: 4, targetDurationSeconds: 60, restSeconds: 30 },
+          { exerciseId: 'voetbal-ex-4', plannedSets: 4, targetDurationSeconds: 60, restSeconds: 30 },
+          { exerciseId: 'voetbal-ex-1', plannedSets: 3, targetDurationSeconds: 30, restSeconds: 30 },
+          { exerciseId: 'voetbal-ex-2', plannedSets: 4, targetDurationSeconds: 45, restSeconds: 30 },
+          { exerciseId: 'voetbal-ex-3', plannedSets: 3, targetDurationSeconds: 30, restSeconds: 30 },
+          { exerciseId: 'voetbal-ex-4', plannedSets: 4, targetDurationSeconds: 45, restSeconds: 30 },
+        ],
       },
       {
         id: 'voetbal-fitness',
@@ -6172,6 +6246,15 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'run',
         color: '#3B82F6',
         exercises: 7,
+        workoutExercises: [
+          { exerciseId: 'voetbal-ex-5', plannedSets: 4, targetDurationSeconds: 45, restSeconds: 45 },
+          { exerciseId: 'voetbal-ex-6', plannedSets: 4, targetDurationSeconds: 45, restSeconds: 45 },
+          { exerciseId: 'voetbal-ex-7', plannedSets: 4, targetDurationSeconds: 45, restSeconds: 45 },
+          { exerciseId: 'voetbal-ex-5', plannedSets: 4, targetDurationSeconds: 30, restSeconds: 45 },
+          { exerciseId: 'voetbal-ex-6', plannedSets: 4, targetDurationSeconds: 30, restSeconds: 45 },
+          { exerciseId: 'voetbal-ex-7', plannedSets: 4, targetDurationSeconds: 30, restSeconds: 45 },
+          { exerciseId: 'voetbal-ex-12', plannedSets: 4, targetDurationSeconds: 45, restSeconds: 45 },
+        ],
       },
       {
         id: 'voetbal-agility',
@@ -6182,6 +6265,16 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'speedometer',
         color: '#EF4444',
         exercises: 8,
+        workoutExercises: [
+          { exerciseId: 'voetbal-ex-6', plannedSets: 5, targetDurationSeconds: 25, restSeconds: 30 },
+          { exerciseId: 'voetbal-ex-7', plannedSets: 5, targetDurationSeconds: 25, restSeconds: 30 },
+          { exerciseId: 'voetbal-ex-11', plannedSets: 6, targetDurationSeconds: 20, restSeconds: 30 },
+          { exerciseId: 'voetbal-ex-5', plannedSets: 5, targetDurationSeconds: 25, restSeconds: 30 },
+          { exerciseId: 'voetbal-ex-6', plannedSets: 4, targetDurationSeconds: 30, restSeconds: 30 },
+          { exerciseId: 'voetbal-ex-7', plannedSets: 4, targetDurationSeconds: 30, restSeconds: 30 },
+          { exerciseId: 'voetbal-ex-11', plannedSets: 5, targetDurationSeconds: 25, restSeconds: 30 },
+          { exerciseId: 'voetbal-ex-5', plannedSets: 6, targetDurationSeconds: 20, restSeconds: 30 },
+        ],
       },
       {
         id: 'voetbal-strength',
@@ -6192,6 +6285,15 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'weight-lifter',
         color: '#F59E0B',
         exercises: 7,
+        workoutExercises: [
+          { exerciseId: 'voetbal-ex-9', plannedSets: 3, targetReps: '10-15', restSeconds: 60 },
+          { exerciseId: 'voetbal-ex-10', plannedSets: 3, targetReps: '10-15', restSeconds: 60 },
+          { exerciseId: 'voetbal-ex-8', plannedSets: 3, targetReps: '10-15', restSeconds: 60 },
+          { exerciseId: 'voetbal-ex-9', plannedSets: 3, targetReps: '10-15', restSeconds: 60 },
+          { exerciseId: 'voetbal-ex-10', plannedSets: 3, targetReps: '10-15', restSeconds: 60 },
+          { exerciseId: 'voetbal-ex-8', plannedSets: 3, targetReps: '10-15', restSeconds: 60 },
+          { exerciseId: 'voetbal-ex-9', plannedSets: 3, targetReps: '10-15', restSeconds: 60 },
+        ],
       },
     ],
     exercises: [
@@ -6335,6 +6437,11 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'basketball',
         color: '#F97316',
         exercises: 8,
+        workoutExercises: [
+          { exerciseId: 'basketbal-ex-1', plannedSets: 3, targetDurationSeconds: 45, restSeconds: 30 },
+          { exerciseId: 'basketbal-ex-2', plannedSets: 3, targetDurationSeconds: 60, restSeconds: 30 },
+          { exerciseId: 'basketbal-ex-11', plannedSets: 4, targetDurationSeconds: 45, restSeconds: 30 },
+        ],
       },
       {
         id: 'basketbal-shooting',
@@ -6345,6 +6452,11 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'target',
         color: '#EF4444',
         exercises: 7,
+        workoutExercises: [
+          { exerciseId: 'basketbal-ex-4', plannedSets: 3, targetDurationSeconds: 30, restSeconds: 45 },
+          { exerciseId: 'basketbal-ex-5', plannedSets: 4, targetDurationSeconds: 20, restSeconds: 45 },
+          { exerciseId: 'basketbal-ex-3', plannedSets: 3, targetDurationSeconds: 30, restSeconds: 45 },
+        ],
       },
       {
         id: 'basketbal-agility',
@@ -6355,6 +6467,11 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'speedometer',
         color: '#3B82F6',
         exercises: 8,
+        workoutExercises: [
+          { exerciseId: 'basketbal-ex-6', plannedSets: 5, targetDurationSeconds: 25, restSeconds: 30 },
+          { exerciseId: 'basketbal-ex-9', plannedSets: 4, targetDurationSeconds: 30, restSeconds: 30 },
+          { exerciseId: 'basketbal-ex-8', plannedSets: 6, targetDurationSeconds: 20, restSeconds: 30 },
+        ],
       },
       {
         id: 'basketbal-strength',
@@ -6365,6 +6482,11 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'weight-lifter',
         color: '#F59E0B',
         exercises: 7,
+        workoutExercises: [
+          { exerciseId: 'basketbal-ex-10', plannedSets: 3, targetReps: '12-15', restSeconds: 60 },
+          { exerciseId: 'basketbal-ex-8', plannedSets: 3, targetReps: '10-12', restSeconds: 60 },
+          { exerciseId: 'basketbal-ex-7', plannedSets: 3, targetReps: '10-15', restSeconds: 60 },
+        ],
       },
     ],
     exercises: [
@@ -6508,6 +6630,16 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'volleyball',
         color: '#F59E0B',
         exercises: 8,
+        workoutExercises: [
+          { exerciseId: 'volleyball-ex-1', plannedSets: 4, targetDurationSeconds: 45, restSeconds: 30 },
+          { exerciseId: 'volleyball-ex-2', plannedSets: 4, targetDurationSeconds: 45, restSeconds: 30 },
+          { exerciseId: 'volleyball-ex-3', plannedSets: 4, targetDurationSeconds: 60, restSeconds: 30 },
+          { exerciseId: 'volleyball-ex-12', plannedSets: 3, targetDurationSeconds: 45, restSeconds: 30 },
+          { exerciseId: 'volleyball-ex-1', plannedSets: 3, targetDurationSeconds: 60, restSeconds: 30 },
+          { exerciseId: 'volleyball-ex-2', plannedSets: 3, targetDurationSeconds: 60, restSeconds: 30 },
+          { exerciseId: 'volleyball-ex-3', plannedSets: 3, targetDurationSeconds: 45, restSeconds: 30 },
+          { exerciseId: 'volleyball-ex-12', plannedSets: 3, targetDurationSeconds: 45, restSeconds: 30 },
+        ],
       },
       {
         id: 'volleyball-attack',
@@ -6518,6 +6650,15 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'arrow-up',
         color: '#EF4444',
         exercises: 7,
+        workoutExercises: [
+          { exerciseId: 'volleyball-ex-4', plannedSets: 4, targetDurationSeconds: 25, restSeconds: 45 },
+          { exerciseId: 'volleyball-ex-5', plannedSets: 4, targetDurationSeconds: 30, restSeconds: 45 },
+          { exerciseId: 'volleyball-ex-6', plannedSets: 4, targetDurationSeconds: 25, restSeconds: 45 },
+          { exerciseId: 'volleyball-ex-9', plannedSets: 4, targetDurationSeconds: 30, restSeconds: 45 },
+          { exerciseId: 'volleyball-ex-4', plannedSets: 3, targetDurationSeconds: 30, restSeconds: 45 },
+          { exerciseId: 'volleyball-ex-5', plannedSets: 3, targetDurationSeconds: 25, restSeconds: 45 },
+          { exerciseId: 'volleyball-ex-6', plannedSets: 3, targetDurationSeconds: 30, restSeconds: 45 },
+        ],
       },
       {
         id: 'volleyball-defense',
@@ -6528,6 +6669,15 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'shield',
         color: '#3B82F6',
         exercises: 7,
+        workoutExercises: [
+          { exerciseId: 'volleyball-ex-7', plannedSets: 4, targetDurationSeconds: 40, restSeconds: 30 },
+          { exerciseId: 'volleyball-ex-8', plannedSets: 4, targetDurationSeconds: 45, restSeconds: 30 },
+          { exerciseId: 'volleyball-ex-10', plannedSets: 4, targetDurationSeconds: 40, restSeconds: 30 },
+          { exerciseId: 'volleyball-ex-11', plannedSets: 4, targetDurationSeconds: 35, restSeconds: 30 },
+          { exerciseId: 'volleyball-ex-7', plannedSets: 3, targetDurationSeconds: 45, restSeconds: 30 },
+          { exerciseId: 'volleyball-ex-8', plannedSets: 3, targetDurationSeconds: 40, restSeconds: 30 },
+          { exerciseId: 'volleyball-ex-10', plannedSets: 3, targetDurationSeconds: 45, restSeconds: 30 },
+        ],
       },
       {
         id: 'volleyball-strength',
@@ -6538,6 +6688,15 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'weight-lifter',
         color: '#10B981',
         exercises: 7,
+        workoutExercises: [
+          { exerciseId: 'volleyball-ex-9', plannedSets: 3, targetReps: '10-15', restSeconds: 60 },
+          { exerciseId: 'volleyball-ex-11', plannedSets: 3, targetReps: '10-15', restSeconds: 60 },
+          { exerciseId: 'volleyball-ex-4', plannedSets: 3, targetReps: '12-15', restSeconds: 60 },
+          { exerciseId: 'volleyball-ex-6', plannedSets: 3, targetReps: '10-12', restSeconds: 60 },
+          { exerciseId: 'volleyball-ex-10', plannedSets: 3, targetReps: '12-15', restSeconds: 60 },
+          { exerciseId: 'volleyball-ex-9', plannedSets: 3, targetReps: '10-12', restSeconds: 60 },
+          { exerciseId: 'volleyball-ex-11', plannedSets: 3, targetReps: '12-15', restSeconds: 60 },
+        ],
       },
     ],
     exercises: [
@@ -6681,6 +6840,12 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'handball',
         color: '#EF4444',
         exercises: 8,
+        workoutExercises: [
+          { exerciseId: 'handbal-ex-1', plannedSets: 4, targetDurationSeconds: 45, restSeconds: 30 },
+          { exerciseId: 'handbal-ex-2', plannedSets: 4, targetDurationSeconds: 45, restSeconds: 30 },
+          { exerciseId: 'handbal-ex-3', plannedSets: 4, targetDurationSeconds: 45, restSeconds: 30 },
+          { exerciseId: 'handbal-ex-7', plannedSets: 4, targetDurationSeconds: 60, restSeconds: 30 },
+        ],
       },
       {
         id: 'handbal-shooting',
@@ -6691,6 +6856,12 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'target',
         color: '#F59E0B',
         exercises: 7,
+        workoutExercises: [
+          { exerciseId: 'handbal-ex-4', plannedSets: 4, targetDurationSeconds: 25, restSeconds: 45 },
+          { exerciseId: 'handbal-ex-5', plannedSets: 4, targetDurationSeconds: 25, restSeconds: 45 },
+          { exerciseId: 'handbal-ex-8', plannedSets: 4, targetDurationSeconds: 30, restSeconds: 45 },
+          { exerciseId: 'handbal-ex-11', plannedSets: 3, targetDurationSeconds: 30, restSeconds: 45 },
+        ],
       },
       {
         id: 'handbal-defense',
@@ -6701,6 +6872,12 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'shield',
         color: '#3B82F6',
         exercises: 8,
+        workoutExercises: [
+          { exerciseId: 'handbal-ex-6', plannedSets: 6, targetDurationSeconds: 25, restSeconds: 30 },
+          { exerciseId: 'handbal-ex-7', plannedSets: 6, targetDurationSeconds: 25, restSeconds: 30 },
+          { exerciseId: 'handbal-ex-9', plannedSets: 5, targetDurationSeconds: 30, restSeconds: 30 },
+          { exerciseId: 'handbal-ex-8', plannedSets: 4, targetDurationSeconds: 30, restSeconds: 30 },
+        ],
       },
       {
         id: 'handbal-strength',
@@ -6711,6 +6888,12 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'weight-lifter',
         color: '#10B981',
         exercises: 7,
+        workoutExercises: [
+          { exerciseId: 'handbal-ex-10', plannedSets: 3, targetReps: '10-15', restSeconds: 60 },
+          { exerciseId: 'handbal-ex-11', plannedSets: 3, targetReps: '10-15', restSeconds: 60 },
+          { exerciseId: 'handbal-ex-6', plannedSets: 3, targetReps: '10-15', restSeconds: 60 },
+          { exerciseId: 'handbal-ex-9', plannedSets: 3, targetReps: '10-12', restSeconds: 60 },
+        ],
       },
     ],
     exercises: [
@@ -6854,6 +7037,12 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'hockey-puck',
         color: '#0EA5E9',
         exercises: 8,
+        workoutExercises: [
+          { exerciseId: 'hockey-ex-1', plannedSets: 4, targetDurationSeconds: 45, restSeconds: 30 },
+          { exerciseId: 'hockey-ex-2', plannedSets: 4, targetDurationSeconds: 60, restSeconds: 30 },
+          { exerciseId: 'hockey-ex-10', plannedSets: 3, targetDurationSeconds: 30, restSeconds: 30 },
+          { exerciseId: 'hockey-ex-12', plannedSets: 3, targetDurationSeconds: 45, restSeconds: 30 },
+        ],
       },
       {
         id: 'hockey-shooting',
@@ -6864,6 +7053,11 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'target',
         color: '#EF4444',
         exercises: 7,
+        workoutExercises: [
+          { exerciseId: 'hockey-ex-3', plannedSets: 4, targetDurationSeconds: 30, restSeconds: 45 },
+          { exerciseId: 'hockey-ex-4', plannedSets: 3, targetDurationSeconds: 20, restSeconds: 45 },
+          { exerciseId: 'hockey-ex-5', plannedSets: 4, targetDurationSeconds: 30, restSeconds: 45 },
+        ],
       },
       {
         id: 'hockey-skating',
@@ -6874,6 +7068,13 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'skate',
         color: '#3B82F6',
         exercises: 8,
+        workoutExercises: [
+          { exerciseId: 'hockey-ex-6', plannedSets: 5, targetDurationSeconds: 25, restSeconds: 30 },
+          { exerciseId: 'hockey-ex-7', plannedSets: 5, targetDurationSeconds: 30, restSeconds: 30 },
+          { exerciseId: 'hockey-ex-8', plannedSets: 4, targetDurationSeconds: 20, restSeconds: 30 },
+          { exerciseId: 'hockey-ex-9', plannedSets: 6, targetDurationSeconds: 25, restSeconds: 30 },
+          { exerciseId: 'hockey-ex-10', plannedSets: 4, targetDurationSeconds: 30, restSeconds: 30 },
+        ],
       },
       {
         id: 'hockey-strength',
@@ -6884,6 +7085,11 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
         icon: 'weight-lifter',
         color: '#F59E0B',
         exercises: 7,
+        workoutExercises: [
+          { exerciseId: 'hockey-ex-9', plannedSets: 3, targetReps: '10-15', restSeconds: 60 },
+          { exerciseId: 'hockey-ex-11', plannedSets: 3, targetReps: '10-15', restSeconds: 60 },
+          { exerciseId: 'hockey-ex-6', plannedSets: 3, targetReps: '10-15', restSeconds: 60 },
+        ],
       },
     ],
     exercises: [
