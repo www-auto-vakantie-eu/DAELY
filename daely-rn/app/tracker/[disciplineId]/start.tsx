@@ -19,6 +19,7 @@ import {
   type GpsRoutePoint,
   type GpsPermissionStatus,
 } from 'services/activity-storage';
+import { completeProgramWorkout } from '@/services/user-programs-storage';
 import { getGpsTrackingService, type GpsTrackingState } from 'services/gps-tracking';
 
 const SESSION_STATUS = {
@@ -525,6 +526,24 @@ export default function StartActivityScreen() {
             : undefined,
         createdAt: now.toISOString(),
       });
+
+      // Update program progress if this was a program workout
+      if (programId && week && day && workout?.id && disciplineId) {
+        try {
+          await completeProgramWorkout({
+            programId,
+            disciplineSlug: disciplineId,
+            workoutId: workout.id,
+            week: parseInt(week, 10),
+            day: parseInt(day, 10),
+            activityId: `${discipline.id}-${now.getTime()}`,
+          });
+        } catch (error) {
+          console.error('Failed to update program progress:', error);
+          // Don't fail the save if program progress update fails
+        }
+      }
+
       setSaved(true);
       Alert.alert('Opgeslagen', 'Activiteit succesvol opgeslagen.');
     } catch {

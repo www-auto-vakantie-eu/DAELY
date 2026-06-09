@@ -5,7 +5,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/use-theme';
 import { DISCIPLINE_CONTENT, Workout, Program } from '@/constants/discipline-content';
 import { SPORT_DISCIPLINES } from '../../../constants/sport-disciplines';
-import { enrollInProgram, isProgramOwned } from '@/services/user-programs-storage';
+import { enrollInProgram, isProgramOwned, getUserProgramByProgramId } from '@/services/user-programs-storage';
 
 interface WeekDayWorkout {
   week: number;
@@ -55,14 +55,33 @@ export default function DisciplineProgramDetailScreen() {
     return plan;
   }, [program, workouts]);
 
+  function isDayCompleted(week: number, day: number): boolean {
+    if (!enrollment || !enrollment.completedWorkouts) return false;
+    return enrollment.completedWorkouts.some(
+      (w: any) => w.week === week && w.day === day
+    );
+  }
+
+  function isNextDay(week: number, day: number): boolean {
+    if (!enrollment) return false;
+    return enrollment.currentWeek === week && enrollment.currentDay === day;
+  }
+
   const [isEnrolled, setIsEnrolled] = React.useState(false);
   const [isCheckingEnrollment, setIsCheckingEnrollment] = React.useState(true);
+  const [enrollment, setEnrollment] = React.useState<any>(null);
 
   React.useEffect(() => {
     const checkEnrollment = async () => {
       if (!program || !slug) return;
       const owned = await isProgramOwned(program.id, slug);
       setIsEnrolled(owned);
+      
+      if (owned) {
+        const progEnrollment = await getUserProgramByProgramId(program.id, slug);
+        setEnrollment(progEnrollment);
+      }
+      
       setIsCheckingEnrollment(false);
     };
     checkEnrollment();
@@ -269,15 +288,23 @@ export default function DisciplineProgramDetailScreen() {
           <View style={styles.weeksContainer}>
             {weeklyPlan.map((item) => {
               if (!item || !item.workout) return null;
+              const completed = isDayCompleted(item.week, item.day);
+              const isNext = isNextDay(item.week, item.day);
               return (
                 <View
                   key={`${item.week}-${item.day}`}
-                  style={[styles.dayCard, { backgroundColor: theme.card, borderColor: theme.border }]}
+                  style={[styles.dayCard, { backgroundColor: theme.card, borderColor: completed ? '#10B981' : theme.border }]}
                 >
                   <View style={styles.dayHeader}>
                     <Text style={[styles.weekDayLabel, { color: theme.subtitleColor }]}>
                       Week {item.week} · Dag {item.day}
                     </Text>
+                    {completed && (
+                      <MaterialCommunityIcons name="check-circle" size={16} color="#10B981" />
+                    )}
+                    {isNext && !completed && (
+                      <Text style={[styles.nextDayLabel, { color: '#2563EB' }]}>Volgende training</Text>
+                    )}
                   </View>
                   <View style={styles.workoutInfo}>
                     <View style={[styles.workoutIconBox, { backgroundColor: item.workout.color + '22' }]}>
@@ -485,11 +512,18 @@ const styles = StyleSheet.create({
   },
   dayHeader: {
     marginBottom: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   weekDayLabel: {
     fontSize: 12,
     textTransform: 'uppercase',
     letterSpacing: 1,
+  },
+  nextDayLabel: {
+    fontSize: 11,
+    fontWeight: '700',
+    marginLeft: 'auto',
   },
   workoutInfo: {
     flexDirection: 'row',

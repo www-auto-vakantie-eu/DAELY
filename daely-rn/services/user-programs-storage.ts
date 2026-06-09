@@ -19,6 +19,16 @@ export interface UserProgramEnrollment {
   purchasedAt?: string;
   currentWeek: number;
   currentDay: number;
+  completedWorkouts?: {
+    workoutId: string;
+    week: number;
+    day: number;
+    completedAt: string;
+    activityId?: string;
+  }[];
+  totalPlannedWorkouts?: number;
+  completedCount?: number;
+  progressPercentage?: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -108,5 +118,81 @@ export async function getUserProgramByProgramId(
     enrollments.find(
       (e) => e.programId === programId && e.disciplineSlug === disciplineSlug
     ) || null
+  );
+}
+
+export async function completeProgramWorkout(params: {
+  programId: string;
+  disciplineSlug: string;
+  workoutId: string;
+  week: number;
+  day: number;
+  activityId?: string;
+}): Promise<void> {
+  const currentEnrollments = await getUserPrograms();
+  const enrollmentIndex = currentEnrollments.findIndex(
+    (e) => e.programId === params.programId && e.disciplineSlug === params.disciplineSlug
+  );
+
+  if (enrollmentIndex === -1) {
+    return; // Enrollment not found, do nothing
+  }
+
+  const enrollment = currentEnrollments[enrollmentIndex];
+  const completedWorkouts = enrollment.completedWorkouts || [];
+
+  // Check if this workout is already completed
+  const alreadyCompleted = completedWorkouts.some(
+    (w) => w.workoutId === params.workoutId && w.week === params.week && w.day === params.day
+  );
+
+  if (alreadyCompleted) {
+    return; // Already completed, do nothing
+  }
+
+  // Add completed workout
+  const newCompletedWorkout = {
+    workoutId: params.workoutId,
+    week: params.week,
+    day: params.day,
+    completedAt: new Date().toISOString(),
+    activityId: params.activityId,
+  };
+
+  const updatedCompletedWorkouts = [...completedWorkouts, newCompletedWorkout];
+
+  // Update currentWeek/currentDay to next uncompleted day
+  let nextWeek = enrollment.currentWeek;
+  let nextDay = enrollment.currentDay + 1;
+
+  // Simple logic: move to next day, wrap to next week if needed
+  // In a real implementation, this would use the program's actual structure
+  if (nextDay > 7) { // Assuming 7 days per week max
+    nextDay = 1;
+    nextWeek += 1;
+  }
+
+  // Calculate progress
+  const totalPlannedWorkouts = enrollment.totalPlannedWorkouts || updatedCompletedWorkouts.length + 10;
+  const completedCount = updatedCompletedWorkouts.length;
+  const progressPercentage = Math.round((completedCount / totalPlannedWorkouts) * 100);
+
+  // Update enrollment
+  const updatedEnrollment: UserProgramEnrollment = {
+    ...enrollment,
+    completedWorkouts: updatedCompletedWorkouts,
+    currentWeek: nextWeek,
+    currentDay: nextDay,
+    totalPlannedWorkouts,
+    completedCount,
+    progressPercentage,
+    updatedAt: new Date().toISOString(),
+  };
+
+  currentEnrollments[enrollmentIndex] = updatedEnrollment;
+
+  await AsyncStorage.setItem(
+    USER_ENROLLMENTS_STORAGE_KEY,
+    JSON.stringify(currentEnrollments)
   );
 }

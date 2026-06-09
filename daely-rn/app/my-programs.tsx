@@ -202,6 +202,24 @@ export default function MyProgramsScreen() {
                         </View>
                       </>
                     )}
+                    {enrollment.completedCount !== undefined && (
+                      <>
+                        <View style={styles.progressDivider} />
+                        <View style={styles.progressItem}>
+                          <Text style={styles.progressLabel}>Voltooid</Text>
+                          <Text style={[styles.progressValue, { color: theme.titleColor }]}>{enrollment.completedCount}</Text>
+                        </View>
+                      </>
+                    )}
+                    {enrollment.progressPercentage !== undefined && (
+                      <>
+                        <View style={styles.progressDivider} />
+                        <View style={styles.progressItem}>
+                          <Text style={styles.progressLabel}>Voortgang</Text>
+                          <Text style={[styles.progressValue, { color: theme.titleColor }]}>{enrollment.progressPercentage}%</Text>
+                        </View>
+                      </>
+                    )}
                   </View>
                 </Pressable>
 
