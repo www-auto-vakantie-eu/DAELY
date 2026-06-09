@@ -6,11 +6,14 @@ const USER_ENROLLMENTS_STORAGE_KEY = 'daely.user.enrollments.v1';
 export interface UserProgramEnrollment {
   id: string;
   programId: string;
+  programName: string;
   disciplineSlug: string;
   sourceType: 'daely' | 'coach' | 'influencer';
   creatorId?: string;
   creatorName?: string;
+  creatorRole?: string;
   accessType: 'included' | 'paid';
+  priceLabel?: string;
   status: 'active' | 'paused' | 'completed';
   startedAt: string;
   purchasedAt?: string;
@@ -55,11 +58,14 @@ export async function enrollInProgram(
   const enrollment: UserProgramEnrollment = {
     id: `enrollment-${Date.now()}`,
     programId: program.id,
+    programName: program.name,
     disciplineSlug,
     sourceType,
     creatorId: program.creatorId,
     creatorName: program.creatorName,
+    creatorRole: program.creatorRole,
     accessType,
+    priceLabel: program.priceLabel,
     status: 'active',
     startedAt: now,
     purchasedAt: accessType === 'paid' ? now : undefined,

@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 
 import { useTheme } from '@/hooks/use-theme';
 import PageHeader from './components/PageHeader';
@@ -21,6 +21,7 @@ function getDisciplineName(slug: string): string {
     fitness: 'Fitness',
     crossfit: 'CrossFit',
     running: 'Hardlopen',
+    hardlopen: 'Hardlopen',
     cycling: 'Wielrennen',
     swimming: 'Zwemmen',
     yoga: 'Yoga',
@@ -29,6 +30,15 @@ function getDisciplineName(slug: string): string {
     football: 'Voetbal',
     basketball: 'Basketbal',
     tennis: 'Tennis',
+    zwaargewicht: 'Zwaargewicht',
+    hyrox: 'Hyrox',
+    pilates: 'Pilates',
+    vechttraining: 'Vechttraining',
+    mobiliteit: 'Mobiliteit',
+    'kegel-oefeningen': 'Kegel-oefeningen',
+    'hardlopen-agility': 'Hardlopen Agility',
+    zwangerschap: 'Zwangerschap',
+    triatlon: 'Triatlon',
   };
   return names[slug] || slug;
 }
@@ -59,15 +69,21 @@ export default function MyProgramsScreen() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<TabType>('active');
 
-  useEffect(() => {
-    const load = async () => {
-      const items = await getUserPrograms();
-      setEnrollments(items);
-      setLoading(false);
-    };
-
-    void load();
+  const loadEnrollments = useCallback(async () => {
+    const items = await getUserPrograms();
+    setEnrollments(items);
+    setLoading(false);
   }, []);
+
+  useEffect(() => {
+    void loadEnrollments();
+  }, [loadEnrollments]);
+
+  useFocusEffect(
+    useCallback(() => {
+      void loadEnrollments();
+    }, [loadEnrollments])
+  );
 
   const filteredEnrollments = enrollments.filter((enrollment) => {
     if (activeTab === 'active') return enrollment.status === 'active' || enrollment.status === 'paused';
@@ -142,7 +158,7 @@ export default function MyProgramsScreen() {
                   <View style={styles.programHeader}>
                     <View style={styles.programTitleSection}>
                       <Text style={[styles.programName, { color: theme.titleColor }]}>
-                        {program?.name || enrollment.programId}
+                        {program?.name || enrollment.programName || enrollment.programId}
                       </Text>
                       <Text style={[styles.programDiscipline, { color: theme.subtitleColor }]}>
                         {disciplineName}
@@ -163,7 +179,7 @@ export default function MyProgramsScreen() {
 
                   {enrollment.accessType === 'paid' && (
                     <Text style={[styles.priceText, { color: '#F59E0B' }]}>
-                      {program?.priceLabel || 'Betaald programma'}
+                      {program?.priceLabel || enrollment.priceLabel || 'Betaald programma'}
                     </Text>
                   )}
 
