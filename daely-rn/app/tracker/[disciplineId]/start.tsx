@@ -265,6 +265,7 @@ export default function StartActivityScreen() {
   const [isResting, setIsResting] = React.useState(false);
   const [restSecondsRemaining, setRestSecondsRemaining] = React.useState(0);
   const [isExerciseFlowComplete, setIsExerciseFlowComplete] = React.useState(false);
+  const [isSavingActivity, setIsSavingActivity] = React.useState(false);
 
   // Reset guided flow state when workout changes
   React.useEffect(() => {
@@ -506,12 +507,44 @@ export default function StartActivityScreen() {
     startTimer();
   };
   const handleStop = () => {
+  // Check if there's workout progress that would be lost
+  const hasProgress = exerciseLogs.some(log => log.completed || log.sets?.some(s => s.completed));
+  
+  if (hasProgress && workoutId && !isGpsDiscipline) {
+    Alert.alert(
+      'Workout nog niet opgeslagen',
+      'Je hebt voortgang in je workout. Weet je zeker dat je wilt stoppen zonder op te slaan?',
+      [
+        { text: 'Annuleren', style: 'cancel' },
+        {
+          text: 'Doorgaan met workout',
+          style: 'default',
+        },
+        {
+          text: 'Stoppen zonder opslaan',
+          style: 'destructive',
+          onPress: () => {
+            if (isGpsDiscipline) {
+              gpsService.stop();
+            }
+            setStatus('FINISHED');
+            stopTimer();
+            setIsResting(false);
+            setRestSecondsRemaining(0);
+          },
+        },
+      ]
+    );
+  } else {
     if (isGpsDiscipline) {
       gpsService.stop();
     }
     setStatus('FINISHED');
     stopTimer();
-  };
+    setIsResting(false);
+    setRestSecondsRemaining(0);
+  }
+};
 
   const handleAddExercise = () => {
     setExerciseDrafts((previous) => [...previous, createExerciseDraft()]);
@@ -614,7 +647,8 @@ export default function StartActivityScreen() {
   const canSaveWorkout = !isWorkoutDiscipline || workoutExercisesPreview !== null;
 
   const handleSave = async () => {
-    if (saving || saved || status !== 'FINISHED') return;
+    if (saving || saved || isSavingActivity || status !== 'FINISHED') return;
+    setIsSavingActivity(true);
 
     const workoutExercises = isWorkoutDiscipline ? buildWorkoutExercises() : null;
     const workoutExerciseLogs = exerciseLogs.length > 0 ? exerciseLogs : undefined;
@@ -772,8 +806,10 @@ export default function StartActivityScreen() {
       Alert.alert('Opgeslagen', 'Activiteit succesvol opgeslagen.');
     } catch {
       Alert.alert('Fout', 'Opslaan mislukt. Probeer opnieuw.');
+    } finally {
+      setSaving(false);
+      setIsSavingActivity(false);
     }
-    setSaving(false);
   };
 
   return (
@@ -918,6 +954,56 @@ export default function StartActivityScreen() {
                 );
               })}
             </View>
+          </View>
+        )}
+
+        {/* Workout Complete Summary */}
+        {workoutId && workoutExercises.length > 0 && exerciseLogs.length > 0 && !isGpsDiscipline && isExerciseFlowComplete && (
+          <View style={styles.workoutCompleteCard}>
+            <MaterialCommunityIcons name="trophy" size={48} color="#10B981" />
+            <Text style={styles.workoutCompleteTitle}>Workout klaar</Text>
+            <Text style={styles.workoutCompleteSubtitle}>Goed gedaan!</Text>
+            <Text style={styles.workoutCompleteWorkoutName}>{workout?.name || 'Workout'}</Text>
+            <Text style={styles.workoutCompleteStats}>
+              {exerciseLogs.filter(l => l.completed).length} van {exerciseLogs.length} oefeningen voltooid
+            </Text>
+            <Text style={styles.workoutCompleteDuration}>
+              Duur: {formatTime(seconds)}
+            </Text>
+            {programId && week && day && (
+              <Text style={styles.workoutCompleteProgram}>
+                Programma · Week {week} · Dag {day}
+              </Text>
+            )}
+            <TouchableOpacity
+              style={[styles.workoutCompleteSaveButton, isSavingActivity && styles.workoutCompleteSaveButtonDisabled]}
+              onPress={handleSave}
+              disabled={isSavingActivity || saving || saved || status !== 'FINISHED'}
+            >
+              <Text style={styles.workoutCompleteSaveButtonText}>
+                {isSavingActivity ? 'Opslaan...' : 'Workout opslaan'}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.workoutCompleteBackButton}
+              onPress={() => {
+                if (status !== 'FINISHED') {
+                  Alert.alert(
+                    'Workout nog niet afgerond',
+                    'Je workout is nog niet gestopt. Wil je terugkeren naar de oefeningen?',
+                    [
+                      { text: 'Annuleren', style: 'cancel' },
+                      {
+                        text: 'Terug',
+                        onPress: () => setIsExerciseFlowComplete(false),
+                      },
+                    ]
+                  );
+                }
+              }}
+            >
+              <Text style={styles.workoutCompleteBackButtonText}>Terug naar oefeningen</Text>
+            </TouchableOpacity>
           </View>
         )}
 
@@ -2035,5 +2121,72 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     borderRadius: 4,
     marginRight: 8,
+  },
+  workoutCompleteCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 24,
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#10B981',
+    marginBottom: 20,
+  },
+  workoutCompleteTitle: {
+    fontSize: 24,
+    fontWeight: '800',
+    color: '#10B981',
+    marginTop: 16,
+  },
+  workoutCompleteSubtitle: {
+    fontSize: 16,
+    color: '#6B7280',
+    marginTop: 4,
+  },
+  workoutCompleteWorkoutName: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#1F2937',
+    marginTop: 16,
+  },
+  workoutCompleteStats: {
+    fontSize: 16,
+    color: '#374151',
+    marginTop: 8,
+  },
+  workoutCompleteDuration: {
+    fontSize: 14,
+    color: '#6B7280',
+    marginTop: 4,
+  },
+  workoutCompleteProgram: {
+    fontSize: 14,
+    color: '#3B82F6',
+    marginTop: 8,
+    fontWeight: '600',
+  },
+  workoutCompleteSaveButton: {
+    backgroundColor: '#10B981',
+    paddingVertical: 16,
+    paddingHorizontal: 32,
+    borderRadius: 12,
+    marginTop: 24,
+    width: '100%',
+  },
+  workoutCompleteSaveButtonDisabled: {
+    backgroundColor: '#9CA3AF',
+  },
+  workoutCompleteSaveButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '700',
+    textAlign: 'center',
+  },
+  workoutCompleteBackButton: {
+    marginTop: 12,
+  },
+  workoutCompleteBackButtonText: {
+    color: '#6B7280',
+    fontSize: 14,
+    fontWeight: '600',
   },
 });
