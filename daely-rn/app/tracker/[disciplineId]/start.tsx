@@ -1019,8 +1019,8 @@ export default function StartActivityScreen() {
                         totalVolumeKg,
                         notes: workoutNotes.trim().length > 0 ? workoutNotes.trim() : undefined,
                         personalRecords: personalRecords && personalRecords.length > 0 ? personalRecords : undefined,
-                        workoutFeedback: feedbackDifficulty ? {
-                          difficulty: feedbackDifficulty,
+                        workoutFeedback: (feedbackDifficulty || typeof feedbackRpe === 'number' || feedbackEnergy || feedbackNote.trim().length > 0) ? {
+                          difficulty: feedbackDifficulty || undefined,
                           rpe: feedbackRpe || undefined,
                           energyAfter: feedbackEnergy || undefined,
                           note: feedbackNote.trim().length > 0 ? feedbackNote.trim() : undefined,
