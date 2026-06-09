@@ -199,7 +199,8 @@ export default function StartActivityScreen() {
     exerciseId?: string;
     exerciseName: string;
     completed: boolean;
-    sets?: { setNumber: number; reps?: number; weightKg?: number; completed?: boolean }[];
+    executionMode?: 'strength' | 'bodyweight' | 'duration' | 'mixed';
+    sets?: { setNumber: number; reps?: number; weightKg?: number; durationSeconds?: number; completed?: boolean }[];
     notes?: string;
     lastPerformance?: {
       exerciseId?: string;
@@ -238,20 +239,27 @@ export default function StartActivityScreen() {
           const lastPerformance = await getLastExercisePerformance(ex.id, ex.name);
           const prefilledWeight = lastPerformance?.lastSet?.weightKg;
           const prefilledReps = lastPerformance?.lastSet?.reps;
+          const prefilledDuration = lastPerformance?.lastSet?.durationSeconds;
 
           // Use prescribed weight if available, otherwise use last performance
           const initialWeight = planning?.plannedWeightKg || planning?.targetWeightKg || prefilledWeight;
           const initialReps = prefilledReps;
+          const initialDuration = planning?.targetDurationSeconds || prefilledDuration;
+
+          // Determine execution mode
+          const executionMode = getExerciseExecutionMode(planning, disciplineId);
 
           return {
             id: `log-${ex.id}`,
             exerciseId: ex.id,
             exerciseName: ex.name,
             completed: false,
+            executionMode,
             sets: Array.from({ length: plannedSets }, (_, i) => ({
               setNumber: i + 1,
               reps: i === 0 ? initialReps : undefined,
               weightKg: i === 0 ? initialWeight : undefined,
+              durationSeconds: i === 0 ? initialDuration : undefined,
               completed: false,
             })),
             lastPerformance: lastPerformance,
@@ -263,7 +271,7 @@ export default function StartActivityScreen() {
     };
 
     initializeExerciseLogs();
-  }, [workoutExercises, workoutExercisePlanning]);
+  }, [workoutExercises, workoutExercisePlanning, disciplineId]);
 
   // Guided workout flow state
   const [currentExerciseIndex, setCurrentExerciseIndex] = React.useState(0);
@@ -274,6 +282,39 @@ export default function StartActivityScreen() {
   const [isSavingActivity, setIsSavingActivity] = React.useState(false);
   const [draftLoaded, setDraftLoaded] = React.useState(false);
   const [personalRecords, setPersonalRecords] = React.useState<any[]>([]);
+
+  // Helper: Determine exercise execution mode
+  const getExerciseExecutionMode = (planning: {
+    exerciseId: string;
+    plannedSets?: number;
+    targetReps?: string;
+    targetDurationSeconds?: number;
+    restSeconds?: number;
+    plannedWeightKg?: number;
+    targetWeightKg?: number;
+    intensityLabel?: string;
+    rpeTarget?: string;
+    notes?: string;
+  } | undefined, disciplineId: string): 'strength' | 'bodyweight' | 'duration' | 'mixed' => {
+    // Duration-based if targetDurationSeconds exists and no clear targetReps
+    if (planning?.targetDurationSeconds && !planning?.targetReps) {
+      return 'duration';
+    }
+    // Mobility/yoga/pilates disciplines with duration
+    if (planning?.targetDurationSeconds && ['mobiliteit', 'yoga', 'pilates'].includes(disciplineId)) {
+      return 'duration';
+    }
+    // Bodyweight if targetReps exists but no weight needed
+    if (planning?.targetReps && !planning?.plannedWeightKg && !planning?.targetWeightKg) {
+      return 'bodyweight';
+    }
+    // Strength if reps/weight logical
+    if (planning?.targetReps && (planning?.plannedWeightKg || planning?.targetWeightKg)) {
+      return 'strength';
+    }
+    // Fallback
+    return 'mixed';
+  };
 
   // Reset guided flow state when workout changes
   React.useEffect(() => {
@@ -457,7 +498,7 @@ export default function StartActivityScreen() {
   };
 
   // Helper: Update current exercise set with patch
-  const updateCurrentExerciseSet = (setIndex: number, patch: Partial<{ reps?: number; weightKg?: number; completed?: boolean }>) => {
+  const updateCurrentExerciseSet = (setIndex: number, patch: Partial<{ reps?: number; weightKg?: number; durationSeconds?: number; completed?: boolean }>) => {
     const updated = [...exerciseLogs];
     const currentLog = updated[currentExerciseIndex];
     if (!currentLog.sets) return;
@@ -476,6 +517,7 @@ export default function StartActivityScreen() {
       setNumber: currentLog.sets.length + 1,
       reps: lastSet?.reps,
       weightKg: lastSet?.weightKg,
+      durationSeconds: lastSet?.durationSeconds,
       completed: false,
     });
     setExerciseLogs(updated);
@@ -492,6 +534,7 @@ export default function StartActivityScreen() {
       setNumber: currentLog.sets.length + 1,
       reps: lastSet?.reps,
       weightKg: lastSet?.weightKg,
+      durationSeconds: lastSet?.durationSeconds,
       completed: false,
     });
     setExerciseLogs(updated);
@@ -1034,6 +1077,11 @@ export default function StartActivityScreen() {
                       · Doel: {exerciseLogs[currentExerciseIndex].planning.targetReps} reps
                     </Text>
                   )}
+                  {exerciseLogs[currentExerciseIndex].planning.targetDurationSeconds && (
+                    <Text style={styles.guidedFlowPlanningText}>
+                      · Doel: {exerciseLogs[currentExerciseIndex].planning.targetDurationSeconds} sec
+                    </Text>
+                  )}
                   {exerciseLogs[currentExerciseIndex].planning.restSeconds && (
                     <Text style={styles.guidedFlowPlanningText}>
                       · Rust: {exerciseLogs[currentExerciseIndex].planning.restSeconds} sec
@@ -1050,6 +1098,8 @@ export default function StartActivityScreen() {
                   Laatste keer: {exerciseLogs[currentExerciseIndex].lastPerformance.lastSet?.weightKg ? `${exerciseLogs[currentExerciseIndex].lastPerformance.lastSet.weightKg} kg` : ''}
                   {exerciseLogs[currentExerciseIndex].lastPerformance.lastSet?.weightKg && exerciseLogs[currentExerciseIndex].lastPerformance.lastSet?.reps ? ' × ' : ''}
                   {exerciseLogs[currentExerciseIndex].lastPerformance.lastSet?.reps ? `${exerciseLogs[currentExerciseIndex].lastPerformance.lastSet.reps} reps` : ''}
+                  {exerciseLogs[currentExerciseIndex].lastPerformance.lastSet?.durationSeconds && (exerciseLogs[currentExerciseIndex].lastPerformance.lastSet?.weightKg || exerciseLogs[currentExerciseIndex].lastPerformance.lastSet?.reps) ? ' · ' : ''}
+                  {exerciseLogs[currentExerciseIndex].lastPerformance.lastSet?.durationSeconds ? `${exerciseLogs[currentExerciseIndex].lastPerformance.lastSet.durationSeconds} sec` : ''}
                 </Text>
               )}
 
@@ -1057,6 +1107,21 @@ export default function StartActivityScreen() {
                 <View>
                   {exerciseLogs[currentExerciseIndex].sets.map((set, setIndex) => {
                     const isCurrentSet = setIndex === currentSetIndex;
+                    const executionMode = exerciseLogs[currentExerciseIndex].executionMode;
+                    const planning = exerciseLogs[currentExerciseIndex].planning;
+
+                    // Determine which inputs to show based on executionMode
+                    const showRepsInput = executionMode === 'strength' ||
+                                          executionMode === 'bodyweight' ||
+                                          executionMode === 'mixed' ||
+                                          (executionMode === 'duration' && planning?.targetReps);
+
+                    const showWeightInput = executionMode === 'strength' ||
+                                            executionMode === 'mixed' ||
+                                            (executionMode === 'bodyweight' && (set.weightKg !== undefined || planning?.plannedWeightKg || planning?.targetWeightKg));
+
+                    const showDurationInput = executionMode === 'duration' || executionMode === 'mixed';
+
                     return (
                       <View
                         key={set.setNumber}
@@ -1073,24 +1138,39 @@ export default function StartActivityScreen() {
                             <MaterialCommunityIcons name="check-circle" size={16} color="#10B981" />
                           )}
                         </View>
-                        <TextInput
-                          style={[styles.guidedFlowInput, isCurrentSet && styles.guidedFlowInputCurrent]}
-                          placeholder="Reps"
-                          keyboardType="number-pad"
-                          value={set.reps?.toString() || ''}
-                          onChangeText={(text) => {
-                            updateCurrentExerciseSet(setIndex, { reps: text ? parseInt(text, 10) : undefined });
-                          }}
-                        />
-                        <TextInput
-                          style={[styles.guidedFlowInput, isCurrentSet && styles.guidedFlowInputCurrent]}
-                          placeholder="Kg"
-                          keyboardType="number-pad"
-                          value={set.weightKg?.toString() || ''}
-                          onChangeText={(text) => {
-                            updateCurrentExerciseSet(setIndex, { weightKg: text ? parseInt(text, 10) : undefined });
-                          }}
-                        />
+                        {showRepsInput && (
+                          <TextInput
+                            style={[styles.guidedFlowInput, isCurrentSet && styles.guidedFlowInputCurrent]}
+                            placeholder="Reps"
+                            keyboardType="number-pad"
+                            value={set.reps?.toString() || ''}
+                            onChangeText={(text) => {
+                              updateCurrentExerciseSet(setIndex, { reps: text ? parseInt(text, 10) : undefined });
+                            }}
+                          />
+                        )}
+                        {showWeightInput && (
+                          <TextInput
+                            style={[styles.guidedFlowInput, isCurrentSet && styles.guidedFlowInputCurrent]}
+                            placeholder="Kg"
+                            keyboardType="number-pad"
+                            value={set.weightKg?.toString() || ''}
+                            onChangeText={(text) => {
+                              updateCurrentExerciseSet(setIndex, { weightKg: text ? parseInt(text, 10) : undefined });
+                            }}
+                          />
+                        )}
+                        {showDurationInput && (
+                          <TextInput
+                            style={[styles.guidedFlowInput, isCurrentSet && styles.guidedFlowInputCurrent]}
+                            placeholder="Sec"
+                            keyboardType="number-pad"
+                            value={set.durationSeconds?.toString() || ''}
+                            onChangeText={(text) => {
+                              updateCurrentExerciseSet(setIndex, { durationSeconds: text ? parseInt(text, 10) : undefined });
+                            }}
+                          />
+                        )}
                         <TouchableOpacity
                           style={styles.guidedFlowSetDeleteButton}
                           onPress={() => removeSetFromCurrentExercise(setIndex)}
