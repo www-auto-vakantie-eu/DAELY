@@ -8,6 +8,7 @@ import PageHeader from '../components/PageHeader';
 import { Activity, getActivities } from 'services/activity-storage';
 import { useAppContext } from '@/contexts/AppContext';
 import { getNextProgramWorkout, NextProgramWorkout } from '@/services/user-programs-storage';
+import { getActiveWorkoutDraft, type WorkoutDraft } from '@/services/workout-draft-storage';
 import { CONNECTED_DEVICES, WHOOP_TOKEN_STORAGE_KEY } from '../constants/connected-devices';
 import {
   HERO_BACKGROUND_STORAGE_KEY,
@@ -124,6 +125,7 @@ export default function TodayScreen() {
   const [shortcuts, setShortcuts] = useState<ShortcutId[]>(DEFAULT_SHORTCUTS);
   const [showShortcutPicker, setShowShortcutPicker] = useState(false);
   const [nextWorkout, setNextWorkout] = useState<NextProgramWorkout | null>(null);
+  const [activeDraft, setActiveDraft] = useState<WorkoutDraft | null>(null);
 
   const todayQuote = useMemo(() => getTodayQuote(), []);
 
@@ -131,14 +133,20 @@ export default function TodayScreen() {
     getNextProgramWorkout().then(setNextWorkout);
   }, []);
 
+  const loadActiveDraft = useCallback(() => {
+    getActiveWorkoutDraft().then(setActiveDraft);
+  }, []);
+
   useEffect(() => {
     loadNextWorkout();
-  }, [loadNextWorkout]);
+    loadActiveDraft();
+  }, [loadNextWorkout, loadActiveDraft]);
 
   useFocusEffect(
     useCallback(() => {
       loadNextWorkout();
-    }, [loadNextWorkout])
+      loadActiveDraft();
+    }, [loadNextWorkout, loadActiveDraft])
   );
 
   useEffect(() => {
@@ -297,6 +305,40 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
             </Pressable>
           ))}
         </View>
+
+      {/* Workout openstaand */}
+      {activeDraft && activeDraft.status === 'active' && (
+        <View style={[styles.sectionCard, styles.nextWorkoutCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+          <View style={styles.nextWorkoutHeader}>
+            <Text style={[styles.nextWorkoutLabel, { color: theme.subtitleColor }]}>WORKOUT OPENSTAAND</Text>
+            <Text style={[styles.nextWorkoutProgram, { color: theme.titleColor }]}>{activeDraft.workoutName || 'Workout'}</Text>
+            {activeDraft.programWeek && activeDraft.programDay && (
+              <Text style={[styles.nextWorkoutWeekDay, { color: theme.subtitleColor }]}>
+                Week {activeDraft.programWeek} · Dag {activeDraft.programDay}
+              </Text>
+            )}
+            <Text style={[styles.nextWorkoutMeta, { color: theme.subtitleColor }]}>
+              Laatst bijgewerkt: {new Date(activeDraft.updatedAt).toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' })}
+            </Text>
+          </View>
+          <Pressable
+            style={[styles.nextWorkoutButton, { backgroundColor: '#F59E0B' }]}
+            onPress={() => router.push({
+              pathname: '/tracker/[disciplineId]/start',
+              params: {
+                disciplineId: activeDraft.disciplineId,
+                workoutId: activeDraft.workoutId,
+                programId: activeDraft.programId,
+                week: activeDraft.programWeek ? String(activeDraft.programWeek) : undefined,
+                day: activeDraft.programDay ? String(activeDraft.programDay) : undefined,
+              },
+            })}
+          >
+            <MaterialCommunityIcons name="play" size={20} color="#FFFFFF" />
+            <Text style={styles.nextWorkoutButtonText}>Hervat workout</Text>
+          </Pressable>
+        </View>
+      )}
 
       {/* Volgende training */}
       {nextWorkout ? (
