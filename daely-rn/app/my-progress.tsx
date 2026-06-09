@@ -5,6 +5,7 @@ import { useRouter } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
 import PageHeader from './components/PageHeader';
 import { Activity, getActivities } from 'services/activity-storage';
+import { getPerformanceSummary, PerformanceSummary } from 'services/performance-summary';
 
 function formatDuration(seconds: number): string {
   const safeSeconds = Number.isFinite(seconds) ? Math.max(0, seconds) : 0;
@@ -82,12 +83,15 @@ export default function MyProgressScreen() {
 
   const [activities, setActivities] = useState<Activity[]>([]);
   const [loading, setLoading] = useState(true);
+  const [performanceSummary, setPerformanceSummary] = useState<PerformanceSummary | null>(null);
 
   useEffect(() => {
     const load = async () => {
       const items = await getActivities();
       const sorted = [...items].sort((a, b) => new Date(b.endedAt).getTime() - new Date(a.endedAt).getTime());
       setActivities(sorted);
+      const summary = await getPerformanceSummary();
+      setPerformanceSummary(summary);
       setLoading(false);
     };
 
@@ -185,6 +189,54 @@ export default function MyProgressScreen() {
           </View>
         )}
       </View>
+
+      <View style={[styles.sectionCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+        <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>PR Overzicht</Text>
+        {loading ? (
+          <ActivityIndicator size="small" color="#2563EB" />
+        ) : (
+          <View style={styles.statsGrid}>
+            <View style={styles.statCard}>
+              <Text style={styles.statLabel}>Workouts voltooid</Text>
+              <Text style={styles.statValue}>{performanceSummary?.totalWorkoutActivities ?? 0}</Text>
+            </View>
+            <View style={styles.statCard}>
+              <Text style={styles.statLabel}>PR&apos;s behaald</Text>
+              <Text style={styles.statValue}>{performanceSummary?.totalPersonalRecords ?? 0}</Text>
+            </View>
+            {performanceSummary?.latestPersonalRecord ? (
+              <View style={[styles.statCard, styles.statCardFull]}>
+                <Text style={styles.statLabel}>Laatste PR</Text>
+                <Text style={styles.statValue}>{performanceSummary.latestPersonalRecord.exerciseName}</Text>
+                <Text style={styles.statMeta}>
+                  {performanceSummary.latestPersonalRecord.weightKg ? `${performanceSummary.latestPersonalRecord.weightKg} kg` : ''}
+                  {performanceSummary.latestPersonalRecord.reps ? ` × ${performanceSummary.latestPersonalRecord.reps}` : ''}
+                  {performanceSummary.latestPersonalRecord.durationSeconds ? `${performanceSummary.latestPersonalRecord.durationSeconds}s` : ''}
+                </Text>
+              </View>
+            ) : null}
+          </View>
+        )}
+      </View>
+
+      {performanceSummary?.recentPersonalRecords && performanceSummary.recentPersonalRecords.length > 0 ? (
+        <View style={[styles.sectionCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+          <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Recente PR&apos;s</Text>
+          <View style={styles.recentList}>
+            {performanceSummary.recentPersonalRecords.slice(0, 10).map((pr) => (
+              <View key={`${pr.exerciseName}-${pr.achievedAt}`} style={styles.recentCard}>
+                <Text style={styles.recentTitle}>{pr.exerciseName}</Text>
+                <Text style={styles.recentMeta}>{formatDateTime(pr.achievedAt)}</Text>
+                <Text style={styles.recentSummary}>
+                  {pr.weightKg ? `${pr.weightKg} kg` : ''}
+                  {pr.reps ? ` × ${pr.reps}` : ''}
+                  {pr.durationSeconds ? `${pr.durationSeconds}s` : ''}
+                </Text>
+              </View>
+            ))}
+          </View>
+        </View>
+      ) : null}
 
       <View style={[styles.sectionCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
         <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Discipline-overzicht</Text>
@@ -298,6 +350,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#F8FAFC',
     paddingHorizontal: 10,
     paddingVertical: 10,
+  },
+  statCardFull: {
+    width: '100%',
   },
   statLabel: {
     fontSize: 12,

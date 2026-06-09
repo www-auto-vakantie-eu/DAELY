@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ImageBackground, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter, type Href } from 'expo-router';
 
 import { useTheme } from '@/hooks/use-theme';
 import PageHeader from '../components/PageHeader';
+import { getPerformanceSummary, type PerformanceSummary } from '@/services/performance-summary';
 
 type MyDomainCard = {
   id: string;
@@ -122,6 +123,11 @@ const MY_DOMAIN_CARDS: MyDomainCard[] = [
 export default function MijnScreen() {
   const theme = useTheme();
   const router = useRouter();
+  const [performanceSummary, setPerformanceSummary] = useState<PerformanceSummary | null>(null);
+
+  useEffect(() => {
+    getPerformanceSummary().then(setPerformanceSummary);
+  }, []);
 
   const handleCardPress = (route: Href) => {
     router.push(route);
@@ -138,6 +144,45 @@ export default function MijnScreen() {
         />
 
         <View style={styles.cardsWrap}>
+          {performanceSummary && (
+            <Pressable
+              style={({ pressed }) => [
+                styles.performanceCard,
+                pressed && styles.slideCardPressed,
+              ]}
+              onPress={() => router.push('/my-progress')}
+            >
+              <LinearGradient
+                colors={['rgba(37, 99, 235, 0.15)', 'rgba(37, 99, 235, 0.05)']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.performanceCardGradient}
+              >
+                <View style={styles.performanceCardContent}>
+                  <View style={styles.performanceCardHeader}>
+                    <Text style={[styles.performanceCardTitle, { color: '#2563EB' }]}>Mijn prestaties</Text>
+                  </View>
+                  <View style={styles.performanceCardStats}>
+                    <View style={styles.performanceStat}>
+                      <Text style={styles.performanceStatValue}>{performanceSummary.totalWorkoutActivities}</Text>
+                      <Text style={styles.performanceStatLabel}>workouts voltooid</Text>
+                    </View>
+                    <View style={styles.performanceStatDivider} />
+                    <View style={styles.performanceStat}>
+                      <Text style={styles.performanceStatValue}>{performanceSummary.totalPersonalRecords}</Text>
+                      <Text style={styles.performanceStatLabel}>PR&apos;s behaald</Text>
+                    </View>
+                  </View>
+                  {performanceSummary.latestPersonalRecord && (
+                    <Text style={styles.performanceLatestPr}>
+                      Laatste PR: {performanceSummary.latestPersonalRecord.exerciseName}
+                    </Text>
+                  )}
+                  <Text style={styles.performanceCardLink}>Bekijk prestaties</Text>
+                </View>
+              </LinearGradient>
+            </Pressable>
+          )}
           {MY_DOMAIN_CARDS.map((card) => (
             <Pressable
               key={card.id}
@@ -243,5 +288,59 @@ const styles = StyleSheet.create({
     fontSize: 13,
     lineHeight: 18,
     color: '#E5E7EB',
+  },
+  performanceCard: {
+    borderRadius: 20,
+    overflow: 'hidden',
+    marginBottom: 14,
+    backgroundColor: 'rgba(37, 99, 235, 0.08)',
+  },
+  performanceCardGradient: {
+    padding: 16,
+  },
+  performanceCardContent: {
+    gap: 12,
+  },
+  performanceCardHeader: {
+    marginBottom: 4,
+  },
+  performanceCardTitle: {
+    fontSize: 18,
+    fontWeight: '800',
+    lineHeight: 22,
+  },
+  performanceCardStats: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+  },
+  performanceStat: {
+    flex: 1,
+  },
+  performanceStatValue: {
+    fontSize: 24,
+    fontWeight: '800',
+    color: '#E5E7EB',
+    lineHeight: 28,
+  },
+  performanceStatLabel: {
+    fontSize: 12,
+    color: '#9CA3AF',
+    marginTop: 2,
+  },
+  performanceStatDivider: {
+    width: 1,
+    height: 32,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+  },
+  performanceLatestPr: {
+    fontSize: 13,
+    color: '#9CA3AF',
+  },
+  performanceCardLink: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#2563EB',
+    marginTop: 4,
   },
 });
