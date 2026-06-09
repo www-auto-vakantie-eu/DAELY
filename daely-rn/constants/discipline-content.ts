@@ -7826,7 +7826,7 @@ export const DISCIPLINE_CONTENT: Record<string, DisciplineContent> = {
       },
       {
         id: 'hockey-skating',
-        name: 'Schaatsbeweging',
+        name: 'Hockey Voetenwerk',
         muscle: 'Explosiviteit · Balans',
         duration: '40 min',
         level: 'Gevorderd',
