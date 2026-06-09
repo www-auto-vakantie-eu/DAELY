@@ -27,7 +27,6 @@ import {
   saveWorkoutDraft,
   getWorkoutDraft,
   clearDraftForWorkout,
-  markDraftAsCompleted,
   type WorkoutDraft,
 } from '@/services/workout-draft-storage';
 
@@ -341,6 +340,7 @@ export default function StartActivityScreen() {
     restSecondsRemaining,
     isExerciseFlowComplete,
     exerciseLogs,
+    workout?.name,
   ]);
 
   // Restore draft on mount
