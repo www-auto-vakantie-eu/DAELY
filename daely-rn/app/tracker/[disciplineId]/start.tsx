@@ -2,6 +2,7 @@
 import React, { useState, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert, TextInput, ScrollView } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import PageHeader from '../../components/PageHeader';
 import { SPORT_DISCIPLINES } from '../../constants/sport-disciplines';
 import { DISCIPLINE_CONTENT } from '@/constants/discipline-content';
@@ -148,6 +149,43 @@ export default function StartActivityScreen() {
     }
     return null;
   }, [workoutId, disciplineId]);
+
+  // Get exercises for the workout
+  const workoutExercises = React.useMemo(() => {
+    if (!workout || !disciplineId) return [];
+    const disciplineContent = DISCIPLINE_CONTENT[disciplineId as keyof typeof DISCIPLINE_CONTENT];
+    if (!disciplineContent?.exercises) return [];
+
+    const exerciseCount = typeof workout.exercises === 'number' ? workout.exercises : 0;
+    if (exerciseCount === 0) return [];
+
+    // For MVP: use first X exercises from discipline as temporary workout list
+    return disciplineContent.exercises.slice(0, Math.min(exerciseCount, disciplineContent.exercises.length));
+  }, [workout, disciplineId]);
+
+  // State for workout exercise logs
+  const [exerciseLogs, setExerciseLogs] = React.useState<{
+    id: string;
+    exerciseId?: string;
+    exerciseName: string;
+    completed: boolean;
+    sets?: { setNumber: number; reps?: number; weightKg?: number; completed?: boolean }[];
+    notes?: string;
+  }[]>([]);
+
+  // Initialize exercise logs when workout changes
+  React.useEffect(() => {
+    if (workoutExercises.length > 0) {
+      setExerciseLogs(workoutExercises.map(ex => ({
+        id: `log-${ex.id}`,
+        exerciseId: ex.id,
+        exerciseName: ex.name,
+        completed: false,
+        sets: [{ setNumber: 1, reps: undefined, weightKg: undefined, completed: false }],
+        notes: undefined,
+      })));
+    }
+  }, [workoutExercises]);
 
   const isWorkoutDiscipline = discipline?.trackingType === 'workout';
   const isSessionDiscipline = discipline?.trackingType === 'session';
@@ -397,6 +435,7 @@ export default function StartActivityScreen() {
     if (saving || saved || status !== 'FINISHED') return;
 
     const workoutExercises = isWorkoutDiscipline ? buildWorkoutExercises() : null;
+    const workoutExerciseLogs = exerciseLogs.length > 0 ? exerciseLogs : undefined;
     if (isWorkoutDiscipline && !workoutExercises) {
       Alert.alert('Workout metrics ontbreken', 'Voeg minimaal een geldige oefening toe met naam, sets en reps.');
       return;
@@ -445,6 +484,9 @@ export default function StartActivityScreen() {
                   isWorkoutDiscipline && workoutExercises
                     ? {
                         exercises: workoutExercises,
+                        workoutExercises: workoutExerciseLogs,
+                        completedExercisesCount: workoutExerciseLogs ? workoutExerciseLogs.filter(l => l.completed).length : undefined,
+                        totalExercisesCount: workoutExerciseLogs ? workoutExerciseLogs.length : undefined,
                         totalVolumeKg,
                         notes: workoutNotes.trim().length > 0 ? workoutNotes.trim() : undefined,
                       }
@@ -574,6 +616,59 @@ export default function StartActivityScreen() {
             )}
           </View>
         )}
+
+        {exerciseLogs.length > 0 && (
+          <View style={styles.exercisesSection}>
+            <Text style={styles.exercisesTitle}>Oefeningen</Text>
+            {exerciseLogs.map((log, index) => (
+              <View key={log.id} style={styles.exerciseCard}>
+                <View style={styles.exerciseHeader}>
+                  <TouchableOpacity onPress={() => {
+                    const updated = [...exerciseLogs];
+                    updated[index].completed = !updated[index].completed;
+                    setExerciseLogs(updated);
+                  }} style={styles.exerciseCheckbox}>
+                    <MaterialCommunityIcons
+                      name={log.completed ? 'checkbox-marked' : 'checkbox-blank-outline'}
+                      size={24}
+                      color={log.completed ? '#10B981' : '#6B7280'}
+                    />
+                  </TouchableOpacity>
+                  <Text style={[styles.exerciseName, log.completed && styles.exerciseNameCompleted]}>
+                    {log.exerciseName}
+                  </Text>
+                </View>
+                {log.sets && log.sets.length > 0 && (
+                  <View style={styles.setsContainer}>
+                    <Text style={styles.setsLabel}>Set 1</Text>
+                    <TextInput
+                      style={styles.setInput}
+                      placeholder="Reps"
+                      keyboardType="number-pad"
+                      value={log.sets[0].reps?.toString() || ''}
+                      onChangeText={(text) => {
+                        const updated = [...exerciseLogs];
+                        updated[index].sets![0].reps = text ? parseInt(text, 10) : undefined;
+                        setExerciseLogs(updated);
+                      }}
+                    />
+                    <TextInput
+                      style={styles.setInput}
+                      placeholder="Kg"
+                      keyboardType="number-pad"
+                      value={log.sets[0].weightKg?.toString() || ''}
+                      onChangeText={(text) => {
+                        const updated = [...exerciseLogs];
+                        updated[index].sets![0].weightKg = text ? parseInt(text, 10) : undefined;
+                        setExerciseLogs(updated);
+                      }}
+                    />
+                  </View>
+                )}
+              </View>
+            ))}
+          </View>
+        )}
         <Text style={styles.timer}>{formatTime(seconds)}</Text>
         {isGpsDiscipline && gpsState.isActive && (
           <View style={styles.gpsMetricsRow}>
@@ -599,7 +694,7 @@ export default function StartActivityScreen() {
           <Text style={styles.sectionSubtitle}>Voeg je oefeningen toe voor een volledige workout-opslag.</Text>
 
           {exerciseDrafts.map((exercise, index) => (
-            <View key={exercise.id} style={styles.exerciseCard}>
+            <View key={exercise.id} style={styles.workoutExerciseCard}>
               <Text style={styles.exerciseTitle}>Oefening {index + 1}</Text>
               <TextInput
                 style={styles.input}
@@ -1163,6 +1258,62 @@ const styles = StyleSheet.create({
     color: '#059669',
     marginTop: 6,
   },
+  exercisesSection: {
+    marginTop: 16,
+  },
+  exercisesTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#0F172A',
+    marginBottom: 12,
+  },
+  exerciseCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 8,
+    padding: 12,
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  exerciseHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  exerciseCheckbox: {
+    marginRight: 12,
+  },
+  exerciseName: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#0F172A',
+    flex: 1,
+  },
+  exerciseNameCompleted: {
+    textDecorationLine: 'line-through',
+    color: '#6B7280',
+  },
+  setsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  setsLabel: {
+    fontSize: 12,
+    color: '#6B7280',
+    marginRight: 8,
+    minWidth: 40,
+  },
+  setInput: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    borderRadius: 4,
+    padding: 8,
+    fontSize: 14,
+    marginRight: 8,
+    backgroundColor: '#F9FAFB',
+  },
   timer: {
     fontSize: 48,
     fontWeight: '800',
@@ -1212,7 +1363,7 @@ const styles = StyleSheet.create({
     color: '#64748B',
     marginBottom: 10,
   },
-  exerciseCard: {
+  workoutExerciseCard: {
     borderWidth: 1,
     borderColor: '#E5E7EB',
     borderRadius: 8,

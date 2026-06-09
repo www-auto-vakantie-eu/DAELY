@@ -11,6 +11,21 @@ export interface WorkoutExercise {
   notes?: string;
 }
 
+export interface WorkoutExerciseLog {
+  id: string;
+  exerciseId?: string;
+  exerciseName: string;
+  completed: boolean;
+  sets?: {
+    setNumber: number;
+    reps?: number;
+    weightKg?: number;
+    durationSeconds?: number;
+    completed?: boolean;
+  }[];
+  notes?: string;
+}
+
 export type SessionIntensity = 'laag' | 'gemiddeld' | 'hoog';
 export type SessionFeeling = 'laag' | 'neutraal' | 'goed' | 'sterk';
 export type MatchType = 'training' | 'wedstrijd';
@@ -106,6 +121,9 @@ export interface SessionMetrics {
 export interface ActivityMetrics {
   workout?: {
     exercises?: WorkoutExercise[];
+    workoutExercises?: WorkoutExerciseLog[];
+    completedExercisesCount?: number;
+    totalExercisesCount?: number;
     rounds?: number;
     totalVolumeKg?: number;
     notes?: string;

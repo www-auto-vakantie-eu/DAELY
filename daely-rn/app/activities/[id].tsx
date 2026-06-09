@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import PageHeader from '../components/PageHeader';
 import { getActivities, deleteActivity, Activity } from 'services/activity-storage';
 import { SPORT_DISCIPLINES } from '../constants/sport-disciplines';
@@ -86,6 +87,28 @@ export default function ActivityDetailScreen() {
       {activity.metrics?.workout ? (
         <View style={styles.metricCard}>
           <Text style={styles.metricTitle}>Workout</Text>
+          {activity.metrics.workout.completedExercisesCount !== undefined && activity.metrics.workout.totalExercisesCount !== undefined && (
+            <DetailRow label="Oefeningen" value={`${activity.metrics.workout.completedExercisesCount} van ${activity.metrics.workout.totalExercisesCount} voltooid`} />
+          )}
+          {(activity.metrics.workout.workoutExercises ?? []).map((log) => (
+            <View key={log.id} style={styles.subCard}>
+              <View style={styles.exerciseLogHeader}>
+                <MaterialCommunityIcons
+                  name={log.completed ? 'checkbox-marked' : 'checkbox-blank-outline'}
+                  size={16}
+                  color={log.completed ? '#10B981' : '#6B7280'}
+                />
+                <Text style={[styles.subCardTitle, log.completed && styles.exerciseLogCompleted]}>{log.exerciseName}</Text>
+              </View>
+              {log.sets && log.sets.length > 0 && log.sets[0] && (
+                <DetailRow
+                  label="Set 1"
+                  value={`${log.sets[0].reps || '-'} reps${log.sets[0].weightKg ? ` · ${log.sets[0].weightKg} kg` : ''}`}
+                />
+              )}
+              {log.notes ? <DetailRow label="Notitie" value={log.notes} /> : null}
+            </View>
+          ))}
           {(activity.metrics.workout.exercises ?? []).map((exercise) => (
             <View key={exercise.id} style={styles.subCard}>
               <Text style={styles.subCardTitle}>{exercise.name}</Text>
@@ -376,6 +399,15 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#0F172A',
     marginBottom: 4,
+  },
+  exerciseLogHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  exerciseLogCompleted: {
+    textDecorationLine: 'line-through',
+    color: '#6B7280',
   },
   detailRow: {
     flexDirection: 'row',
