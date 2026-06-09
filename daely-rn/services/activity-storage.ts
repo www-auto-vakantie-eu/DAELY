@@ -110,6 +110,18 @@ export interface GpsMetrics {
   notes?: string;
 }
 
+export interface PersonalRecord {
+  exerciseId?: string;
+  exerciseName: string;
+  type: 'weight' | 'reps' | 'duration';
+  previousValue?: number;
+  newValue: number;
+  reps?: number;
+  weightKg?: number;
+  durationSeconds?: number;
+  achievedAt: string;
+}
+
 export interface SessionMetrics {
   intensity?: SessionIntensity;
   focusAreas?: string[];
@@ -127,6 +139,7 @@ export interface ActivityMetrics {
     rounds?: number;
     totalVolumeKg?: number;
     notes?: string;
+    personalRecords?: PersonalRecord[];
   };
   session?: SessionMetrics;
   match?: MatchMetrics;

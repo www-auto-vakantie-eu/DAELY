@@ -21,7 +21,7 @@ import {
   type GpsPermissionStatus,
 } from 'services/activity-storage';
 import { completeProgramWorkout } from '@/services/user-programs-storage';
-import { getLastExercisePerformance } from '@/services/exercise-history';
+import { getLastExercisePerformance, detectPersonalRecords } from '@/services/exercise-history';
 import { getGpsTrackingService, type GpsTrackingState } from 'services/gps-tracking';
 import {
   saveWorkoutDraft,
@@ -273,6 +273,7 @@ export default function StartActivityScreen() {
   const [isExerciseFlowComplete, setIsExerciseFlowComplete] = React.useState(false);
   const [isSavingActivity, setIsSavingActivity] = React.useState(false);
   const [draftLoaded, setDraftLoaded] = React.useState(false);
+  const [personalRecords, setPersonalRecords] = React.useState<any[]>([]);
 
   // Reset guided flow state when workout changes
   React.useEffect(() => {
@@ -746,6 +747,17 @@ export default function StartActivityScreen() {
       return;
     }
 
+    // Detect personal records
+    let personalRecords = undefined;
+    if (workoutExerciseLogs) {
+      try {
+        personalRecords = await detectPersonalRecords(workoutExerciseLogs);
+        setPersonalRecords(personalRecords || []);
+      } catch (error) {
+        console.error('Failed to detect personal records:', error);
+      }
+    }
+
     const sessionFocusAreas = isSessionDiscipline ? buildSessionFocusAreas() : undefined;
     const matchPersonalStats = isMatchDiscipline ? buildMatchPersonalStats() : undefined;
     const skillTechniques = isSkillDiscipline ? buildSkillTechniques() : undefined;
@@ -794,6 +806,7 @@ export default function StartActivityScreen() {
                         totalExercisesCount: workoutExerciseLogs ? workoutExerciseLogs.length : undefined,
                         totalVolumeKg,
                         notes: workoutNotes.trim().length > 0 ? workoutNotes.trim() : undefined,
+                        personalRecords: personalRecords && personalRecords.length > 0 ? personalRecords : undefined,
                       }
                     : undefined,
                 session: isSessionDiscipline
@@ -1068,6 +1081,16 @@ export default function StartActivityScreen() {
               <Text style={styles.workoutCompleteProgram}>
                 Programma · Week {week} · Dag {day}
               </Text>
+            )}
+            {personalRecords && personalRecords.length > 0 && (
+              <View style={styles.prSection}>
+                <Text style={styles.prTitle}>Nieuwe PR&apos;s</Text>
+                {personalRecords.slice(0, 3).map((pr) => (
+                  <Text key={`${pr.exerciseName}-${pr.type}`} style={styles.prItem}>
+                    {pr.exerciseName} · {pr.weightKg ? `${pr.weightKg} kg` : ''} {pr.reps ? `× ${pr.reps}` : ''} {pr.durationSeconds ? `${pr.durationSeconds}s` : ''}
+                  </Text>
+                ))}
+              </View>
             )}
             <TouchableOpacity
               style={[styles.workoutCompleteSaveButton, isSavingActivity && styles.workoutCompleteSaveButtonDisabled]}
@@ -2257,6 +2280,24 @@ const styles = StyleSheet.create({
     color: '#3B82F6',
     marginTop: 8,
     fontWeight: '600',
+  },
+  prSection: {
+    marginTop: 16,
+    backgroundColor: '#FEF3C7',
+    borderRadius: 8,
+    padding: 12,
+    width: '100%',
+  },
+  prTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#92400E',
+    marginBottom: 8,
+  },
+  prItem: {
+    fontSize: 13,
+    color: '#92400E',
+    marginBottom: 4,
   },
   workoutCompleteSaveButton: {
     backgroundColor: '#10B981',

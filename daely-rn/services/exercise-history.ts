@@ -1,4 +1,4 @@
-import { getActivities, Activity } from './activity-storage';
+import { getActivities, Activity, PersonalRecord } from './activity-storage';
 
 export interface LastExercisePerformance {
   exerciseId?: string;
@@ -194,4 +194,95 @@ export async function getExerciseStats(
     lastSet,
     bestSet,
   };
+}
+
+export async function detectPersonalRecords(
+  workoutExerciseLogs: any[]
+): Promise<PersonalRecord[]> {
+  const records: PersonalRecord[] = [];
+  const activities = await getActivities();
+  const now = new Date().toISOString();
+
+  for (const log of workoutExerciseLogs) {
+    if (!log.exerciseName) continue;
+
+    // Get historical best set for this exercise
+    const stats = await getExerciseStats(log.exerciseId, log.exerciseName);
+    const historicalBestSet = stats.bestSet;
+
+    // Check all completed sets in this workout
+    if (!log.sets || log.sets.length === 0) continue;
+
+    for (const set of log.sets) {
+      if (!set.completed) continue;
+
+      const hasWeight = set.weightKg !== undefined && set.weightKg > 0;
+      const hasReps = set.reps !== undefined && set.reps > 0;
+      const hasDuration = set.durationSeconds !== undefined && set.durationSeconds > 0;
+
+      // Weight PR: higher weightKg than historical best
+      if (hasWeight && hasReps) {
+        const historicalWeight = historicalBestSet?.weightKg ?? 0;
+        if (set.weightKg > historicalWeight) {
+          records.push({
+            exerciseId: log.exerciseId,
+            exerciseName: log.exerciseName,
+            type: 'weight',
+            previousValue: historicalWeight > 0 ? historicalWeight : undefined,
+            newValue: set.weightKg,
+            reps: set.reps,
+            weightKg: set.weightKg,
+            achievedAt: now,
+          });
+        }
+        // Equal weight but more reps
+        else if (set.weightKg === historicalWeight && historicalBestSet?.reps !== undefined) {
+          if (set.reps > historicalBestSet.reps) {
+            records.push({
+              exerciseId: log.exerciseId,
+              exerciseName: log.exerciseName,
+              type: 'weight',
+              previousValue: historicalWeight,
+              newValue: set.weightKg,
+              reps: set.reps,
+              weightKg: set.weightKg,
+              achievedAt: now,
+            });
+          }
+        }
+      }
+      // Reps PR (bodyweight, no weight)
+      else if (hasReps && !hasWeight) {
+        const historicalReps = historicalBestSet?.reps ?? 0;
+        if (set.reps > historicalReps) {
+          records.push({
+            exerciseId: log.exerciseId,
+            exerciseName: log.exerciseName,
+            type: 'reps',
+            previousValue: historicalReps > 0 ? historicalReps : undefined,
+            newValue: set.reps,
+            reps: set.reps,
+            achievedAt: now,
+          });
+        }
+      }
+      // Duration PR
+      else if (hasDuration) {
+        const historicalDuration = historicalBestSet?.durationSeconds ?? 0;
+        if (set.durationSeconds > historicalDuration) {
+          records.push({
+            exerciseId: log.exerciseId,
+            exerciseName: log.exerciseName,
+            type: 'duration',
+            previousValue: historicalDuration > 0 ? historicalDuration : undefined,
+            newValue: set.durationSeconds,
+            durationSeconds: set.durationSeconds,
+            achievedAt: now,
+          });
+        }
+      }
+    }
+  }
+
+  return records;
 }

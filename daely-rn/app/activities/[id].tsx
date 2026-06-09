@@ -140,6 +140,31 @@ export default function ActivityDetailScreen() {
           {activity.metrics.workout.notes ? <DetailRow label="Workout notitie" value={activity.metrics.workout.notes} /> : null}
         </View>
       ) : null}
+      {activity.metrics?.workout?.personalRecords && activity.metrics.workout.personalRecords.length > 0 ? (
+        <View style={styles.metricCard}>
+          <Text style={styles.metricTitle}>Persoonlijke records</Text>
+          {activity.metrics.workout.personalRecords.map((record) => (
+            <View key={record.exerciseName + record.type} style={styles.subCard}>
+              <Text style={styles.subCardTitle}>{record.exerciseName}</Text>
+              <DetailRow label="Type" value={record.type === 'weight' ? 'Gewicht' : record.type === 'reps' ? 'Reps' : 'Tijd'} />
+              <DetailRow
+                label="Waarde"
+                value={
+                  record.type === 'weight' && record.weightKg !== undefined && record.reps !== undefined
+                    ? `${record.weightKg} kg × ${record.reps}`
+                    : record.type === 'weight' && record.weightKg !== undefined
+                    ? `${record.weightKg} kg`
+                    : record.type === 'reps'
+                    ? `${record.newValue} reps`
+                    : record.type === 'duration'
+                    ? formatDuration(record.newValue)
+                    : `${record.newValue}`
+                }
+              />
+            </View>
+          ))}
+        </View>
+      ) : null}
       {activity.metrics?.session ? (
         <View style={styles.metricCard}>
           <Text style={styles.metricTitle}>Session</Text>
