@@ -179,6 +179,13 @@ export default function StartActivityScreen() {
     return disciplineContent.exercises.slice(0, Math.min(exerciseCount, disciplineContent.exercises.length));
   }, [workout, disciplineId]);
 
+  // Get workout exercise planning
+  const workoutExercisePlanning = React.useMemo(() => {
+    if (!workout?.workoutExercises) return [];
+    const exerciseMap = new Map(workout.workoutExercises.map(we => [we.exerciseId, we]));
+    return workoutExercises.map(ex => exerciseMap.get(ex.id)).filter((we): we is NonNullable<typeof we> => we !== undefined);
+  }, [workout, workoutExercises]);
+
   // State for workout exercise logs
   const [exerciseLogs, setExerciseLogs] = React.useState<{
     id: string;
@@ -192,16 +199,25 @@ export default function StartActivityScreen() {
   // Initialize exercise logs when workout changes
   React.useEffect(() => {
     if (workoutExercises.length > 0) {
-      setExerciseLogs(workoutExercises.map(ex => ({
-        id: `log-${ex.id}`,
-        exerciseId: ex.id,
-        exerciseName: ex.name,
-        completed: false,
-        sets: [{ setNumber: 1, reps: undefined, weightKg: undefined, completed: false }],
-        notes: undefined,
-      })));
+      setExerciseLogs(workoutExercises.map((ex, index) => {
+        const planning = workoutExercisePlanning[index];
+        const plannedSets = planning?.plannedSets || 1;
+        return {
+          id: `log-${ex.id}`,
+          exerciseId: ex.id,
+          exerciseName: ex.name,
+          completed: false,
+          sets: Array.from({ length: plannedSets }, (_, i) => ({
+            setNumber: i + 1,
+            reps: undefined,
+            weightKg: undefined,
+            completed: false,
+          })),
+          notes: undefined,
+        };
+      }));
     }
-  }, [workoutExercises]);
+  }, [workoutExercises, workoutExercisePlanning]);
 
   const isWorkoutDiscipline = discipline?.trackingType === 'workout';
   const isSessionDiscipline = discipline?.trackingType === 'session';
@@ -636,24 +652,39 @@ export default function StartActivityScreen() {
         {exerciseLogs.length > 0 && (
           <View style={styles.exercisesSection}>
             <Text style={styles.exercisesTitle}>Oefeningen</Text>
-            {exerciseLogs.map((log, index) => (
-              <View key={log.id} style={styles.exerciseCard}>
-                <View style={styles.exerciseHeader}>
-                  <TouchableOpacity onPress={() => {
-                    const updated = [...exerciseLogs];
-                    updated[index].completed = !updated[index].completed;
-                    setExerciseLogs(updated);
-                  }} style={styles.exerciseCheckbox}>
-                    <MaterialCommunityIcons
-                      name={log.completed ? 'checkbox-marked' : 'checkbox-blank-outline'}
-                      size={24}
-                      color={log.completed ? '#10B981' : '#6B7280'}
-                    />
-                  </TouchableOpacity>
-                  <Text style={[styles.exerciseName, log.completed && styles.exerciseNameCompleted]}>
-                    {log.exerciseName}
-                  </Text>
-                </View>
+            {exerciseLogs.map((log, index) => {
+              const planning = workoutExercisePlanning[index];
+              return (
+                <View key={log.id} style={styles.exerciseCard}>
+                  <View style={styles.exerciseHeader}>
+                    <TouchableOpacity onPress={() => {
+                      const updated = [...exerciseLogs];
+                      updated[index].completed = !updated[index].completed;
+                      setExerciseLogs(updated);
+                    }} style={styles.exerciseCheckbox}>
+                      <MaterialCommunityIcons
+                        name={log.completed ? 'checkbox-marked' : 'checkbox-blank-outline'}
+                        size={24}
+                        color={log.completed ? '#10B981' : '#6B7280'}
+                      />
+                    </TouchableOpacity>
+                    <View style={styles.exerciseInfo}>
+                      <Text style={[styles.exerciseName, log.completed && styles.exerciseNameCompleted]}>
+                        {log.exerciseName}
+                      </Text>
+                      {planning && (
+                        <Text style={styles.exercisePlanning}>
+                          {planning.plannedSets} sets
+                          {planning.targetReps && ` · ${planning.targetReps} reps`}
+                          {planning.targetDurationSeconds && ` · ${planning.targetDurationSeconds} sec`}
+                          {planning.restSeconds && ` · ${planning.restSeconds} sec rust`}
+                        </Text>
+                      )}
+                      {planning?.notes && (
+                        <Text style={styles.exerciseNotes}>{planning.notes}</Text>
+                      )}
+                    </View>
+                  </View>
                 {log.sets && log.sets.length > 0 && (
                   <View style={styles.setsContainer}>
                     <Text style={styles.setsLabel}>Set 1</Text>
@@ -682,7 +713,8 @@ export default function StartActivityScreen() {
                   </View>
                 )}
               </View>
-            ))}
+              );
+            })}
           </View>
         )}
         <Text style={styles.timer}>{formatTime(seconds)}</Text>
@@ -1299,15 +1331,28 @@ const styles = StyleSheet.create({
   exerciseCheckbox: {
     marginRight: 12,
   },
+  exerciseInfo: {
+    flex: 1,
+  },
   exerciseName: {
     fontSize: 14,
     fontWeight: '600',
     color: '#0F172A',
-    flex: 1,
   },
   exerciseNameCompleted: {
     textDecorationLine: 'line-through',
     color: '#6B7280',
+  },
+  exercisePlanning: {
+    fontSize: 12,
+    color: '#6B7280',
+    marginTop: 2,
+  },
+  exerciseNotes: {
+    fontSize: 11,
+    color: '#9CA3AF',
+    marginTop: 2,
+    fontStyle: 'italic',
   },
   setsContainer: {
     flexDirection: 'row',
