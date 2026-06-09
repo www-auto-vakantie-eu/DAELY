@@ -21,6 +21,7 @@ import {
   type GpsPermissionStatus,
 } from 'services/activity-storage';
 import { completeProgramWorkout } from '@/services/user-programs-storage';
+import { getLastExercisePerformance } from '@/services/exercise-history';
 import { getGpsTrackingService, type GpsTrackingState } from 'services/gps-tracking';
 
 const SESSION_STATUS = {
@@ -194,29 +195,68 @@ export default function StartActivityScreen() {
     completed: boolean;
     sets?: { setNumber: number; reps?: number; weightKg?: number; completed?: boolean }[];
     notes?: string;
+    lastPerformance?: {
+      exerciseId?: string;
+      exerciseName: string;
+      lastPerformedAt: string;
+      lastSet?: {
+        reps?: number;
+        weightKg?: number;
+        durationSeconds?: number;
+      };
+      sourceActivityId: string;
+    } | null;
+    planning?: {
+      exerciseId: string;
+      plannedSets?: number;
+      targetReps?: string;
+      targetDurationSeconds?: number;
+      restSeconds?: number;
+      plannedWeightKg?: number;
+      targetWeightKg?: number;
+      intensityLabel?: string;
+      rpeTarget?: string;
+      notes?: string;
+    };
   }[]>([]);
 
   // Initialize exercise logs when workout changes
   React.useEffect(() => {
-    if (workoutExercises.length > 0) {
-      setExerciseLogs(workoutExercises.map((ex, index) => {
-        const planning = workoutExercisePlanning[index];
-        const plannedSets = planning?.plannedSets || 1;
-        return {
-          id: `log-${ex.id}`,
-          exerciseId: ex.id,
-          exerciseName: ex.name,
-          completed: false,
-          sets: Array.from({ length: plannedSets }, (_, i) => ({
-            setNumber: i + 1,
-            reps: undefined,
-            weightKg: undefined,
+    const initializeExerciseLogs = async () => {
+      if (workoutExercises.length > 0) {
+        const logs = await Promise.all(workoutExercises.map(async (ex, index) => {
+          const planning = workoutExercisePlanning[index];
+          const plannedSets = planning?.plannedSets || 1;
+          
+          // Get last performance for prefill
+          const lastPerformance = await getLastExercisePerformance(ex.id, ex.name);
+          const prefilledWeight = lastPerformance?.lastSet?.weightKg;
+          const prefilledReps = lastPerformance?.lastSet?.reps;
+
+          // Use prescribed weight if available, otherwise use last performance
+          const initialWeight = planning?.plannedWeightKg || planning?.targetWeightKg || prefilledWeight;
+          const initialReps = prefilledReps;
+
+          return {
+            id: `log-${ex.id}`,
+            exerciseId: ex.id,
+            exerciseName: ex.name,
             completed: false,
-          })),
-          notes: undefined,
-        };
-      }));
-    }
+            sets: Array.from({ length: plannedSets }, (_, i) => ({
+              setNumber: i + 1,
+              reps: i === 0 ? initialReps : undefined,
+              weightKg: i === 0 ? initialWeight : undefined,
+              completed: false,
+            })),
+            lastPerformance: lastPerformance,
+            planning: planning,
+          };
+        }));
+        setExerciseLogs(logs);
+      }
+    };
+    
+    initializeExerciseLogs();
   }, [workoutExercises, workoutExercisePlanning]);
 
   const isWorkoutDiscipline = discipline?.trackingType === 'workout';
@@ -677,7 +717,16 @@ export default function StartActivityScreen() {
                           {planning.plannedSets} sets
                           {planning.targetReps && ` · ${planning.targetReps} reps`}
                           {planning.targetDurationSeconds && ` · ${planning.targetDurationSeconds} sec`}
+                          {(planning.plannedWeightKg || planning.targetWeightKg) && ` · ${(planning.plannedWeightKg || planning.targetWeightKg)} kg`}
                           {planning.restSeconds && ` · ${planning.restSeconds} sec rust`}
+                        </Text>
+                      )}
+                      {log.lastPerformance && !planning?.plannedWeightKg && !planning?.targetWeightKg && (
+                        <Text style={styles.lastPerformanceText}>
+                          Vorige keer: {log.lastPerformance.lastSet?.weightKg ? `${log.lastPerformance.lastSet.weightKg} kg` : ''}
+                          {log.lastPerformance.lastSet?.weightKg && log.lastPerformance.lastSet?.reps ? ' × ' : ''}
+                          {log.lastPerformance.lastSet?.reps ? `${log.lastPerformance.lastSet.reps} reps` : ''}
+                          {log.lastPerformance.lastSet?.durationSeconds ? `${log.lastPerformance.lastSet.durationSeconds} sec` : ''}
                         </Text>
                       )}
                       {planning?.notes && (
@@ -1351,6 +1400,12 @@ const styles = StyleSheet.create({
   exerciseNotes: {
     fontSize: 11,
     color: '#9CA3AF',
+    marginTop: 2,
+    fontStyle: 'italic',
+  },
+  lastPerformanceText: {
+    fontSize: 11,
+    color: '#3B82F6',
     marginTop: 2,
     fontStyle: 'italic',
   },

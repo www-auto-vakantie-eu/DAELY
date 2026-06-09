@@ -17,6 +17,10 @@ export interface Workout {
     targetReps?: string;
     targetDurationSeconds?: number;
     restSeconds?: number;
+    plannedWeightKg?: number;
+    targetWeightKg?: number;
+    intensityLabel?: string;
+    rpeTarget?: string;
     notes?: string;
   }[];
 }
