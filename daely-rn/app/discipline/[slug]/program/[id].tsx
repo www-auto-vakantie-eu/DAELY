@@ -174,6 +174,29 @@ export default function DisciplineProgramDetailScreen() {
           )}
         </View>
 
+        {program.accessType === 'paid' && (program.creatorName || program.priceLabel) && (
+          <View style={[styles.creatorSection, { backgroundColor: theme.card, borderColor: theme.border }]}>
+            {program.creatorName && (
+              <View style={styles.creatorInfo}>
+                <MaterialCommunityIcons name="account-tie" size={18} color={theme.subtitleColor} />
+                <Text style={[styles.creatorText, { color: theme.titleColor }]}>
+                  {program.creatorName}
+                </Text>
+                {program.creatorRole && (
+                  <Text style={[styles.creatorRole, { color: theme.subtitleColor }]}>
+                    {' · ' + program.creatorRole}
+                  </Text>
+                )}
+              </View>
+            )}
+            {program.priceLabel && (
+              <Text style={[styles.priceText, { color: '#F59E0B' }]}>
+                {program.priceLabel}
+              </Text>
+            )}
+          </View>
+        )}
+
         {!isCheckingEnrollment && (
           <View style={styles.enrollmentSection}>
             {isEnrolled ? (
@@ -336,6 +359,31 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     gap: 8,
     marginBottom: 24,
+  },
+  creatorSection: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    marginBottom: 20,
+  },
+  creatorInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  creatorText: {
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  creatorRole: {
+    fontSize: 13,
+  },
+  priceText: {
+    fontSize: 16,
+    fontWeight: '700',
   },
   metaChip: {
     flexDirection: 'row',

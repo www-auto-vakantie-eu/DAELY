@@ -161,6 +161,12 @@ export default function MyProgramsScreen() {
                     </Text>
                   )}
 
+                  {enrollment.accessType === 'paid' && (
+                    <Text style={[styles.priceText, { color: '#F59E0B' }]}>
+                      {program?.priceLabel || 'Betaald programma'}
+                    </Text>
+                  )}
+
                   <View style={styles.progressRow}>
                     <View style={styles.progressItem}>
                       <Text style={styles.progressLabel}>Week</Text>
@@ -291,6 +297,10 @@ const styles = StyleSheet.create({
   creatorText: {
     fontSize: 13,
     fontWeight: '600',
+  },
+  priceText: {
+    fontSize: 13,
+    fontWeight: '700',
   },
   progressRow: {
     flexDirection: 'row',
