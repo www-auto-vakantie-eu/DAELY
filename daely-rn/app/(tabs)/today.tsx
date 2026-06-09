@@ -7,6 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import PageHeader from '../components/PageHeader';
 import { Activity, getActivities } from 'services/activity-storage';
 import { useAppContext } from '@/contexts/AppContext';
+import { getNextProgramWorkout, NextProgramWorkout } from '@/services/user-programs-storage';
 import { CONNECTED_DEVICES, WHOOP_TOKEN_STORAGE_KEY } from '../constants/connected-devices';
 import {
   HERO_BACKGROUND_STORAGE_KEY,
@@ -122,6 +123,7 @@ export default function TodayScreen() {
   const [isFitbitConnected, setIsFitbitConnected] = useState(false);
   const [shortcuts, setShortcuts] = useState<ShortcutId[]>(DEFAULT_SHORTCUTS);
   const [showShortcutPicker, setShowShortcutPicker] = useState(false);
+  const [nextWorkout, setNextWorkout] = useState<NextProgramWorkout | null>(null);
 
   const todayQuote = useMemo(() => getTodayQuote(), []);
 
@@ -137,6 +139,10 @@ export default function TodayScreen() {
       const sorted = [...items].sort((a, b) => new Date(b.endedAt).getTime() - new Date(a.endedAt).getTime());
       setActivities(sorted);
     });
+  }, []);
+
+  useEffect(() => {
+    getNextProgramWorkout().then(setNextWorkout);
   }, []);
 
   useEffect(() => {
@@ -289,9 +295,38 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
             <MaterialCommunityIcons name="dumbbell" size={20} color="#2563EB" />
             <View style={styles.dailyStatusContent}>
               <Text style={[styles.dailyStatusLabel, { color: theme.titleColor }]}>Training</Text>
-              <Text style={[styles.dailyStatusValue, { color: theme.subtitleColor }]}>Nog niet gepland</Text>
+              {nextWorkout ? (
+                <>
+                  <Text style={[styles.dailyStatusValue, { color: theme.subtitleColor }]}>{nextWorkout.workout?.name || 'Volgende training'}</Text>
+                  <Text style={[styles.dailyStatusSub, { color: theme.subtitleColor }]}>
+                    {nextWorkout.program.name} · Week {nextWorkout.week} · Dag {nextWorkout.day}
+                  </Text>
+                  <Text style={[styles.dailyStatusProgress, { color: theme.subtitleColor }]}>
+                    {nextWorkout.completedCount} van {nextWorkout.totalPlannedWorkouts} trainingen voltooid
+                  </Text>
+                </>
+              ) : (
+                <Text style={[styles.dailyStatusValue, { color: theme.subtitleColor }]}>Nog niet gepland</Text>
+              )}
             </View>
           </View>
+          {nextWorkout && (
+            <Pressable
+              style={[styles.startTrainingButton, { backgroundColor: '#2563EB' }]}
+              onPress={() => router.push({
+                pathname: '/tracker/[disciplineId]/start',
+                params: {
+                  disciplineId: nextWorkout.disciplineSlug,
+                  workoutId: nextWorkout.workout?.id,
+                  programId: nextWorkout.program.id,
+                  week: String(nextWorkout.week),
+                  day: String(nextWorkout.day),
+                },
+              })}
+            >
+              <Text style={styles.startTrainingButtonText}>Start training</Text>
+            </Pressable>
+          )}
           <View style={[styles.dailyStatusItem, { backgroundColor: theme.background, borderColor: theme.border }]}>
             <MaterialCommunityIcons name="silverware-fork-knife" size={20} color="#059669" />
             <View style={styles.dailyStatusContent}>
@@ -933,5 +968,25 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     flex: 1,
     lineHeight: 20,
+  },
+  dailyStatusSub: {
+    fontSize: 12,
+    marginTop: 2,
+  },
+  dailyStatusProgress: {
+    fontSize: 11,
+    marginTop: 2,
+    color: '#10B981',
+  },
+  startTrainingButton: {
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 8,
+    alignSelf: 'center',
+  },
+  startTrainingButtonText: {
+    color: '#FFFFFF',
+    fontWeight: '700',
+    fontSize: 14,
   },
 });

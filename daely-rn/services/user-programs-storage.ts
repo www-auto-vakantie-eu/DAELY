@@ -1,7 +1,19 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Program } from '@/constants/discipline-content';
+import { Program, DISCIPLINE_CONTENT } from '@/constants/discipline-content';
 
 const USER_ENROLLMENTS_STORAGE_KEY = 'daely.user.enrollments.v1';
+
+export interface NextProgramWorkout {
+  enrollment: UserProgramEnrollment;
+  program: Program;
+  disciplineSlug: string;
+  week: number;
+  day: number;
+  workout?: any;
+  completedCount: number;
+  totalPlannedWorkouts: number;
+  progressPercentage: number;
+}
 
 export interface UserProgramEnrollment {
   id: string;
@@ -195,4 +207,53 @@ export async function completeProgramWorkout(params: {
     USER_ENROLLMENTS_STORAGE_KEY,
     JSON.stringify(currentEnrollments)
   );
+}
+
+export async function getNextProgramWorkout(): Promise<NextProgramWorkout | null> {
+  const enrollments = await getUserPrograms();
+  const activeEnrollments = enrollments.filter((e) => e.status === 'active');
+
+  if (activeEnrollments.length === 0) {
+    return null;
+  }
+
+  // Use the most recently updated active enrollment
+  const enrollment = activeEnrollments.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())[0];
+
+  // Get program from DISCIPLINE_CONTENT
+  const disciplineContent = DISCIPLINE_CONTENT[enrollment.disciplineSlug as keyof typeof DISCIPLINE_CONTENT];
+  if (!disciplineContent || !disciplineContent.programs) {
+    return null;
+  }
+
+  const program = disciplineContent.programs.find((p) => p.id === enrollment.programId);
+  if (!program) {
+    return null;
+  }
+
+  // Calculate which workout to show based on currentWeek/currentDay
+  const week = enrollment.currentWeek;
+  const day = enrollment.currentDay;
+  const daysPerWeek = program.daysPerWeek || 3;
+  const workoutIndex = (week - 1) * daysPerWeek + (day - 1);
+
+  const workout = program.workoutIds && workoutIndex < program.workoutIds.length
+    ? disciplineContent.workouts.find((w) => w.id === program.workoutIds![workoutIndex])
+    : undefined;
+
+  const completedCount = enrollment.completedCount || 0;
+  const totalPlannedWorkouts = enrollment.totalPlannedWorkouts || daysPerWeek * program.weeks;
+  const progressPercentage = enrollment.progressPercentage || Math.round((completedCount / totalPlannedWorkouts) * 100);
+
+  return {
+    enrollment,
+    program,
+    disciplineSlug: enrollment.disciplineSlug,
+    week,
+    day,
+    workout,
+    completedCount,
+    totalPlannedWorkouts,
+    progressPercentage,
+  };
 }
