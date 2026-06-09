@@ -80,6 +80,21 @@ export default function ActivityDetailScreen() {
             {activity.programId && activity.programWeek && activity.programDay && (
               <Text style={styles.programContext}>Programma · Week {activity.programWeek} · Dag {activity.programDay}</Text>
             )}
+            {activity.workoutId && activity.disciplineId && (
+              <TouchableOpacity
+                style={styles.replayButton}
+                onPress={() => router.push({
+                  pathname: '/tracker/[disciplineId]/start',
+                  params: {
+                    disciplineId: activity.disciplineId,
+                    workoutId: activity.workoutId,
+                  },
+                })}
+              >
+                <MaterialCommunityIcons name="restart" size={16} color="#2563EB" />
+                <Text style={styles.replayButtonText}>Herhaal workout</Text>
+              </TouchableOpacity>
+            )}
           </View>
         )}
       </View>
@@ -491,5 +506,21 @@ const styles = StyleSheet.create({
     color: '#B91C1C',
     fontWeight: 'bold',
     fontSize: 16,
+  },
+  replayButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    backgroundColor: '#EFF6FF',
+    borderRadius: 8,
+    alignSelf: 'flex-start',
+  },
+  replayButtonText: {
+    color: '#2563EB',
+    fontSize: 14,
+    fontWeight: '600',
+    marginLeft: 6,
   },
 });
