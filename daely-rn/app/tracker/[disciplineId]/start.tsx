@@ -1,6 +1,6 @@
 
 import React, { useState, useRef } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert, TextInput, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Pressable, Alert, TextInput, ScrollView } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import PageHeader from '../../components/PageHeader';
@@ -751,6 +751,10 @@ export default function StartActivityScreen() {
   const [gpsRoutePoints] = useState<GpsRoutePoint[]>([]);
   const [gpsPermissionStatus, setGpsPermissionStatus] = useState<GpsPermissionStatus | undefined>(undefined);
   const [exerciseDrafts, setExerciseDrafts] = useState<ExerciseDraft[]>([createExerciseDraft()]);
+  const [feedbackDifficulty, setFeedbackDifficulty] = useState<'too_easy' | 'good' | 'too_hard' | null>(null);
+  const [feedbackRpe, setFeedbackRpe] = useState<number | null>(null);
+  const [feedbackEnergy, setFeedbackEnergy] = useState<'low' | 'normal' | 'high' | null>(null);
+  const [feedbackNote, setFeedbackNote] = useState('');
   const timerRef = useRef<number | null>(null);
 
   // Timer logic
@@ -1015,6 +1019,13 @@ export default function StartActivityScreen() {
                         totalVolumeKg,
                         notes: workoutNotes.trim().length > 0 ? workoutNotes.trim() : undefined,
                         personalRecords: personalRecords && personalRecords.length > 0 ? personalRecords : undefined,
+                        workoutFeedback: feedbackDifficulty ? {
+                          difficulty: feedbackDifficulty,
+                          rpe: feedbackRpe || undefined,
+                          energyAfter: feedbackEnergy || undefined,
+                          note: feedbackNote.trim().length > 0 ? feedbackNote.trim() : undefined,
+                          createdAt: new Date().toISOString(),
+                        } : undefined,
                       }
                     : undefined,
                 session: isSessionDiscipline
@@ -1445,6 +1456,83 @@ export default function StartActivityScreen() {
                 ))}
               </View>
             )}
+
+            {/* Feedback Section */}
+            <View style={styles.feedbackSection}>
+              <Text style={styles.feedbackTitle}>Hoe voelde het?</Text>
+
+              {/* Difficulty */}
+              <Text style={styles.feedbackLabel}>Moeilijkheid</Text>
+              <View style={styles.feedbackButtonRow}>
+                <Pressable
+                  style={[styles.feedbackButton, feedbackDifficulty === 'too_easy' && styles.feedbackButtonSelected]}
+                  onPress={() => setFeedbackDifficulty('too_easy')}
+                >
+                  <Text style={[styles.feedbackButtonText, feedbackDifficulty === 'too_easy' && styles.feedbackButtonTextSelected]}>Te licht</Text>
+                </Pressable>
+                <Pressable
+                  style={[styles.feedbackButton, feedbackDifficulty === 'good' && styles.feedbackButtonSelected]}
+                  onPress={() => setFeedbackDifficulty('good')}
+                >
+                  <Text style={[styles.feedbackButtonText, feedbackDifficulty === 'good' && styles.feedbackButtonTextSelected]}>Goed</Text>
+                </Pressable>
+                <Pressable
+                  style={[styles.feedbackButton, feedbackDifficulty === 'too_hard' && styles.feedbackButtonSelected]}
+                  onPress={() => setFeedbackDifficulty('too_hard')}
+                >
+                  <Text style={[styles.feedbackButtonText, feedbackDifficulty === 'too_hard' && styles.feedbackButtonTextSelected]}>Te zwaar</Text>
+                </Pressable>
+              </View>
+
+              {/* RPE */}
+              <Text style={styles.feedbackLabel}>RPE (optioneel)</Text>
+              <View style={styles.feedbackButtonRow}>
+                {Array.from({ length: 10 }, (_, i) => i + 1).map((rpe) => (
+                  <Pressable
+                    key={rpe}
+                    style={[styles.rpeButton, feedbackRpe === rpe && styles.rpeButtonSelected]}
+                    onPress={() => setFeedbackRpe(rpe)}
+                  >
+                    <Text style={[styles.rpeButtonText, feedbackRpe === rpe && styles.rpeButtonTextSelected]}>{rpe}</Text>
+                  </Pressable>
+                ))}
+              </View>
+
+              {/* Energy */}
+              <Text style={styles.feedbackLabel}>Energie na afloop</Text>
+              <View style={styles.feedbackButtonRow}>
+                <Pressable
+                  style={[styles.feedbackButton, feedbackEnergy === 'low' && styles.feedbackButtonSelected]}
+                  onPress={() => setFeedbackEnergy('low')}
+                >
+                  <Text style={[styles.feedbackButtonText, feedbackEnergy === 'low' && styles.feedbackButtonTextSelected]}>Laag</Text>
+                </Pressable>
+                <Pressable
+                  style={[styles.feedbackButton, feedbackEnergy === 'normal' && styles.feedbackButtonSelected]}
+                  onPress={() => setFeedbackEnergy('normal')}
+                >
+                  <Text style={[styles.feedbackButtonText, feedbackEnergy === 'normal' && styles.feedbackButtonTextSelected]}>Normaal</Text>
+                </Pressable>
+                <Pressable
+                  style={[styles.feedbackButton, feedbackEnergy === 'high' && styles.feedbackButtonSelected]}
+                  onPress={() => setFeedbackEnergy('high')}
+                >
+                  <Text style={[styles.feedbackButtonText, feedbackEnergy === 'high' && styles.feedbackButtonTextSelected]}>Hoog</Text>
+                </Pressable>
+              </View>
+
+              {/* Note */}
+              <Text style={styles.feedbackLabel}>Notitie (optioneel)</Text>
+              <TextInput
+                style={styles.feedbackNoteInput}
+                placeholder="Korte notitie..."
+                value={feedbackNote}
+                onChangeText={setFeedbackNote}
+                multiline
+                numberOfLines={3}
+              />
+            </View>
+
             <TouchableOpacity
               style={[styles.workoutCompleteSaveButton, isSavingActivity && styles.workoutCompleteSaveButtonDisabled]}
               onPress={handleSave}
@@ -2788,5 +2876,81 @@ const styles = StyleSheet.create({
     color: '#6B7280',
     fontSize: 14,
     fontWeight: '600',
+  },
+  feedbackSection: {
+    marginTop: 16,
+    width: '100%',
+  },
+  feedbackTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#0F172A',
+    marginBottom: 12,
+  },
+  feedbackLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#374151',
+    marginTop: 12,
+    marginBottom: 8,
+  },
+  feedbackButtonRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  feedbackButton: {
+    backgroundColor: '#F3F4F6',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#D1D5DB',
+  },
+  feedbackButtonSelected: {
+    backgroundColor: '#3B82F6',
+    borderColor: '#3B82F6',
+  },
+  feedbackButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#374151',
+  },
+  feedbackButtonTextSelected: {
+    color: '#FFFFFF',
+  },
+  rpeButton: {
+    width: 36,
+    height: 36,
+    backgroundColor: '#F3F4F6',
+    borderRadius: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#D1D5DB',
+  },
+  rpeButtonSelected: {
+    backgroundColor: '#3B82F6',
+    borderColor: '#3B82F6',
+  },
+  rpeButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#374151',
+  },
+  rpeButtonTextSelected: {
+    color: '#FFFFFF',
+  },
+  feedbackNoteInput: {
+    backgroundColor: '#F9FAFB',
+    borderRadius: 8,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: '#D1D5DB',
+    fontSize: 14,
+    color: '#0F172A',
+    marginTop: 4,
+    minHeight: 80,
+    textAlignVertical: 'top',
   },
 });

@@ -4,6 +4,8 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import PageHeader from '../components/PageHeader';
 import { getActivities, deleteActivity, Activity } from 'services/activity-storage';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- Type import for type checking
+import type { WorkoutFeedback } from 'services/activity-storage';
 import { SPORT_DISCIPLINES } from '../constants/sport-disciplines';
 /* eslint-disable import/no-unresolved -- Platform split (ActivityMap.tsx/native.tsx/web.tsx) */
 // @ts-ignore - Platform split (ActivityMap.tsx/native.tsx/web.tsx)
@@ -138,6 +140,41 @@ export default function ActivityDetailScreen() {
             <DetailRow label="Totaal volume" value={`${Math.round(activity.metrics.workout.totalVolumeKg)} kg`} />
           ) : null}
           {activity.metrics.workout.notes ? <DetailRow label="Workout notitie" value={activity.metrics.workout.notes} /> : null}
+        </View>
+      ) : null}
+      {activity.metrics?.workout?.workoutFeedback ? (
+        <View style={styles.metricCard}>
+          <Text style={styles.metricTitle}>Workout feedback</Text>
+          {activity.metrics.workout.workoutFeedback.difficulty ? (
+            <DetailRow
+              label="Gevoel"
+              value={
+                activity.metrics.workout.workoutFeedback.difficulty === 'too_easy'
+                  ? 'Te licht'
+                  : activity.metrics.workout.workoutFeedback.difficulty === 'good'
+                  ? 'Goed'
+                  : 'Te zwaar'
+              }
+            />
+          ) : null}
+          {activity.metrics.workout.workoutFeedback.rpe !== undefined ? (
+            <DetailRow label="RPE" value={`${activity.metrics.workout.workoutFeedback.rpe}`} />
+          ) : null}
+          {activity.metrics.workout.workoutFeedback.energyAfter ? (
+            <DetailRow
+              label="Energie na afloop"
+              value={
+                activity.metrics.workout.workoutFeedback.energyAfter === 'low'
+                  ? 'Laag'
+                  : activity.metrics.workout.workoutFeedback.energyAfter === 'normal'
+                  ? 'Normaal'
+                  : 'Hoog'
+              }
+            />
+          ) : null}
+          {activity.metrics.workout.workoutFeedback.note ? (
+            <DetailRow label="Notitie" value={activity.metrics.workout.workoutFeedback.note} />
+          ) : null}
         </View>
       ) : null}
       {activity.metrics?.workout?.personalRecords && activity.metrics.workout.personalRecords.length > 0 ? (

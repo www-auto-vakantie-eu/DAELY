@@ -140,6 +140,7 @@ export interface ActivityMetrics {
     totalVolumeKg?: number;
     notes?: string;
     personalRecords?: PersonalRecord[];
+    workoutFeedback?: WorkoutFeedback;
   };
   session?: SessionMetrics;
   match?: MatchMetrics;
@@ -147,6 +148,14 @@ export interface ActivityMetrics {
   skill?: SkillMetrics;
   laps?: LapsMetrics;
   gps?: GpsMetrics;
+}
+
+export interface WorkoutFeedback {
+  difficulty?: 'too_easy' | 'good' | 'too_hard';
+  rpe?: number;
+  energyAfter?: 'low' | 'normal' | 'high';
+  note?: string;
+  createdAt: string;
 }
 
 export interface Activity {
