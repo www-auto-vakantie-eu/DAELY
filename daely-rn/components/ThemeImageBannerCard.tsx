@@ -10,20 +10,20 @@ interface ThemeImageBannerCardProps {
 
 // Static asset mappings for themes that have image banners
 const THEME_BANNER_IMAGES: Record<string, any> = {
-  'force': require('@/assets/Thema\'s/force.png'),
-  'pastelCalm': require('@/assets/Thema\'s/pastel_calm.png'),
-  'retroSport': require('@/assets/Thema\'s/retro_sport.png'),
-  'saharaDune': require('@/assets/Thema\'s/sahara_dune.png'),
-  'zenInk': require('@/assets/Thema\'s/zen_ink.png'),
-  'aurora': require('@/assets/Thema\'s/aurora.png'),
-  'ruby': require('@/assets/Thema\'s/ruby.png'),
-  'coralBloom': require('@/assets/Thema\'s/coral_bloom.png'),
-  'marble': require('@/assets/Thema\'s/marble.png'),
-  'sapphire': require('@/assets/Thema\'s/sapphire.png'),
-  'purpleStorm': require('@/assets/Thema\'s/purple_storm.png'),
-  'volcanicAsh': require('@/assets/Thema\'s/volcanic_ash.png'),
-  'venom': require('@/assets/Thema\'s/venom.png'),
-  'wave': require('@/assets/Thema\'s/wave.png'),
+  'force': require('@/assets/themes/force.png'),
+  'pastelCalm': require('@/assets/themes/pastel_calm.png'),
+  'retroSport': require('@/assets/themes/retro_sport.png'),
+  'saharaDune': require('@/assets/themes/sahara_dune.png'),
+  'zenInk': require('@/assets/themes/zen_ink.png'),
+  'aurora': require('@/assets/themes/aurora.png'),
+  'ruby': require('@/assets/themes/ruby.png'),
+  'coralBloom': require('@/assets/themes/coral_bloom.png'),
+  'marble': require('@/assets/themes/marble.png'),
+  'sapphire': require('@/assets/themes/sapphire.png'),
+  'purpleStorm': require('@/assets/themes/purple_storm.png'),
+  'volcanicAsh': require('@/assets/themes/volcanic_ash.png'),
+  'venom': require('@/assets/themes/venom.png'),
+  'wave': require('@/assets/themes/wave.png'),
 };
 
 export function ThemeImageBannerCard({ theme, isActive, onPress }: ThemeImageBannerCardProps) {
