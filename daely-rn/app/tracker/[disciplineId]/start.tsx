@@ -4,6 +4,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Alert, TextInput, ScrollView 
 import { useLocalSearchParams } from 'expo-router';
 import PageHeader from '../../components/PageHeader';
 import { SPORT_DISCIPLINES } from '../../constants/sport-disciplines';
+import { DISCIPLINE_CONTENT } from '@/constants/discipline-content';
 import {
   saveActivity,
   type WorkoutExercise,
@@ -128,7 +129,7 @@ function calculateRouteDistanceMeters(points: GpsRoutePoint[]): number | undefin
 }
 
 export default function StartActivityScreen() {
-  const { disciplineId } = useLocalSearchParams<{ 
+  const { disciplineId, workoutId, programId, week, day } = useLocalSearchParams<{
     disciplineId: string;
     programId?: string;
     week?: string;
@@ -136,6 +137,17 @@ export default function StartActivityScreen() {
     workoutId?: string;
   }>();
   const discipline = SPORT_DISCIPLINES.find((d) => d.id === disciplineId);
+
+  // Get workout context if workoutId is provided
+  const workout = React.useMemo(() => {
+    if (!workoutId || !disciplineId) return null;
+    const disciplineContent = DISCIPLINE_CONTENT[disciplineId as keyof typeof DISCIPLINE_CONTENT];
+    if (disciplineContent?.workouts) {
+      return disciplineContent.workouts.find((w: any) => w.id === workoutId);
+    }
+    return null;
+  }, [workoutId, disciplineId]);
+
   const isWorkoutDiscipline = discipline?.trackingType === 'workout';
   const isSessionDiscipline = discipline?.trackingType === 'session';
   const isMatchDiscipline = discipline?.trackingType === 'match';
@@ -420,6 +432,11 @@ export default function StartActivityScreen() {
         endedAt: now.toISOString(),
         durationSeconds: seconds,
         status: 'completed',
+        workoutId: workout?.id,
+        workoutName: workout?.name,
+        programId: programId,
+        programWeek: week ? parseInt(week, 10) : undefined,
+        programDay: day ? parseInt(day, 10) : undefined,
         metrics:
           isWorkoutDiscipline || isSessionDiscipline || isMatchDiscipline || isScoreDiscipline || isSkillDiscipline || isLapsDiscipline || isGpsDiscipline
             ? {
@@ -527,6 +544,17 @@ export default function StartActivityScreen() {
           <Text style={styles.statusPill}>Status: {SESSION_STATUS[status]}</Text>
         </View>
         <Text style={styles.statusSubtitle}>{getStatusSubtitle(status)}</Text>
+
+        {workout && (
+          <View style={styles.workoutContextCard}>
+            <Text style={styles.workoutContextTitle}>{workout.name}</Text>
+            <Text style={styles.workoutContextMeta}>{workout.muscle} · {workout.duration} · {workout.level}</Text>
+            <Text style={styles.workoutContextMeta}>{typeof workout.exercises === 'number' ? `${workout.exercises} oefeningen` : 'Oefeningenlijst beschikbaar'}</Text>
+            {programId && week && day && (
+              <Text style={styles.programContext}>Programma · Week {week} · Dag {day}</Text>
+            )}
+          </View>
+        )}
         <Text style={styles.timer}>{formatTime(seconds)}</Text>
         {isGpsDiscipline && gpsState.isActive && (
           <View style={styles.gpsMetricsRow}>
@@ -1090,6 +1118,31 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#475569',
     marginBottom: 10,
+  },
+  workoutContextCard: {
+    backgroundColor: '#F0FDF4',
+    borderRadius: 8,
+    padding: 12,
+    marginTop: 12,
+    borderWidth: 1,
+    borderColor: '#86EFAC',
+  },
+  workoutContextTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#166534',
+    marginBottom: 4,
+  },
+  workoutContextMeta: {
+    fontSize: 13,
+    color: '#15803D',
+    marginBottom: 2,
+  },
+  programContext: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#059669',
+    marginTop: 6,
   },
   timer: {
     fontSize: 48,

@@ -73,6 +73,14 @@ export default function ActivityDetailScreen() {
         </View>
         <Text style={styles.heroDuration}>{formatDuration(activity.durationSeconds)}</Text>
         <Text style={styles.heroMeta}>{formatDate(activity.endedAt)}</Text>
+        {activity.workoutName && (
+          <View style={styles.workoutContext}>
+            <Text style={styles.workoutContextTitle}>{activity.workoutName}</Text>
+            {activity.programId && activity.programWeek && activity.programDay && (
+              <Text style={styles.programContext}>Programma · Week {activity.programWeek} · Dag {activity.programDay}</Text>
+            )}
+          </View>
+        )}
       </View>
 
       {activity.metrics?.workout ? (
@@ -317,6 +325,23 @@ const styles = StyleSheet.create({
     marginTop: 4,
     color: '#94A3B8',
     fontSize: 14,
+  },
+  workoutContext: {
+    marginTop: 12,
+    backgroundColor: '#1E293B',
+    borderRadius: 8,
+    padding: 10,
+  },
+  workoutContextTitle: {
+    color: '#FFFFFF',
+    fontSize: 15,
+    fontWeight: '700',
+    marginBottom: 4,
+  },
+  programContext: {
+    color: '#BFDBFE',
+    fontSize: 13,
+    fontWeight: '600',
   },
   fallback: {
     color: '#EF4444',

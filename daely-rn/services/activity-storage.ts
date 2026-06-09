@@ -129,6 +129,11 @@ export interface Activity {
   status: 'completed';
   notes?: string;
   metrics?: ActivityMetrics;
+  workoutId?: string;
+  workoutName?: string;
+  programId?: string;
+  programWeek?: number;
+  programDay?: number;
   createdAt: string;
   updatedAt?: string;
 }
