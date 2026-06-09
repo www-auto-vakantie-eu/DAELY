@@ -227,7 +227,7 @@ export default function StartActivityScreen() {
         const logs = await Promise.all(workoutExercises.map(async (ex, index) => {
           const planning = workoutExercisePlanning[index];
           const plannedSets = planning?.plannedSets || 1;
-          
+
           // Get last performance for prefill
           const lastPerformance = await getLastExercisePerformance(ex.id, ex.name);
           const prefilledWeight = lastPerformance?.lastSet?.weightKg;
@@ -255,9 +255,119 @@ export default function StartActivityScreen() {
         setExerciseLogs(logs);
       }
     };
-    
+
     initializeExerciseLogs();
   }, [workoutExercises, workoutExercisePlanning]);
+
+  // Guided workout flow state
+  const [currentExerciseIndex, setCurrentExerciseIndex] = React.useState(0);
+  const [currentSetIndex, setCurrentSetIndex] = React.useState(0);
+  const [isResting, setIsResting] = React.useState(false);
+  const [restSecondsRemaining, setRestSecondsRemaining] = React.useState(0);
+  const [isExerciseFlowComplete, setIsExerciseFlowComplete] = React.useState(false);
+
+  // Reset guided flow state when workout changes
+  React.useEffect(() => {
+    if (workoutExercises.length > 0) {
+      setCurrentExerciseIndex(0);
+      setCurrentSetIndex(0);
+      setIsResting(false);
+      setRestSecondsRemaining(0);
+      setIsExerciseFlowComplete(false);
+    }
+  }, [workoutExercises]);
+
+  // Rest timer effect
+  React.useEffect(() => {
+    let interval: number | null = null;
+    if (isResting && restSecondsRemaining > 0) {
+      interval = setInterval(() => {
+        setRestSecondsRemaining((prev) => {
+          if (prev <= 1) {
+            setIsResting(false);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000) as unknown as number;
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isResting, restSecondsRemaining]);
+
+  // Handler: Complete current set
+  const handleSetComplete = () => {
+    const updated = [...exerciseLogs];
+    const currentLog = updated[currentExerciseIndex];
+    if (!currentLog.sets) return;
+
+    // Mark current set as completed
+    currentLog.sets[currentSetIndex].completed = true;
+
+    const totalSets = currentLog.sets.length;
+    const isLastSet = currentSetIndex === totalSets - 1;
+
+    if (isLastSet) {
+      // Mark exercise as completed
+      currentLog.completed = true;
+      const isLastExercise = currentExerciseIndex === exerciseLogs.length - 1;
+
+      if (isLastExercise) {
+        setIsExerciseFlowComplete(true);
+        setExerciseLogs(updated);
+        return;
+      }
+
+      // Move to next exercise
+      setCurrentExerciseIndex((prev) => prev + 1);
+      setCurrentSetIndex(0);
+      setExerciseLogs(updated);
+    } else {
+      // Move to next set
+      const planning = currentLog.planning;
+      const restSeconds = planning?.restSeconds;
+      if (restSeconds && restSeconds > 0) {
+        setIsResting(true);
+        setRestSecondsRemaining(restSeconds);
+      }
+      setCurrentSetIndex((prev) => prev + 1);
+      setExerciseLogs(updated);
+    }
+  };
+
+  // Handler: Skip current exercise
+  const handleSkipExercise = () => {
+    const updated = [...exerciseLogs];
+    updated[currentExerciseIndex].completed = true;
+    setExerciseLogs(updated);
+
+    const isLastExercise = currentExerciseIndex === exerciseLogs.length - 1;
+    if (isLastExercise) {
+      setIsExerciseFlowComplete(true);
+    } else {
+      setCurrentExerciseIndex((prev) => prev + 1);
+      setCurrentSetIndex(0);
+      setIsResting(false);
+      setRestSecondsRemaining(0);
+    }
+  };
+
+  // Handler: Go to previous exercise
+  const handlePreviousExercise = () => {
+    if (currentExerciseIndex > 0) {
+      setCurrentExerciseIndex((prev) => prev - 1);
+      setCurrentSetIndex(0);
+      setIsResting(false);
+      setRestSecondsRemaining(0);
+    }
+  };
+
+  // Handler: Skip rest
+  const handleSkipRest = () => {
+    setIsResting(false);
+    setRestSecondsRemaining(0);
+  };
 
   const isWorkoutDiscipline = discipline?.trackingType === 'workout';
   const isSessionDiscipline = discipline?.trackingType === 'session';
@@ -689,7 +799,130 @@ export default function StartActivityScreen() {
           </View>
         )}
 
-        {exerciseLogs.length > 0 && (
+        {workoutId && workoutExercises.length > 0 && exerciseLogs.length > 0 && !isGpsDiscipline && !isExerciseFlowComplete && (
+          <View style={styles.exercisesSection}>
+            <Text style={styles.exercisesTitle}>Oefeningen</Text>
+            {/* Guided Flow - Current Exercise */}
+            <View style={styles.guidedFlowCard}>
+              <View style={styles.guidedFlowHeader}>
+                <Text style={styles.guidedFlowProgress}>Oefening {currentExerciseIndex + 1} van {exerciseLogs.length}</Text>
+                <Text style={styles.guidedFlowSetProgress}>Set {currentSetIndex + 1} van {exerciseLogs[currentExerciseIndex].sets?.length || 1}</Text>
+              </View>
+
+              <Text style={styles.guidedFlowExerciseName}>{exerciseLogs[currentExerciseIndex].exerciseName}</Text>
+
+              {exerciseLogs[currentExerciseIndex].planning && (
+                <View style={styles.guidedFlowPlanning}>
+                  <Text style={styles.guidedFlowPlanningText}>
+                    {exerciseLogs[currentExerciseIndex].planning.plannedSets} sets gepland
+                  </Text>
+                  {exerciseLogs[currentExerciseIndex].planning.targetReps && (
+                    <Text style={styles.guidedFlowPlanningText}>
+                      · Doel: {exerciseLogs[currentExerciseIndex].planning.targetReps} reps
+                    </Text>
+                  )}
+                  {exerciseLogs[currentExerciseIndex].planning.restSeconds && (
+                    <Text style={styles.guidedFlowPlanningText}>
+                      · Rust: {exerciseLogs[currentExerciseIndex].planning.restSeconds} sec
+                    </Text>
+                  )}
+                  {exerciseLogs[currentExerciseIndex].planning.notes && (
+                    <Text style={styles.guidedFlowNotes}>{exerciseLogs[currentExerciseIndex].planning.notes}</Text>
+                  )}
+                </View>
+              )}
+
+              {exerciseLogs[currentExerciseIndex].lastPerformance && (
+                <Text style={styles.guidedFlowLastPerformance}>
+                  Laatste keer: {exerciseLogs[currentExerciseIndex].lastPerformance.lastSet?.weightKg ? `${exerciseLogs[currentExerciseIndex].lastPerformance.lastSet.weightKg} kg` : ''}
+                  {exerciseLogs[currentExerciseIndex].lastPerformance.lastSet?.weightKg && exerciseLogs[currentExerciseIndex].lastPerformance.lastSet?.reps ? ' × ' : ''}
+                  {exerciseLogs[currentExerciseIndex].lastPerformance.lastSet?.reps ? `${exerciseLogs[currentExerciseIndex].lastPerformance.lastSet.reps} reps` : ''}
+                </Text>
+              )}
+
+              {!isResting && exerciseLogs[currentExerciseIndex].sets && exerciseLogs[currentExerciseIndex].sets.length > 0 && (
+                <View style={styles.guidedFlowSetInput}>
+                  <TextInput
+                    style={styles.guidedFlowInput}
+                    placeholder="Reps"
+                    keyboardType="number-pad"
+                    value={exerciseLogs[currentExerciseIndex].sets[currentSetIndex].reps?.toString() || ''}
+                    onChangeText={(text) => {
+                      const updated = [...exerciseLogs];
+                      updated[currentExerciseIndex].sets![currentSetIndex].reps = text ? parseInt(text, 10) : undefined;
+                      setExerciseLogs(updated);
+                    }}
+                  />
+                  <TextInput
+                    style={styles.guidedFlowInput}
+                    placeholder="Kg"
+                    keyboardType="number-pad"
+                    value={exerciseLogs[currentExerciseIndex].sets[currentSetIndex].weightKg?.toString() || ''}
+                    onChangeText={(text) => {
+                      const updated = [...exerciseLogs];
+                      updated[currentExerciseIndex].sets![currentSetIndex].weightKg = text ? parseInt(text, 10) : undefined;
+                      setExerciseLogs(updated);
+                    }}
+                  />
+                </View>
+              )}
+
+              {isResting && (
+                <View style={styles.restTimerContainer}>
+                  <Text style={styles.restTimerLabel}>Rusttijd</Text>
+                  <Text style={styles.restTimerValue}>{formatTime(restSecondsRemaining)}</Text>
+                  <TouchableOpacity style={styles.skipRestButton} onPress={handleSkipRest}>
+                    <Text style={styles.skipRestButtonText}>Sla rust over</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+
+              {!isResting && (
+                <View style={styles.guidedFlowButtons}>
+                  <TouchableOpacity
+                    style={[styles.guidedFlowNavButton, currentExerciseIndex === 0 && styles.guidedFlowNavButtonDisabled]}
+                    onPress={handlePreviousExercise}
+                    disabled={currentExerciseIndex === 0}
+                  >
+                    <Text style={styles.guidedFlowNavButtonText}>Vorige oefening</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.guidedFlowCompleteButton} onPress={handleSetComplete}>
+                    <Text style={styles.guidedFlowCompleteButtonText}>Set klaar</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={styles.guidedFlowSkipButton} onPress={handleSkipExercise}>
+                    <Text style={styles.guidedFlowSkipButtonText}>Sla oefening over</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+            </View>
+
+            {/* Compact Overview */}
+            <View style={styles.compactOverview}>
+              <Text style={styles.compactOverviewTitle}>Overzicht</Text>
+              {exerciseLogs.map((log, index) => {
+                const isCurrent = index === currentExerciseIndex;
+                const isCompleted = log.completed;
+                let statusColor = '#9CA3AF'; // todo
+                if (isCompleted) statusColor = '#10B981';
+                else if (isCurrent) statusColor = '#3B82F6';
+
+                return (
+                  <View key={log.id} style={[styles.compactOverviewItem, isCurrent && styles.compactOverviewItemCurrent]}>
+                    <View style={[styles.compactOverviewDot, { backgroundColor: statusColor }]} />
+                    <Text style={[styles.compactOverviewText, isCompleted && styles.compactOverviewTextCompleted]}>
+                      {log.exerciseName}
+                    </Text>
+                    {isCurrent && <Text style={styles.compactOverviewBadge}>Huidig</Text>}
+                    {isCompleted && <MaterialCommunityIcons name="check" size={16} color="#10B981" />}
+                  </View>
+                );
+              })}
+            </View>
+          </View>
+        )}
+
+        {/* Fallback to list view for GPS or when no workoutId */}
+        {(!workoutId || isGpsDiscipline) && exerciseLogs.length > 0 && (
           <View style={styles.exercisesSection}>
             <Text style={styles.exercisesTitle}>Oefeningen</Text>
             {exerciseLogs.map((log, index) => {
@@ -1616,5 +1849,191 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginTop: 12,
     textAlign: 'center',
+  },
+  // Guided Flow Styles
+  guidedFlowCard: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+    borderWidth: 2,
+    borderColor: '#3B82F6',
+  },
+  guidedFlowHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+  },
+  guidedFlowProgress: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#3B82F6',
+  },
+  guidedFlowSetProgress: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#6B7280',
+  },
+  guidedFlowExerciseName: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#0F172A',
+    marginBottom: 8,
+  },
+  guidedFlowPlanning: {
+    backgroundColor: '#F0FDF4',
+    borderRadius: 8,
+    padding: 10,
+    marginBottom: 8,
+  },
+  guidedFlowPlanningText: {
+    fontSize: 13,
+    color: '#166534',
+  },
+  guidedFlowNotes: {
+    fontSize: 12,
+    color: '#15803D',
+    fontStyle: 'italic',
+    marginTop: 4,
+  },
+  guidedFlowLastPerformance: {
+    fontSize: 12,
+    color: '#3B82F6',
+    fontStyle: 'italic',
+    marginBottom: 12,
+  },
+  guidedFlowSetInput: {
+    flexDirection: 'row',
+    gap: 12,
+    marginBottom: 16,
+  },
+  guidedFlowInput: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: '#D1D5DB',
+    borderRadius: 8,
+    padding: 12,
+    fontSize: 16,
+    backgroundColor: '#F9FAFB',
+  },
+  restTimerContainer: {
+    alignItems: 'center',
+    paddingVertical: 20,
+    backgroundColor: '#FEF3C7',
+    borderRadius: 8,
+    marginBottom: 16,
+  },
+  restTimerLabel: {
+    fontSize: 14,
+    color: '#92400E',
+    marginBottom: 8,
+  },
+  restTimerValue: {
+    fontSize: 48,
+    fontWeight: '800',
+    color: '#92400E',
+    marginBottom: 12,
+  },
+  skipRestButton: {
+    backgroundColor: '#F59E0B',
+    paddingHorizontal: 20,
+    paddingVertical: 8,
+    borderRadius: 8,
+  },
+  skipRestButtonText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  guidedFlowButtons: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  guidedFlowNavButton: {
+    flex: 1,
+    backgroundColor: '#E5E7EB',
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  guidedFlowNavButtonDisabled: {
+    opacity: 0.5,
+  },
+  guidedFlowNavButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#374151',
+  },
+  guidedFlowCompleteButton: {
+    flex: 1,
+    backgroundColor: '#10B981',
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  guidedFlowCompleteButtonText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#FFFFFF',
+  },
+  guidedFlowSkipButton: {
+    flex: 1,
+    backgroundColor: '#EF4444',
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  guidedFlowSkipButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#FFFFFF',
+  },
+  compactOverview: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 8,
+    padding: 12,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  compactOverviewTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#374151',
+    marginBottom: 8,
+  },
+  compactOverviewItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F3F4F6',
+  },
+  compactOverviewItemCurrent: {
+    backgroundColor: '#EFF6FF',
+  },
+  compactOverviewDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginRight: 10,
+  },
+  compactOverviewText: {
+    flex: 1,
+    fontSize: 14,
+    color: '#374151',
+  },
+  compactOverviewTextCompleted: {
+    textDecorationLine: 'line-through',
+    color: '#9CA3AF',
+  },
+  compactOverviewBadge: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#3B82F6',
+    backgroundColor: '#DBEAFE',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+    marginRight: 8,
   },
 });
