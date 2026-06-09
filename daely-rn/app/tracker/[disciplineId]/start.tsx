@@ -278,6 +278,9 @@ export default function StartActivityScreen() {
   const [currentSetIndex, setCurrentSetIndex] = React.useState(0);
   const [isResting, setIsResting] = React.useState(false);
   const [restSecondsRemaining, setRestSecondsRemaining] = React.useState(0);
+  const [isDurationTimerRunning, setIsDurationTimerRunning] = React.useState(false);
+  const [isDurationTimerPaused, setIsDurationTimerPaused] = React.useState(false);
+  const [durationSecondsRemaining, setDurationSecondsRemaining] = React.useState(0);
   const [isExerciseFlowComplete, setIsExerciseFlowComplete] = React.useState(false);
   const [isSavingActivity, setIsSavingActivity] = React.useState(false);
   const [draftLoaded, setDraftLoaded] = React.useState(false);
@@ -324,6 +327,9 @@ export default function StartActivityScreen() {
       setIsResting(false);
       setRestSecondsRemaining(0);
       setIsExerciseFlowComplete(false);
+      setIsDurationTimerRunning(false);
+      setIsDurationTimerPaused(false);
+      setDurationSecondsRemaining(0);
     }
   }, [workoutExercises]);
 
@@ -423,11 +429,26 @@ export default function StartActivityScreen() {
     restoreDraft();
   }, [workoutId, disciplineId, programId, exerciseLogs.length, draftLoaded]);
 
-  // Handler: Complete current set
-  const handleSetComplete = () => {
+  // Helper: Mark current set as completed
+  const markCurrentSetCompleted = React.useCallback(() => {
     const updated = [...exerciseLogs];
     const currentLog = updated[currentExerciseIndex];
     if (!currentLog.sets) return;
+
+    currentLog.sets[currentSetIndex].completed = true;
+    setExerciseLogs(updated);
+  }, [currentExerciseIndex, currentSetIndex, exerciseLogs]);
+
+  // Handler: Complete current set
+  const handleSetComplete = React.useCallback(() => {
+    const updated = [...exerciseLogs];
+    const currentLog = updated[currentExerciseIndex];
+    if (!currentLog.sets) return;
+
+    // Stop duration timer
+    setIsDurationTimerRunning(false);
+    setIsDurationTimerPaused(false);
+    setDurationSecondsRemaining(0);
 
     // Mark current set as completed
     markCurrentSetCompleted();
@@ -462,7 +483,7 @@ export default function StartActivityScreen() {
       setIsResting(false);
       setRestSecondsRemaining(0);
     }
-  };
+  }, [currentExerciseIndex, currentSetIndex, exerciseLogs, markCurrentSetCompleted]);
 
   // Handler: Skip current exercise
   const handleSkipExercise = () => {
@@ -490,6 +511,28 @@ export default function StartActivityScreen() {
       setRestSecondsRemaining(0);
     }
   };
+
+  // Duration timer effect
+  React.useEffect(() => {
+    let interval: number | null = null;
+    if (isDurationTimerRunning && !isDurationTimerPaused && durationSecondsRemaining > 0) {
+      interval = setInterval(() => {
+        setDurationSecondsRemaining((prev) => {
+          if (prev <= 1) {
+            setIsDurationTimerRunning(false);
+            setDurationSecondsRemaining(0);
+            // Auto-complete set on timer finish
+            handleSetComplete();
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000) as unknown as number;
+    }
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isDurationTimerRunning, isDurationTimerPaused, durationSecondsRemaining, handleSetComplete]);
 
   // Handler: Skip rest
   const handleSkipRest = () => {
@@ -558,14 +601,53 @@ export default function StartActivityScreen() {
     setExerciseLogs(updated);
   };
 
-  // Helper: Mark current set as completed
-  const markCurrentSetCompleted = () => {
+  // Helper: Start duration timer
+  const handleStartDurationTimer = () => {
+    const currentLog = exerciseLogs[currentExerciseIndex];
+    if (!currentLog.sets) return;
+
+    const currentSet = currentLog.sets[currentSetIndex];
+    const targetDuration = currentSet.durationSeconds || currentLog.planning?.targetDurationSeconds || 30;
+
+    setDurationSecondsRemaining(targetDuration);
+    setIsDurationTimerRunning(true);
+    setIsDurationTimerPaused(false);
+  };
+
+  // Helper: Pause/resume duration timer
+  const handlePauseResumeDurationTimer = () => {
+    setIsDurationTimerPaused((prev) => !prev);
+  };
+
+  // Helper: Reset duration timer
+  const handleResetDurationTimer = () => {
+    const currentLog = exerciseLogs[currentExerciseIndex];
+    if (!currentLog.sets) return;
+
+    const currentSet = currentLog.sets[currentSetIndex];
+    const targetDuration = currentSet.durationSeconds || currentLog.planning?.targetDurationSeconds || 30;
+
+    setDurationSecondsRemaining(targetDuration);
+    setIsDurationTimerRunning(false);
+    setIsDurationTimerPaused(false);
+  };
+
+  // Helper: Manual complete with duration timer
+  const handleManualCompleteWithDuration = () => {
+    setIsDurationTimerRunning(false);
+    setIsDurationTimerPaused(false);
+    setDurationSecondsRemaining(0);
+
+    // Save the completed duration to the set
     const updated = [...exerciseLogs];
     const currentLog = updated[currentExerciseIndex];
     if (!currentLog.sets) return;
 
-    currentLog.sets[currentSetIndex].completed = true;
+    const targetDuration = currentLog.planning?.targetDurationSeconds || 30;
+    currentLog.sets[currentSetIndex].durationSeconds = targetDuration;
     setExerciseLogs(updated);
+
+    handleSetComplete();
   };
 
   const isWorkoutDiscipline = discipline?.trackingType === 'workout';
@@ -1185,6 +1267,52 @@ export default function StartActivityScreen() {
                       </View>
                     );
                   })}
+
+                  {/* Duration Timer UI for duration-mode exercises */}
+                  {exerciseLogs[currentExerciseIndex].executionMode === 'duration' && (
+                    <View style={styles.durationTimerContainer}>
+                      <Text style={styles.durationTimerTargetLabel}>
+                        Doel: {exerciseLogs[currentExerciseIndex].planning?.targetDurationSeconds || exerciseLogs[currentExerciseIndex].sets?.[currentSetIndex]?.durationSeconds || 30} sec
+                      </Text>
+                      <Text style={styles.durationTimerCountdown}>
+                        {durationSecondsRemaining} sec
+                      </Text>
+                      <View style={styles.durationTimerButtons}>
+                        {!isDurationTimerRunning && (
+                          <TouchableOpacity
+                            style={styles.durationTimerButton}
+                            onPress={handleStartDurationTimer}
+                          >
+                            <Text style={styles.durationTimerButtonText}>Start timer</Text>
+                          </TouchableOpacity>
+                        )}
+                        {isDurationTimerRunning && (
+                          <>
+                            <TouchableOpacity
+                              style={styles.durationTimerButton}
+                              onPress={handlePauseResumeDurationTimer}
+                            >
+                              <Text style={styles.durationTimerButtonText}>
+                                {isDurationTimerPaused ? 'Hervat' : 'Pauze'}
+                              </Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                              style={styles.durationTimerButton}
+                              onPress={handleResetDurationTimer}
+                            >
+                              <Text style={styles.durationTimerButtonText}>Reset</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                              style={[styles.durationTimerButton, styles.durationTimerCompleteButton]}
+                              onPress={handleManualCompleteWithDuration}
+                            >
+                              <Text style={styles.durationTimerButtonText}>Markeer klaar</Text>
+                            </TouchableOpacity>
+                          </>
+                        )}
+                      </View>
+                    </View>
+                  )}
                   <View style={styles.guidedFlowSetManagementButtons}>
                     <TouchableOpacity
                       style={styles.guidedFlowSetManagementButton}
@@ -2396,6 +2524,46 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 14,
     fontWeight: '600',
+  },
+  durationTimerContainer: {
+    alignItems: 'center',
+    paddingVertical: 20,
+    backgroundColor: '#DBEAFE',
+    borderRadius: 8,
+    marginBottom: 16,
+  },
+  durationTimerTargetLabel: {
+    fontSize: 14,
+    color: '#1E40AF',
+    marginBottom: 8,
+  },
+  durationTimerCountdown: {
+    fontSize: 48,
+    fontWeight: '800',
+    color: '#1E40AF',
+    marginBottom: 12,
+  },
+  durationTimerButtons: {
+    flexDirection: 'row',
+    gap: 8,
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+  },
+  durationTimerButton: {
+    backgroundColor: '#3B82F6',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 8,
+    minWidth: 100,
+    alignItems: 'center',
+  },
+  durationTimerButtonText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  durationTimerCompleteButton: {
+    backgroundColor: '#10B981',
   },
   guidedFlowButtons: {
     flexDirection: 'row',
