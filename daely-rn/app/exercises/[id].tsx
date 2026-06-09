@@ -1,16 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Text, Pressable, ScrollView, Dimensions, StatusBar, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/use-theme';
 import { DISCIPLINE_CONTENT } from '@/constants/discipline-content';
+import { getExerciseStats, ExerciseStats } from '@/services/exercise-history';
 
 export default function ExerciseDetailScreen() {
   const { id, disciplineSlug } = useLocalSearchParams<{ id: string; disciplineSlug?: string }>();
   const router = useRouter();
   const theme = useTheme();
   const [activeMediaIndex, setActiveMediaIndex] = useState(0);
+  const [exerciseStats, setExerciseStats] = useState<ExerciseStats | null>(null);
   const screenWidth = Dimensions.get('window').width;
   const slideWidth = Platform.OS === 'web' ? Math.min(screenWidth, 430) : screenWidth;
 
@@ -60,6 +62,12 @@ export default function ExerciseDetailScreen() {
       { id: 'illustration', type: 'illustration' as const, title: 'Techniektekening', description: 'Bekijk de oefening in eenvoudige stappen' },
     ];
   }, [exercise]);
+
+  useEffect(() => {
+    if (exercise?.id || exercise?.name) {
+      getExerciseStats(exercise.id, exercise.name).then(setExerciseStats);
+    }
+  }, [exercise?.id, exercise?.name]);
 
   if (!exercise) {
     return (
@@ -121,6 +129,34 @@ export default function ExerciseDetailScreen() {
       case 'Gevorderd': return '#EF4444';
       default: return '#6B7280';
     }
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
+    
+    if (diffDays === 0) return 'Vandaag';
+    if (diffDays === 1) return 'Gisteren';
+    if (diffDays < 7) return `${diffDays} dagen geleden`;
+    if (diffDays < 30) return `${Math.floor(diffDays / 7)} weken geleden`;
+    return date.toLocaleDateString('nl-NL', { day: 'numeric', month: 'short' });
+  };
+
+  const formatSet = (set?: { reps?: number; weightKg?: number; durationSeconds?: number }) => {
+    if (!set) return '-';
+    if (set.weightKg !== undefined && set.reps !== undefined) {
+      return `${set.weightKg} kg × ${set.reps}`;
+    }
+    if (set.reps !== undefined) {
+      return `${set.reps} herhalingen`;
+    }
+    if (set.durationSeconds !== undefined) {
+      const minutes = Math.floor(set.durationSeconds / 60);
+      const seconds = set.durationSeconds % 60;
+      return minutes > 0 ? `${minutes}m ${seconds}s` : `${seconds}s`;
+    }
+    return '-';
   };
 
   const renderSection = (title: string, icon: string, children: React.ReactNode) => (
@@ -253,6 +289,42 @@ export default function ExerciseDetailScreen() {
                 </View>
               </View>
             </View>
+
+            {/* Jouw historie */}
+            {renderSection('Jouw historie', 'history',
+              exerciseStats && exerciseStats.timesPerformed > 0 ? (
+                <View style={styles.statsContainer}>
+                  <View style={styles.statRow}>
+                    <Text style={[styles.statLabel, { color: theme.subtitleColor }]}>Laatste keer</Text>
+                    <Text style={[styles.statValue, { color: theme.titleColor }]}>
+                      {exerciseStats.lastPerformedAt ? formatDate(exerciseStats.lastPerformedAt) : '-'}
+                    </Text>
+                  </View>
+                  <View style={styles.statRow}>
+                    <Text style={[styles.statLabel, { color: theme.subtitleColor }]}>Laatste set</Text>
+                    <Text style={[styles.statValue, { color: theme.titleColor }]}>
+                      {formatSet(exerciseStats.lastSet)}
+                    </Text>
+                  </View>
+                  <View style={styles.statRow}>
+                    <Text style={[styles.statLabel, { color: theme.subtitleColor }]}>Beste set</Text>
+                    <Text style={[styles.statValue, { color: theme.titleColor }]}>
+                      {formatSet(exerciseStats.bestSet)}
+                    </Text>
+                  </View>
+                  <View style={styles.statRow}>
+                    <Text style={[styles.statLabel, { color: theme.subtitleColor }]}>Aantal keer</Text>
+                    <Text style={[styles.statValue, { color: theme.titleColor }]}>
+                      {exerciseStats.timesPerformed}×
+                    </Text>
+                  </View>
+                </View>
+              ) : (
+                <Text style={[styles.noHistoryText, { color: theme.subtitleColor }]}>
+                  Je hebt deze oefening nog niet gelogd.
+                </Text>
+              )
+            )}
 
         {/* Uitvoering */}
         {renderSection('Uitvoering', 'run', renderBulletPoints(exercise.instructions || getFallbackInstructions()))}
@@ -495,5 +567,27 @@ const styles = StyleSheet.create({
   },
   equipmentText: {
     fontSize: 13,
+  },
+  statsContainer: {
+    gap: 12,
+  },
+  statRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  statLabel: {
+    fontSize: 13,
+    fontWeight: '500',
+  },
+  statValue: {
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  noHistoryText: {
+    fontSize: 14,
+    fontStyle: 'italic',
+    textAlign: 'center',
+    paddingVertical: 8,
   },
 });
