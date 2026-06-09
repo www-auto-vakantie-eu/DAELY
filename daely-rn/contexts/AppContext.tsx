@@ -301,8 +301,20 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         ]);
 
         if (savedThemeId) {
-          // Fallback: if saved theme is 'default', use 'classic' instead
-          const normalizedThemeId = savedThemeId === 'default' ? 'classic' : savedThemeId;
+          // Migrate old theme IDs to new theme IDs
+          const themeMigration: Record<string, string> = {
+            'default': 'classic',
+            'forest-breath': 'zenInk',
+            'pure-luxury': 'marble',
+            'innovation': 'aurora',
+            'pastel-calm': 'pastelCalm',
+            'retro-sport': 'retroSport',
+            'pulse': 'wave',
+            'rogue': 'venom',
+            'dune': 'saharaDune',
+            'ember': 'volcanicAsh',
+          };
+          const normalizedThemeId = themeMigration[savedThemeId] || savedThemeId;
           setActiveThemeIdState(normalizedThemeId);
         }
 
@@ -354,8 +366,20 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   }, []);
 
   const setActiveThemeId = useCallback(async (themeId: string) => {
-    // Fallback: if 'default' is selected, use 'classic' instead
-    const normalizedThemeId = themeId === 'default' ? 'classic' : themeId;
+    // Migrate old theme IDs to new theme IDs
+    const themeMigration: Record<string, string> = {
+      'default': 'classic',
+      'forest-breath': 'zenInk',
+      'pure-luxury': 'marble',
+      'innovation': 'aurora',
+      'pastel-calm': 'pastelCalm',
+      'retro-sport': 'retroSport',
+      'pulse': 'wave',
+      'rogue': 'venom',
+      'dune': 'saharaDune',
+      'ember': 'volcanicAsh',
+    };
+    const normalizedThemeId = themeMigration[themeId] || themeId;
     setActiveThemeIdState(normalizedThemeId);
     try {
       await AsyncStorage.setItem(STORAGE_KEYS.activeThemeId, normalizedThemeId);

@@ -13,27 +13,38 @@ export default function ThemasScreen() {
   const theme = useTheme();
 
   const visibleThemes = [
-    'classic',
-    'zen-ink',
-    'forest-breath',
     'force',
-    'pure-luxury',
-    'innovation',
-    'pastel-calm',
-    'retro-sport',
-    'pulse',
-    'rogue',
-    'dune',
-    'ember',
+    'pastelCalm',
+    'retroSport',
+    'saharaDune',
+    'zenInk',
+    'aurora',
+    'ruby',
+    'coralBloom',
+    'marble',
+    'sapphire',
+    'purpleStorm',
+    'volcanicAsh',
+    'venom',
+    'wave',
   ] as const;
 
 // Themes that have image banner assets
 const themesWithImageBanners = [
   'force',
-  'forest-breath',
-  'innovation',
-  'pastel-calm',
-  'pure-luxury',
+  'pastelCalm',
+  'retroSport',
+  'saharaDune',
+  'zenInk',
+  'aurora',
+  'ruby',
+  'coralBloom',
+  'marble',
+  'sapphire',
+  'purpleStorm',
+  'volcanicAsh',
+  'venom',
+  'wave',
 ] as const;
 
   return (

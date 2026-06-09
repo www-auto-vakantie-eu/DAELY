@@ -147,7 +147,7 @@ function getThemeStyle(themeId: string) {
       microColor: 'rgba(59, 130, 246, 0.2)',
       edgeColor: 'rgba(37, 99, 235, 0.3)',
     },
-    'zen-ink': {
+    'zenInk': {
       // Base material: off-white paper with ink texture
       gradientColors: ['#FAFAFA', '#F5F5F5', '#EBEBEB'],
       innerShadowColors: ['rgba(0,0,0,0)', 'rgba(0,0,0,0.03)', 'rgba(0,0,0,0.08)'],
@@ -173,33 +173,6 @@ function getThemeStyle(themeId: string) {
       depthColor2: 'rgba(0,0,0,0.06)',
       microColor: 'rgba(0,0,0,0.08)',
       edgeColor: 'rgba(0,0,0,0.1)',
-    },
-    'forest-breath': {
-      // Base material: organic green with mist and depth
-      gradientColors: ['#D1FAE5', '#A7F3D0', '#6EE7B7'],
-      innerShadowColors: ['rgba(5, 150, 105, 0.05)', 'rgba(6, 78, 59, 0.04)', 'rgba(0,0,0,0.08)'],
-      titleColor: '#064E3B',
-      checkColor: '#064E3B',
-      checkBg: 'rgba(255,255,255,0.92)',
-      lineBaseColor: 'rgba(6, 78, 59, 0.15)',
-      textShadowColor: 'rgba(5, 150, 105, 0.2)',
-      textShadowOffset: { width: 0, height: 1 },
-      textShadowRadius: 2,
-      primaryColor: '#059669',
-      secondaryColor: '#34D399',
-      atmosphereColor: 'rgba(5, 150, 105, 0.2)',
-      motifColor: 'rgba(52, 211, 153, 0.28)',
-      motionColor: 'rgba(5, 150, 105, 0.32)',
-      textureColor: 'rgba(5, 150, 105, 0.08)',
-      borderColor: 'rgba(5, 150, 105, 0.4)',
-      lightingColor: 'rgba(167, 243, 208, 0.4)',
-      accentGlowColor: 'rgba(52, 211, 153, 0.35)',
-      // New layer properties
-      materialColor: 'rgba(5, 150, 105, 0.06)',
-      depthColor1: 'rgba(52, 211, 153, 0.08)',
-      depthColor2: 'rgba(5, 150, 105, 0.12)',
-      microColor: 'rgba(167, 243, 208, 0.2)',
-      edgeColor: 'rgba(52, 211, 153, 0.3)',
     },
     'force': {
       // Base material: dark performance surface with red accents
@@ -228,61 +201,7 @@ function getThemeStyle(themeId: string) {
       microColor: 'rgba(248, 113, 113, 0.3)',
       edgeColor: 'rgba(248, 113, 113, 0.4)',
     },
-    'pure-luxury': {
-      // Base material: matte black with brushed gold
-      gradientColors: ['#0A0A0A', '#0D0D0D', '#1A1A1A'],
-      innerShadowColors: ['rgba(201,168,76,0.2)', 'rgba(201,168,76,0.1)', 'rgba(0,0,0,0.3)'],
-      titleColor: '#E8C97A',
-      checkColor: '#E8C97A',
-      checkBg: 'rgba(0,0,0,0.5)',
-      lineBaseColor: 'rgba(201, 168, 76, 0.2)',
-      textShadowColor: 'rgba(201, 168, 76, 0.6)',
-      textShadowOffset: { width: 0, height: 2 },
-      textShadowRadius: 8,
-      primaryColor: '#C9A84C',
-      secondaryColor: '#FCD34D',
-      atmosphereColor: 'rgba(201, 168, 76, 0.18)',
-      motifColor: 'rgba(252, 211, 77, 0.28)',
-      motionColor: 'rgba(201, 168, 76, 0.32)',
-      textureColor: 'rgba(201, 168, 76, 0.08)',
-      borderColor: 'rgba(201, 168, 76, 0.45)',
-      lightingColor: 'rgba(252, 211, 77, 0.25)',
-      accentGlowColor: 'rgba(201, 168, 76, 0.5)',
-      // New layer properties
-      materialColor: 'rgba(201, 168, 76, 0.1)',
-      depthColor1: 'rgba(252, 211, 77, 0.12)',
-      depthColor2: 'rgba(201, 168, 76, 0.18)',
-      microColor: 'rgba(252, 211, 77, 0.3)',
-      edgeColor: 'rgba(252, 211, 77, 0.4)',
-    },
-    'innovation': {
-      // Base material: dark tech surface with cyan glow
-      gradientColors: ['#0F172A', '#0A0F1E', '#111827'],
-      innerShadowColors: ['rgba(0,245,160,0.18)', 'rgba(56, 189, 248, 0.08)', 'rgba(0,0,0,0.25)'],
-      titleColor: '#E0FFF5',
-      checkColor: '#0A0F1E',
-      checkBg: 'rgba(0,245,160,0.35)',
-      lineBaseColor: 'rgba(0, 245, 160, 0.2)',
-      textShadowColor: 'rgba(0, 245, 160, 0.6)',
-      textShadowOffset: { width: 0, height: 2 },
-      textShadowRadius: 6,
-      primaryColor: '#00F5A0',
-      secondaryColor: '#38BDF8',
-      atmosphereColor: 'rgba(0, 245, 160, 0.15)',
-      motifColor: 'rgba(56, 189, 248, 0.25)',
-      motionColor: 'rgba(0, 245, 160, 0.32)',
-      textureColor: 'rgba(0, 245, 160, 0.08)',
-      borderColor: 'rgba(0, 245, 160, 0.45)',
-      lightingColor: 'rgba(56, 189, 248, 0.2)',
-      accentGlowColor: 'rgba(0, 245, 160, 0.5)',
-      // New layer properties
-      materialColor: 'rgba(0, 245, 160, 0.08)',
-      depthColor1: 'rgba(56, 189, 248, 0.1)',
-      depthColor2: 'rgba(0, 245, 160, 0.15)',
-      microColor: 'rgba(56, 189, 248, 0.25)',
-      edgeColor: 'rgba(0, 245, 160, 0.35)',
-    },
-    'pastel-calm': {
+    'pastelCalm': {
       // Base material: soft pastel with airy feel
       gradientColors: ['#F5F3FF', '#F0EEFF', '#E6E3FF'],
       innerShadowColors: ['rgba(139, 92, 246, 0.04)', 'rgba(139, 92, 246, 0.02)', 'rgba(0,0,0,0.06)'],
@@ -309,7 +228,7 @@ function getThemeStyle(themeId: string) {
       microColor: 'rgba(196, 181, 253, 0.2)',
       edgeColor: 'rgba(196, 181, 253, 0.25)',
     },
-    'retro-sport': {
+    'retroSport': {
       // Base material: vintage cream with navy/red
       gradientColors: ['#FFFBF5', '#F5F0E8', '#EDE8E0'],
       innerShadowColors: ['rgba(27, 46, 107, 0.05)', 'rgba(192, 57, 43, 0.03)', 'rgba(0,0,0,0.08)'],
@@ -336,88 +255,7 @@ function getThemeStyle(themeId: string) {
       microColor: 'rgba(192, 57, 43, 0.15)',
       edgeColor: 'rgba(27, 46, 107, 0.2)',
     },
-    'pulse': {
-      // Base material: dark glass with lime energy
-      gradientColors: ['#0D1A00', '#0A1A00', '#112200'],
-      innerShadowColors: ['rgba(127,255,0,0.22)', 'rgba(127,255,0,0.1)', 'rgba(0,0,0,0.3)'],
-      titleColor: '#ADFF2F',
-      checkColor: '#0A1A00',
-      checkBg: 'rgba(127,255,0,0.35)',
-      lineBaseColor: 'rgba(127, 255, 0, 0.2)',
-      textShadowColor: 'rgba(127, 255, 0, 0.7)',
-      textShadowOffset: { width: 0, height: 2 },
-      textShadowRadius: 6,
-      primaryColor: '#84CC16',
-      secondaryColor: '#A3E635',
-      atmosphereColor: 'rgba(127, 255, 0, 0.22)',
-      motifColor: 'rgba(163, 230, 53, 0.32)',
-      motionColor: 'rgba(127, 255, 0, 0.38)',
-      textureColor: 'rgba(127, 255, 0, 0.08)',
-      borderColor: 'rgba(127, 255, 0, 0.5)',
-      lightingColor: 'rgba(163, 230, 53, 0.2)',
-      accentGlowColor: 'rgba(127, 255, 0, 0.5)',
-      // New layer properties
-      materialColor: 'rgba(127, 255, 0, 0.1)',
-      depthColor1: 'rgba(163, 230, 53, 0.15)',
-      depthColor2: 'rgba(127, 255, 0, 0.2)',
-      microColor: 'rgba(163, 230, 53, 0.3)',
-      edgeColor: 'rgba(163, 230, 53, 0.4)',
-    },
-    'rogue': {
-      // Base material: dark charcoal with orange aggression
-      gradientColors: ['#0A0800', '#0D0A00', '#1A1200'],
-      innerShadowColors: ['rgba(255,106,0,0.25)', 'rgba(255,106,0,0.12)', 'rgba(0,0,0,0.35)'],
-      titleColor: '#FFB347',
-      checkColor: '#0D0A00',
-      checkBg: 'rgba(255,106,0,0.35)',
-      lineBaseColor: 'rgba(255, 106, 0, 0.22)',
-      textShadowColor: 'rgba(255, 106, 0, 0.6)',
-      textShadowOffset: { width: 0, height: 2 },
-      textShadowRadius: 6,
-      primaryColor: '#FF6A00',
-      secondaryColor: '#FB923C',
-      atmosphereColor: 'rgba(255, 106, 0, 0.28)',
-      motifColor: 'rgba(251, 146, 60, 0.38)',
-      motionColor: 'rgba(255, 106, 0, 0.42)',
-      textureColor: 'rgba(255, 106, 0, 0.1)',
-      borderColor: 'rgba(255, 106, 0, 0.55)',
-      lightingColor: 'rgba(251, 146, 60, 0.2)',
-      accentGlowColor: 'rgba(255, 106, 0, 0.5)',
-      // New layer properties
-      materialColor: 'rgba(255, 106, 0, 0.12)',
-      depthColor1: 'rgba(251, 146, 60, 0.15)',
-      depthColor2: 'rgba(255, 106, 0, 0.22)',
-      microColor: 'rgba(251, 146, 60, 0.35)',
-      edgeColor: 'rgba(251, 146, 60, 0.45)',
-    },
-    'ember': {
-      // Base material: warm dark with glowing embers
-      gradientColors: ['#0A0300', '#0A0500', '#150900'],
-      innerShadowColors: ['rgba(255,140,0,0.22)', 'rgba(255,140,0,0.1)', 'rgba(0,0,0,0.3)'],
-      titleColor: '#FFD700',
-      checkColor: '#0A0500',
-      checkBg: 'rgba(255,140,0,0.35)',
-      lineBaseColor: 'rgba(255, 140, 0, 0.2)',
-      textShadowColor: 'rgba(255, 140, 0, 0.6)',
-      textShadowOffset: { width: 0, height: 2 },
-      textShadowRadius: 6,
-      primaryColor: '#F97316',
-      secondaryColor: '#FB923C',
-      atmosphereColor: 'rgba(255, 140, 0, 0.25)',
-      motifColor: 'rgba(251, 146, 60, 0.35)',
-      motionColor: 'rgba(255, 140, 0, 0.38)',
-      textureColor: 'rgba(255, 140, 0, 0.08)',
-      borderColor: 'rgba(255, 140, 0, 0.5)',
-      lightingColor: 'rgba(251, 146, 60, 0.2)',
-      accentGlowColor: 'rgba(255, 140, 0, 0.5)',
-      // New layer properties
-      materialColor: 'rgba(255, 140, 0, 0.1)',
-      depthColor1: 'rgba(251, 146, 60, 0.12)',
-      depthColor2: 'rgba(255, 140, 0, 0.18)',
-      microColor: 'rgba(251, 146, 60, 0.3)',
-      edgeColor: 'rgba(251, 146, 60, 0.4)',
-    },
-    'dune': {
+    'saharaDune': {
       // Base material: warm sand with sun glow
       gradientColors: ['#FFFBF0', '#FDF6EC', '#FAF0E6'],
       innerShadowColors: ['rgba(200, 155, 114, 0.08)', 'rgba(139, 90, 43, 0.04)', 'rgba(0,0,0,0.08)'],
@@ -444,6 +282,240 @@ function getThemeStyle(themeId: string) {
       microColor: 'rgba(252, 211, 77, 0.22)',
       edgeColor: 'rgba(200, 155, 114, 0.3)',
     },
+    'aurora': {
+      // Base material: northern lights with green/purple
+      gradientColors: ['#0F172A', '#1E1B4B', '#312E81'],
+      innerShadowColors: ['rgba(34, 211, 238, 0.15)', 'rgba(168, 85, 247, 0.1)', 'rgba(0,0,0,0.25)'],
+      titleColor: '#A5F3FC',
+      checkColor: '#0F172A',
+      checkBg: 'rgba(34, 211, 238, 0.35)',
+      lineBaseColor: 'rgba(34, 211, 238, 0.2)',
+      textShadowColor: 'rgba(34, 211, 238, 0.5)',
+      textShadowOffset: { width: 0, height: 2 },
+      textShadowRadius: 6,
+      primaryColor: '#22D3EE',
+      secondaryColor: '#A855F7',
+      atmosphereColor: 'rgba(34, 211, 238, 0.18)',
+      motifColor: 'rgba(168, 85, 247, 0.28)',
+      motionColor: 'rgba(34, 211, 238, 0.32)',
+      textureColor: 'rgba(34, 211, 238, 0.08)',
+      borderColor: 'rgba(34, 211, 238, 0.45)',
+      lightingColor: 'rgba(168, 85, 247, 0.25)',
+      accentGlowColor: 'rgba(34, 211, 238, 0.5)',
+      materialColor: 'rgba(34, 211, 238, 0.08)',
+      depthColor1: 'rgba(168, 85, 247, 0.1)',
+      depthColor2: 'rgba(34, 211, 238, 0.15)',
+      microColor: 'rgba(168, 85, 247, 0.25)',
+      edgeColor: 'rgba(34, 211, 238, 0.35)',
+    },
+    'ruby': {
+      // Base material: deep red with luxury feel
+      gradientColors: ['#450A0A', '#7F1D1D', '#991B1B'],
+      innerShadowColors: ['rgba(239, 68, 68, 0.2)', 'rgba(220, 38, 38, 0.12)', 'rgba(0,0,0,0.3)'],
+      titleColor: '#FCA5A5',
+      checkColor: '#450A0A',
+      checkBg: 'rgba(239, 68, 68, 0.35)',
+      lineBaseColor: 'rgba(239, 68, 68, 0.2)',
+      textShadowColor: 'rgba(239, 68, 68, 0.5)',
+      textShadowOffset: { width: 0, height: 2 },
+      textShadowRadius: 6,
+      primaryColor: '#EF4444',
+      secondaryColor: '#F87171',
+      atmosphereColor: 'rgba(239, 68, 68, 0.25)',
+      motifColor: 'rgba(248, 113, 113, 0.35)',
+      motionColor: 'rgba(239, 68, 68, 0.4)',
+      textureColor: 'rgba(239, 68, 68, 0.1)',
+      borderColor: 'rgba(239, 68, 68, 0.5)',
+      lightingColor: 'rgba(248, 113, 113, 0.2)',
+      accentGlowColor: 'rgba(239, 68, 68, 0.5)',
+      materialColor: 'rgba(239, 68, 68, 0.1)',
+      depthColor1: 'rgba(248, 113, 113, 0.12)',
+      depthColor2: 'rgba(239, 68, 68, 0.18)',
+      microColor: 'rgba(248, 113, 113, 0.3)',
+      edgeColor: 'rgba(248, 113, 113, 0.4)',
+    },
+    'coralBloom': {
+      // Base material: warm coral with soft pink
+      gradientColors: ['#FFF5F5', '#FFE4E6', '#FECDD3'],
+      innerShadowColors: ['rgba(244, 114, 182, 0.08)', 'rgba(236, 72, 153, 0.04)', 'rgba(0,0,0,0.06)'],
+      titleColor: '#831843',
+      checkColor: '#831843',
+      checkBg: 'rgba(255,255,255,0.92)',
+      lineBaseColor: 'rgba(236, 72, 153, 0.15)',
+      textShadowColor: 'rgba(244, 114, 182, 0.2)',
+      textShadowOffset: { width: 0, height: 1 },
+      textShadowRadius: 2,
+      primaryColor: '#F472B6',
+      secondaryColor: '#EC4899',
+      atmosphereColor: 'rgba(244, 114, 182, 0.18)',
+      motifColor: 'rgba(236, 72, 153, 0.25)',
+      motionColor: 'rgba(244, 114, 182, 0.28)',
+      textureColor: 'rgba(244, 114, 182, 0.08)',
+      borderColor: 'rgba(244, 114, 182, 0.4)',
+      lightingColor: 'rgba(251, 207, 232, 0.4)',
+      accentGlowColor: 'rgba(244, 114, 182, 0.35)',
+      materialColor: 'rgba(244, 114, 182, 0.06)',
+      depthColor1: 'rgba(251, 207, 232, 0.1)',
+      depthColor2: 'rgba(244, 114, 182, 0.14)',
+      microColor: 'rgba(251, 207, 232, 0.22)',
+      edgeColor: 'rgba(244, 114, 182, 0.3)',
+    },
+    'marble': {
+      // Base material: elegant white marble with gray veins
+      gradientColors: ['#FAFAFA', '#F5F5F4', '#E7E5E4'],
+      innerShadowColors: ['rgba(120, 113, 108, 0.06)', 'rgba(87, 83, 78, 0.03)', 'rgba(0,0,0,0.08)'],
+      titleColor: '#292524',
+      checkColor: '#292524',
+      checkBg: 'rgba(255,255,255,0.95)',
+      lineBaseColor: 'rgba(120, 113, 108, 0.15)',
+      textShadowColor: 'rgba(120, 113, 108, 0.15)',
+      textShadowOffset: { width: 0, height: 1 },
+      textShadowRadius: 2,
+      primaryColor: '#78716C',
+      secondaryColor: '#A8A29E',
+      atmosphereColor: 'rgba(120, 113, 108, 0.12)',
+      motifColor: 'rgba(168, 162, 158, 0.18)',
+      motionColor: 'rgba(120, 113, 108, 0.22)',
+      textureColor: 'rgba(120, 113, 108, 0.06)',
+      borderColor: 'rgba(120, 113, 108, 0.3)',
+      lightingColor: 'rgba(255,255,255,0.5)',
+      accentGlowColor: 'rgba(168, 162, 158, 0.25)',
+      materialColor: 'rgba(120, 113, 108, 0.05)',
+      depthColor1: 'rgba(168, 162, 158, 0.08)',
+      depthColor2: 'rgba(120, 113, 108, 0.12)',
+      microColor: 'rgba(168, 162, 158, 0.2)',
+      edgeColor: 'rgba(168, 162, 158, 0.25)',
+    },
+    'sapphire': {
+      // Base material: deep blue with royal elegance
+      gradientColors: ['#0C4A6E', '#075985', '#0369A1'],
+      innerShadowColors: ['rgba(56, 189, 248, 0.18)', 'rgba(14, 165, 233, 0.1)', 'rgba(0,0,0,0.25)'],
+      titleColor: '#E0F2FE',
+      checkColor: '#0C4A6E',
+      checkBg: 'rgba(56, 189, 248, 0.35)',
+      lineBaseColor: 'rgba(56, 189, 248, 0.2)',
+      textShadowColor: 'rgba(56, 189, 248, 0.5)',
+      textShadowOffset: { width: 0, height: 2 },
+      textShadowRadius: 6,
+      primaryColor: '#38BDF8',
+      secondaryColor: '#0EA5E9',
+      atmosphereColor: 'rgba(56, 189, 248, 0.2)',
+      motifColor: 'rgba(14, 165, 233, 0.3)',
+      motionColor: 'rgba(56, 189, 248, 0.35)',
+      textureColor: 'rgba(56, 189, 248, 0.08)',
+      borderColor: 'rgba(56, 189, 248, 0.5)',
+      lightingColor: 'rgba(14, 165, 233, 0.25)',
+      accentGlowColor: 'rgba(56, 189, 248, 0.5)',
+      materialColor: 'rgba(56, 189, 248, 0.1)',
+      depthColor1: 'rgba(14, 165, 233, 0.12)',
+      depthColor2: 'rgba(56, 189, 248, 0.18)',
+      microColor: 'rgba(14, 165, 233, 0.3)',
+      edgeColor: 'rgba(56, 189, 248, 0.4)',
+    },
+    'purpleStorm': {
+      // Base material: dark purple with electric energy
+      gradientColors: ['#1E1B4B', '#312E81', '#4338CA'],
+      innerShadowColors: ['rgba(192, 132, 252, 0.2)', 'rgba(167, 139, 250, 0.12)', 'rgba(0,0,0,0.3)'],
+      titleColor: '#E9D5FF',
+      checkColor: '#1E1B4B',
+      checkBg: 'rgba(192, 132, 252, 0.35)',
+      lineBaseColor: 'rgba(192, 132, 252, 0.22)',
+      textShadowColor: 'rgba(192, 132, 252, 0.5)',
+      textShadowOffset: { width: 0, height: 2 },
+      textShadowRadius: 6,
+      primaryColor: '#C084FC',
+      secondaryColor: '#A78BFA',
+      atmosphereColor: 'rgba(192, 132, 252, 0.25)',
+      motifColor: 'rgba(167, 139, 250, 0.35)',
+      motionColor: 'rgba(192, 132, 252, 0.4)',
+      textureColor: 'rgba(192, 132, 252, 0.1)',
+      borderColor: 'rgba(192, 132, 252, 0.55)',
+      lightingColor: 'rgba(167, 139, 250, 0.2)',
+      accentGlowColor: 'rgba(192, 132, 252, 0.5)',
+      materialColor: 'rgba(192, 132, 252, 0.12)',
+      depthColor1: 'rgba(167, 139, 250, 0.15)',
+      depthColor2: 'rgba(192, 132, 252, 0.22)',
+      microColor: 'rgba(167, 139, 250, 0.35)',
+      edgeColor: 'rgba(167, 139, 250, 0.45)',
+    },
+    'volcanicAsh': {
+      // Base material: dark gray with ash texture
+      gradientColors: ['#18181B', '#27272A', '#3F3F46'],
+      innerShadowColors: ['rgba(161, 161, 170, 0.15)', 'rgba(113, 113, 122, 0.1)', 'rgba(0,0,0,0.3)'],
+      titleColor: '#E4E4E7',
+      checkColor: '#18181B',
+      checkBg: 'rgba(161, 161, 170, 0.35)',
+      lineBaseColor: 'rgba(161, 161, 170, 0.2)',
+      textShadowColor: 'rgba(161, 161, 170, 0.4)',
+      textShadowOffset: { width: 0, height: 2 },
+      textShadowRadius: 6,
+      primaryColor: '#A1A1AA',
+      secondaryColor: '#71717A',
+      atmosphereColor: 'rgba(161, 161, 170, 0.2)',
+      motifColor: 'rgba(113, 113, 122, 0.3)',
+      motionColor: 'rgba(161, 161, 170, 0.35)',
+      textureColor: 'rgba(161, 161, 170, 0.1)',
+      borderColor: 'rgba(161, 161, 170, 0.45)',
+      lightingColor: 'rgba(113, 113, 122, 0.2)',
+      accentGlowColor: 'rgba(161, 161, 170, 0.4)',
+      materialColor: 'rgba(161, 161, 170, 0.1)',
+      depthColor1: 'rgba(113, 113, 122, 0.12)',
+      depthColor2: 'rgba(161, 161, 170, 0.18)',
+      microColor: 'rgba(113, 113, 122, 0.3)',
+      edgeColor: 'rgba(113, 113, 122, 0.4)',
+    },
+    'venom': {
+      // Base material: toxic green with danger feel
+      gradientColors: ['#052E16', '#14532D', '#166534'],
+      innerShadowColors: ['rgba(74, 222, 128, 0.2)', 'rgba(34, 197, 94, 0.12)', 'rgba(0,0,0,0.35)'],
+      titleColor: '#BBF7D0',
+      checkColor: '#052E16',
+      checkBg: 'rgba(74, 222, 128, 0.35)',
+      lineBaseColor: 'rgba(74, 222, 128, 0.22)',
+      textShadowColor: 'rgba(74, 222, 128, 0.5)',
+      textShadowOffset: { width: 0, height: 2 },
+      textShadowRadius: 6,
+      primaryColor: '#4ADE80',
+      secondaryColor: '#22C55E',
+      atmosphereColor: 'rgba(74, 222, 128, 0.25)',
+      motifColor: 'rgba(34, 197, 94, 0.35)',
+      motionColor: 'rgba(74, 222, 128, 0.4)',
+      textureColor: 'rgba(74, 222, 128, 0.1)',
+      borderColor: 'rgba(74, 222, 128, 0.55)',
+      lightingColor: 'rgba(34, 197, 94, 0.2)',
+      accentGlowColor: 'rgba(74, 222, 128, 0.5)',
+      materialColor: 'rgba(74, 222, 128, 0.12)',
+      depthColor1: 'rgba(34, 197, 94, 0.15)',
+      depthColor2: 'rgba(74, 222, 128, 0.22)',
+      microColor: 'rgba(34, 197, 94, 0.35)',
+      edgeColor: 'rgba(34, 197, 94, 0.45)',
+    },
+    'wave': {
+      // Base material: ocean blue with water feel
+      gradientColors: ['#0C4A6E', '#0369A1', '#0284C7'],
+      innerShadowColors: ['rgba(125, 211, 252, 0.18)', 'rgba(56, 189, 248, 0.1)', 'rgba(0,0,0,0.25)'],
+      titleColor: '#E0F2FE',
+      checkColor: '#0C4A6E',
+      checkBg: 'rgba(125, 211, 252, 0.35)',
+      lineBaseColor: 'rgba(125, 211, 252, 0.2)',
+      textShadowColor: 'rgba(125, 211, 252, 0.5)',
+      textShadowOffset: { width: 0, height: 2 },
+      textShadowRadius: 6,
+      primaryColor: '#7DD3FC',
+      secondaryColor: '#38BDF8',
+      atmosphereColor: 'rgba(125, 211, 252, 0.18)',
+      motifColor: 'rgba(56, 189, 248, 0.28)',
+      motionColor: 'rgba(125, 211, 252, 0.32)',
+      textureColor: 'rgba(125, 211, 252, 0.08)',
+      borderColor: 'rgba(125, 211, 252, 0.45)',
+      lightingColor: 'rgba(56, 189, 248, 0.2)',
+      accentGlowColor: 'rgba(125, 211, 252, 0.5)',
+      materialColor: 'rgba(125, 211, 252, 0.08)',
+      depthColor1: 'rgba(56, 189, 248, 0.1)',
+      depthColor2: 'rgba(125, 211, 252, 0.15)',
+      microColor: 'rgba(56, 189, 248, 0.25)',
+      edgeColor: 'rgba(125, 211, 252, 0.35)',
+    },
   };
   return styles[themeId] || styles['default'];
 }
@@ -454,28 +526,34 @@ function renderMaterialLayer(themeId: string, style: any) {
       return <View style={[styles.glassMaterial, { backgroundColor: style.materialColor }]} />;
     case 'classic':
       return <View style={[styles.sportMaterial, { backgroundColor: style.materialColor }]} />;
-    case 'zen-ink':
+    case 'zenInk':
       return <View style={[styles.paperMaterial, { backgroundColor: style.materialColor }]} />;
-    case 'forest-breath':
-      return <View style={[styles.organicMaterial, { backgroundColor: style.materialColor }]} />;
     case 'force':
       return <View style={[styles.performanceMaterial, { backgroundColor: style.materialColor }]} />;
-    case 'pure-luxury':
-      return <View style={[styles.luxuryMaterial, { backgroundColor: style.materialColor }]} />;
-    case 'innovation':
-      return <View style={[styles.techMaterial, { backgroundColor: style.materialColor }]} />;
-    case 'pastel-calm':
+    case 'pastelCalm':
       return <View style={[styles.softMaterial, { backgroundColor: style.materialColor }]} />;
-    case 'retro-sport':
+    case 'retroSport':
       return <View style={[styles.vintageMaterial, { backgroundColor: style.materialColor }]} />;
-    case 'pulse':
-      return <View style={[styles.energyMaterial, { backgroundColor: style.materialColor }]} />;
-    case 'rogue':
-      return <View style={[styles.aggressiveMaterial, { backgroundColor: style.materialColor }]} />;
-    case 'ember':
-      return <View style={[styles.warmMaterial, { backgroundColor: style.materialColor }]} />;
-    case 'dune':
+    case 'saharaDune':
       return <View style={[styles.sandMaterial, { backgroundColor: style.materialColor }]} />;
+    case 'aurora':
+      return <View style={[styles.glassMaterial, { backgroundColor: style.materialColor }]} />;
+    case 'ruby':
+      return <View style={[styles.performanceMaterial, { backgroundColor: style.materialColor }]} />;
+    case 'coralBloom':
+      return <View style={[styles.softMaterial, { backgroundColor: style.materialColor }]} />;
+    case 'marble':
+      return <View style={[styles.paperMaterial, { backgroundColor: style.materialColor }]} />;
+    case 'sapphire':
+      return <View style={[styles.glassMaterial, { backgroundColor: style.materialColor }]} />;
+    case 'purpleStorm':
+      return <View style={[styles.techMaterial, { backgroundColor: style.materialColor }]} />;
+    case 'volcanicAsh':
+      return <View style={[styles.performanceMaterial, { backgroundColor: style.materialColor }]} />;
+    case 'venom':
+      return <View style={[styles.organicMaterial, { backgroundColor: style.materialColor }]} />;
+    case 'wave':
+      return <View style={[styles.glassMaterial, { backgroundColor: style.materialColor }]} />;
     default:
       return null;
   }
@@ -497,58 +575,70 @@ function renderDepthLayer(themeId: string, style: any) {
           <LinearGradient colors={['transparent', style.depthColor2]} style={styles.depthGradientBottom} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} />
         </>
       );
-    case 'zen-ink':
+    case 'zenInk':
       return (
         <LinearGradient colors={[style.depthColor1, 'transparent', style.depthColor2]} style={styles.depthGradientFull} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
-      );
-    case 'forest-breath':
-      return (
-        <>
-          <LinearGradient colors={[style.depthColor1, 'transparent']} style={styles.depthGradientTop} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} />
-          <LinearGradient colors={['transparent', style.depthColor2]} style={styles.depthGradientBottom} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} />
-        </>
       );
     case 'force':
       return (
         <LinearGradient colors={[style.depthColor1, style.depthColor2, 'transparent']} style={styles.depthGradientDiagonal} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
       );
-    case 'pure-luxury':
+    case 'pastelCalm':
       return (
         <LinearGradient colors={[style.depthColor1, 'transparent', style.depthColor2]} style={styles.depthGradientFull} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
       );
-    case 'innovation':
-      return (
-        <LinearGradient colors={[style.depthColor1, style.depthColor2, 'transparent']} style={styles.depthGradientDiagonal} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
-      );
-    case 'pastel-calm':
-      return (
-        <LinearGradient colors={[style.depthColor1, 'transparent', style.depthColor2]} style={styles.depthGradientFull} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
-      );
-    case 'retro-sport':
+    case 'retroSport':
       return (
         <>
           <LinearGradient colors={[style.depthColor1, 'transparent']} style={styles.depthGradientTop} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} />
           <LinearGradient colors={['transparent', style.depthColor2]} style={styles.depthGradientBottom} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} />
         </>
       );
-    case 'pulse':
-      return (
-        <LinearGradient colors={[style.depthColor1, style.depthColor2, 'transparent']} style={styles.depthGradientDiagonal} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
-      );
-    case 'rogue':
-      return (
-        <LinearGradient colors={[style.depthColor1, style.depthColor2, 'transparent']} style={styles.depthGradientDiagonal} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
-      );
-    case 'ember':
-      return (
-        <LinearGradient colors={['transparent', style.depthColor1, style.depthColor2]} style={styles.depthGradientBottom} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} />
-      );
-    case 'dune':
+    case 'saharaDune':
       return (
         <>
           <LinearGradient colors={[style.depthColor1, 'transparent']} style={styles.depthGradientTop} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} />
           <LinearGradient colors={['transparent', style.depthColor2]} style={styles.depthGradientBottom} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} />
         </>
+      );
+    case 'aurora':
+      return (
+        <LinearGradient colors={[style.depthColor1, style.depthColor2, 'transparent']} style={styles.depthGradientDiagonal} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
+      );
+    case 'ruby':
+      return (
+        <LinearGradient colors={[style.depthColor1, style.depthColor2, 'transparent']} style={styles.depthGradientDiagonal} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
+      );
+    case 'coralBloom':
+      return (
+        <LinearGradient colors={[style.depthColor1, 'transparent', style.depthColor2]} style={styles.depthGradientFull} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
+      );
+    case 'marble':
+      return (
+        <>
+          <LinearGradient colors={[style.depthColor1, 'transparent']} style={styles.depthGradientTop} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} />
+          <LinearGradient colors={['transparent', style.depthColor2]} style={styles.depthGradientBottom} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} />
+        </>
+      );
+    case 'sapphire':
+      return (
+        <LinearGradient colors={[style.depthColor1, style.depthColor2, 'transparent']} style={styles.depthGradientDiagonal} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
+      );
+    case 'purpleStorm':
+      return (
+        <LinearGradient colors={[style.depthColor1, style.depthColor2, 'transparent']} style={styles.depthGradientDiagonal} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
+      );
+    case 'volcanicAsh':
+      return (
+        <LinearGradient colors={[style.depthColor1, style.depthColor2, 'transparent']} style={styles.depthGradientDiagonal} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
+      );
+    case 'venom':
+      return (
+        <LinearGradient colors={[style.depthColor1, style.depthColor2, 'transparent']} style={styles.depthGradientDiagonal} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
+      );
+    case 'wave':
+      return (
+        <LinearGradient colors={[style.depthColor1, style.depthColor2, 'transparent']} style={styles.depthGradientDiagonal} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} />
       );
     default:
       return null;
@@ -572,20 +662,12 @@ function renderMotifLayer(themeId: string, style: any) {
           <View style={[styles.glowDotClassic, { backgroundColor: style.motifColor }]} />
         </>
       );
-    case 'zen-ink':
+    case 'zenInk':
       return (
         <>
           <View style={[styles.inkWashLarge, { backgroundColor: style.motifColor }]} />
           <View style={[styles.inkWashSmall, { backgroundColor: style.motifColor }]} />
           <View style={[styles.asymmetricCircle, { backgroundColor: style.motifColor }]} />
-        </>
-      );
-    case 'forest-breath':
-      return (
-        <>
-          <View style={[styles.leafCurve, { backgroundColor: style.motifColor }]} />
-          <View style={[styles.leafFloating, { backgroundColor: style.motifColor }]} />
-          <View style={[styles.sunRay, { backgroundColor: style.motifColor }]} />
         </>
       );
     case 'force':
@@ -596,23 +678,7 @@ function renderMotifLayer(themeId: string, style: any) {
           <View style={[styles.forceGlow, { backgroundColor: style.motifColor }]} />
         </>
       );
-    case 'pure-luxury':
-      return (
-        <>
-          <View style={[styles.goldDiagonal, { backgroundColor: style.motifColor }]} />
-          <View style={[styles.luxuryOrnament, { backgroundColor: style.motifColor }]} />
-          <View style={[styles.goldParticle, { backgroundColor: style.motifColor }]} />
-        </>
-      );
-    case 'innovation':
-      return (
-        <>
-          <View style={[styles.circuitGrid, { backgroundColor: style.motifColor }]} />
-          <View style={[styles.dataNode, { backgroundColor: style.motifColor }]} />
-          <View style={[styles.techOrb, { backgroundColor: style.motifColor }]} />
-        </>
-      );
-    case 'pastel-calm':
+    case 'pastelCalm':
       return (
         <>
           <View style={[styles.pearlCurve, { backgroundColor: style.motifColor }]} />
@@ -620,7 +686,7 @@ function renderMotifLayer(themeId: string, style: any) {
           <View style={[styles.calmDot, { backgroundColor: style.motifColor }]} />
         </>
       );
-    case 'retro-sport':
+    case 'retroSport':
       return (
         <>
           <View style={[styles.vintageStripeMain, { backgroundColor: style.motifColor }]} />
@@ -628,36 +694,83 @@ function renderMotifLayer(themeId: string, style: any) {
           <View style={[styles.badgeRetro, { backgroundColor: style.motifColor }]} />
         </>
       );
-    case 'pulse':
-      return (
-        <>
-          <View style={[styles.heartbeatCurve, { backgroundColor: style.motifColor }]} />
-          <View style={[styles.pulseOrb, { backgroundColor: style.motifColor }]} />
-          <View style={[styles.rhythmDot, { backgroundColor: style.motifColor }]} />
-        </>
-      );
-    case 'rogue':
-      return (
-        <>
-          <View style={[styles.aggressionSlash, { backgroundColor: style.motifColor }]} />
-          <View style={[styles.fireOrb, { backgroundColor: style.motifColor }]} />
-          <View style={[styles.sparkRing, { backgroundColor: style.motifColor }]} />
-        </>
-      );
-    case 'ember':
-      return (
-        <>
-          <View style={[styles.warmthCurve, { backgroundColor: style.motifColor }]} />
-          <View style={[styles.emberOrb, { backgroundColor: style.motifColor }]} />
-          <View style={[styles.glowParticle, { backgroundColor: style.motifColor }]} />
-        </>
-      );
-    case 'dune':
+    case 'saharaDune':
       return (
         <>
           <View style={[styles.duneCurve, { backgroundColor: style.motifColor }]} />
           <View style={[styles.sunOrb, { backgroundColor: style.motifColor }]} />
           <View style={[styles.sandDot, { backgroundColor: style.motifColor }]} />
+        </>
+      );
+    case 'aurora':
+      return (
+        <>
+          <View style={[styles.diagonalHighlight, { backgroundColor: style.motifColor }]} />
+          <View style={[styles.energyOrb, { backgroundColor: style.motifColor }]} />
+        </>
+      );
+    case 'ruby':
+      return (
+        <>
+          <View style={[styles.powerDiagonal, { backgroundColor: style.motifColor }]} />
+          <View style={[styles.impactRing, { backgroundColor: style.motifColor }]} />
+          <View style={[styles.forceGlow, { backgroundColor: style.motifColor }]} />
+        </>
+      );
+    case 'coralBloom':
+      return (
+        <>
+          <View style={[styles.pearlCurve, { backgroundColor: style.motifColor }]} />
+          <View style={[styles.softOrb, { backgroundColor: style.motifColor }]} />
+          <View style={[styles.calmDot, { backgroundColor: style.motifColor }]} />
+        </>
+      );
+    case 'marble':
+      return (
+        <>
+          <View style={[styles.inkWashLarge, { backgroundColor: style.motifColor }]} />
+          <View style={[styles.inkWashSmall, { backgroundColor: style.motifColor }]} />
+          <View style={[styles.asymmetricCircle, { backgroundColor: style.motifColor }]} />
+        </>
+      );
+    case 'sapphire':
+      return (
+        <>
+          <View style={[styles.circuitGrid, { backgroundColor: style.motifColor }]} />
+          <View style={[styles.dataNode, { backgroundColor: style.motifColor }]} />
+          <View style={[styles.techOrb, { backgroundColor: style.motifColor }]} />
+        </>
+      );
+    case 'purpleStorm':
+      return (
+        <>
+          <View style={[styles.circuitGrid, { backgroundColor: style.motifColor }]} />
+          <View style={[styles.dataNode, { backgroundColor: style.motifColor }]} />
+          <View style={[styles.techOrb, { backgroundColor: style.motifColor }]} />
+        </>
+      );
+    case 'volcanicAsh':
+      return (
+        <>
+          <View style={[styles.powerDiagonal, { backgroundColor: style.motifColor }]} />
+          <View style={[styles.impactRing, { backgroundColor: style.motifColor }]} />
+          <View style={[styles.forceGlow, { backgroundColor: style.motifColor }]} />
+        </>
+      );
+    case 'venom':
+      return (
+        <>
+          <View style={[styles.leafCurve, { backgroundColor: style.motifColor }]} />
+          <View style={[styles.leafFloating, { backgroundColor: style.motifColor }]} />
+          <View style={[styles.sunRay, { backgroundColor: style.motifColor }]} />
+        </>
+      );
+    case 'wave':
+      return (
+        <>
+          <View style={[styles.pearlCurve, { backgroundColor: style.motifColor }]} />
+          <View style={[styles.softOrb, { backgroundColor: style.motifColor }]} />
+          <View style={[styles.calmDot, { backgroundColor: style.motifColor }]} />
         </>
       );
     default:
@@ -682,20 +795,12 @@ function renderMotionLayer(themeId: string, style: any) {
           <View style={[styles.energyParticleClassic, { backgroundColor: style.motionColor }]} />
         </>
       );
-    case 'zen-ink':
+    case 'zenInk':
       return (
         <>
           <View style={[styles.brushLineLong, { backgroundColor: style.motionColor }]} />
           <View style={[styles.brushLineShort, { backgroundColor: style.motionColor }]} />
           <View style={[styles.inkDot, { backgroundColor: style.motionColor }]} />
-        </>
-      );
-    case 'forest-breath':
-      return (
-        <>
-          <View style={[styles.breathWave, { backgroundColor: style.motionColor }]} />
-          <View style={[styles.leafTrail, { backgroundColor: style.motionColor }]} />
-          <View style={[styles.natureParticle, { backgroundColor: style.motionColor }]} />
         </>
       );
     case 'force':
@@ -706,23 +811,7 @@ function renderMotionLayer(themeId: string, style: any) {
           <View style={[styles.impactParticle, { backgroundColor: style.motionColor }]} />
         </>
       );
-    case 'pure-luxury':
-      return (
-        <>
-          <View style={[styles.goldLine, { backgroundColor: style.motionColor }]} />
-          <View style={[styles.shimmerLine, { backgroundColor: style.motionColor }]} />
-          <View style={[styles.luxuryDot, { backgroundColor: style.motionColor }]} />
-        </>
-      );
-    case 'innovation':
-      return (
-        <>
-          <View style={[styles.circuitTrace, { backgroundColor: style.motionColor }]} />
-          <View style={[styles.scanLine, { backgroundColor: style.motionColor }]} />
-          <View style={[styles.techParticle, { backgroundColor: style.motionColor }]} />
-        </>
-      );
-    case 'pastel-calm':
+    case 'pastelCalm':
       return (
         <>
           <View style={[styles.waveLine, { backgroundColor: style.motionColor }]} />
@@ -730,7 +819,7 @@ function renderMotionLayer(themeId: string, style: any) {
           <View style={[styles.calmParticle, { backgroundColor: style.motionColor }]} />
         </>
       );
-    case 'retro-sport':
+    case 'retroSport':
       return (
         <>
           <View style={[styles.racingLine, { backgroundColor: style.motionColor }]} />
@@ -738,36 +827,84 @@ function renderMotionLayer(themeId: string, style: any) {
           <View style={[styles.halftonePattern, { backgroundColor: style.motionColor }]} />
         </>
       );
-    case 'pulse':
-      return (
-        <>
-          <View style={[styles.ecgLine, { backgroundColor: style.motionColor }]} />
-          <View style={[styles.pulseLine, { backgroundColor: style.motionColor }]} />
-          <View style={[styles.energyParticlePulse, { backgroundColor: style.motionColor }]} />
-        </>
-      );
-    case 'rogue':
-      return (
-        <>
-          <View style={[styles.energySlash, { backgroundColor: style.motionColor }]} />
-          <View style={[styles.fireLine, { backgroundColor: style.motionColor }]} />
-          <View style={[styles.sparkParticleRogue, { backgroundColor: style.motionColor }]} />
-        </>
-      );
-    case 'ember':
-      return (
-        <>
-          <View style={[styles.heatTrail, { backgroundColor: style.motionColor }]} />
-          <View style={[styles.smokeLine, { backgroundColor: style.motionColor }]} />
-          <View style={[styles.emberParticle, { backgroundColor: style.motionColor }]} />
-        </>
-      );
-    case 'dune':
+    case 'saharaDune':
       return (
         <>
           <View style={[styles.windLine, { backgroundColor: style.motionColor }]} />
           <View style={[styles.duneTrail, { backgroundColor: style.motionColor }]} />
           <View style={[styles.sandParticle, { backgroundColor: style.motionColor }]} />
+        </>
+      );
+    case 'aurora':
+      return (
+        <>
+          <View style={[styles.circuitTrace, { backgroundColor: style.motionColor }]} />
+          <View style={[styles.scanLine, { backgroundColor: style.motionColor }]} />
+          <View style={[styles.techParticle, { backgroundColor: style.motionColor }]} />
+        </>
+      );
+    case 'ruby':
+      return (
+        <>
+          <View style={[styles.diagonalCut, { backgroundColor: style.motionColor }]} />
+          <View style={[styles.powerLine, { backgroundColor: style.motionColor }]} />
+          <View style={[styles.impactParticle, { backgroundColor: style.motionColor }]} />
+        </>
+      );
+    case 'coralBloom':
+      return (
+        <>
+          <View style={[styles.waveLine, { backgroundColor: style.motionColor }]} />
+          <View style={[styles.bubbleTrail, { backgroundColor: style.motionColor }]} />
+          <View style={[styles.calmParticle, { backgroundColor: style.motionColor }]} />
+        </>
+      );
+    case 'marble':
+      return (
+        <>
+          <View style={[styles.brushLineLong, { backgroundColor: style.motionColor }]} />
+          <View style={[styles.brushLineShort, { backgroundColor: style.motionColor }]} />
+          <View style={[styles.inkDot, { backgroundColor: style.motionColor }]} />
+        </>
+      );
+    case 'sapphire':
+      return (
+        <>
+          <View style={[styles.circuitTrace, { backgroundColor: style.motionColor }]} />
+          <View style={[styles.scanLine, { backgroundColor: style.motionColor }]} />
+          <View style={[styles.techParticle, { backgroundColor: style.motionColor }]} />
+        </>
+      );
+    case 'purpleStorm':
+      return (
+        <>
+          <View style={[styles.circuitTrace, { backgroundColor: style.motionColor }]} />
+          <View style={[styles.scanLine, { backgroundColor: style.motionColor }]} />
+          <View style={[styles.techParticle, { backgroundColor: style.motionColor }]} />
+        </>
+      );
+    case 'volcanicAsh':
+      return (
+        <>
+          <View style={[styles.diagonalCut, { backgroundColor: style.motionColor }]} />
+          <View style={[styles.powerLine, { backgroundColor: style.motionColor }]} />
+          <View style={[styles.impactParticle, { backgroundColor: style.motionColor }]} />
+        </>
+      );
+    case 'venom':
+      return (
+        <>
+          <View style={[styles.breathWave, { backgroundColor: style.motionColor }]} />
+          <View style={[styles.leafTrail, { backgroundColor: style.motionColor }]} />
+          <View style={[styles.natureParticle, { backgroundColor: style.motionColor }]} />
+        </>
+      );
+    case 'wave':
+      return (
+        <>
+          <View style={[styles.waveLine, { backgroundColor: style.motionColor }]} />
+          <View style={[styles.bubbleTrail, { backgroundColor: style.motionColor }]} />
+          <View style={[styles.calmParticle, { backgroundColor: style.motionColor }]} />
         </>
       );
     default:
@@ -791,16 +928,9 @@ function renderLightingLayer(themeId: string, style: any) {
           <View style={[styles.stadiumLight2, { backgroundColor: style.lightingColor }]} />
         </>
       );
-    case 'zen-ink':
+    case 'zenInk':
       return (
         <View style={[styles.paperLight, { backgroundColor: style.lightingColor }]} />
-      );
-    case 'forest-breath':
-      return (
-        <>
-          <View style={[styles.sunRay1, { backgroundColor: style.lightingColor }]} />
-          <View style={[styles.sunRay2, { backgroundColor: style.lightingColor }]} />
-        </>
       );
     case 'force':
       return (
@@ -809,57 +939,82 @@ function renderLightingLayer(themeId: string, style: any) {
           <View style={[styles.impactLight2, { backgroundColor: style.lightingColor }]} />
         </>
       );
-    case 'pure-luxury':
-      return (
-        <>
-          <View style={[styles.goldShine1, { backgroundColor: style.lightingColor }]} />
-          <View style={[styles.goldShine2, { backgroundColor: style.lightingColor }]} />
-        </>
-      );
-    case 'innovation':
-      return (
-        <>
-          <View style={[styles.techLight1, { backgroundColor: style.lightingColor }]} />
-          <View style={[styles.techLight2, { backgroundColor: style.lightingColor }]} />
-        </>
-      );
-    case 'pastel-calm':
+    case 'pastelCalm':
       return (
         <>
           <View style={[styles.softLight1, { backgroundColor: style.lightingColor }]} />
           <View style={[styles.softLight2, { backgroundColor: style.lightingColor }]} />
         </>
       );
-    case 'retro-sport':
+    case 'retroSport':
       return (
         <View style={[styles.vintageLight, { backgroundColor: style.lightingColor }]} />
       );
-    case 'pulse':
-      return (
-        <>
-          <View style={[styles.energyLight1, { backgroundColor: style.lightingColor }]} />
-          <View style={[styles.energyLight2, { backgroundColor: style.lightingColor }]} />
-        </>
-      );
-    case 'rogue':
-      return (
-        <>
-          <View style={[styles.fireLight1, { backgroundColor: style.lightingColor }]} />
-          <View style={[styles.fireLight2, { backgroundColor: style.lightingColor }]} />
-        </>
-      );
-    case 'ember':
-      return (
-        <>
-          <View style={[styles.emberLight1, { backgroundColor: style.lightingColor }]} />
-          <View style={[styles.emberLight2, { backgroundColor: style.lightingColor }]} />
-        </>
-      );
-    case 'dune':
+    case 'saharaDune':
       return (
         <>
           <View style={[styles.sunLight1, { backgroundColor: style.lightingColor }]} />
           <View style={[styles.sunLight2, { backgroundColor: style.lightingColor }]} />
+        </>
+      );
+    case 'aurora':
+      return (
+        <>
+          <View style={[styles.techLight1, { backgroundColor: style.lightingColor }]} />
+          <View style={[styles.techLight2, { backgroundColor: style.lightingColor }]} />
+        </>
+      );
+    case 'ruby':
+      return (
+        <>
+          <View style={[styles.impactLight1, { backgroundColor: style.lightingColor }]} />
+          <View style={[styles.impactLight2, { backgroundColor: style.lightingColor }]} />
+        </>
+      );
+    case 'coralBloom':
+      return (
+        <>
+          <View style={[styles.softLight1, { backgroundColor: style.lightingColor }]} />
+          <View style={[styles.softLight2, { backgroundColor: style.lightingColor }]} />
+        </>
+      );
+    case 'marble':
+      return (
+        <View style={[styles.paperLight, { backgroundColor: style.lightingColor }]} />
+      );
+    case 'sapphire':
+      return (
+        <>
+          <View style={[styles.techLight1, { backgroundColor: style.lightingColor }]} />
+          <View style={[styles.techLight2, { backgroundColor: style.lightingColor }]} />
+        </>
+      );
+    case 'purpleStorm':
+      return (
+        <>
+          <View style={[styles.techLight1, { backgroundColor: style.lightingColor }]} />
+          <View style={[styles.techLight2, { backgroundColor: style.lightingColor }]} />
+        </>
+      );
+    case 'volcanicAsh':
+      return (
+        <>
+          <View style={[styles.impactLight1, { backgroundColor: style.lightingColor }]} />
+          <View style={[styles.impactLight2, { backgroundColor: style.lightingColor }]} />
+        </>
+      );
+    case 'venom':
+      return (
+        <>
+          <View style={[styles.sunRay1, { backgroundColor: style.lightingColor }]} />
+          <View style={[styles.sunRay2, { backgroundColor: style.lightingColor }]} />
+        </>
+      );
+    case 'wave':
+      return (
+        <>
+          <View style={[styles.softLight1, { backgroundColor: style.lightingColor }]} />
+          <View style={[styles.softLight2, { backgroundColor: style.lightingColor }]} />
         </>
       );
     default:
@@ -885,19 +1040,11 @@ function renderMicroDetails(themeId: string, style: any) {
           <View style={[styles.microLineClassic, { backgroundColor: style.microColor }]} />
         </>
       );
-    case 'zen-ink':
+    case 'zenInk':
       return (
         <>
           <View style={[styles.microDotZen1, { backgroundColor: style.microColor }]} />
           <View style={[styles.microLineZen, { backgroundColor: style.microColor }]} />
-        </>
-      );
-    case 'forest-breath':
-      return (
-        <>
-          <View style={[styles.microDotForest1, { backgroundColor: style.microColor }]} />
-          <View style={[styles.microDotForest2, { backgroundColor: style.microColor }]} />
-          <View style={[styles.microCurveForest, { backgroundColor: style.microColor }]} />
         </>
       );
     case 'force':
@@ -908,23 +1055,7 @@ function renderMicroDetails(themeId: string, style: any) {
           <View style={[styles.microDotForce, { backgroundColor: style.microColor }]} />
         </>
       );
-    case 'pure-luxury':
-      return (
-        <>
-          <View style={[styles.microGoldLine1, { backgroundColor: style.microColor }]} />
-          <View style={[styles.microGoldLine2, { backgroundColor: style.microColor }]} />
-          <View style={[styles.microDotLuxury, { backgroundColor: style.microColor }]} />
-        </>
-      );
-    case 'innovation':
-      return (
-        <>
-          <View style={[styles.microNode1, { backgroundColor: style.microColor }]} />
-          <View style={[styles.microNode2, { backgroundColor: style.microColor }]} />
-          <View style={[styles.microCircuitLine, { backgroundColor: style.microColor }]} />
-        </>
-      );
-    case 'pastel-calm':
+    case 'pastelCalm':
       return (
         <>
           <View style={[styles.microBubble1, { backgroundColor: style.microColor }]} />
@@ -932,7 +1063,7 @@ function renderMicroDetails(themeId: string, style: any) {
           <View style={[styles.microSoftCurve, { backgroundColor: style.microColor }]} />
         </>
       );
-    case 'retro-sport':
+    case 'retroSport':
       return (
         <>
           <View style={[styles.microDotRetro1, { backgroundColor: style.microColor }]} />
@@ -940,36 +1071,83 @@ function renderMicroDetails(themeId: string, style: any) {
           <View style={[styles.microRetroLine, { backgroundColor: style.microColor }]} />
         </>
       );
-    case 'pulse':
-      return (
-        <>
-          <View style={[styles.microPulseDot1, { backgroundColor: style.microColor }]} />
-          <View style={[styles.microPulseDot2, { backgroundColor: style.microColor }]} />
-          <View style={[styles.microPulseLine, { backgroundColor: style.microColor }]} />
-        </>
-      );
-    case 'rogue':
-      return (
-        <>
-          <View style={[styles.microRogueSlash1, { backgroundColor: style.microColor }]} />
-          <View style={[styles.microRogueSlash2, { backgroundColor: style.microColor }]} />
-          <View style={[styles.microSpark, { backgroundColor: style.microColor }]} />
-        </>
-      );
-    case 'ember':
-      return (
-        <>
-          <View style={[styles.microEmberDot1, { backgroundColor: style.microColor }]} />
-          <View style={[styles.microEmberDot2, { backgroundColor: style.microColor }]} />
-          <View style={[styles.microEmberTrail, { backgroundColor: style.microColor }]} />
-        </>
-      );
-    case 'dune':
+    case 'saharaDune':
       return (
         <>
           <View style={[styles.microSandDot1, { backgroundColor: style.microColor }]} />
           <View style={[styles.microSandDot2, { backgroundColor: style.microColor }]} />
           <View style={[styles.microSandCurve, { backgroundColor: style.microColor }]} />
+        </>
+      );
+    case 'aurora':
+      return (
+        <>
+          <View style={[styles.microNode1, { backgroundColor: style.microColor }]} />
+          <View style={[styles.microNode2, { backgroundColor: style.microColor }]} />
+          <View style={[styles.microCircuitLine, { backgroundColor: style.microColor }]} />
+        </>
+      );
+    case 'ruby':
+      return (
+        <>
+          <View style={[styles.microSlash1, { backgroundColor: style.microColor }]} />
+          <View style={[styles.microSlash2, { backgroundColor: style.microColor }]} />
+          <View style={[styles.microDotForce, { backgroundColor: style.microColor }]} />
+        </>
+      );
+    case 'coralBloom':
+      return (
+        <>
+          <View style={[styles.microBubble1, { backgroundColor: style.microColor }]} />
+          <View style={[styles.microBubble2, { backgroundColor: style.microColor }]} />
+          <View style={[styles.microSoftCurve, { backgroundColor: style.microColor }]} />
+        </>
+      );
+    case 'marble':
+      return (
+        <>
+          <View style={[styles.microDotZen1, { backgroundColor: style.microColor }]} />
+          <View style={[styles.microLineZen, { backgroundColor: style.microColor }]} />
+        </>
+      );
+    case 'sapphire':
+      return (
+        <>
+          <View style={[styles.microNode1, { backgroundColor: style.microColor }]} />
+          <View style={[styles.microNode2, { backgroundColor: style.microColor }]} />
+          <View style={[styles.microCircuitLine, { backgroundColor: style.microColor }]} />
+        </>
+      );
+    case 'purpleStorm':
+      return (
+        <>
+          <View style={[styles.microNode1, { backgroundColor: style.microColor }]} />
+          <View style={[styles.microNode2, { backgroundColor: style.microColor }]} />
+          <View style={[styles.microCircuitLine, { backgroundColor: style.microColor }]} />
+        </>
+      );
+    case 'volcanicAsh':
+      return (
+        <>
+          <View style={[styles.microSlash1, { backgroundColor: style.microColor }]} />
+          <View style={[styles.microSlash2, { backgroundColor: style.microColor }]} />
+          <View style={[styles.microDotForce, { backgroundColor: style.microColor }]} />
+        </>
+      );
+    case 'venom':
+      return (
+        <>
+          <View style={[styles.microDotForest1, { backgroundColor: style.microColor }]} />
+          <View style={[styles.microDotForest2, { backgroundColor: style.microColor }]} />
+          <View style={[styles.microCurveForest, { backgroundColor: style.microColor }]} />
+        </>
+      );
+    case 'wave':
+      return (
+        <>
+          <View style={[styles.microBubble1, { backgroundColor: style.microColor }]} />
+          <View style={[styles.microBubble2, { backgroundColor: style.microColor }]} />
+          <View style={[styles.microSoftCurve, { backgroundColor: style.microColor }]} />
         </>
       );
     default:
@@ -993,16 +1171,9 @@ function renderEdgeHighlight(themeId: string, style: any) {
           <View style={[styles.edgeHighlightBottom, { backgroundColor: style.edgeColor }]} />
         </>
       );
-    case 'zen-ink':
+    case 'zenInk':
       return (
         <View style={[styles.edgeHighlightLeft, { backgroundColor: style.edgeColor }]} />
-      );
-    case 'forest-breath':
-      return (
-        <>
-          <View style={[styles.edgeHighlightTop, { backgroundColor: style.edgeColor }]} />
-          <View style={[styles.edgeHighlightLeft, { backgroundColor: style.edgeColor }]} />
-        </>
       );
     case 'force':
       return (
@@ -1011,55 +1182,77 @@ function renderEdgeHighlight(themeId: string, style: any) {
           <View style={[styles.edgeHighlightDiagonal2, { backgroundColor: style.edgeColor }]} />
         </>
       );
-    case 'pure-luxury':
-      return (
-        <>
-          <View style={[styles.edgeHighlightTop, { backgroundColor: style.edgeColor }]} />
-          <View style={[styles.edgeHighlightRight, { backgroundColor: style.edgeColor }]} />
-        </>
-      );
-    case 'innovation':
-      return (
-        <>
-          <View style={[styles.edgeHighlightTop, { backgroundColor: style.edgeColor }]} />
-          <View style={[styles.edgeHighlightRight, { backgroundColor: style.edgeColor }]} />
-        </>
-      );
-    case 'pastel-calm':
+    case 'pastelCalm':
       return (
         <View style={[styles.edgeHighlightTop, { backgroundColor: style.edgeColor }]} />
       );
-    case 'retro-sport':
+    case 'retroSport':
       return (
         <>
           <View style={[styles.edgeHighlightTop, { backgroundColor: style.edgeColor }]} />
           <View style={[styles.edgeHighlightBottom, { backgroundColor: style.edgeColor }]} />
         </>
       );
-    case 'pulse':
+    case 'saharaDune':
       return (
         <>
-          <View style={[styles.edgeHighlightLeft, { backgroundColor: style.edgeColor }]} />
+          <View style={[styles.edgeHighlightTop, { backgroundColor: style.edgeColor }]} />
           <View style={[styles.edgeHighlightRight, { backgroundColor: style.edgeColor }]} />
         </>
       );
-    case 'rogue':
+    case 'aurora':
+      return (
+        <>
+          <View style={[styles.edgeHighlightTop, { backgroundColor: style.edgeColor }]} />
+          <View style={[styles.edgeHighlightRight, { backgroundColor: style.edgeColor }]} />
+        </>
+      );
+    case 'ruby':
       return (
         <>
           <View style={[styles.edgeHighlightDiagonal1, { backgroundColor: style.edgeColor }]} />
           <View style={[styles.edgeHighlightDiagonal2, { backgroundColor: style.edgeColor }]} />
         </>
       );
-    case 'ember':
+    case 'coralBloom':
       return (
-        <View style={[styles.edgeHighlightBottom, { backgroundColor: style.edgeColor }]} />
+        <View style={[styles.edgeHighlightTop, { backgroundColor: style.edgeColor }]} />
       );
-    case 'dune':
+    case 'marble':
+      return (
+        <View style={[styles.edgeHighlightLeft, { backgroundColor: style.edgeColor }]} />
+      );
+    case 'sapphire':
       return (
         <>
           <View style={[styles.edgeHighlightTop, { backgroundColor: style.edgeColor }]} />
           <View style={[styles.edgeHighlightRight, { backgroundColor: style.edgeColor }]} />
         </>
+      );
+    case 'purpleStorm':
+      return (
+        <>
+          <View style={[styles.edgeHighlightDiagonal1, { backgroundColor: style.edgeColor }]} />
+          <View style={[styles.edgeHighlightDiagonal2, { backgroundColor: style.edgeColor }]} />
+        </>
+      );
+    case 'volcanicAsh':
+      return (
+        <>
+          <View style={[styles.edgeHighlightDiagonal1, { backgroundColor: style.edgeColor }]} />
+          <View style={[styles.edgeHighlightDiagonal2, { backgroundColor: style.edgeColor }]} />
+        </>
+      );
+    case 'venom':
+      return (
+        <>
+          <View style={[styles.edgeHighlightTop, { backgroundColor: style.edgeColor }]} />
+          <View style={[styles.edgeHighlightLeft, { backgroundColor: style.edgeColor }]} />
+        </>
+      );
+    case 'wave':
+      return (
+        <View style={[styles.edgeHighlightTop, { backgroundColor: style.edgeColor }]} />
       );
     default:
       return null;
@@ -1084,19 +1277,11 @@ function renderAccentLine(themeId: string, style: any, theme: AppTheme) {
           <View style={[styles.accentLineGlow, { backgroundColor: style.accentGlowColor }]} />
         </View>
       );
-    case 'zen-ink':
+    case 'zenInk':
       return (
         <View style={styles.accentLineContainer}>
           <View style={[styles.accentLineBase, { backgroundColor: style.lineBaseColor }]} />
           <View style={[styles.accentLineFill, { backgroundColor: theme.tabBarActive }]} />
-        </View>
-      );
-    case 'forest-breath':
-      return (
-        <View style={styles.accentLineContainer}>
-          <View style={[styles.accentLineBase, { backgroundColor: style.lineBaseColor }]} />
-          <View style={[styles.accentLineFill, { backgroundColor: theme.tabBarActive }]} />
-          <View style={[styles.accentLineGlow, { backgroundColor: style.accentGlowColor }]} />
         </View>
       );
     case 'force':
@@ -1107,7 +1292,7 @@ function renderAccentLine(themeId: string, style: any, theme: AppTheme) {
           <View style={[styles.accentLineGlow, { backgroundColor: style.accentGlowColor }]} />
         </View>
       );
-    case 'pure-luxury':
+    case 'pastelCalm':
       return (
         <View style={styles.accentLineContainer}>
           <View style={[styles.accentLineBase, { backgroundColor: style.lineBaseColor }]} />
@@ -1115,7 +1300,14 @@ function renderAccentLine(themeId: string, style: any, theme: AppTheme) {
           <View style={[styles.accentLineGlow, { backgroundColor: style.accentGlowColor }]} />
         </View>
       );
-    case 'innovation':
+    case 'retroSport':
+      return (
+        <View style={styles.accentLineContainer}>
+          <View style={[styles.accentLineBase, { backgroundColor: style.lineBaseColor }]} />
+          <View style={[styles.accentLineFill, { backgroundColor: theme.tabBarActive }]} />
+        </View>
+      );
+    case 'saharaDune':
       return (
         <View style={styles.accentLineContainer}>
           <View style={[styles.accentLineBase, { backgroundColor: style.lineBaseColor }]} />
@@ -1123,7 +1315,7 @@ function renderAccentLine(themeId: string, style: any, theme: AppTheme) {
           <View style={[styles.accentLineGlow, { backgroundColor: style.accentGlowColor }]} />
         </View>
       );
-    case 'pastel-calm':
+    case 'aurora':
       return (
         <View style={styles.accentLineContainer}>
           <View style={[styles.accentLineBase, { backgroundColor: style.lineBaseColor }]} />
@@ -1131,14 +1323,7 @@ function renderAccentLine(themeId: string, style: any, theme: AppTheme) {
           <View style={[styles.accentLineGlow, { backgroundColor: style.accentGlowColor }]} />
         </View>
       );
-    case 'retro-sport':
-      return (
-        <View style={styles.accentLineContainer}>
-          <View style={[styles.accentLineBase, { backgroundColor: style.lineBaseColor }]} />
-          <View style={[styles.accentLineFill, { backgroundColor: theme.tabBarActive }]} />
-        </View>
-      );
-    case 'pulse':
+    case 'ruby':
       return (
         <View style={styles.accentLineContainer}>
           <View style={[styles.accentLineBase, { backgroundColor: style.lineBaseColor }]} />
@@ -1146,7 +1331,7 @@ function renderAccentLine(themeId: string, style: any, theme: AppTheme) {
           <View style={[styles.accentLineGlow, { backgroundColor: style.accentGlowColor }]} />
         </View>
       );
-    case 'rogue':
+    case 'coralBloom':
       return (
         <View style={styles.accentLineContainer}>
           <View style={[styles.accentLineBase, { backgroundColor: style.lineBaseColor }]} />
@@ -1154,7 +1339,7 @@ function renderAccentLine(themeId: string, style: any, theme: AppTheme) {
           <View style={[styles.accentLineGlow, { backgroundColor: style.accentGlowColor }]} />
         </View>
       );
-    case 'ember':
+    case 'marble':
       return (
         <View style={styles.accentLineContainer}>
           <View style={[styles.accentLineBase, { backgroundColor: style.lineBaseColor }]} />
@@ -1162,7 +1347,39 @@ function renderAccentLine(themeId: string, style: any, theme: AppTheme) {
           <View style={[styles.accentLineGlow, { backgroundColor: style.accentGlowColor }]} />
         </View>
       );
-    case 'dune':
+    case 'sapphire':
+      return (
+        <View style={styles.accentLineContainer}>
+          <View style={[styles.accentLineBase, { backgroundColor: style.lineBaseColor }]} />
+          <View style={[styles.accentLineFill, { backgroundColor: theme.tabBarActive }]} />
+          <View style={[styles.accentLineGlow, { backgroundColor: style.accentGlowColor }]} />
+        </View>
+      );
+    case 'purpleStorm':
+      return (
+        <View style={styles.accentLineContainer}>
+          <View style={[styles.accentLineBase, { backgroundColor: style.lineBaseColor }]} />
+          <View style={[styles.accentLineFill, { backgroundColor: theme.tabBarActive }]} />
+          <View style={[styles.accentLineGlow, { backgroundColor: style.accentGlowColor }]} />
+        </View>
+      );
+    case 'volcanicAsh':
+      return (
+        <View style={styles.accentLineContainer}>
+          <View style={[styles.accentLineBase, { backgroundColor: style.lineBaseColor }]} />
+          <View style={[styles.accentLineFill, { backgroundColor: theme.tabBarActive }]} />
+          <View style={[styles.accentLineGlow, { backgroundColor: style.accentGlowColor }]} />
+        </View>
+      );
+    case 'venom':
+      return (
+        <View style={styles.accentLineContainer}>
+          <View style={[styles.accentLineBase, { backgroundColor: style.lineBaseColor }]} />
+          <View style={[styles.accentLineFill, { backgroundColor: theme.tabBarActive }]} />
+          <View style={[styles.accentLineGlow, { backgroundColor: style.accentGlowColor }]} />
+        </View>
+      );
+    case 'wave':
       return (
         <View style={styles.accentLineContainer}>
           <View style={[styles.accentLineBase, { backgroundColor: style.lineBaseColor }]} />

@@ -11,10 +11,19 @@ interface ThemeImageBannerCardProps {
 // Static asset mappings for themes that have image banners
 const THEME_BANNER_IMAGES: Record<string, any> = {
   'force': require('@/assets/theme-banners/force-banner.png'),
-  'forest-breath': require('@/assets/theme-banners/forest-breath-banner.png'),
-  'innovation': require('@/assets/theme-banners/innovation-banner.png'),
-  'pastel-calm': require('@/assets/theme-banners/pastel-calm-banner.png'),
-  'pure-luxury': require('@/assets/theme-banners/pure-luxury-banner.png'),
+  'pastelCalm': require('@/assets/theme-banners/pastel-calm-banner.png'),
+  'retroSport': require('@/assets/theme-banners/retro-sport-banner.png'),
+  'saharaDune': require('@/assets/theme-banners/sahara-dune-banner.png'),
+  'zenInk': require('@/assets/theme-banners/zen-ink-banner.png'),
+  'aurora': require('@/assets/theme-banners/aurora-banner.png'),
+  'ruby': require('@/assets/theme-banners/ruby-banner.png'),
+  'coralBloom': require('@/assets/theme-banners/coral-bloom-banner.png'),
+  'marble': require('@/assets/theme-banners/marble-banner.png'),
+  'sapphire': require('@/assets/theme-banners/sapphire-banner.png'),
+  'purpleStorm': require('@/assets/theme-banners/purple-storm-banner.png'),
+  'volcanicAsh': require('@/assets/theme-banners/volcanic-ash-banner.png'),
+  'venom': require('@/assets/theme-banners/venom-banner.png'),
+  'wave': require('@/assets/theme-banners/wave-banner.png'),
 };
 
 export function ThemeImageBannerCard({ theme, isActive, onPress }: ThemeImageBannerCardProps) {
