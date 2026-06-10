@@ -101,10 +101,6 @@ export default function DisciplineDetail() {
     <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
       <PageHeader title={discipline.name} />
 
-      <Pressable style={styles.backPill} onPress={() => router.push('/tracker')}>
-        <Text style={styles.backPillText}>Terug naar disciplines</Text>
-      </Pressable>
-
       <View style={styles.heroCard}>
         <Text style={styles.heroTitle}>{discipline.name}</Text>
         <Text style={styles.heroMeta}>Tracking: {discipline.trackingType}</Text>
@@ -180,19 +176,6 @@ const styles = StyleSheet.create({
     color: '#EF4444',
     marginTop: 32,
     textAlign: 'center',
-  },
-  backPill: {
-    alignSelf: 'flex-start',
-    backgroundColor: '#E2E8F0',
-    borderRadius: 999,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    marginBottom: 10,
-  },
-  backPillText: {
-    color: '#334155',
-    fontSize: 12,
-    fontWeight: '700',
   },
   heroCard: {
     backgroundColor: '#0F172A',

@@ -6,6 +6,8 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/use-theme';
 import { DISCIPLINE_CONTENT } from '@/constants/discipline-content';
 import { getExerciseStats, ExerciseStats } from '@/services/exercise-history';
+import { AppScreen } from '@/components/AppScreen';
+import SharedBottomNav from '@/components/SharedBottomNav';
 
 export default function ExerciseDetailScreen() {
   const { id, disciplineSlug } = useLocalSearchParams<{ id: string; disciplineSlug?: string }>();
@@ -71,7 +73,7 @@ export default function ExerciseDetailScreen() {
 
   if (!exercise) {
     return (
-      <View style={[styles.screen, { backgroundColor: theme.background }]}>
+      <AppScreen style={{ backgroundColor: theme.background }}>
         <View style={styles.content}>
           <Pressable onPress={() => router.back()} style={styles.backButton}>
             <MaterialCommunityIcons name="arrow-left" size={24} color={theme.titleColor} />
@@ -81,7 +83,7 @@ export default function ExerciseDetailScreen() {
             Deze oefening kon niet worden geladen.
           </Text>
         </View>
-      </View>
+      </AppScreen>
     );
   }
 
@@ -230,10 +232,9 @@ export default function ExerciseDetailScreen() {
   };
 
   return (
-    <View style={[styles.screen, { backgroundColor: theme.background }]}>
+    <AppScreen style={{ backgroundColor: theme.background }}>
       <StatusBar barStyle="light-content" />
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-        <View style={Platform.OS === 'web' ? styles.webContainer : undefined}>
           {/* Media Hero Carousel */}
           <View style={styles.mediaHeader}>
             <ScrollView
@@ -368,9 +369,9 @@ export default function ExerciseDetailScreen() {
           </View>
         )}
           </View>
-        </View>
+        <SharedBottomNav activeTab="disciplines" />
       </ScrollView>
-    </View>
+    </AppScreen>
   );
 }
 
@@ -379,12 +380,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: 24,
-  },
-  webContainer: {
-    maxWidth: 430,
-    alignSelf: 'center',
-    width: '100%',
+    paddingBottom: 100,
   },
   mediaHeader: {
     height: 280,

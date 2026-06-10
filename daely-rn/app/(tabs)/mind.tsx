@@ -190,9 +190,6 @@ export default function MindScreen() {
         </Pressable>
 
         <View style={styles.buttonRow}>
-          <Pressable style={styles.primaryButton} onPress={() => router.push('/(tabs)/mijn')}>
-            <Text style={styles.primaryButtonText}>Terug naar Mijn</Text>
-          </Pressable>
           <Pressable
             style={[styles.secondaryButton, { backgroundColor: theme.background, borderColor: theme.border }]}
             onPress={() => router.push('/feedback')}

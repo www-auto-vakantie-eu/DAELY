@@ -1,11 +1,13 @@
 import React from 'react';
-import { View, StyleSheet, Text, Pressable, ScrollView, TouchableOpacity, Alert, Platform } from 'react-native';
+import { View, StyleSheet, Text, Pressable, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/use-theme';
 import { DISCIPLINE_CONTENT, Workout, Program } from '@/constants/discipline-content';
 import { SPORT_DISCIPLINES } from '../../../constants/sport-disciplines';
 import { enrollInProgram, isProgramOwned, getUserProgramByProgramId } from '@/services/user-programs-storage';
+import { AppScreen } from '@/components/AppScreen';
+import SharedBottomNav from '@/components/SharedBottomNav';
 
 interface WeekDayWorkout {
   week: number;
@@ -134,7 +136,7 @@ export default function DisciplineProgramDetailScreen() {
 
   if (!program) {
     return (
-      <View style={[styles.screen, { backgroundColor: theme.background }]}>
+      <AppScreen style={{ backgroundColor: theme.background }}>
         <View style={styles.content}>
           <Pressable onPress={() => router.back()} style={styles.backButton}>
             <MaterialCommunityIcons name="arrow-left" size={24} color={theme.titleColor} />
@@ -144,13 +146,13 @@ export default function DisciplineProgramDetailScreen() {
             Dit programma kon niet worden geladen.
           </Text>
         </View>
-      </View>
+      </AppScreen>
     );
   }
 
   return (
-    <ScrollView style={[styles.screen, { backgroundColor: theme.background }]}>
-      <View style={Platform.OS === 'web' ? styles.webContainer : undefined}>
+    <AppScreen style={{ backgroundColor: theme.background }}>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.content}>
           <Pressable onPress={() => router.back()} style={styles.backButton}>
             <MaterialCommunityIcons name="arrow-left" size={24} color={theme.titleColor} />
@@ -333,9 +335,10 @@ export default function DisciplineProgramDetailScreen() {
             })}
           </View>
         )}
-      </View>
-      </View>
-    </ScrollView>
+        </View>
+        <SharedBottomNav activeTab="disciplines" />
+      </ScrollView>
+    </AppScreen>
   );
 }
 
@@ -343,10 +346,8 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
   },
-  webContainer: {
-    maxWidth: 430,
-    alignSelf: 'center',
-    width: '100%',
+  scrollContent: {
+    paddingBottom: 100,
   },
   content: {
     padding: 20,

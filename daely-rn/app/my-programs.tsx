@@ -6,6 +6,8 @@ import { useTheme } from '@/hooks/use-theme';
 import PageHeader from './components/PageHeader';
 import { getUserPrograms, UserProgramEnrollment } from '@/services/user-programs-storage';
 import { DISCIPLINE_CONTENT, Program } from '@/constants/discipline-content';
+import { AppScreen } from '@/components/AppScreen';
+import SharedBottomNav from '@/components/SharedBottomNav';
 
 type TabType = 'active' | 'completed' | 'saved';
 
@@ -100,12 +102,13 @@ export default function MyProgramsScreen() {
   };
 
   return (
-    <ScrollView style={[styles.screen, { backgroundColor: theme.background }]} contentContainerStyle={styles.content}>
-      <PageHeader
-        title="Mijn Programma's"
-        onSettingsPress={() => router.push('/(tabs)/athlete')}
-        onCartPress={() => router.push('/(tabs)/cart')}
-      />
+    <AppScreen style={{ backgroundColor: theme.background }}>
+      <ScrollView contentContainerStyle={styles.content}>
+        <PageHeader
+          title="Mijn Programma's"
+          onSettingsPress={() => router.push('/(tabs)/athlete')}
+          onCartPress={() => router.push('/(tabs)/cart')}
+        />
 
       <View style={styles.tabsContainer}>
         {(['active', 'completed', 'saved'] as TabType[]).map((tab) => (
@@ -239,8 +242,10 @@ export default function MyProgramsScreen() {
         </View>
       )}
 
+      <SharedBottomNav activeTab="mijn" />
       <View style={styles.bottomSpacer} />
     </ScrollView>
+    </AppScreen>
   );
 }
 
@@ -251,7 +256,7 @@ const styles = StyleSheet.create({
   content: {
     paddingHorizontal: 16,
     paddingTop: 16,
-    paddingBottom: 24,
+    paddingBottom: 100,
   },
   tabsContainer: {
     flexDirection: 'row',

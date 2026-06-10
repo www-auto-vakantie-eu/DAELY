@@ -77,9 +77,6 @@ export default function EventRunningDayScreen() {
         </View>
 
         <View style={styles.buttonRow}>
-          <Pressable style={styles.primaryButton} onPress={() => router.push('/(tabs)/today')}>
-            <Text style={styles.primaryButtonText}>Terug naar Today</Text>
-          </Pressable>
           <Pressable style={styles.secondaryButton} onPress={() => router.push('/tracker')}>
             <Text style={styles.secondaryButtonText}>Start training</Text>
           </Pressable>

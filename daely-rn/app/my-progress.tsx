@@ -6,6 +6,8 @@ import { useTheme } from '@/hooks/use-theme';
 import PageHeader from './components/PageHeader';
 import { Activity, getActivities } from 'services/activity-storage';
 import { getPerformanceSummary, PerformanceSummary } from 'services/performance-summary';
+import { AppScreen } from '@/components/AppScreen';
+import SharedBottomNav from '@/components/SharedBottomNav';
 
 function formatDuration(seconds: number): string {
   const safeSeconds = Number.isFinite(seconds) ? Math.max(0, seconds) : 0;
@@ -131,13 +133,14 @@ export default function MyProgressScreen() {
   const hasNoProgress = !loading && totalActivities === 0;
 
   return (
-    <ScrollView style={[styles.screen, { backgroundColor: theme.background }]} contentContainerStyle={styles.content}>
-      <PageHeader
-        title="Progressie"
-        onSettingsPress={() => router.push('/(tabs)/athlete')}
-        onSearchPress={() => router.push('/nutrition/search')}
-        onCartPress={() => router.push('/(tabs)/cart')}
-      />
+    <AppScreen style={{ backgroundColor: theme.background }}>
+      <ScrollView contentContainerStyle={styles.content}>
+        <PageHeader
+          title="Progressie"
+          onSettingsPress={() => router.push('/(tabs)/athlete')}
+          onSearchPress={() => router.push('/nutrition/search')}
+          onCartPress={() => router.push('/(tabs)/cart')}
+        />
 
       <View style={[styles.heroCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
         <Text style={[styles.heroTitle, { color: theme.titleColor }]}>Jouw voortgang</Text>
@@ -296,9 +299,10 @@ export default function MyProgressScreen() {
           <Text style={styles.secondaryCtaBtnText}>Bekijk data</Text>
         </Pressable>
       </View>
-
+      <SharedBottomNav activeTab="mijn" />
       <View style={styles.bottomSpacer} />
     </ScrollView>
+    </AppScreen>
   );
 }
 
@@ -309,7 +313,7 @@ const styles = StyleSheet.create({
   content: {
     paddingHorizontal: 16,
     paddingTop: 16,
-    paddingBottom: 24,
+    paddingBottom: 100,
   },
   heroCard: {
     borderWidth: 1,

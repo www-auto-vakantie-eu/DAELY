@@ -1,10 +1,12 @@
 import React from 'react';
-import { View, StyleSheet, Text, Pressable, ScrollView, TouchableOpacity, Platform } from 'react-native';
+import { View, StyleSheet, Text, Pressable, ScrollView, TouchableOpacity } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/use-theme';
 import { DISCIPLINE_CONTENT } from '@/constants/discipline-content';
 import { SPORT_DISCIPLINES } from '../../../constants/sport-disciplines';
+import { AppScreen } from '@/components/AppScreen';
+import SharedBottomNav from '@/components/SharedBottomNav';
 
 export default function DisciplineWorkoutDetailScreen() {
   const { id, slug } = useLocalSearchParams<{ id: string; slug: string }>();
@@ -27,7 +29,7 @@ export default function DisciplineWorkoutDetailScreen() {
 
   if (!workout) {
     return (
-      <View style={[styles.screen, { backgroundColor: theme.background }]}>
+      <AppScreen style={{ backgroundColor: theme.background }}>
         <View style={styles.content}>
           <Pressable onPress={() => router.back()} style={styles.backButton}>
             <MaterialCommunityIcons name="arrow-left" size={24} color={theme.titleColor} />
@@ -37,7 +39,7 @@ export default function DisciplineWorkoutDetailScreen() {
             Deze workout kon niet worden geladen.
           </Text>
         </View>
-      </View>
+      </AppScreen>
     );
   }
 
@@ -52,8 +54,8 @@ export default function DisciplineWorkoutDetailScreen() {
   };
 
   return (
-    <ScrollView style={[styles.screen, { backgroundColor: theme.background }]}>
-      <View style={Platform.OS === 'web' ? styles.webContainer : undefined}>
+    <AppScreen style={{ backgroundColor: theme.background }}>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.content}>
           <Pressable onPress={() => router.back()} style={styles.backButton}>
             <MaterialCommunityIcons name="arrow-left" size={24} color={theme.titleColor} />
@@ -119,9 +121,10 @@ export default function DisciplineWorkoutDetailScreen() {
             Wordt later gekoppeld.
           </Text>
         </View>
-      </View>
-      </View>
-    </ScrollView>
+        </View>
+        <SharedBottomNav activeTab="disciplines" />
+      </ScrollView>
+    </AppScreen>
   );
 }
 
@@ -129,10 +132,8 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
   },
-  webContainer: {
-    maxWidth: 430,
-    alignSelf: 'center',
-    width: '100%',
+  scrollContent: {
+    paddingBottom: 100,
   },
   content: {
     padding: 20,
