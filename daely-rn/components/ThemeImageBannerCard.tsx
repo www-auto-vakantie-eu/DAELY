@@ -72,6 +72,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     position: 'relative',
     overflow: 'hidden',
+    backgroundColor: 'transparent',
   },
   cardActive: {
     transform: [{ scale: 1.01 }],
@@ -79,6 +80,7 @@ const styles = StyleSheet.create({
   imageBackground: {
     width: '100%',
     height: '100%',
+    backgroundColor: 'transparent',
   },
   imageStyle: {
     borderRadius: 32,
