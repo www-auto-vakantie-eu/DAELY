@@ -106,7 +106,6 @@ export default function NutritionScreen() {
         title="Voeding."
         subtitle="Beter eten, gezonder leven."
         onSettingsPress={() => router.push('/(tabs)/athlete')}
-        onCartPress={() => router.push('/(tabs)/cart')}
       />
       <View style={{ height: 16 }} />
 

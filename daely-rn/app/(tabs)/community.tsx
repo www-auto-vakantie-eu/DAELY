@@ -328,7 +328,6 @@ export default function CommunityScreen() {
           title="Community."
           subtitle="Atleet tot atleet."
           onSettingsPress={() => router.push('/(tabs)/athlete')}
-          onCartPress={() => router.push('/(tabs)/cart')}
         />
 
         {/* Tabs */}

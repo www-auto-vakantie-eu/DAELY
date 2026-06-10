@@ -257,7 +257,6 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
         title="Vandaag."
         subtitle="Jouw dag begint hier."
         onSettingsPress={() => router.push('/(tabs)/athlete')}
-        onCartPress={() => router.push('/(tabs)/cart')}
       />
 
       <View style={styles.heroWrap}>

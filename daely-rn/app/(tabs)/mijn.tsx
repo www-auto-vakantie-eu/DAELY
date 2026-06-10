@@ -159,7 +159,6 @@ export default function MijnScreen() {
           title="Mijn."
           subtitle="Alles op één plek."
           onSettingsPress={() => router.push('/(tabs)/athlete')}
-          onCartPress={() => router.push('/(tabs)/cart')}
         />
 
         <View style={styles.cardsWrap}>

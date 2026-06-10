@@ -407,7 +407,6 @@ export default function DisciplinesScreen() {
         title="Bibliotheek."
         subtitle="Verbeter je oefeningen."
         onSettingsPress={() => router.push('/(tabs)/athlete')}
-        onCartPress={() => router.push('/(tabs)/cart')}
       />
       <ScrollView style={[styles.container, { backgroundColor: theme.background }]} showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
           {/* Quick Actions */}

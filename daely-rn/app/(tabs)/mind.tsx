@@ -23,7 +23,6 @@ export default function MindScreen() {
         title="Mind."
         subtitle="Sterke geest, sterk lichaam."
         onSettingsPress={() => router.push('/(tabs)/athlete')}
-        onCartPress={() => router.push('/(tabs)/cart')}
       />
 
       <View style={styles.quickActionsBlock}>

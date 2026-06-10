@@ -20,7 +20,7 @@ export default function AppHeader({
   subtitle,
   showSettings = true,
   showSearch,
-  showCart = true,
+  showCart = false,
   onSettingsPress,
   onSearchPress,
   onCartPress,
