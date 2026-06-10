@@ -6,12 +6,13 @@ import { useTheme } from '@/hooks/use-theme';
 import { AppScreen } from '@/components/AppScreen';
 import AppHeader from './components/AppHeader';
 import SharedBottomNav from '@/components/SharedBottomNav';
-import { getMessageThreads, type MessageThread, type MessageThreadType } from '@/services/messages-storage';
+import { getMessageThreads, joinGroup, type MessageThread, type MessageThreadType } from '@/services/messages-storage';
 
 type FilterType = MessageThreadType | 'all';
 
 const FILTERS: { key: FilterType; label: string }[] = [
   { key: 'all', label: 'Alles' },
+  { key: 'group', label: 'Groepen' },
   { key: 'support', label: 'Support' },
   { key: 'coach', label: 'Coaches' },
   { key: 'community', label: 'Community' },
@@ -43,6 +44,8 @@ function getTypeBadgeColor(type: MessageThreadType): string {
       return '#10B981';
     case 'forwarded':
       return '#8B5CF6';
+    case 'group':
+      return '#EC4899';
     default:
       return '#6B7280';
   }
@@ -58,6 +61,8 @@ function getTypeLabel(type: MessageThreadType): string {
       return 'Community';
     case 'forwarded':
       return 'Doorgestuurd';
+    case 'group':
+      return 'Groep';
     default:
       return '';
   }
@@ -85,6 +90,11 @@ export default function MessagesScreen() {
     const loadedThreads = await getMessageThreads();
     setThreads(loadedThreads);
     setIsLoading(false);
+  }
+
+  async function handleJoinGroup(groupId: string) {
+    await joinGroup(groupId);
+    loadThreads();
   }
 
   const filteredThreads = threads.filter((thread) => {
@@ -122,6 +132,13 @@ export default function MessagesScreen() {
               </Text>
             </Pressable>
           ))}
+          <Pressable
+            style={[styles.filterChip, styles.newGroupButton, { backgroundColor: '#2563EB' }]}
+            onPress={() => router.push('/messages/new-group' as Href)}
+          >
+            <MaterialCommunityIcons name="plus" size={16} color="#FFFFFF" />
+            <Text style={styles.newGroupButtonText}>Nieuw</Text>
+          </Pressable>
         </View>
 
         {isLoading ? (
@@ -159,10 +176,26 @@ export default function MessagesScreen() {
                       {getTypeLabel(thread.type)}
                     </Text>
                   </View>
-                  {thread.participantRole && (
+                  {thread.isGroup && thread.memberCount !== undefined && (
+                    <View style={styles.memberCountRow}>
+                      <MaterialCommunityIcons name="account-group" size={12} color={theme.subtitleColor} />
+                      <Text style={[styles.memberCount, { color: theme.subtitleColor }]}>
+                        {thread.memberCount}
+                      </Text>
+                    </View>
+                  )}
+                  {thread.participantRole && !thread.isGroup && (
                     <Text style={[styles.participantRole, { color: theme.subtitleColor }]}>
                       {thread.participantRole}
                     </Text>
+                  )}
+                  {thread.isGroup && thread.joined === false && (
+                    <Pressable
+                      style={[styles.joinedBadge, { backgroundColor: '#10B981' }]}
+                      onPress={() => handleJoinGroup(thread.id)}
+                    >
+                      <Text style={styles.joinedText}>Word lid</Text>
+                    </Pressable>
                   )}
                 </View>
 
@@ -205,6 +238,9 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   filterChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 16,
@@ -214,6 +250,14 @@ const styles = StyleSheet.create({
   filterText: {
     fontSize: 13,
     fontWeight: '500',
+  },
+  newGroupButton: {
+    borderColor: '#2563EB',
+  },
+  newGroupButtonText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#FFFFFF',
   },
   centerContent: {
     alignItems: 'center',
@@ -285,6 +329,24 @@ const styles = StyleSheet.create({
   },
   participantRole: {
     fontSize: 12,
+  },
+  memberCountRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  memberCount: {
+    fontSize: 12,
+  },
+  joinedBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 6,
+  },
+  joinedText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#FFFFFF',
   },
   lastMessage: {
     fontSize: 14,

@@ -32,6 +32,8 @@ function getTypeBadgeColor(type: string): string {
       return '#10B981';
     case 'forwarded':
       return '#8B5CF6';
+    case 'group':
+      return '#EC4899';
     default:
       return '#6B7280';
   }
@@ -47,6 +49,8 @@ function getTypeLabel(type: string): string {
       return 'Community';
     case 'forwarded':
       return 'Doorgestuurd';
+    case 'group':
+      return 'Groep';
     default:
       return '';
   }
@@ -124,6 +128,14 @@ export default function MessageThreadScreen() {
           <View style={[styles.threadHeader, { backgroundColor: theme.card, borderColor: theme.border }]}>
             <View style={styles.threadTitleRow}>
               <Text style={[styles.threadTitle, { color: theme.titleColor }]}>{thread.title}</Text>
+              {thread.isGroup && thread.memberCount !== undefined && (
+                <View style={styles.memberCountRow}>
+                  <MaterialCommunityIcons name="account-group" size={16} color={theme.subtitleColor} />
+                  <Text style={[styles.memberCount, { color: theme.subtitleColor }]}>
+                    {thread.memberCount}
+                  </Text>
+                </View>
+              )}
             </View>
             <View style={styles.threadMeta}>
               <View style={[styles.typeBadge, { backgroundColor: getTypeBadgeColor(thread.type) + '20' }]}>
@@ -131,12 +143,22 @@ export default function MessageThreadScreen() {
                   {getTypeLabel(thread.type)}
                 </Text>
               </View>
-              {thread.participantRole && (
+              {thread.participantRole && !thread.isGroup && (
                 <Text style={[styles.participantRole, { color: theme.subtitleColor }]}>
                   {thread.participantRole}
                 </Text>
               )}
+              {thread.isGroup && thread.groupType && (
+                <Text style={[styles.participantRole, { color: theme.subtitleColor }]}>
+                  {thread.groupType}
+                </Text>
+              )}
             </View>
+            {thread.isGroup && thread.groupDescription && (
+              <Text style={[styles.groupDescription, { color: theme.subtitleColor }]}>
+                {thread.groupDescription}
+              </Text>
+            )}
           </View>
 
           {thread.linkedItemTitle && (
@@ -245,6 +267,18 @@ const styles = StyleSheet.create({
   },
   threadTitleRow: {
     marginBottom: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  memberCountRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  memberCount: {
+    fontSize: 14,
+    fontWeight: '500',
   },
   threadTitle: {
     fontSize: 18,
@@ -267,6 +301,11 @@ const styles = StyleSheet.create({
   },
   participantRole: {
     fontSize: 12,
+  },
+  groupDescription: {
+    fontSize: 13,
+    lineHeight: 18,
+    marginTop: 8,
   },
   linkedItemBanner: {
     flexDirection: 'row',
