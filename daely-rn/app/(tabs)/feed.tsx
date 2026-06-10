@@ -1,12 +1,13 @@
 // ...alle imports bovenaan...
 import { useCallback, useEffect, useState } from 'react';
-import { ScrollView, StyleSheet, Text, View, Pressable, Image, RefreshControl } from 'react-native';
+import { ScrollView, StyleSheet, Text, View, Pressable, Image, RefreshControl, TextInput } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 
 import { useTheme } from '@/hooks/use-theme';
 import { AppScreen } from '@/components/AppScreen';
 import { getCommunitFeed, formatFeedDate, type FeedItem, type FeedItemType } from '@/services/community-feed';
+import { getCommentsForPost, addCommentToPost, type PostComment } from '@/services/post-comments-storage';
 
 const FILTER_OPTIONS: FeedItemType[] = ['post', 'meal', 'workout'];
 
@@ -19,6 +20,9 @@ export default function CommunityFeedScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState<FeedItemType | 'all'>('all');
   const [sortBy, setSortBy] = useState<'recent' | 'popular'>('recent');
+  const [commentsByPostId, setCommentsByPostId] = useState<Record<string, PostComment[]>>({});
+  const [commentInputByPostId, setCommentInputByPostId] = useState<Record<string, string>>({});
+  const [expandedCommentsByPostId, setExpandedCommentsByPostId] = useState<Record<string, boolean>>({});
 
   const loadFeed = useCallback(async (isRefresh = false) => {
     try {
@@ -45,6 +49,89 @@ export default function CommunityFeedScreen() {
       setRefreshing(false);
     }
   }, [selectedFilter, sortBy]);
+
+  const loadCommentsForPost = useCallback(async (postId: string) => {
+    const comments = await getCommentsForPost(postId);
+    setCommentsByPostId((prev) => ({ ...prev, [postId]: comments }));
+  }, []);
+
+  const toggleComments = useCallback(async (postId: string) => {
+    setExpandedCommentsByPostId((prev) => {
+      const isExpanded = prev[postId];
+      const newState = { ...prev, [postId]: !isExpanded };
+      
+      // Load comments when expanding
+      if (!isExpanded) {
+        loadCommentsForPost(postId);
+      }
+      
+      return newState;
+    });
+  }, [loadCommentsForPost]);
+
+  const handleCommentSubmit = useCallback(async (postId: string) => {
+    const text = commentInputByPostId[postId]?.trim();
+    if (!text) return;
+
+    const newComment = await addCommentToPost(postId, 'user', 'Jij', text);
+    if (newComment) {
+      setCommentInputByPostId((prev) => ({ ...prev, [postId]: '' }));
+      loadCommentsForPost(postId);
+    }
+  }, [commentInputByPostId, loadCommentsForPost]);
+
+  const renderCommentsSection = (postId: string) => {
+    const isExpanded = expandedCommentsByPostId[postId];
+    const comments = commentsByPostId[postId] || [];
+
+    return (
+      <>
+        <Pressable
+          style={styles.replyButton}
+          onPress={() => toggleComments(postId)}
+        >
+          <MaterialCommunityIcons name="comment-outline" size={16} color={theme.subtitleColor} />
+          <Text style={[styles.replyButtonText, { color: theme.subtitleColor }]}>
+            Reageren {comments.length > 0 && `· ${comments.length}`}
+          </Text>
+        </Pressable>
+
+        {isExpanded && (
+          <View style={[styles.commentsSection, { borderTopColor: theme.border }]}>
+            {comments.length === 0 ? (
+              <Text style={[styles.noCommentsText, { color: theme.subtitleColor }]}>
+                Nog geen reacties.
+              </Text>
+            ) : (
+              comments.map((comment) => (
+                <View key={comment.id} style={[styles.commentItem, { borderBottomColor: theme.border }]}>
+                  <Text style={[styles.commentUser, { color: theme.titleColor }]}>{comment.userName}</Text>
+                  <Text style={[styles.commentText, { color: theme.subtitleColor }]}>{comment.text}</Text>
+                </View>
+              ))
+            )}
+
+            <View style={styles.commentInputRow}>
+              <TextInput
+                style={[styles.commentInput, { backgroundColor: theme.background, color: theme.titleColor, borderColor: theme.border }]}
+                placeholder="Schrijf een reactie…"
+                placeholderTextColor={theme.subtitleColor}
+                value={commentInputByPostId[postId] || ''}
+                onChangeText={(text) => setCommentInputByPostId((prev) => ({ ...prev, [postId]: text }))}
+                multiline
+              />
+              <Pressable
+                style={[styles.commentSubmitButton, { backgroundColor: '#2563EB' }]}
+                onPress={() => handleCommentSubmit(postId)}
+              >
+                <Text style={styles.commentSubmitButtonText}>Plaats</Text>
+              </Pressable>
+            </View>
+          </View>
+        )}
+      </>
+    );
+  };
 
   useEffect(() => {
     loadFeed();
@@ -102,6 +189,7 @@ export default function CommunityFeedScreen() {
               <Text style={[styles.forwardButtonText, { color: theme.subtitleColor }]}>Doorsturen</Text>
             </Pressable>
           </View>
+          {renderCommentsSection(item.id)}
         </View>
       );
     }
@@ -160,6 +248,7 @@ export default function CommunityFeedScreen() {
               <Text style={[styles.forwardButtonText, { color: theme.subtitleColor }]}>Doorsturen</Text>
             </Pressable>
           </View>
+          {renderCommentsSection(item.id)}
         </View>
       );
     }
@@ -212,6 +301,7 @@ export default function CommunityFeedScreen() {
               <Text style={[styles.forwardButtonText, { color: theme.subtitleColor }]}>Doorsturen</Text>
             </Pressable>
           </View>
+          {renderCommentsSection(item.id)}
         </View>
       );
     }
@@ -366,6 +456,56 @@ const styles = StyleSheet.create({
   engagementText: { fontSize: 12, fontWeight: '600' },
   forwardButton: { flexDirection: 'row', alignItems: 'center', gap: 6, padding: 4 },
   forwardButtonText: { fontSize: 12, fontWeight: '600' },
+  replyButton: { flexDirection: 'row', alignItems: 'center', gap: 6, padding: 4, marginTop: 8 },
+  replyButtonText: { fontSize: 12, fontWeight: '600' },
+  commentsSection: {
+    marginTop: 12,
+    paddingTop: 12,
+    borderTopWidth: 1,
+  },
+  noCommentsText: {
+    fontSize: 13,
+    fontStyle: 'italic',
+    marginBottom: 8,
+  },
+  commentItem: {
+    marginBottom: 8,
+    paddingBottom: 8,
+    borderBottomWidth: 1,
+  },
+  commentUser: {
+    fontSize: 13,
+    fontWeight: '600',
+    marginBottom: 2,
+  },
+  commentText: {
+    fontSize: 14,
+    lineHeight: 18,
+  },
+  commentInputRow: {
+    flexDirection: 'row',
+    gap: 8,
+    marginTop: 12,
+    alignItems: 'flex-end',
+  },
+  commentInput: {
+    flex: 1,
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    minHeight: 40,
+  },
+  commentSubmitButton: {
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 8,
+  },
+  commentSubmitButtonText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '600',
+  },
   moreButton: { padding: 4 },
   emptyState: { alignItems: 'center', justifyContent: 'center', paddingVertical: 60, gap: 12 },
   emptyStateText: { fontSize: 14, fontWeight: '500' },
