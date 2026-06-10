@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, ScrollView, View, Text, Pressable } from 'react-native';
+import { StyleSheet, ScrollView, View, Text, Pressable, TextInput } from 'react-native';
 import { useRouter, type Href, useFocusEffect } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/use-theme';
@@ -7,17 +7,6 @@ import { AppScreen } from '@/components/AppScreen';
 import AppHeader from './components/AppHeader';
 import SharedBottomNav from '@/components/SharedBottomNav';
 import { getMessageThreads, joinGroup, type MessageThread, type MessageThreadType } from '@/services/messages-storage';
-
-type FilterType = MessageThreadType | 'all';
-
-const FILTERS: { key: FilterType; label: string }[] = [
-  { key: 'all', label: 'Alles' },
-  { key: 'group', label: 'Groepen' },
-  { key: 'support', label: 'Support' },
-  { key: 'coach', label: 'Coaches' },
-  { key: 'community', label: 'Community' },
-  { key: 'forwarded', label: 'Doorgestuurd' },
-];
 
 function formatTime(isoString: string): string {
   const date = new Date(isoString);
@@ -72,7 +61,7 @@ export default function MessagesScreen() {
   const theme = useTheme();
   const router = useRouter();
   const [threads, setThreads] = useState<MessageThread[]>([]);
-  const [activeFilter, setActiveFilter] = useState<FilterType>('all');
+  const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -98,8 +87,17 @@ export default function MessagesScreen() {
   }
 
   const filteredThreads = threads.filter((thread) => {
-    if (activeFilter === 'all') return true;
-    return thread.type === activeFilter;
+    if (!searchQuery) return true;
+    const query = searchQuery.toLowerCase();
+    return (
+      thread.title.toLowerCase().includes(query) ||
+      thread.participantName.toLowerCase().includes(query) ||
+      (thread.participantRole?.toLowerCase().includes(query) ?? false) ||
+      thread.lastMessage.toLowerCase().includes(query) ||
+      thread.type.toLowerCase().includes(query) ||
+      (thread.groupType?.toLowerCase().includes(query) ?? false) ||
+      (thread.linkedItemTitle?.toLowerCase().includes(query) ?? false)
+    );
   });
 
   return (
@@ -129,32 +127,16 @@ export default function MessagesScreen() {
           </Pressable>
         </View>
 
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.filterRow}
-        >
-          {FILTERS.map((filter) => (
-            <Pressable
-              key={filter.key}
-              style={[
-                styles.filterChip,
-                activeFilter === filter.key ? styles.filterChipActive : styles.filterChipInactive,
-                { borderColor: activeFilter === filter.key ? theme.tabBarActive : theme.border },
-              ]}
-              onPress={() => setActiveFilter(filter.key)}
-            >
-              <Text
-                style={[
-                  styles.filterText,
-                  activeFilter === filter.key ? { color: '#FFFFFF' } : { color: theme.subtitleColor },
-                ]}
-              >
-                {filter.label}
-              </Text>
-            </Pressable>
-          ))}
-        </ScrollView>
+        <View style={styles.searchBar}>
+          <MaterialCommunityIcons name="magnify" size={20} color={theme.subtitleColor} style={styles.searchIcon} />
+          <TextInput
+            style={[styles.searchInput, { color: theme.titleColor, backgroundColor: theme.card, borderColor: theme.border }]}
+            placeholder="Zoek in berichten…"
+            placeholderTextColor={theme.subtitleColor}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
+        </View>
 
         {isLoading ? (
           <View style={styles.centerContent}>
@@ -163,7 +145,14 @@ export default function MessagesScreen() {
         ) : filteredThreads.length === 0 ? (
           <View style={styles.centerContent}>
             <MaterialCommunityIcons name="message-outline" size={48} color={theme.subtitleColor} />
-            <Text style={[styles.emptyText, { color: theme.subtitleColor }]}>Geen berichten</Text>
+            <Text style={[styles.emptyText, { color: theme.subtitleColor }]}>
+              {searchQuery ? 'Geen gesprekken gevonden.' : 'Geen berichten'}
+            </Text>
+            {searchQuery && (
+              <Text style={[styles.emptySubText, { color: theme.subtitleColor }]}>
+                Probeer een andere zoekterm.
+              </Text>
+            )}
           </View>
         ) : (
           <View style={styles.threadsList}>
@@ -268,26 +257,25 @@ const styles = StyleSheet.create({
   },
   primaryActionButton: {},
   secondaryActionButton: {},
-  filterRow: {
+  searchBar: {
     flexDirection: 'row',
-    gap: 8,
+    alignItems: 'center',
+    backgroundColor: '#F3F4F6',
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
     marginBottom: 20,
   },
-  filterChip: {
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 20,
+  searchIcon: {
+    marginRight: 8,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 15,
     borderWidth: 1,
-  },
-  filterChipActive: {
-    backgroundColor: '#2563EB',
-  },
-  filterChipInactive: {
-    backgroundColor: 'transparent',
-  },
-  filterText: {
-    fontSize: 13,
-    fontWeight: '600',
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
   },
   centerContent: {
     alignItems: 'center',
@@ -300,6 +288,10 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 16,
     marginTop: 12,
+  },
+  emptySubText: {
+    fontSize: 14,
+    marginTop: 8,
   },
   threadsList: {
     gap: 12,
