@@ -4,6 +4,8 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
 import PageHeader from './components/PageHeader';
+import { AppScreen } from '@/components/AppScreen';
+import SharedBottomNav from '@/components/SharedBottomNav';
 
 export default function FindCoachScreen() {
   const theme = useTheme();
@@ -11,135 +13,141 @@ export default function FindCoachScreen() {
   const [filter, setFilter] = useState<'online' | 'personal'>('online');
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: theme.background }]} showsVerticalScrollIndicator={false}>
-      <PageHeader
-        title="Vind een coach"
-        onSettingsPress={() => router.push('/(tabs)/athlete')}
-        onSearchPress={() => router.push('/nutrition/search')}
-        onCartPress={() => router.push('/(tabs)/cart')}
-      />
+    <AppScreen style={{ backgroundColor: theme.background }}>
+      <ScrollView style={styles.container} showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+        <PageHeader
+          title="Vind een coach"
+          onSettingsPress={() => router.push('/(tabs)/athlete')}
+          onSearchPress={() => router.push('/nutrition/search')}
+          onCartPress={() => router.push('/(tabs)/cart')}
+        />
 
-      <View style={styles.content}>
-        <View style={[styles.heroCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <View style={styles.iconContainer}>
-            <MaterialCommunityIcons name="account-tie" size={48} color="#10B981" />
+        <View style={styles.content}>
+          <View style={[styles.heroCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+            <View style={styles.iconContainer}>
+              <MaterialCommunityIcons name="account-tie" size={48} color="#10B981" />
+            </View>
+            <Text style={[styles.heroTitle, { color: theme.titleColor }]}>DAELY Coach komt binnenkort beschikbaar.</Text>
+            <Text style={[styles.heroText, { color: theme.subtitleColor }]}>
+              Vind straks coaches op basis van sport, doel, niveau en locatie.
+            </Text>
+            <View style={styles.statusBadge}>
+              <Text style={styles.statusText}>Binnenkort</Text>
+            </View>
           </View>
-          <Text style={[styles.heroTitle, { color: theme.titleColor }]}>DAELY Coach komt binnenkort beschikbaar.</Text>
-          <Text style={[styles.heroText, { color: theme.subtitleColor }]}>
-            Vind straks coaches op basis van sport, doel, niveau en locatie.
-          </Text>
-          <View style={styles.statusBadge}>
-            <Text style={styles.statusText}>Binnenkort</Text>
+
+          <View style={[styles.infoCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+            <Text style={[styles.infoTitle, { color: theme.titleColor }]}>Wat komt eraan?</Text>
+            <Text style={[styles.infoText, { color: theme.subtitleColor }]}>
+              We bereiden coachprofielen, specialisaties en beschikbaarheid voor.
+            </Text>
           </View>
-        </View>
 
-        <View style={[styles.infoCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <Text style={[styles.infoTitle, { color: theme.titleColor }]}>Wat komt eraan?</Text>
-          <Text style={[styles.infoText, { color: theme.subtitleColor }]}>
-            We bereiden coachprofielen, specialisaties en beschikbaarheid voor.
-          </Text>
-        </View>
+          <View style={[styles.filterCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+            <Text style={[styles.filterTitle, { color: theme.titleColor }]}>Filter preview</Text>
+            <View style={styles.filterRow}>
+              <Pressable
+                style={[styles.filterButton, filter === 'online' && styles.filterButtonActive]}
+                onPress={() => setFilter('online')}
+              >
+                <Text style={[styles.filterButtonText, filter === 'online' ? styles.filterButtonTextActive : { color: theme.titleColor }]}>Online coaching</Text>
+              </Pressable>
+              <Pressable
+                style={[styles.filterButton, filter === 'personal' && styles.filterButtonActive]}
+                onPress={() => setFilter('personal')}
+              >
+                <Text style={[styles.filterButtonText, filter === 'personal' ? styles.filterButtonTextActive : { color: theme.titleColor }]}>Personal coaching</Text>
+              </Pressable>
+            </View>
+            <View style={styles.filterInfo}>
+              <MaterialCommunityIcons name="information" size={16} color="#64748B" />
+              <Text style={styles.filterInfoText}>Filters zijn preview en tonen voorbeeldresultaten.</Text>
+            </View>
+          </View>
 
-        <View style={[styles.filterCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <Text style={[styles.filterTitle, { color: theme.titleColor }]}>Filter preview</Text>
-          <View style={styles.filterRow}>
-            <Pressable
-              style={[styles.filterButton, filter === 'online' && styles.filterButtonActive]}
-              onPress={() => setFilter('online')}
-            >
-              <Text style={[styles.filterButtonText, filter === 'online' ? styles.filterButtonTextActive : { color: theme.titleColor }]}>Online coaching</Text>
+          <View style={[styles.previewCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+            <View style={styles.cardHeader}>
+              <View style={styles.cardIconContainer}>
+                <MaterialCommunityIcons name="dumbbell" size={28} color="#EF4444" />
+              </View>
+              <View style={styles.cardContent}>
+                <Text style={[styles.cardTitle, { color: theme.titleColor }]}>Kracht & fitness coach</Text>
+                <Text style={[styles.cardSubtitle, { color: theme.subtitleColor }]}>Specialiseert in krachttraining, uithoudingsvermogen en functionele fitness</Text>
+              </View>
+              <View style={styles.statusBadge}>
+                <Text style={styles.statusText}>Binnenkort</Text>
+              </View>
+            </View>
+            <Pressable style={styles.cardButton} onPress={() => router.push('/feedback')}>
+              <Text style={styles.cardButtonText}>Interesse doorgeven</Text>
+            </Pressable>
+          </View>
+
+          <View style={[styles.previewCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+            <View style={styles.cardHeader}>
+              <View style={styles.cardIconContainer}>
+                <MaterialCommunityIcons name="run" size={28} color="#F59E0B" />
+              </View>
+              <View style={styles.cardContent}>
+                <Text style={[styles.cardTitle, { color: theme.titleColor }]}>Hardloop coach</Text>
+                <Text style={[styles.cardSubtitle, { color: theme.subtitleColor }]}>Specialiseert in hardloopschema&apos;s, techniek en prestatieverbetering</Text>
+              </View>
+              <View style={styles.statusBadge}>
+                <Text style={styles.statusText}>Binnenkort</Text>
+              </View>
+            </View>
+            <Pressable style={styles.cardButton} onPress={() => router.push('/feedback')}>
+              <Text style={styles.cardButtonText}>Interesse doorgeven</Text>
+            </Pressable>
+          </View>
+
+          <View style={[styles.previewCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+            <View style={styles.cardHeader}>
+              <View style={styles.cardIconContainer}>
+                <MaterialCommunityIcons name="human-handsdown" size={28} color="#3B82F6" />
+              </View>
+              <View style={styles.cardContent}>
+                <Text style={[styles.cardTitle, { color: theme.titleColor }]}>Mobiliteit coach</Text>
+                <Text style={[styles.cardSubtitle, { color: theme.subtitleColor }]}>Specialiseert in mobiliteit, herstel en blessurepreventie</Text>
+              </View>
+              <View style={styles.statusBadge}>
+                <Text style={styles.statusText}>Binnenkort</Text>
+              </View>
+            </View>
+            <Pressable style={styles.cardButton} onPress={() => router.push('/feedback')}>
+              <Text style={styles.cardButtonText}>Interesse doorgeven</Text>
+            </Pressable>
+          </View>
+
+          <View style={styles.buttonRow}>
+            <Pressable style={styles.primaryButton} onPress={() => router.push('/feedback')}>
+              <Text style={styles.primaryButtonText}>Feedback geven</Text>
+            </Pressable>
+            <Pressable style={styles.secondaryButton} onPress={() => router.push('/(tabs)/mijn')}>
+              <Text style={styles.secondaryButtonText}>Terug naar Mijn</Text>
             </Pressable>
             <Pressable
-              style={[styles.filterButton, filter === 'personal' && styles.filterButtonActive]}
-              onPress={() => setFilter('personal')}
+              style={[styles.tertiaryButton, { backgroundColor: theme.background, borderColor: theme.border }]}
+              onPress={() => router.push('/tracker')}
             >
-              <Text style={[styles.filterButtonText, filter === 'personal' ? styles.filterButtonTextActive : { color: theme.titleColor }]}>Personal coaching</Text>
+              <Text style={[styles.tertiaryButtonText, { color: theme.titleColor }]}>Start activiteit</Text>
             </Pressable>
           </View>
-          <View style={styles.filterInfo}>
-            <MaterialCommunityIcons name="information" size={16} color="#64748B" />
-            <Text style={styles.filterInfoText}>Filters zijn preview en tonen voorbeeldresultaten.</Text>
-          </View>
         </View>
 
-        <View style={[styles.previewCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <View style={styles.cardHeader}>
-            <View style={styles.cardIconContainer}>
-              <MaterialCommunityIcons name="dumbbell" size={28} color="#EF4444" />
-            </View>
-            <View style={styles.cardContent}>
-              <Text style={[styles.cardTitle, { color: theme.titleColor }]}>Kracht & fitness coach</Text>
-              <Text style={[styles.cardSubtitle, { color: theme.subtitleColor }]}>Specialiseert in krachttraining, uithoudingsvermogen en functionele fitness</Text>
-            </View>
-            <View style={styles.statusBadge}>
-              <Text style={styles.statusText}>Binnenkort</Text>
-            </View>
-          </View>
-          <Pressable style={styles.cardButton} onPress={() => router.push('/feedback')}>
-            <Text style={styles.cardButtonText}>Interesse doorgeven</Text>
-          </Pressable>
-        </View>
-
-        <View style={[styles.previewCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <View style={styles.cardHeader}>
-            <View style={styles.cardIconContainer}>
-              <MaterialCommunityIcons name="run" size={28} color="#F59E0B" />
-            </View>
-            <View style={styles.cardContent}>
-              <Text style={[styles.cardTitle, { color: theme.titleColor }]}>Hardloop coach</Text>
-              <Text style={[styles.cardSubtitle, { color: theme.subtitleColor }]}>Specialiseert in hardloopschema&apos;s, techniek en prestatieverbetering</Text>
-            </View>
-            <View style={styles.statusBadge}>
-              <Text style={styles.statusText}>Binnenkort</Text>
-            </View>
-          </View>
-          <Pressable style={styles.cardButton} onPress={() => router.push('/feedback')}>
-            <Text style={styles.cardButtonText}>Interesse doorgeven</Text>
-          </Pressable>
-        </View>
-
-        <View style={[styles.previewCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <View style={styles.cardHeader}>
-            <View style={styles.cardIconContainer}>
-              <MaterialCommunityIcons name="human-handsdown" size={28} color="#3B82F6" />
-            </View>
-            <View style={styles.cardContent}>
-              <Text style={[styles.cardTitle, { color: theme.titleColor }]}>Mobiliteit coach</Text>
-              <Text style={[styles.cardSubtitle, { color: theme.subtitleColor }]}>Specialiseert in mobiliteit, herstel en blessurepreventie</Text>
-            </View>
-            <View style={styles.statusBadge}>
-              <Text style={styles.statusText}>Binnenkort</Text>
-            </View>
-          </View>
-          <Pressable style={styles.cardButton} onPress={() => router.push('/feedback')}>
-            <Text style={styles.cardButtonText}>Interesse doorgeven</Text>
-          </Pressable>
-        </View>
-
-        <View style={styles.buttonRow}>
-          <Pressable style={styles.primaryButton} onPress={() => router.push('/feedback')}>
-            <Text style={styles.primaryButtonText}>Feedback geven</Text>
-          </Pressable>
-          <Pressable style={styles.secondaryButton} onPress={() => router.push('/(tabs)/mijn')}>
-            <Text style={styles.secondaryButtonText}>Terug naar Mijn</Text>
-          </Pressable>
-          <Pressable
-            style={[styles.tertiaryButton, { backgroundColor: theme.background, borderColor: theme.border }]}
-            onPress={() => router.push('/tracker')}
-          >
-            <Text style={[styles.tertiaryButtonText, { color: theme.titleColor }]}>Start activiteit</Text>
-          </Pressable>
-        </View>
-      </View>
-
-      <View style={styles.bottomSpacer} />
-    </ScrollView>
+        <View style={styles.bottomSpacer} />
+        <SharedBottomNav activeTab="explore" />
+      </ScrollView>
+    </AppScreen>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 100,
   },
   content: {
     paddingHorizontal: 16,

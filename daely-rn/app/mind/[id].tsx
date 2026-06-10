@@ -1,37 +1,28 @@
-import { StyleSheet, View, Text, ScrollView, Pressable, ImageBackground } from 'react-native';
+import { StyleSheet, View, Text, ScrollView, ImageBackground } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useLocalSearchParams } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
+import { AppScreen } from '@/components/AppScreen';
 import { MIND_PROGRAMS } from '@/constants/mind-programs';
+import SharedBottomNav from '@/components/SharedBottomNav';
 
 export default function MindProgramScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const router = useRouter();
   const theme = useTheme();
   const program = MIND_PROGRAMS.find((item) => item.id === id);
 
   if (!program) {
     return (
-      <View style={[styles.screen, { backgroundColor: theme.background }]}>
-        <Pressable style={[styles.backButtonPlain, { borderColor: theme.border, backgroundColor: theme.card }]} onPress={() => router.back()}>
-          <MaterialCommunityIcons name="chevron-left" size={22} color={theme.titleColor} />
-          <Text style={[styles.backPlainLabel, { color: theme.titleColor }]}>Mind</Text>
-        </Pressable>
+      <AppScreen style={{ backgroundColor: theme.background }}>
         <Text style={[styles.notFoundTitle, { color: theme.titleColor }]}>Programma niet gevonden</Text>
-      </View>
+      </AppScreen>
     );
   }
 
   return (
-    <View style={[styles.screen, { backgroundColor: theme.background }]}>
-      <ScrollView showsVerticalScrollIndicator={false}>
+    <AppScreen style={{ backgroundColor: theme.background }}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
         <View style={styles.topArea}>
-          <Pressable style={[styles.backButtonPlain, { borderColor: theme.border, backgroundColor: theme.card }]} onPress={() => router.back()}>
-            <MaterialCommunityIcons name="chevron-left" size={22} color={theme.titleColor} />
-            <Text style={[styles.backPlainLabel, { color: theme.titleColor }]}>Mind</Text>
-          </Pressable>
-
           <ImageBackground source={{ uri: program.image }} style={styles.hero} imageStyle={styles.heroImage}>
             <LinearGradient colors={['rgba(0,0,0,0.02)', 'rgba(0,0,0,0.82)']} style={styles.heroOverlay}>
               <View>
@@ -76,13 +67,16 @@ export default function MindProgramScreen() {
         </View>
 
         <View style={styles.bottomSpacer} />
+        <SharedBottomNav activeTab="mind" />
       </ScrollView>
-    </View>
+    </AppScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1 },
+  scrollContent: {
+    paddingBottom: 100,
+  },
   topArea: {
     paddingHorizontal: 16,
     paddingTop: 24,
@@ -184,20 +178,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '700',
     letterSpacing: 1,
-  },
-  backButtonPlain: {
-    width: 96,
-    height: 44,
-    borderWidth: 1,
-    borderRadius: 14,
-    paddingHorizontal: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 2,
-  },
-  backPlainLabel: {
-    fontSize: 16,
-    fontWeight: '500',
   },
   notFoundTitle: {
     marginTop: 20,

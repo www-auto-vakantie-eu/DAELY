@@ -2,7 +2,9 @@ import { StyleSheet, ScrollView, View, Text, Pressable } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
+import { AppScreen } from '@/components/AppScreen';
 import PageHeader from '../../components/PageHeader';
+import SharedBottomNav from '@/components/SharedBottomNav';
 
 export default function MindCategoryScreen() {
   const theme = useTheme();
@@ -27,7 +29,8 @@ export default function MindCategoryScreen() {
   const categoryName = getCategoryName(categoryId);
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: theme.background }]} showsVerticalScrollIndicator={false}>
+    <AppScreen style={{ backgroundColor: theme.background }}>
+      <ScrollView style={styles.container} showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
       <PageHeader
         title={categoryName}
         onSettingsPress={() => router.push('/(tabs)/athlete')}
@@ -170,13 +173,18 @@ export default function MindCategoryScreen() {
       </View>
 
       <View style={styles.bottomSpacer} />
+      <SharedBottomNav activeTab="mind" />
     </ScrollView>
+    </AppScreen>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 100,
   },
   content: {
     paddingHorizontal: 16,

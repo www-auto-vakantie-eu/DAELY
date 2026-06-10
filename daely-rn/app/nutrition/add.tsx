@@ -2,6 +2,8 @@ import React, { useMemo, useState } from 'react';
 import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import PageHeader from '../components/PageHeader';
 import { useTheme } from '@/hooks/use-theme';
+import { AppScreen } from '@/components/AppScreen';
+import SharedBottomNav from '@/components/SharedBottomNav';
 
 const MOMENTS = ['Ontbijt', 'Lunch', 'Diner', 'Snack', 'Drinken'] as const;
 
@@ -29,79 +31,82 @@ export default function AddNutritionScreen() {
   };
 
   return (
-    <View style={[styles.screen, { backgroundColor: theme.background }]}>
-      <PageHeader title="Voeding toevoegen" showSettings={false} showSearch={false} showCart={false} />
+    <AppScreen style={{ backgroundColor: theme.background }}>
+      <View style={styles.screen}>
+        <PageHeader title="Voeding toevoegen" showSettings={false} showSearch={false} showCart={false} />
 
-      <ScrollView style={styles.scroll} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-        <View style={[styles.introCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <Text style={[styles.introTitle, { color: theme.titleColor }]}>Snel vastleggen</Text>
-          <Text style={[styles.introText, { color: theme.subtitleColor }]}>Leg snel vast wat je hebt gegeten of gedronken.</Text>
-        </View>
-
-        <View style={[styles.formCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <Text style={[styles.label, { color: theme.subtitleColor }]}>Product/maaltijd naam</Text>
-          <TextInput
-            value={mealName}
-            onChangeText={setMealName}
-            placeholder="Bijv. Griekse yoghurt met banaan"
-            placeholderTextColor="#9CA3AF"
-            style={[styles.input, { borderColor: theme.border, color: theme.titleColor, backgroundColor: theme.background }]}
-          />
-
-          <Text style={[styles.label, { color: theme.subtitleColor }]}>Moment</Text>
-          <View style={styles.chipsRow}>
-            {MOMENTS.map((item) => {
-              const active = item === moment;
-              return (
-                <Pressable
-                  key={item}
-                  onPress={() => setMoment(item)}
-                  style={[
-                    styles.chip,
-                    { borderColor: active ? '#2563EB' : theme.border, backgroundColor: active ? '#DBEAFE' : theme.background },
-                  ]}
-                >
-                  <Text style={[styles.chipText, { color: active ? '#1D4ED8' : theme.titleColor }]}>{item}</Text>
-                </Pressable>
-              );
-            })}
+        <ScrollView style={styles.scroll} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+          <View style={[styles.introCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+            <Text style={[styles.introTitle, { color: theme.titleColor }]}>Snel vastleggen</Text>
+            <Text style={[styles.introText, { color: theme.subtitleColor }]}>Leg snel vast wat je hebt gegeten of gedronken.</Text>
           </View>
 
-          <Text style={[styles.label, { color: theme.subtitleColor }]}>Hoeveelheid</Text>
-          <TextInput
-            value={amount}
-            onChangeText={setAmount}
-            placeholder="Bijv. 250 ml of 1 portie"
-            placeholderTextColor="#9CA3AF"
-            style={[styles.input, { borderColor: theme.border, color: theme.titleColor, backgroundColor: theme.background }]}
-          />
+          <View style={[styles.formCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+            <Text style={[styles.label, { color: theme.subtitleColor }]}>Product/maaltijd naam</Text>
+            <TextInput
+              value={mealName}
+              onChangeText={setMealName}
+              placeholder="Bijv. Griekse yoghurt met banaan"
+              placeholderTextColor="#9CA3AF"
+              style={[styles.input, { borderColor: theme.border, color: theme.titleColor, backgroundColor: theme.background }]}
+            />
 
-          <Text style={[styles.label, { color: theme.subtitleColor }]}>Notities</Text>
-          <TextInput
-            value={notes}
-            onChangeText={setNotes}
-            placeholder="Optioneel: hoe voelde je je, timing, etc."
-            placeholderTextColor="#9CA3AF"
-            multiline
-            style={[
-              styles.input,
-              styles.notesInput,
-              { borderColor: theme.border, color: theme.titleColor, backgroundColor: theme.background },
-            ]}
-          />
-
-          <Pressable style={[styles.submitButton, !canSubmit ? styles.submitButtonDisabled : null]} onPress={handleSubmit}>
-            <Text style={styles.submitButtonText}>Toevoegen</Text>
-          </Pressable>
-
-          {showPlaceholderFeedback ? (
-            <View style={[styles.feedbackCard, { borderColor: theme.border, backgroundColor: theme.background }]}>
-              <Text style={[styles.feedbackText, { color: theme.subtitleColor }]}>Voeding opslaan komt binnenkort.</Text>
+            <Text style={[styles.label, { color: theme.subtitleColor }]}>Moment</Text>
+            <View style={styles.chipsRow}>
+              {MOMENTS.map((item) => {
+                const active = item === moment;
+                return (
+                  <Pressable
+                    key={item}
+                    onPress={() => setMoment(item)}
+                    style={[
+                      styles.chip,
+                      { borderColor: active ? '#2563EB' : theme.border, backgroundColor: active ? '#DBEAFE' : theme.background },
+                    ]}
+                  >
+                    <Text style={[styles.chipText, { color: active ? '#1D4ED8' : theme.titleColor }]}>{item}</Text>
+                  </Pressable>
+                );
+              })}
             </View>
-          ) : null}
-        </View>
-      </ScrollView>
-    </View>
+
+            <Text style={[styles.label, { color: theme.subtitleColor }]}>Hoeveelheid</Text>
+            <TextInput
+              value={amount}
+              onChangeText={setAmount}
+              placeholder="Bijv. 250 ml of 1 portie"
+              placeholderTextColor="#9CA3AF"
+              style={[styles.input, { borderColor: theme.border, color: theme.titleColor, backgroundColor: theme.background }]}
+            />
+
+            <Text style={[styles.label, { color: theme.subtitleColor }]}>Notities</Text>
+            <TextInput
+              value={notes}
+              onChangeText={setNotes}
+              placeholder="Optioneel: hoe voelde je je, timing, etc."
+              placeholderTextColor="#9CA3AF"
+              multiline
+              style={[
+                styles.input,
+                styles.notesInput,
+                { borderColor: theme.border, color: theme.titleColor, backgroundColor: theme.background },
+              ]}
+            />
+
+            <Pressable style={[styles.submitButton, !canSubmit ? styles.submitButtonDisabled : null]} onPress={handleSubmit}>
+              <Text style={styles.submitButtonText}>Toevoegen</Text>
+            </Pressable>
+
+            {showPlaceholderFeedback ? (
+              <View style={[styles.feedbackCard, { borderColor: theme.border, backgroundColor: theme.background }]}>
+                <Text style={[styles.feedbackText, { color: theme.subtitleColor }]}>Voeding opslaan komt binnenkort.</Text>
+              </View>
+            ) : null}
+          </View>
+          <SharedBottomNav activeTab="nutrition" />
+        </ScrollView>
+      </View>
+    </AppScreen>
   );
 }
 
@@ -114,7 +119,7 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingHorizontal: 16,
-    paddingBottom: 28,
+    paddingBottom: 100,
     gap: 12,
   },
   introCard: {

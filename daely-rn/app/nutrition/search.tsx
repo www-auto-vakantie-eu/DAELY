@@ -2,6 +2,8 @@ import React, { useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import PageHeader from '../components/PageHeader';
 import { useTheme } from '@/hooks/use-theme';
+import { AppScreen } from '@/components/AppScreen';
+import SharedBottomNav from '@/components/SharedBottomNav';
 
 const POPULAR_SEARCHES = [
   'Eiwitrijke snacks',
@@ -18,48 +20,51 @@ export default function NutritionSearchScreen() {
   const hasQuery = useMemo(() => query.trim().length > 0, [query]);
 
   return (
-    <View style={[styles.screen, { backgroundColor: theme.background }]}>
-      <PageHeader title="Voeding zoeken" showSettings={false} showSearch={false} showCart={false} />
+    <AppScreen style={{ backgroundColor: theme.background }}>
+      <View style={styles.screen}>
+        <PageHeader title="Voeding zoeken" showSettings={false} showSearch={false} showCart={false} />
 
-      <ScrollView style={styles.scroll} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-        <View style={[styles.introCard, { borderColor: theme.border, backgroundColor: theme.card }]}>
-          <Text style={[styles.introTitle, { color: theme.titleColor }]}>Snel vinden</Text>
-          <Text style={[styles.introText, { color: theme.subtitleColor }]}>Zoek snel voedingsinformatie of productdetails.</Text>
-        </View>
-
-        <View style={[styles.searchCard, { borderColor: theme.border, backgroundColor: theme.card }]}>
-          <Text style={[styles.label, { color: theme.subtitleColor }]}>Zoekveld</Text>
-          <TextInput
-            value={query}
-            onChangeText={setQuery}
-            placeholder="Zoek product, merk of maaltijd"
-            placeholderTextColor="#9CA3AF"
-            style={[styles.searchInput, { borderColor: theme.border, color: theme.titleColor, backgroundColor: theme.background }]}
-          />
-        </View>
-
-        <View style={[styles.popularCard, { borderColor: theme.border, backgroundColor: theme.card }]}>
-          <Text style={[styles.popularTitle, { color: theme.titleColor }]}>Populaire zoekopdrachten</Text>
-          <View style={styles.chipsRow}>
-            {POPULAR_SEARCHES.map((item) => (
-              <Pressable
-                key={item}
-                onPress={() => setQuery(item)}
-                style={[styles.chip, { borderColor: theme.border, backgroundColor: theme.background }]}
-              >
-                <Text style={[styles.chipText, { color: theme.titleColor }]}>{item}</Text>
-              </Pressable>
-            ))}
+        <ScrollView style={styles.scroll} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+          <View style={[styles.introCard, { borderColor: theme.border, backgroundColor: theme.card }]}>
+            <Text style={[styles.introTitle, { color: theme.titleColor }]}>Snel vinden</Text>
+            <Text style={[styles.introText, { color: theme.subtitleColor }]}>Zoek snel voedingsinformatie of productdetails.</Text>
           </View>
-        </View>
 
-        {hasQuery ? (
-          <View style={[styles.resultCard, { borderColor: theme.border, backgroundColor: theme.card }]}>
-            <Text style={[styles.resultText, { color: theme.subtitleColor }]}>Zoeken in voedingsdata komt binnenkort.</Text>
+          <View style={[styles.searchCard, { borderColor: theme.border, backgroundColor: theme.card }]}>
+            <Text style={[styles.label, { color: theme.subtitleColor }]}>Zoekveld</Text>
+            <TextInput
+              value={query}
+              onChangeText={setQuery}
+              placeholder="Zoek product, merk of maaltijd"
+              placeholderTextColor="#9CA3AF"
+              style={[styles.searchInput, { borderColor: theme.border, color: theme.titleColor, backgroundColor: theme.background }]}
+            />
           </View>
-        ) : null}
-      </ScrollView>
-    </View>
+
+          <View style={[styles.popularCard, { borderColor: theme.border, backgroundColor: theme.card }]}>
+            <Text style={[styles.popularTitle, { color: theme.titleColor }]}>Populaire zoekopdrachten</Text>
+            <View style={styles.chipsRow}>
+              {POPULAR_SEARCHES.map((item) => (
+                <Pressable
+                  key={item}
+                  onPress={() => setQuery(item)}
+                  style={[styles.chip, { borderColor: theme.border, backgroundColor: theme.background }]}
+                >
+                  <Text style={[styles.chipText, { color: theme.titleColor }]}>{item}</Text>
+                </Pressable>
+              ))}
+            </View>
+          </View>
+
+          {hasQuery ? (
+            <View style={[styles.resultCard, { borderColor: theme.border, backgroundColor: theme.card }]}>
+              <Text style={[styles.resultText, { color: theme.subtitleColor }]}>Zoeken in voedingsdata komt binnenkort.</Text>
+            </View>
+          ) : null}
+          <SharedBottomNav activeTab="nutrition" />
+        </ScrollView>
+      </View>
+    </AppScreen>
   );
 }
 
@@ -72,7 +77,7 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingHorizontal: 16,
-    paddingBottom: 28,
+    paddingBottom: 100,
     gap: 12,
   },
   introCard: {

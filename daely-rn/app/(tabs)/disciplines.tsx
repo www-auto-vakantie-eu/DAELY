@@ -2,6 +2,7 @@
 import { StyleSheet, ScrollView, View, Text, Pressable, ImageBackground, ImageSourcePropType } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
+import { AppScreen } from '@/components/AppScreen';
 import { useAppContext } from '@/contexts/AppContext';
 import { resolveContentAudience, getGenderedDisciplineImage, type DisciplineMedia } from '@/lib/content-audience';
 import PageHeader from '../components/PageHeader';
@@ -401,7 +402,7 @@ export default function DisciplinesScreen() {
   const audience = resolveContentAudience(user, appSettings);
 
   return (
-    <View style={{ flex: 1, backgroundColor: theme.background }}>
+    <AppScreen style={{ backgroundColor: theme.background }}>
       <PageHeader
         title="Bibliotheek."
         subtitle="Verbeter je oefeningen."
@@ -453,7 +454,7 @@ export default function DisciplinesScreen() {
           <View style={styles.bottomSpacer} />
         </View>
       </ScrollView>
-    </View>
+    </AppScreen>
   );
 }
 

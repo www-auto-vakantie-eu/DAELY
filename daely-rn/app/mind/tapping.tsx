@@ -2,14 +2,17 @@ import { StyleSheet, ScrollView, View, Text, Pressable } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
+import { AppScreen } from '@/components/AppScreen';
 import PageHeader from '../components/PageHeader';
+import SharedBottomNav from '@/components/SharedBottomNav';
 
 export default function TappingScreen() {
   const theme = useTheme();
   const router = useRouter();
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: theme.background }]} showsVerticalScrollIndicator={false}>
+    <AppScreen style={{ backgroundColor: theme.background }}>
+      <ScrollView style={styles.container} showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
       <PageHeader
         title="Tapping"
         onSettingsPress={() => router.push('/(tabs)/athlete')}
@@ -72,13 +75,18 @@ export default function TappingScreen() {
       </View>
 
       <View style={styles.bottomSpacer} />
+      <SharedBottomNav activeTab="mind" />
     </ScrollView>
+    </AppScreen>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 100,
   },
   content: {
     paddingHorizontal: 16,

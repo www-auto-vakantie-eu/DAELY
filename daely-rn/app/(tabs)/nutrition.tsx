@@ -6,6 +6,7 @@ import React, { useState, useMemo } from 'react';
 import { View, Text, StyleSheet, ScrollView, Pressable, ImageBackground } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '@/hooks/use-theme';
+import { AppScreen } from '@/components/AppScreen';
 import { NUTRITION_MEALS } from '@/constants/nutrition-meals';
 import { useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -96,7 +97,8 @@ export default function NutritionScreen() {
     : null;
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: theme.background }]}
+    <AppScreen style={{ backgroundColor: theme.background }}>
+      <ScrollView style={styles.container}
       contentContainerStyle={{ padding: 16 }}
       showsVerticalScrollIndicator={false}
     >
@@ -227,6 +229,7 @@ export default function NutritionScreen() {
 
       <View style={styles.bottomSpacer} />
     </ScrollView>
+    </AppScreen>
   );
 }
 

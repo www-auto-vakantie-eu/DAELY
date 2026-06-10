@@ -75,9 +75,6 @@ export default function ExerciseDetailScreen() {
     return (
       <AppScreen style={{ backgroundColor: theme.background }}>
         <View style={styles.content}>
-          <Pressable onPress={() => router.back()} style={styles.backButton}>
-            <MaterialCommunityIcons name="arrow-left" size={24} color={theme.titleColor} />
-          </Pressable>
           <Text style={[styles.title, { color: theme.titleColor }]}>Oefening niet gevonden</Text>
           <Text style={[styles.message, { color: theme.subtitleColor }]}>
             Deze oefening kon niet worden geladen.
@@ -265,10 +262,6 @@ export default function ExerciseDetailScreen() {
           </View>
 
           <View style={styles.content}>
-            <Pressable onPress={() => router.back()} style={styles.backButton}>
-              <MaterialCommunityIcons name="arrow-left" size={24} color={theme.titleColor} />
-            </Pressable>
-
             {/* Premium Title Card */}
             <View style={[styles.titleCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
               <Text style={[styles.exerciseName, { color: theme.titleColor }]}>
@@ -457,13 +450,6 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 20,
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 20,
   },
   title: {
     fontSize: 24,

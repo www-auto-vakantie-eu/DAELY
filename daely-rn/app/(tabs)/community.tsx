@@ -2,6 +2,7 @@ import { ScrollView, StyleSheet, Text, View, Pressable, TextInput } from 'react-
 import { useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/use-theme';
+import { AppScreen } from '@/components/AppScreen';
 import { useState, useMemo, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import PageHeader from '../components/PageHeader';
@@ -321,7 +322,7 @@ export default function CommunityScreen() {
   }, [localPosts]);
 
   return (
-    <View style={[styles.screen, { backgroundColor: theme.background }]}>
+    <AppScreen style={{ backgroundColor: theme.background }}>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <PageHeader
           title="Community."
@@ -657,14 +658,11 @@ export default function CommunityScreen() {
 
         <View style={styles.bottomSpacer} />
       </ScrollView>
-    </View>
+    </AppScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-  },
   content: {
     paddingHorizontal: 16,
     paddingTop: 20,

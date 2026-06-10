@@ -18,6 +18,8 @@ import { useTheme } from '@/hooks/use-theme';
 import { lookupBarcodeProduct, type BarcodeNutritionProduct } from '@/services/nutrition-barcode';
 import { addNutritionLog } from '@/services/nutrition-log';
 import type { NutritionMealType } from '@/services/nutrition-log.types';
+import { AppScreen } from '@/components/AppScreen';
+import SharedBottomNav from '@/components/SharedBottomNav';
 
 const MEAL_TYPES: NutritionMealType[] = ['ontbijt', 'lunch', 'diner', 'snack', 'pre-workout', 'post-workout', 'supplement'];
 const UNIT_OPTIONS = ['gram', 'ml', 'portie', 'stuk'] as const;
@@ -148,167 +150,167 @@ export default function NutritionScanScreen() {
 
   if (!permission) {
     return (
-      <View style={[styles.centered, { backgroundColor: theme.background }]}>
-        <ActivityIndicator size="large" color="#2563EB" />
-      </View>
+      <AppScreen style={{ backgroundColor: theme.background }}>
+        <View style={styles.centered}>
+          <ActivityIndicator size="large" color="#2563EB" />
+        </View>
+      </AppScreen>
     );
   }
 
   if (!permission.granted) {
     return (
-      <View style={[styles.centered, { backgroundColor: theme.background }]}>
-        <MaterialCommunityIcons name="camera-off-outline" size={30} color={theme.subtitleColor} />
-        <Text style={[styles.permissionTitle, { color: theme.titleColor }]}>Camera toegang nodig</Text>
-        <Text style={[styles.permissionSubtitle, { color: theme.subtitleColor }]}>Geef camera permissie om barcodes te scannen.</Text>
-        <Pressable style={styles.primaryButton} onPress={requestPermission}>
-          <Text style={styles.primaryButtonText}>Permissie geven</Text>
-        </Pressable>
-      </View>
+      <AppScreen style={{ backgroundColor: theme.background }}>
+        <View style={styles.centered}>
+          <MaterialCommunityIcons name="camera-off-outline" size={30} color={theme.subtitleColor} />
+          <Text style={[styles.permissionTitle, { color: theme.titleColor }]}>Camera toegang nodig</Text>
+          <Text style={[styles.permissionSubtitle, { color: theme.subtitleColor }]}>Geef camera permissie om barcodes te scannen.</Text>
+          <Pressable style={styles.primaryButton} onPress={requestPermission}>
+            <Text style={styles.primaryButtonText}>Permissie geven</Text>
+          </Pressable>
+        </View>
+      </AppScreen>
     );
   }
 
   return (
-    <ScrollView
-      style={[styles.screen, { backgroundColor: theme.background }]}
-      contentContainerStyle={styles.content}
-      keyboardShouldPersistTaps="handled"
-    >
-      <View style={styles.headerRow}>
-        <Pressable style={[styles.backButton, { borderColor: theme.border, backgroundColor: theme.card }]} onPress={() => router.back()}>
-          <MaterialCommunityIcons name="arrow-left" size={18} color={theme.titleColor} />
-          <Text style={[styles.backText, { color: theme.titleColor }]}>Terug</Text>
-        </Pressable>
-      </View>
+    <AppScreen style={{ backgroundColor: theme.background }}>
+      <ScrollView
+        style={styles.screen}
+        contentContainerStyle={styles.content}
+        keyboardShouldPersistTaps="handled"
+      >
+        <Text style={[styles.title, { color: theme.titleColor }]}>Barcode scannen</Text>
+        <Text style={[styles.subtitle, { color: theme.subtitleColor }]}>Scan een barcode en voeg direct toe aan je daglog.</Text>
 
-      <Text style={[styles.title, { color: theme.titleColor }]}>Barcode scannen</Text>
-      <Text style={[styles.subtitle, { color: theme.subtitleColor }]}>Scan een barcode en voeg direct toe aan je daglog.</Text>
-
-      {!hasResult && (
-        <View style={[styles.cameraWrap, { borderColor: theme.border, backgroundColor: theme.card }]}>
-          <CameraView
-            style={styles.camera}
-            facing="back"
-            onBarcodeScanned={handleScanned}
-            barcodeScannerSettings={{
-              barcodeTypes: ['ean13', 'ean8', 'upc_a', 'upc_e', 'code128'],
-            }}
-          />
-          <View pointerEvents="none" style={styles.overlay}>
-            <View style={styles.scanFrame}>
-              <View style={styles.scanCornerTopLeft} />
-              <View style={styles.scanCornerTopRight} />
-              <View style={styles.scanCornerBottomLeft} />
-              <View style={styles.scanCornerBottomRight} />
+        {!hasResult && (
+          <View style={[styles.cameraWrap, { borderColor: theme.border, backgroundColor: theme.card }]}>
+            <CameraView
+              style={styles.camera}
+              facing="back"
+              onBarcodeScanned={handleScanned}
+              barcodeScannerSettings={{
+                barcodeTypes: ['ean13', 'ean8', 'upc_a', 'upc_e', 'code128'],
+              }}
+            />
+            <View pointerEvents="none" style={styles.overlay}>
+              <View style={styles.scanFrame}>
+                <View style={styles.scanCornerTopLeft} />
+                <View style={styles.scanCornerTopRight} />
+                <View style={styles.scanCornerBottomLeft} />
+                <View style={styles.scanCornerBottomRight} />
+              </View>
+              <Text style={styles.overlayText}>Richt de barcode binnen het kader</Text>
             </View>
-            <Text style={styles.overlayText}>Richt de barcode binnen het kader</Text>
+            {isHandlingScan && (
+              <View style={styles.lookupOverlay}>
+                <ActivityIndicator size="large" color="#FFFFFF" />
+                <Text style={styles.lookupText}>Product opzoeken...</Text>
+              </View>
+            )}
           </View>
-          {isHandlingScan && (
-            <View style={styles.lookupOverlay}>
-              <ActivityIndicator size="large" color="#FFFFFF" />
-              <Text style={styles.lookupText}>Product opzoeken...</Text>
-            </View>
-          )}
-        </View>
-      )}
+        )}
 
-      {(!!notFoundMessage || !!product) && (
-        <View style={[styles.resultCard, { borderColor: theme.border, backgroundColor: theme.card }]}>
-          {notFoundMessage ? (
-            <>
-              <MaterialCommunityIcons name="barcode-off" size={22} color="#EF4444" />
-              <Text style={[styles.notFoundTitle, { color: theme.titleColor }]}>Niet gevonden</Text>
-              <Text style={[styles.notFoundText, { color: theme.subtitleColor }]}>{notFoundMessage}</Text>
-            </>
-          ) : null}
+        {(!!notFoundMessage || !!product) && (
+          <View style={[styles.resultCard, { borderColor: theme.border, backgroundColor: theme.card }]}>
+            {notFoundMessage ? (
+              <>
+                <MaterialCommunityIcons name="barcode-off" size={22} color="#EF4444" />
+                <Text style={[styles.notFoundTitle, { color: theme.titleColor }]}>Niet gevonden</Text>
+                <Text style={[styles.notFoundText, { color: theme.subtitleColor }]}>{notFoundMessage}</Text>
+              </>
+            ) : null}
 
-          {product ? (
-            <>
-              {product.imageUrl ? <Image source={{ uri: product.imageUrl }} style={styles.productImage} /> : null}
-              <Text style={[styles.productName, { color: theme.titleColor }]}>{product.name}</Text>
-              <Text style={[styles.productBrand, { color: theme.subtitleColor }]}>{product.brand || 'Merk onbekend'}</Text>
+            {product ? (
+              <>
+                {product.imageUrl ? <Image source={{ uri: product.imageUrl }} style={styles.productImage} /> : null}
+                <Text style={[styles.productName, { color: theme.titleColor }]}>{product.name}</Text>
+                <Text style={[styles.productBrand, { color: theme.subtitleColor }]}>{product.brand || 'Merk onbekend'}</Text>
 
-              <View style={styles.sourceInfoRow}>
-                <View style={styles.sourceBadge}>
-                  <Text style={styles.sourceBadgeText}>{barcodeSourceLabel(product.source)}</Text>
+                <View style={styles.sourceInfoRow}>
+                  <View style={styles.sourceBadge}>
+                    <Text style={styles.sourceBadgeText}>{barcodeSourceLabel(product.source)}</Text>
+                  </View>
+                  {verificationHint(product.verificationStatus) ? (
+                    <Text style={[styles.verificationText, { color: product.verificationStatus === 'unverified' ? '#B45309' : theme.subtitleColor }]}>
+                      {verificationHint(product.verificationStatus)}
+                          {product.confidenceScore ? ` · ${product.confidenceScore}` : ''}
+                    </Text>
+                  ) : null}
                 </View>
-                {verificationHint(product.verificationStatus) ? (
-                  <Text style={[styles.verificationText, { color: product.verificationStatus === 'unverified' ? '#B45309' : theme.subtitleColor }]}> 
-                    {verificationHint(product.verificationStatus)}
-                        {product.confidenceScore ? ` · ${product.confidenceScore}` : ''}
-                  </Text>
-                ) : null}
-              </View>
 
-              <View style={styles.metaBlock}>
-                <Text style={[styles.metaText, { color: theme.subtitleColor }]}>kcal: {product.kcal}</Text>
-                <Text style={[styles.metaText, { color: theme.subtitleColor }]}>Eiwit: {product.protein}g</Text>
-                <Text style={[styles.metaText, { color: theme.subtitleColor }]}>Koolhydraten: {product.carbs}g</Text>
-                <Text style={[styles.metaText, { color: theme.subtitleColor }]}>Vetten: {product.fats}g</Text>
-              </View>
+                <View style={styles.metaBlock}>
+                  <Text style={[styles.metaText, { color: theme.subtitleColor }]}>kcal: {product.kcal}</Text>
+                  <Text style={[styles.metaText, { color: theme.subtitleColor }]}>Eiwit: {product.protein}g</Text>
+                  <Text style={[styles.metaText, { color: theme.subtitleColor }]}>Koolhydraten: {product.carbs}g</Text>
+                  <Text style={[styles.metaText, { color: theme.subtitleColor }]}>Vetten: {product.fats}g</Text>
+                </View>
 
-              <Text style={[styles.label, { color: theme.subtitleColor }]}>Eetmoment</Text>
-              <View style={styles.chipRow}>
-                {MEAL_TYPES.map((value) => {
-                  const selected = mealType === value;
-                  return (
-                    <Pressable
-                      key={value}
-                      style={[styles.chip, { borderColor: selected ? '#2563EB' : theme.border, backgroundColor: selected ? '#DBEAFE' : theme.card }]}
-                      onPress={() => setMealType(value)}
-                    >
-                      <Text style={[styles.chipText, { color: selected ? '#1D4ED8' : theme.titleColor }]}>{value}</Text>
-                    </Pressable>
-                  );
-                })}
-              </View>
-
-              <Text style={[styles.label, { color: theme.subtitleColor }]}>Hoeveelheid</Text>
-              <View style={styles.amountRow}>
-                <TextInput
-                  value={amount}
-                  onChangeText={setAmount}
-                  keyboardType="decimal-pad"
-                  style={[styles.amountInput, { borderColor: theme.border, color: theme.titleColor, backgroundColor: theme.background }]}
-                />
-                <View style={styles.unitRow}>
-                  {UNIT_OPTIONS.map((unit) => {
-                    const selected = amountUnit === unit;
+                <Text style={[styles.label, { color: theme.subtitleColor }]}>Eetmoment</Text>
+                <View style={styles.chipRow}>
+                  {MEAL_TYPES.map((value) => {
+                    const selected = mealType === value;
                     return (
                       <Pressable
-                        key={unit}
-                        style={[styles.unitChip, { borderColor: selected ? '#2563EB' : theme.border, backgroundColor: selected ? '#DBEAFE' : theme.background }]}
-                        onPress={() => setAmountUnit(unit)}
+                        key={value}
+                        style={[styles.chip, { borderColor: selected ? '#2563EB' : theme.border, backgroundColor: selected ? '#DBEAFE' : theme.card }]}
+                        onPress={() => setMealType(value)}
                       >
-                        <Text style={[styles.unitChipText, { color: selected ? '#1D4ED8' : theme.titleColor }]}>{unit}</Text>
+                        <Text style={[styles.chipText, { color: selected ? '#1D4ED8' : theme.titleColor }]}>{value}</Text>
                       </Pressable>
                     );
                   })}
                 </View>
-              </View>
 
-              <Pressable style={[styles.primaryButton, !canSave ? styles.disabledButton : null]} onPress={handleSave} disabled={!canSave}>
-                <MaterialCommunityIcons name="plus-circle-outline" size={18} color="#FFFFFF" />
-                <Text style={styles.primaryButtonText}>{isSaving ? 'Toevoegen...' : 'Toevoegen aan Mijn Voeding'}</Text>
-              </Pressable>
-            </>
-          ) : null}
+                <Text style={[styles.label, { color: theme.subtitleColor }]}>Hoeveelheid</Text>
+                <View style={styles.amountRow}>
+                  <TextInput
+                    value={amount}
+                    onChangeText={setAmount}
+                    keyboardType="decimal-pad"
+                    style={[styles.amountInput, { borderColor: theme.border, color: theme.titleColor, backgroundColor: theme.background }]}
+                  />
+                  <View style={styles.unitRow}>
+                    {UNIT_OPTIONS.map((unit) => {
+                      const selected = amountUnit === unit;
+                      return (
+                        <Pressable
+                          key={unit}
+                          style={[styles.unitChip, { borderColor: selected ? '#2563EB' : theme.border, backgroundColor: selected ? '#DBEAFE' : theme.background }]}
+                          onPress={() => setAmountUnit(unit)}
+                        >
+                          <Text style={[styles.unitChipText, { color: selected ? '#1D4ED8' : theme.titleColor }]}>{unit}</Text>
+                        </Pressable>
+                      );
+                    })}
+                  </View>
+                </View>
 
-          <View style={styles.secondaryActionRow}>
-            <Pressable style={[styles.secondaryButton, { borderColor: theme.border }]} onPress={resetForRescan}>
-              <MaterialCommunityIcons name="refresh" size={16} color={theme.titleColor} />
-              <Text style={[styles.secondaryButtonText, { color: theme.titleColor }]}>Opnieuw scannen</Text>
-            </Pressable>
-            {notFoundMessage ? (
-              <Pressable style={[styles.secondaryButton, styles.secondaryWarmButton]} onPress={() => router.push('/nutrition/add')}>
-                <MaterialCommunityIcons name="plus-circle-outline" size={16} color="#92400E" />
-                <Text style={[styles.secondaryButtonText, styles.secondaryWarmButtonText]}>Zelf toevoegen</Text>
-              </Pressable>
+                <Pressable style={[styles.primaryButton, !canSave ? styles.disabledButton : null]} onPress={handleSave} disabled={!canSave}>
+                  <MaterialCommunityIcons name="plus-circle-outline" size={18} color="#FFFFFF" />
+                  <Text style={styles.primaryButtonText}>{isSaving ? 'Toevoegen...' : 'Toevoegen aan Mijn Voeding'}</Text>
+                </Pressable>
+              </>
             ) : null}
+
+            <View style={styles.secondaryActionRow}>
+              <Pressable style={[styles.secondaryButton, { borderColor: theme.border }]} onPress={resetForRescan}>
+                <MaterialCommunityIcons name="refresh" size={16} color={theme.titleColor} />
+                <Text style={[styles.secondaryButtonText, { color: theme.titleColor }]}>Opnieuw scannen</Text>
+              </Pressable>
+              {notFoundMessage ? (
+                <Pressable style={[styles.secondaryButton, styles.secondaryWarmButton]} onPress={() => router.push('/nutrition/add')}>
+                  <MaterialCommunityIcons name="plus-circle-outline" size={16} color="#92400E" />
+                  <Text style={[styles.secondaryButtonText, styles.secondaryWarmButtonText]}>Zelf toevoegen</Text>
+                </Pressable>
+              ) : null}
+            </View>
+            {scannedCode ? <Text style={[styles.scannedCode, { color: theme.subtitleColor }]}>Barcode: {scannedCode}</Text> : null}
           </View>
-          {scannedCode ? <Text style={[styles.scannedCode, { color: theme.subtitleColor }]}>Barcode: {scannedCode}</Text> : null}
-        </View>
-      )}
-    </ScrollView>
+        )}
+        <SharedBottomNav activeTab="nutrition" />
+      </ScrollView>
+    </AppScreen>
   );
 }
 
@@ -336,23 +338,6 @@ const styles = StyleSheet.create({
   permissionSubtitle: {
     fontSize: 13,
     textAlign: 'center',
-  },
-  headerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  backButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    borderWidth: 1,
-    borderRadius: 999,
-    paddingHorizontal: 12,
-    paddingVertical: 7,
-  },
-  backText: {
-    fontSize: 12,
-    fontWeight: '700',
   },
   title: {
     fontSize: 30,

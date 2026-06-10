@@ -4,6 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter, type Href } from 'expo-router';
 
 import { useTheme } from '@/hooks/use-theme';
+import { AppScreen } from '@/components/AppScreen';
 import PageHeader from '../components/PageHeader';
 import { getPerformanceSummary, type PerformanceSummary } from '@/services/performance-summary';
 
@@ -134,7 +135,7 @@ export default function MijnScreen() {
   };
 
   return (
-    <View style={[styles.screen, { backgroundColor: theme.background }]}>
+    <AppScreen style={{ backgroundColor: theme.background }}>
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         <PageHeader
           title="Mijn."
@@ -235,14 +236,11 @@ export default function MijnScreen() {
           ))}
         </View>
       </ScrollView>
-    </View>
+    </AppScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-  },
   container: {
     flex: 1,
   },

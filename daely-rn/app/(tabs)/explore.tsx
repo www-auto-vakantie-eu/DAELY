@@ -3,6 +3,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
+import { AppScreen } from '@/components/AppScreen';
 import { NUTRITION_MEALS } from '@/constants/nutrition-meals';
 import { COMMUNITY_CREATORS } from '@/constants/community-creators';
 import { MIND_CATEGORIES } from '@/constants/mind-categories';
@@ -22,10 +23,11 @@ export default function ExploreScreen() {
   const featuredCreators = COMMUNITY_CREATORS.slice(0, 3);
 
   return (
-    <ScrollView
-      style={[styles.container, { backgroundColor: theme.background }]}
-      showsVerticalScrollIndicator={false}
-    >
+    <AppScreen style={{ backgroundColor: theme.background }}>
+      <ScrollView
+        style={styles.container}
+        showsVerticalScrollIndicator={false}
+      >
       <View style={styles.content}>
         <View style={styles.header}>
           <Text style={[styles.title, { color: theme.titleColor }]}>Verkennen.</Text>
@@ -133,6 +135,7 @@ export default function ExploreScreen() {
       </View>
       <View style={styles.bottomSpacer} />
     </ScrollView>
+    </AppScreen>
   );
 }
 

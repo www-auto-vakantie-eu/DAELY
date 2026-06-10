@@ -5,6 +5,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 
 import { useTheme } from '@/hooks/use-theme';
+import { AppScreen } from '@/components/AppScreen';
 import { getCommunitFeed, formatFeedDate, type FeedItem, type FeedItemType } from '@/services/community-feed';
 
 const FILTER_OPTIONS: FeedItemType[] = ['post', 'meal', 'workout'];
@@ -184,7 +185,7 @@ export default function CommunityFeedScreen() {
   };
 
   return (
-    <View style={[styles.screen, { backgroundColor: theme.background }]}>
+    <AppScreen style={{ backgroundColor: theme.background }}>
       <ScrollView
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
@@ -270,12 +271,11 @@ export default function CommunityFeedScreen() {
 
         <View style={styles.bottomSpacer} />
       </ScrollView>
-    </View>
+    </AppScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1 },
   content: { paddingHorizontal: 16, paddingTop: 16, paddingBottom: 80 },
   header: {
     flexDirection: 'row',

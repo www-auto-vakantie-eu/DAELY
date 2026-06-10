@@ -4,99 +4,107 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
 import PageHeader from '../components/PageHeader';
+import { AppScreen } from '@/components/AppScreen';
+import SharedBottomNav from '@/components/SharedBottomNav';
 
 export default function EventRunningDayScreen() {
   const theme = useTheme();
   const router = useRouter();
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: theme.background }]} showsVerticalScrollIndicator={false}>
-      <PageHeader
-        title="Running Day"
-        onSettingsPress={() => router.push('/(tabs)/athlete')}
-        onSearchPress={() => router.push('/nutrition/search')}
-        onCartPress={() => router.push('/(tabs)/cart')}
-      />
+    <AppScreen style={{ backgroundColor: theme.background }}>
+      <ScrollView style={styles.container} showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+        <PageHeader
+          title="Running Day"
+          onSettingsPress={() => router.push('/(tabs)/athlete')}
+          onSearchPress={() => router.push('/nutrition/search')}
+          onCartPress={() => router.push('/(tabs)/cart')}
+        />
 
-      <View style={styles.content}>
-        <View style={[styles.heroCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <View style={styles.iconContainer}>
-            <MaterialCommunityIcons name="shoe-print" size={48} color="#10B981" />
+        <View style={styles.content}>
+          <View style={[styles.heroCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+            <View style={styles.iconContainer}>
+              <MaterialCommunityIcons name="shoe-print" size={48} color="#10B981" />
+            </View>
+            <Text style={[styles.heroTitle, { color: theme.titleColor }]}>Binnenkort beschikbaar</Text>
+            <Text style={[styles.heroText, { color: theme.subtitleColor }]}>
+              DAELY Events komt binnenkort beschikbaar.
+            </Text>
+            <Text style={[styles.heroText, { color: theme.subtitleColor }]}>
+              Hier vind je straks events, challenges, voorbereiding en deelname-informatie.
+            </Text>
+            <View style={styles.statusBadge}>
+              <Text style={styles.statusText}>Binnenkort</Text>
+            </View>
           </View>
-          <Text style={[styles.heroTitle, { color: theme.titleColor }]}>Binnenkort beschikbaar</Text>
-          <Text style={[styles.heroText, { color: theme.subtitleColor }]}>
-            DAELY Events komt binnenkort beschikbaar.
-          </Text>
-          <Text style={[styles.heroText, { color: theme.subtitleColor }]}>
-            Hier vind je straks events, challenges, voorbereiding en deelname-informatie.
-          </Text>
-          <View style={styles.statusBadge}>
-            <Text style={styles.statusText}>Binnenkort</Text>
+
+          <View style={[styles.infoCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+            <Text style={[styles.infoTitle, { color: theme.titleColor }]}>Wat is Running Day?</Text>
+            <Text style={[styles.infoText, { color: theme.subtitleColor }]}>
+              Running Day is hét hardloopevenement voor jong en oud. DAELY helpt je straks met hardloopschema&apos;s, doelen stellen en community challenges.
+            </Text>
+          </View>
+
+          <View style={[styles.infoCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+            <Text style={[styles.infoTitle, { color: theme.titleColor }]}>Wat komt eraan?</Text>
+            <View style={styles.bulletRow}>
+              <MaterialCommunityIcons name="check-circle" size={18} color="#10B981" />
+              <Text style={[styles.bulletText, { color: theme.subtitleColor }]}>Hardloopschema&apos;s voor alle afstanden</Text>
+            </View>
+            <View style={styles.bulletRow}>
+              <MaterialCommunityIcons name="check-circle" size={18} color="#10B981" />
+              <Text style={[styles.bulletText, { color: theme.subtitleColor }]}>Prestatie doelen en tracking</Text>
+            </View>
+            <View style={styles.bulletRow}>
+              <MaterialCommunityIcons name="check-circle" size={18} color="#10B981" />
+              <Text style={[styles.bulletText, { color: theme.subtitleColor }]}>Community challenges</Text>
+            </View>
+            <View style={styles.bulletRow}>
+              <MaterialCommunityIcons name="check-circle" size={18} color="#10B981" />
+              <Text style={[styles.bulletText, { color: theme.subtitleColor }]}>Event deelname-informatie</Text>
+            </View>
+          </View>
+
+          <View style={[styles.infoCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+            <Text style={[styles.infoTitle, { color: theme.titleColor }]}>Voor wie?</Text>
+            <Text style={[styles.infoText, { color: theme.subtitleColor }]}>
+              Voor hardlopers van elk niveau, van beginner tot marathonloper. DAELY biedt training op elk niveau.
+            </Text>
+          </View>
+
+          <View style={[styles.infoCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+            <Text style={[styles.infoTitle, { color: theme.titleColor }]}>Hoe helpt DAELY?</Text>
+            <Text style={[styles.infoText, { color: theme.subtitleColor }]}>
+              DAELY biedt persoonlijke hardloopschema&apos;s, voeding voor duursport, hersteladvies en community support om je optimaal voor te bereiden op je running day.
+            </Text>
+          </View>
+
+          <View style={styles.buttonRow}>
+            <Pressable style={styles.secondaryButton} onPress={() => router.push('/tracker')}>
+              <Text style={styles.secondaryButtonText}>Start training</Text>
+            </Pressable>
+            <Pressable
+              style={[styles.tertiaryButton, { backgroundColor: theme.background, borderColor: theme.border }]}
+              onPress={() => router.push('/feedback')}
+            >
+              <Text style={[styles.tertiaryButtonText, { color: theme.titleColor }]}>Feedback geven</Text>
+            </Pressable>
           </View>
         </View>
 
-        <View style={[styles.infoCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <Text style={[styles.infoTitle, { color: theme.titleColor }]}>Wat is Running Day?</Text>
-          <Text style={[styles.infoText, { color: theme.subtitleColor }]}>
-            Running Day is hét hardloopevenement voor jong en oud. DAELY helpt je straks met hardloopschema&apos;s, doelen stellen en community challenges.
-          </Text>
-        </View>
-
-        <View style={[styles.infoCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <Text style={[styles.infoTitle, { color: theme.titleColor }]}>Wat komt eraan?</Text>
-          <View style={styles.bulletRow}>
-            <MaterialCommunityIcons name="check-circle" size={18} color="#10B981" />
-            <Text style={[styles.bulletText, { color: theme.subtitleColor }]}>Hardloopschema&apos;s voor alle afstanden</Text>
-          </View>
-          <View style={styles.bulletRow}>
-            <MaterialCommunityIcons name="check-circle" size={18} color="#10B981" />
-            <Text style={[styles.bulletText, { color: theme.subtitleColor }]}>Prestatie doelen en tracking</Text>
-          </View>
-          <View style={styles.bulletRow}>
-            <MaterialCommunityIcons name="check-circle" size={18} color="#10B981" />
-            <Text style={[styles.bulletText, { color: theme.subtitleColor }]}>Community challenges</Text>
-          </View>
-          <View style={styles.bulletRow}>
-            <MaterialCommunityIcons name="check-circle" size={18} color="#10B981" />
-            <Text style={[styles.bulletText, { color: theme.subtitleColor }]}>Event deelname-informatie</Text>
-          </View>
-        </View>
-
-        <View style={[styles.infoCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <Text style={[styles.infoTitle, { color: theme.titleColor }]}>Voor wie?</Text>
-          <Text style={[styles.infoText, { color: theme.subtitleColor }]}>
-            Voor hardlopers van elk niveau, van beginner tot marathonloper. DAELY biedt training op elk niveau.
-          </Text>
-        </View>
-
-        <View style={[styles.infoCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <Text style={[styles.infoTitle, { color: theme.titleColor }]}>Hoe helpt DAELY?</Text>
-          <Text style={[styles.infoText, { color: theme.subtitleColor }]}>
-            DAELY biedt persoonlijke hardloopschema&apos;s, voeding voor duursport, hersteladvies en community support om je optimaal voor te bereiden op je running day.
-          </Text>
-        </View>
-
-        <View style={styles.buttonRow}>
-          <Pressable style={styles.secondaryButton} onPress={() => router.push('/tracker')}>
-            <Text style={styles.secondaryButtonText}>Start training</Text>
-          </Pressable>
-          <Pressable
-            style={[styles.tertiaryButton, { backgroundColor: theme.background, borderColor: theme.border }]}
-            onPress={() => router.push('/feedback')}
-          >
-            <Text style={[styles.tertiaryButtonText, { color: theme.titleColor }]}>Feedback geven</Text>
-          </Pressable>
-        </View>
-      </View>
-
-      <View style={styles.bottomSpacer} />
-    </ScrollView>
+        <View style={styles.bottomSpacer} />
+        <SharedBottomNav activeTab="today" />
+      </ScrollView>
+    </AppScreen>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 100,
   },
   content: {
     paddingHorizontal: 16,

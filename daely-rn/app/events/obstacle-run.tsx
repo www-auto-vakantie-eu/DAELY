@@ -4,99 +4,107 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
 import PageHeader from '../components/PageHeader';
+import { AppScreen } from '@/components/AppScreen';
+import SharedBottomNav from '@/components/SharedBottomNav';
 
 export default function EventObstacleRunScreen() {
   const theme = useTheme();
   const router = useRouter();
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: theme.background }]} showsVerticalScrollIndicator={false}>
-      <PageHeader
-        title="Obstacle Run"
-        onSettingsPress={() => router.push('/(tabs)/athlete')}
-        onSearchPress={() => router.push('/nutrition/search')}
-        onCartPress={() => router.push('/(tabs)/cart')}
-      />
+    <AppScreen style={{ backgroundColor: theme.background }}>
+      <ScrollView style={styles.container} showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+        <PageHeader
+          title="Obstacle Run"
+          onSettingsPress={() => router.push('/(tabs)/athlete')}
+          onSearchPress={() => router.push('/nutrition/search')}
+          onCartPress={() => router.push('/(tabs)/cart')}
+        />
 
-      <View style={styles.content}>
-        <View style={[styles.heroCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <View style={styles.iconContainer}>
-            <MaterialCommunityIcons name="run" size={48} color="#F59E0B" />
+        <View style={styles.content}>
+          <View style={[styles.heroCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+            <View style={styles.iconContainer}>
+              <MaterialCommunityIcons name="run" size={48} color="#F59E0B" />
+            </View>
+            <Text style={[styles.heroTitle, { color: theme.titleColor }]}>Binnenkort beschikbaar</Text>
+            <Text style={[styles.heroText, { color: theme.subtitleColor }]}>
+              DAELY Events komt binnenkort beschikbaar.
+            </Text>
+            <Text style={[styles.heroText, { color: theme.subtitleColor }]}>
+              Hier vind je straks events, challenges, voorbereiding en deelname-informatie.
+            </Text>
+            <View style={styles.statusBadge}>
+              <Text style={styles.statusText}>Binnenkort</Text>
+            </View>
           </View>
-          <Text style={[styles.heroTitle, { color: theme.titleColor }]}>Binnenkort beschikbaar</Text>
-          <Text style={[styles.heroText, { color: theme.subtitleColor }]}>
-            DAELY Events komt binnenkort beschikbaar.
-          </Text>
-          <Text style={[styles.heroText, { color: theme.subtitleColor }]}>
-            Hier vind je straks events, challenges, voorbereiding en deelname-informatie.
-          </Text>
-          <View style={styles.statusBadge}>
-            <Text style={styles.statusText}>Binnenkort</Text>
+
+          <View style={[styles.infoCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+            <Text style={[styles.infoTitle, { color: theme.titleColor }]}>Wat is Obstacle Run?</Text>
+            <Text style={[styles.infoText, { color: theme.subtitleColor }]}>
+              Obstacle Run is een avontuurlijke race met modder, water en uitdagende hindernissen. DAELY helpt je straks met obstacle techniek, krachttraining en uithoudingsschema&apos;s.
+            </Text>
+          </View>
+
+          <View style={[styles.infoCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+            <Text style={[styles.infoTitle, { color: theme.titleColor }]}>Wat komt eraan?</Text>
+            <View style={styles.bulletRow}>
+              <MaterialCommunityIcons name="check-circle" size={18} color="#10B981" />
+              <Text style={[styles.bulletText, { color: theme.subtitleColor }]}>Obstacle techniek workshops</Text>
+            </View>
+            <View style={styles.bulletRow}>
+              <MaterialCommunityIcons name="check-circle" size={18} color="#10B981" />
+              <Text style={[styles.bulletText, { color: theme.subtitleColor }]}>Kracht- en uithoudingstraining</Text>
+            </View>
+            <View style={styles.bulletRow}>
+              <MaterialCommunityIcons name="check-circle" size={18} color="#10B981" />
+              <Text style={[styles.bulletText, { color: theme.subtitleColor }]}>Trainingsschema&apos;s per obstakel</Text>
+            </View>
+            <View style={styles.bulletRow}>
+              <MaterialCommunityIcons name="check-circle" size={18} color="#10B981" />
+              <Text style={[styles.bulletText, { color: theme.subtitleColor }]}>Event deelname-informatie</Text>
+            </View>
+          </View>
+
+          <View style={[styles.infoCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+            <Text style={[styles.infoTitle, { color: theme.titleColor }]}>Voor wie?</Text>
+            <Text style={[styles.infoText, { color: theme.subtitleColor }]}>
+              Voor beginners en gevorderden die willen deelnemen aan obstacle races. DAELY biedt training op elk niveau.
+            </Text>
+          </View>
+
+          <View style={[styles.infoCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+            <Text style={[styles.infoTitle, { color: theme.titleColor }]}>Hoe helpt DAELY?</Text>
+            <Text style={[styles.infoText, { color: theme.subtitleColor }]}>
+              DAELY biedt specifieke obstacle training, voeding voor uithouding, hersteladvies en community support om je voor te bereiden op je obstacle run.
+            </Text>
+          </View>
+
+          <View style={styles.buttonRow}>
+            <Pressable style={styles.secondaryButton} onPress={() => router.push('/tracker')}>
+              <Text style={styles.secondaryButtonText}>Start training</Text>
+            </Pressable>
+            <Pressable
+              style={[styles.tertiaryButton, { backgroundColor: theme.background, borderColor: theme.border }]}
+              onPress={() => router.push('/feedback')}
+            >
+              <Text style={[styles.tertiaryButtonText, { color: theme.titleColor }]}>Feedback geven</Text>
+            </Pressable>
           </View>
         </View>
 
-        <View style={[styles.infoCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <Text style={[styles.infoTitle, { color: theme.titleColor }]}>Wat is Obstacle Run?</Text>
-          <Text style={[styles.infoText, { color: theme.subtitleColor }]}>
-            Obstacle Run is een avontuurlijke race met modder, water en uitdagende hindernissen. DAELY helpt je straks met obstacle techniek, krachttraining en uithoudingsschema&apos;s.
-          </Text>
-        </View>
-
-        <View style={[styles.infoCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <Text style={[styles.infoTitle, { color: theme.titleColor }]}>Wat komt eraan?</Text>
-          <View style={styles.bulletRow}>
-            <MaterialCommunityIcons name="check-circle" size={18} color="#10B981" />
-            <Text style={[styles.bulletText, { color: theme.subtitleColor }]}>Obstacle techniek workshops</Text>
-          </View>
-          <View style={styles.bulletRow}>
-            <MaterialCommunityIcons name="check-circle" size={18} color="#10B981" />
-            <Text style={[styles.bulletText, { color: theme.subtitleColor }]}>Kracht- en uithoudingstraining</Text>
-          </View>
-          <View style={styles.bulletRow}>
-            <MaterialCommunityIcons name="check-circle" size={18} color="#10B981" />
-            <Text style={[styles.bulletText, { color: theme.subtitleColor }]}>Trainingsschema&apos;s per obstakel</Text>
-          </View>
-          <View style={styles.bulletRow}>
-            <MaterialCommunityIcons name="check-circle" size={18} color="#10B981" />
-            <Text style={[styles.bulletText, { color: theme.subtitleColor }]}>Event deelname-informatie</Text>
-          </View>
-        </View>
-
-        <View style={[styles.infoCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <Text style={[styles.infoTitle, { color: theme.titleColor }]}>Voor wie?</Text>
-          <Text style={[styles.infoText, { color: theme.subtitleColor }]}>
-            Voor beginners en gevorderden die willen deelnemen aan obstacle races. DAELY biedt training op elk niveau.
-          </Text>
-        </View>
-
-        <View style={[styles.infoCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <Text style={[styles.infoTitle, { color: theme.titleColor }]}>Hoe helpt DAELY?</Text>
-          <Text style={[styles.infoText, { color: theme.subtitleColor }]}>
-            DAELY biedt specifieke obstacle training, voeding voor uithouding, hersteladvies en community support om je voor te bereiden op je obstacle run.
-          </Text>
-        </View>
-
-        <View style={styles.buttonRow}>
-          <Pressable style={styles.secondaryButton} onPress={() => router.push('/tracker')}>
-            <Text style={styles.secondaryButtonText}>Start training</Text>
-          </Pressable>
-          <Pressable
-            style={[styles.tertiaryButton, { backgroundColor: theme.background, borderColor: theme.border }]}
-            onPress={() => router.push('/feedback')}
-          >
-            <Text style={[styles.tertiaryButtonText, { color: theme.titleColor }]}>Feedback geven</Text>
-          </Pressable>
-        </View>
-      </View>
-
-      <View style={styles.bottomSpacer} />
-    </ScrollView>
+        <View style={styles.bottomSpacer} />
+        <SharedBottomNav activeTab="today" />
+      </ScrollView>
+    </AppScreen>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: 100,
   },
   content: {
     paddingHorizontal: 16,

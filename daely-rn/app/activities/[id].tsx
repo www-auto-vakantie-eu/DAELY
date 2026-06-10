@@ -10,10 +10,14 @@ import { SPORT_DISCIPLINES } from '../constants/sport-disciplines';
 /* eslint-disable import/no-unresolved -- Platform split (ActivityMap.tsx/native.tsx/web.tsx) */
 // @ts-ignore - Platform split (ActivityMap.tsx/native.tsx/web.tsx)
 import ActivityMap from '@/components/ActivityMap';
+import { AppScreen } from '@/components/AppScreen';
+import { useTheme } from '@/hooks/use-theme';
+import SharedBottomNav from '@/components/SharedBottomNav';
 
 export default function ActivityDetailScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
+  const theme = useTheme();
   const [activity, setActivity] = useState<Activity | null>(null);
 
   useEffect(() => {
@@ -65,8 +69,9 @@ export default function ActivityDetailScreen() {
   );
 
   return (
-    <ScrollView style={styles.container}>
-      <PageHeader title="Prestatie details" />
+    <AppScreen style={{ backgroundColor: theme.background }}>
+      <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
+        <PageHeader title="Prestatie details" />
 
       <View style={styles.heroCard}>
         <Text style={styles.heroDiscipline}>{activity.disciplineName}</Text>
@@ -346,7 +351,9 @@ export default function ActivityDetailScreen() {
           <Text style={styles.deleteBtnText}>Activiteit verwijderen</Text>
         </TouchableOpacity>
       </View>
-    </ScrollView>
+      <SharedBottomNav activeTab="today" />
+      </ScrollView>
+    </AppScreen>
   );
 }
 
@@ -385,6 +392,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F3F4F6',
     padding: 16,
+  },
+  scrollContent: {
+    paddingBottom: 100,
   },
   heroCard: {
     backgroundColor: '#0F172A',

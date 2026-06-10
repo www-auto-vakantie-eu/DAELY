@@ -1,11 +1,12 @@
-import { StyleSheet, View, Text, ScrollView, Pressable, ImageBackground, Platform } from 'react-native';
+import { StyleSheet, View, Text, ScrollView, ImageBackground, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useMemo, useState } from 'react';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useLocalSearchParams } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
 import { NUTRITION_MEALS } from '@/constants/nutrition-meals';
 import { getPublicCreatorMeals } from '@/services/creator-content';
+import { AppScreen } from '@/components/AppScreen';
+import SharedBottomNav from '@/components/SharedBottomNav';
 
 function pickProtein(title: string): string {
   const lower = title.toLowerCase();
@@ -108,7 +109,6 @@ function prepTimeFromTags(tags: string[]): string {
 
 export default function NutritionMealScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const router = useRouter();
   const theme = useTheme();
   const [creatorMeals, setCreatorMeals] = useState<typeof NUTRITION_MEALS>([]);
 
@@ -121,15 +121,13 @@ export default function NutritionMealScreen() {
 
   if (!meal) {
     return (
-      <View style={[styles.screen, { backgroundColor: theme.background }]}>
-        <View style={Platform.OS === 'web' ? styles.webContainer : undefined}>
-          <Pressable style={styles.backButtonPlain} onPress={() => router.back()}>
-            <MaterialCommunityIcons name="chevron-left" size={26} color={theme.titleColor} />
-            <Text style={[styles.backPlainLabel, { color: theme.titleColor }]}>Terug</Text>
-          </Pressable>
-          <Text style={[styles.notFoundTitle, { color: theme.titleColor }]}>Gerecht niet gevonden</Text>
+      <AppScreen style={{ backgroundColor: theme.background }}>
+        <View style={styles.screen}>
+          <View style={Platform.OS === 'web' ? styles.webContainer : undefined}>
+            <Text style={[styles.notFoundTitle, { color: theme.titleColor }]}>Gerecht niet gevonden</Text>
+          </View>
         </View>
-      </View>
+      </AppScreen>
     );
   }
 
@@ -138,68 +136,69 @@ export default function NutritionMealScreen() {
   const prepTime = prepTimeFromTags(meal.timeTags);
 
   return (
-    <View style={[styles.screen, { backgroundColor: theme.background }]}>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={Platform.OS === 'web' ? styles.webContainer : undefined}>
-          <View style={styles.topArea}>
-            <Pressable style={[styles.backButtonPlain, { borderColor: theme.border, backgroundColor: theme.card }]} onPress={() => router.back()}>
-              <MaterialCommunityIcons name="chevron-left" size={22} color={theme.titleColor} />
-              <Text style={[styles.backPlainLabel, { color: theme.titleColor }]}>Voeding</Text>
-            </Pressable>
+    <AppScreen style={{ backgroundColor: theme.background }}>
+      <View style={styles.screen}>
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+          <View style={Platform.OS === 'web' ? styles.webContainer : undefined}>
+            <View style={styles.topArea}>
+            <ImageBackground source={{ uri: meal.image }} style={styles.hero} imageStyle={styles.heroImage}>
+              <LinearGradient colors={['rgba(0,0,0,0.02)', 'rgba(0,0,0,0.82)']} style={styles.heroOverlay}>
+                <View>
+                  <Text style={styles.heroTitle}>{meal.title}</Text>
+                  <Text style={styles.heroMeta}>{meal.kcal} KCAL    {meal.protein}G EIWIT</Text>
+                </View>
+              </LinearGradient>
+            </ImageBackground>
+          </View>
 
-          <ImageBackground source={{ uri: meal.image }} style={styles.hero} imageStyle={styles.heroImage}>
-            <LinearGradient colors={['rgba(0,0,0,0.02)', 'rgba(0,0,0,0.82)']} style={styles.heroOverlay}>
-              <View>
-                <Text style={styles.heroTitle}>{meal.title}</Text>
-                <Text style={styles.heroMeta}>{meal.kcal} KCAL    {meal.protein}G EIWIT</Text>
+          <View style={styles.content}>
+            <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Over dit gerecht</Text>
+            <Text style={[styles.sectionText, { color: theme.subtitleColor }]}>{meal.description}</Text>
+
+            <View style={styles.statsRow}>
+              <View style={[styles.statCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+                <Text style={[styles.statValue, { color: theme.titleColor }]}>{meal.kcal}</Text>
+                <Text style={[styles.statLabel, { color: theme.subtitleColor }]}>KCAL</Text>
               </View>
-            </LinearGradient>
-          </ImageBackground>
-        </View>
-
-        <View style={styles.content}>
-          <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Over dit gerecht</Text>
-          <Text style={[styles.sectionText, { color: theme.subtitleColor }]}>{meal.description}</Text>
-
-          <View style={styles.statsRow}>
-            <View style={[styles.statCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-              <Text style={[styles.statValue, { color: theme.titleColor }]}>{meal.kcal}</Text>
-              <Text style={[styles.statLabel, { color: theme.subtitleColor }]}>KCAL</Text>
+              <View style={[styles.statCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+                <Text style={[styles.statValue, { color: theme.titleColor }]}>{meal.protein}g</Text>
+                <Text style={[styles.statLabel, { color: theme.subtitleColor }]}>Eiwit</Text>
+              </View>
+              <View style={[styles.statCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+                <Text style={[styles.statValueSmall, { color: theme.titleColor }]}>{prepTime}</Text>
+                <Text style={[styles.statLabel, { color: theme.subtitleColor }]}>BEREIDTIJD</Text>
+              </View>
             </View>
-            <View style={[styles.statCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-              <Text style={[styles.statValue, { color: theme.titleColor }]}>{meal.protein}g</Text>
-              <Text style={[styles.statLabel, { color: theme.subtitleColor }]}>Eiwit</Text>
+
+            <View style={[styles.recipeBlock, { backgroundColor: theme.card, borderColor: theme.border }]}>
+              <Text style={[styles.blockTitle, { color: theme.titleColor }]}>Ingredienten</Text>
+              {ingredients.map((item) => (
+                <Text key={item} style={[styles.listText, { color: theme.subtitleColor }]}>• {item}</Text>
+              ))}
             </View>
-            <View style={[styles.statCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-              <Text style={[styles.statValueSmall, { color: theme.titleColor }]}>{prepTime}</Text>
-              <Text style={[styles.statLabel, { color: theme.subtitleColor }]}>BEREIDTIJD</Text>
+
+            <View style={[styles.recipeBlock, { backgroundColor: theme.card, borderColor: theme.border }]}>
+              <Text style={[styles.blockTitle, { color: theme.titleColor }]}>Bereidingswijze</Text>
+              {steps.map((step, index) => (
+                <Text key={step} style={[styles.listText, { color: theme.subtitleColor }]}>{index + 1}. {step}</Text>
+              ))}
             </View>
           </View>
 
-          <View style={[styles.recipeBlock, { backgroundColor: theme.card, borderColor: theme.border }]}> 
-            <Text style={[styles.blockTitle, { color: theme.titleColor }]}>Ingredienten</Text>
-            {ingredients.map((item) => (
-              <Text key={item} style={[styles.listText, { color: theme.subtitleColor }]}>• {item}</Text>
-            ))}
+          <View style={styles.bottomSpacer} />
+          <SharedBottomNav activeTab="nutrition" />
           </View>
-
-          <View style={[styles.recipeBlock, { backgroundColor: theme.card, borderColor: theme.border }]}> 
-            <Text style={[styles.blockTitle, { color: theme.titleColor }]}>Bereidingswijze</Text>
-            {steps.map((step, index) => (
-              <Text key={step} style={[styles.listText, { color: theme.subtitleColor }]}>{index + 1}. {step}</Text>
-            ))}
-          </View>
-        </View>
-
-        <View style={styles.bottomSpacer} />
-        </View>
-      </ScrollView>
-    </View>
+        </ScrollView>
+      </View>
+    </AppScreen>
   );
 }
 
 const styles = StyleSheet.create({
   screen: { flex: 1 },
+  scrollContent: {
+    paddingBottom: 100,
+  },
   webContainer: {
     maxWidth: 430,
     alignSelf: 'center',
@@ -295,20 +294,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 22,
     marginBottom: 4,
-  },
-  backButtonPlain: {
-    width: 110,
-    height: 44,
-    borderWidth: 1,
-    borderRadius: 14,
-    paddingHorizontal: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 2,
-  },
-  backPlainLabel: {
-    fontSize: 16,
-    fontWeight: '500',
   },
   notFoundTitle: {
     marginTop: 20,

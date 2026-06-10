@@ -1,6 +1,7 @@
 import { StyleSheet, ScrollView, View, Text, Pressable, ImageBackground } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '@/hooks/use-theme';
+import { AppScreen } from '@/components/AppScreen';
 import { useRouter } from 'expo-router';
 import PageHeader from '../components/PageHeader';
 
@@ -16,7 +17,8 @@ export default function MindScreen() {
   const router = useRouter();
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: theme.background }]} showsVerticalScrollIndicator={false}>
+    <AppScreen style={{ backgroundColor: theme.background }}>
+      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <PageHeader
         title="Mind."
         subtitle="Sterke geest, sterk lichaam."
@@ -201,6 +203,7 @@ export default function MindScreen() {
 
       <View style={styles.bottomSpacer} />
     </ScrollView>
+    </AppScreen>
   );
 }
 

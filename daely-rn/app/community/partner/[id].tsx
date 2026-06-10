@@ -3,6 +3,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/use-theme';
+import { AppScreen } from '@/components/AppScreen';
+import SharedBottomNav from '@/components/SharedBottomNav';
 
 // Safe preview data
 const PARTNER_DATA: Record<string, {
@@ -65,12 +67,9 @@ export default function PartnerDetailScreen() {
 
   if (!partner) {
     return (
-      <View style={[styles.screen, { backgroundColor: theme.background }]}>
+      <AppScreen style={{ backgroundColor: theme.background }}>
         <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
           <View style={styles.headerRow}>
-            <Pressable onPress={() => router.back()}>
-              <MaterialCommunityIcons name="arrow-left" size={24} color={theme.titleColor} />
-            </Pressable>
             <Text style={[styles.headerTitle, { color: theme.titleColor }]}>Partner</Text>
           </View>
           <View style={[styles.fallbackCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
@@ -81,17 +80,14 @@ export default function PartnerDetailScreen() {
             </Pressable>
           </View>
         </ScrollView>
-      </View>
+      </AppScreen>
     );
   }
 
   return (
-    <View style={[styles.screen, { backgroundColor: theme.background }]}>
+    <AppScreen style={{ backgroundColor: theme.background }}>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={styles.headerRow}>
-          <Pressable onPress={() => router.back()}>
-            <MaterialCommunityIcons name="arrow-left" size={24} color={theme.titleColor} />
-          </Pressable>
           <Text style={[styles.headerTitle, { color: theme.titleColor }]}>Partner</Text>
         </View>
 
@@ -178,8 +174,9 @@ export default function PartnerDetailScreen() {
         </View>
 
         <View style={styles.bottomSpacer} />
+        <SharedBottomNav activeTab="community" />
       </ScrollView>
-    </View>
+    </AppScreen>
   );
 }
 
@@ -190,6 +187,7 @@ const styles = StyleSheet.create({
   content: {
     paddingHorizontal: 16,
     paddingTop: 20,
+    paddingBottom: 100,
   },
   headerRow: {
     flexDirection: 'row',

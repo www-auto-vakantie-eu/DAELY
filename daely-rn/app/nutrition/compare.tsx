@@ -2,6 +2,8 @@ import React, { useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import PageHeader from '../components/PageHeader';
 import { useTheme } from '@/hooks/use-theme';
+import { AppScreen } from '@/components/AppScreen';
+import SharedBottomNav from '@/components/SharedBottomNav';
 
 type ProductForm = {
   name: string;
@@ -124,31 +126,34 @@ export default function NutritionCompareScreen() {
   );
 
   return (
-    <View style={[styles.screen, { backgroundColor: theme.background }]}>
-      <PageHeader title="Voeding vergelijken" showSettings={false} showSearch={false} showCart={false} />
+    <AppScreen style={{ backgroundColor: theme.background }}>
+      <View style={styles.screen}>
+        <PageHeader title="Voeding vergelijken" showSettings={false} showSearch={false} showCart={false} />
 
-      <ScrollView style={styles.scroll} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-        <View style={[styles.introCard, { borderColor: theme.border, backgroundColor: theme.card }]}>
-          <Text style={[styles.introTitle, { color: theme.titleColor }]}>Snel naast elkaar</Text>
-          <Text style={[styles.introText, { color: theme.subtitleColor }]}>
-            Vergelijk producten op kcal, eiwitten, koolhydraten, vetten en suiker.
-          </Text>
-        </View>
-
-        {renderCard('Product A', 'a', productA)}
-        {renderCard('Product B', 'b', productB)}
-
-        <Pressable style={[styles.compareButton, !canCompare ? styles.compareButtonDisabled : null]} onPress={handleCompare}>
-          <Text style={styles.compareButtonText}>Vergelijken</Text>
-        </Pressable>
-
-        {showResult ? (
-          <View style={[styles.resultCard, { borderColor: theme.border, backgroundColor: theme.card }]}>
-            <Text style={[styles.resultText, { color: theme.subtitleColor }]}>Vergelijking wordt binnenkort uitgebreid.</Text>
+        <ScrollView style={styles.scroll} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+          <View style={[styles.introCard, { borderColor: theme.border, backgroundColor: theme.card }]}>
+            <Text style={[styles.introTitle, { color: theme.titleColor }]}>Snel naast elkaar</Text>
+            <Text style={[styles.introText, { color: theme.subtitleColor }]}>
+              Vergelijk producten op kcal, eiwitten, koolhydraten, vetten en suiker.
+            </Text>
           </View>
-        ) : null}
-      </ScrollView>
-    </View>
+
+          {renderCard('Product A', 'a', productA)}
+          {renderCard('Product B', 'b', productB)}
+
+          <Pressable style={[styles.compareButton, !canCompare ? styles.compareButtonDisabled : null]} onPress={handleCompare}>
+            <Text style={styles.compareButtonText}>Vergelijken</Text>
+          </Pressable>
+
+          {showResult ? (
+            <View style={[styles.resultCard, { borderColor: theme.border, backgroundColor: theme.card }]}>
+              <Text style={[styles.resultText, { color: theme.subtitleColor }]}>Vergelijking wordt binnenkort uitgebreid.</Text>
+            </View>
+          ) : null}
+          <SharedBottomNav activeTab="nutrition" />
+        </ScrollView>
+      </View>
+    </AppScreen>
   );
 }
 
@@ -161,7 +166,7 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingHorizontal: 16,
-    paddingBottom: 28,
+    paddingBottom: 100,
     gap: 12,
   },
   introCard: {

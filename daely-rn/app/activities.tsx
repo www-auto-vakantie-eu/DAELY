@@ -6,6 +6,7 @@ import PageHeader from './components/PageHeader';
 import { getActivities, Activity } from 'services/activity-storage';
 import { useTheme } from '@/hooks/use-theme';
 import { AppBottomMenu } from '@/components/AppBottomMenu';
+import { AppScreen } from '@/components/AppScreen';
 
 export default function ActivitiesScreen() {
   const [activities, setActivities] = useState<Activity[]>([]);
@@ -26,9 +27,10 @@ export default function ActivitiesScreen() {
   const lastActivity = activities[0];
 
   return (
-    <View style={[styles.screen, { backgroundColor: theme.background }]}>
-      <ScrollView contentContainerStyle={[styles.content, { paddingBottom: Platform.OS === 'ios' ? 80 : 60 }]} showsVerticalScrollIndicator={false}>
-      <PageHeader title="Activiteiten" />
+    <AppScreen style={{ backgroundColor: theme.background }}>
+      <View style={styles.screen}>
+        <ScrollView contentContainerStyle={[styles.content, { paddingBottom: Platform.OS === 'ios' ? 80 : 60 }]} showsVerticalScrollIndicator={false}>
+        <PageHeader title="Activiteiten" />
 
       <View style={styles.contentWrapper}>
         <View style={[styles.heroCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
@@ -139,6 +141,7 @@ export default function ActivitiesScreen() {
     </ScrollView>
     <AppBottomMenu activeRoute="today" />
   </View>
+    </AppScreen>
   );
 }
 

@@ -3,6 +3,7 @@ import { ScrollView, StyleSheet, Text, View, Pressable, ImageBackground } from '
 import { useRouter, useLocalSearchParams, useFocusEffect } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/use-theme';
+import { AppScreen } from '@/components/AppScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import PageHeader from '../components/PageHeader';
 import { Activity, getActivities } from 'services/activity-storage';
@@ -250,7 +251,8 @@ const handleSaveShortcuts = async (newShortcuts: ShortcutId[]) => {
 const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => opt.id === id)).filter(Boolean) as ShortcutOption[];
 
   return (
-    <ScrollView style={[styles.screen, { backgroundColor: theme.background }]} contentContainerStyle={styles.content}>
+    <AppScreen style={{ backgroundColor: theme.background }}>
+      <ScrollView contentContainerStyle={styles.content}>
       <PageHeader
         title="Vandaag."
         subtitle="Jouw dag begint hier."
@@ -548,13 +550,11 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
 
       <View style={styles.bottomSpacer} />
     </ScrollView>
+    </AppScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-  },
   content: {
     paddingHorizontal: 16,
     paddingTop: 20,

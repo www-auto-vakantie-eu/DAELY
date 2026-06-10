@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, Text, Pressable, ScrollView, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Text, ScrollView, TouchableOpacity } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/use-theme';
@@ -31,9 +31,6 @@ export default function DisciplineWorkoutDetailScreen() {
     return (
       <AppScreen style={{ backgroundColor: theme.background }}>
         <View style={styles.content}>
-          <Pressable onPress={() => router.back()} style={styles.backButton}>
-            <MaterialCommunityIcons name="arrow-left" size={24} color={theme.titleColor} />
-          </Pressable>
           <Text style={[styles.title, { color: theme.titleColor }]}>Workout niet gevonden</Text>
           <Text style={[styles.message, { color: theme.subtitleColor }]}>
             Deze workout kon niet worden geladen.
@@ -57,10 +54,6 @@ export default function DisciplineWorkoutDetailScreen() {
     <AppScreen style={{ backgroundColor: theme.background }}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={styles.content}>
-          <Pressable onPress={() => router.back()} style={styles.backButton}>
-            <MaterialCommunityIcons name="arrow-left" size={24} color={theme.titleColor} />
-          </Pressable>
-
         <View style={[styles.iconBox, { backgroundColor: workout.color + '22' }]}>
           <MaterialCommunityIcons name={workout.icon as any} size={48} color={workout.color} />
         </View>
@@ -138,13 +131,6 @@ const styles = StyleSheet.create({
   content: {
     padding: 20,
     paddingTop: 60,
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 20,
   },
   title: {
     fontSize: 24,
