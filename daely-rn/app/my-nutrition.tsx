@@ -5,6 +5,8 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { useTheme } from '@/hooks/use-theme';
 import PageHeader from './components/PageHeader';
+import { AppScreen } from '@/components/AppScreen';
+import SharedBottomNav from '@/components/SharedBottomNav';
 
 const FOCUS_TIPS = [
   {
@@ -34,7 +36,7 @@ export default function MyNutritionScreen() {
   const [placeholderMessage, setPlaceholderMessage] = useState<string | null>(null);
 
   return (
-    <View style={[styles.screen, { backgroundColor: theme.background }]}>
+    <AppScreen style={{ backgroundColor: theme.background }}>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <PageHeader
           title="Mijn Voeding"
@@ -173,18 +175,16 @@ export default function MyNutritionScreen() {
 
         <View style={styles.bottomSpacer} />
       </ScrollView>
-    </View>
+      <SharedBottomNav activeTab="nutrition" />
+    </AppScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-  },
   content: {
     paddingHorizontal: 16,
     paddingTop: 18,
-    paddingBottom: 96,
+    paddingBottom: 100,
     gap: 14,
   },
   heroCard: {

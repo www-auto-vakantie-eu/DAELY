@@ -6,6 +6,8 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import PageHeader from '../../components/PageHeader';
 import { SPORT_DISCIPLINES } from '../../constants/sport-disciplines';
 import { DISCIPLINE_CONTENT } from '@/constants/discipline-content';
+import { AppScreen } from '@/components/AppScreen';
+import { useTheme } from '@/hooks/use-theme';
 import {
   saveActivity,
   type WorkoutExercise,
@@ -145,6 +147,7 @@ export default function StartActivityScreen() {
     day?: string;
     workoutId?: string;
   }>();
+  const theme = useTheme();
   const discipline = SPORT_DISCIPLINES.find((d) => d.id === disciplineId);
 
   // Get workout context if workoutId is provided
@@ -1139,8 +1142,9 @@ export default function StartActivityScreen() {
   };
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-      <PageHeader title={`Start ${discipline.name}`} />
+    <AppScreen style={{ backgroundColor: theme.background }}>
+      <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+        <PageHeader title={`Start ${discipline.name}`} />
 
       <View style={styles.sessionHeaderCard}>
         <Text style={styles.sessionTitle}>{discipline.name}</Text>
@@ -2151,7 +2155,8 @@ export default function StartActivityScreen() {
         </>
       ) : null}
       {saved && <Text style={styles.successText}>Activiteit opgeslagen.</Text>}
-    </ScrollView>
+      </ScrollView>
+    </AppScreen>
   );
 }
 

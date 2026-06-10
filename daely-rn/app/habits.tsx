@@ -3,6 +3,8 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { useTheme } from '@/hooks/use-theme';
 import PageHeader from './components/PageHeader';
+import { AppScreen } from '@/components/AppScreen';
+import SharedBottomNav from '@/components/SharedBottomNav';
 
 type HabitItem = {
   id: string;
@@ -63,7 +65,7 @@ export default function HabitsScreen() {
   };
 
   return (
-    <View style={[styles.screen, { backgroundColor: theme.background }]}>
+    <AppScreen style={{ backgroundColor: theme.background }}>
       <PageHeader title="Habit tracker" showSettings={false} showSearch={false} showCart={false} />
 
       <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
@@ -111,20 +113,18 @@ export default function HabitsScreen() {
           })}
         </View>
       </ScrollView>
-    </View>
+      <SharedBottomNav activeTab="mijn" />
+    </AppScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-  },
   scroll: {
     flex: 1,
   },
   content: {
     paddingHorizontal: 16,
-    paddingBottom: 28,
+    paddingBottom: 100,
     gap: 12,
   },
   introCard: {

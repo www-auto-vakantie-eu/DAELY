@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
 import PageHeader from './components/PageHeader';
-import { AppBottomMenu } from '@/components/AppBottomMenu';
+import { AppScreen } from '@/components/AppScreen';
+import SharedBottomNav from '@/components/SharedBottomNav';
 import { CommerceOrder } from '@/app/constants/commerce';
 import { getCommerceOrders } from '@/services/commerce-storage';
 
@@ -39,14 +40,14 @@ export default function MyOrdersScreen() {
   }, []);
 
   return (
-    <View style={[styles.screen, { backgroundColor: theme.background }]}>
+    <AppScreen style={{ backgroundColor: theme.background }}>
       <PageHeader
         title="Mijn bestellingen"
         onCartPress={() => router.push('/(tabs)/cart')}
         showSearch={false}
         showSettings={false}
       />
-      <ScrollView contentContainerStyle={[styles.content, { paddingBottom: Platform.OS === 'ios' ? 80 : 60 }]} showsVerticalScrollIndicator={false}>
+      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={[styles.heroCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
           <View style={styles.iconContainer}>
             <MaterialCommunityIcons name="package-variant" size={32} color="#2563EB" />
@@ -97,8 +98,8 @@ export default function MyOrdersScreen() {
           ))
         )}
       </ScrollView>
-      <AppBottomMenu activeRoute="shop" />
-    </View>
+      <SharedBottomNav activeTab="shop" />
+    </AppScreen>
   );
 }
 
@@ -118,11 +119,9 @@ function getStatusBadgeColor(status: CommerceOrder['status']) {
 }
 
 const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-  },
   content: {
     padding: 16,
+    paddingBottom: 100,
   },
   heroCard: {
     flexDirection: 'row',

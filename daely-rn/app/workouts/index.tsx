@@ -6,6 +6,8 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/use-theme';
 import { type Activity, getActivities } from '@/services/activity-storage';
 import PageHeader from '../components/PageHeader';
+import { AppScreen } from '@/components/AppScreen';
+import SharedBottomNav from '@/components/SharedBottomNav';
 
 const CATEGORIES = ['Kracht', 'Hyrox', 'Calisthenics', 'Mobiliteit', 'Conditie', 'Herstel'] as const;
 const WORKOUT_TRACKING_TYPES = new Set(['fitness', 'crossfit', 'zwaargewicht', 'hyrox', 'calisthenics']);
@@ -99,7 +101,7 @@ export default function WorkoutsIndexScreen() {
   const recentWorkouts = useMemo(() => activities.slice(0, 3), [activities]);
 
   return (
-    <View style={[styles.screen, { backgroundColor: theme.background }]}> 
+    <AppScreen style={{ backgroundColor: theme.background }}> 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <PageHeader
           title="Workouts"
@@ -251,18 +253,16 @@ export default function WorkoutsIndexScreen() {
 
         <View style={styles.bottomSpacer} />
       </ScrollView>
-    </View>
+      <SharedBottomNav activeTab="disciplines" />
+    </AppScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-  },
   content: {
     paddingHorizontal: 16,
     paddingTop: 18,
-    paddingBottom: 96,
+    paddingBottom: 100,
     gap: 14,
   },
   heroCard: {

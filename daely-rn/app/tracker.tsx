@@ -6,6 +6,8 @@ import { useRouter } from 'expo-router';
 import PageHeader from './components/PageHeader';
 import { SPORT_DISCIPLINES, SportDiscipline } from './constants/sport-disciplines';
 import { useTheme } from '@/hooks/use-theme';
+import { AppScreen } from '@/components/AppScreen';
+import SharedBottomNav from '@/components/SharedBottomNav';
 
 type FilterChip = 'Alles' | 'Kracht' | 'Mind & Mobility' | 'Duur & afstand' | 'Teamsport' | 'Score' | 'Skill' | 'Wellness';
 
@@ -49,7 +51,8 @@ export default function TrackerScreen() {
   };
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: theme.background }]} showsVerticalScrollIndicator={false}>
+    <AppScreen style={{ backgroundColor: theme.background }}>
+      <ScrollView style={styles.container} showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
       <PageHeader
         title="DAELY Tracker"
         onSettingsPress={() => router.push('/(tabs)/athlete')}
@@ -142,7 +145,9 @@ export default function TrackerScreen() {
           ))}
         </View>
       )}
-    </ScrollView>
+      </ScrollView>
+      <SharedBottomNav activeTab="disciplines" />
+    </AppScreen>
   );
 }
 
@@ -180,7 +185,10 @@ function getTrackingPreview(trackingType: SportDiscipline['trackingType']) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  content: {
     paddingTop: 20,
+    paddingBottom: 100,
   },
   heroCard: {
     flexDirection: 'row',
