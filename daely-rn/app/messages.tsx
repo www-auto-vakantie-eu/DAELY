@@ -115,14 +115,14 @@ export default function MessagesScreen() {
             style={[styles.actionButton, styles.primaryActionButton, { backgroundColor: '#2563EB' }]}
             onPress={() => router.push('/messages/new' as Href)}
           >
-            <MaterialCommunityIcons name="message-plus" size={18} color="#FFFFFF" />
+            <MaterialCommunityIcons name="message-plus" size={16} color="#FFFFFF" />
             <Text style={styles.actionButtonText}>Nieuw bericht</Text>
           </Pressable>
           <Pressable
             style={[styles.actionButton, styles.secondaryActionButton, { backgroundColor: '#8B5CF6' }]}
             onPress={() => router.push('/messages/new-group' as Href)}
           >
-            <MaterialCommunityIcons name="account-multiple-plus" size={18} color="#FFFFFF" />
+            <MaterialCommunityIcons name="account-multiple-plus" size={16} color="#FFFFFF" />
             <Text style={styles.actionButtonText}>Nieuwe groep</Text>
           </Pressable>
         </View>
@@ -238,20 +238,20 @@ const styles = StyleSheet.create({
   actionRow: {
     flexDirection: 'row',
     gap: 10,
-    marginBottom: 16,
+    marginBottom: 12,
   },
   actionButton: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 12,
+    gap: 6,
+    paddingVertical: 9,
+    paddingHorizontal: 12,
+    borderRadius: 10,
   },
   actionButtonText: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '600',
     color: '#FFFFFF',
   },
