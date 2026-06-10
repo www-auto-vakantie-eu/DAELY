@@ -94,9 +94,9 @@ export default function ExercisesIndexScreen() {
           </Pressable>
 
           <View style={styles.bottomSpacer} />
-          <SharedBottomNav activeTab="disciplines" />
         </ScrollView>
       </View>
+      <SharedBottomNav activeTab="disciplines" />
     </AppScreen>
   );
 }

@@ -72,10 +72,10 @@ export default function TappingScreen() {
       </View>
 
       <View style={styles.bottomSpacer} />
-      <SharedBottomNav activeTab="mind" />
     </ScrollView>
-    </AppScreen>
-  );
+    <SharedBottomNav activeTab="mind" />
+  </AppScreen>
+);
 }
 
 const styles = StyleSheet.create({

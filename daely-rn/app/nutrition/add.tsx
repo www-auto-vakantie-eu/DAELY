@@ -103,9 +103,9 @@ export default function AddNutritionScreen() {
               </View>
             ) : null}
           </View>
-          <SharedBottomNav activeTab="nutrition" />
         </ScrollView>
       </View>
+      <SharedBottomNav activeTab="nutrition" />
     </AppScreen>
   );
 }

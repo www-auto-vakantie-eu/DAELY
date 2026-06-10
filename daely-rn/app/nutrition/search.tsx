@@ -61,9 +61,9 @@ export default function NutritionSearchScreen() {
               <Text style={[styles.resultText, { color: theme.subtitleColor }]}>Zoeken in voedingsdata komt binnenkort.</Text>
             </View>
           ) : null}
-          <SharedBottomNav activeTab="nutrition" />
         </ScrollView>
       </View>
+      <SharedBottomNav activeTab="nutrition" />
     </AppScreen>
   );
 }

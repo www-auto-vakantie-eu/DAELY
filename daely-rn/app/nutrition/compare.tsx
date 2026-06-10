@@ -150,9 +150,9 @@ export default function NutritionCompareScreen() {
               <Text style={[styles.resultText, { color: theme.subtitleColor }]}>Vergelijking wordt binnenkort uitgebreid.</Text>
             </View>
           ) : null}
-          <SharedBottomNav activeTab="nutrition" />
         </ScrollView>
       </View>
+      <SharedBottomNav activeTab="nutrition" />
     </AppScreen>
   );
 }

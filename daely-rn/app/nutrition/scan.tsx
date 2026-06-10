@@ -308,8 +308,8 @@ export default function NutritionScanScreen() {
             {scannedCode ? <Text style={[styles.scannedCode, { color: theme.subtitleColor }]}>Barcode: {scannedCode}</Text> : null}
           </View>
         )}
-        <SharedBottomNav activeTab="nutrition" />
       </ScrollView>
+      <SharedBottomNav activeTab="nutrition" />
     </AppScreen>
   );
 }
