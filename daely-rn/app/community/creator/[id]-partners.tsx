@@ -1,5 +1,4 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { useRouter } from 'expo-router';
+import { StyleSheet, Text, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/use-theme';
 import PageHeader from '../../components/PageHeader';
@@ -7,16 +6,15 @@ import { AppScreen } from '@/components/AppScreen';
 import SharedBottomNav from '@/components/SharedBottomNav';
 
 export default function CreatorPartnersScreen() {
-  const router = useRouter();
   const theme = useTheme();
 
   return (
     <AppScreen style={{ backgroundColor: theme.background }}>
       <PageHeader
         title="Creator Partners"
-        onSettingsPress={() => router.push('/(tabs)/athlete')}
-        onSearchPress={() => router.push('/nutrition/search')}
-        onCartPress={() => router.push('/(tabs)/cart')}
+        onSettingsPress={() => {}}
+        onSearchPress={() => {}}
+        onCartPress={() => {}}
       />
 
       <View style={[styles.content, { backgroundColor: theme.background }]}>

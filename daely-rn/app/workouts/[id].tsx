@@ -1,8 +1,8 @@
-import { ScrollView, StyleSheet, Text, View, Pressable, ImageBackground } from 'react-native';
+import { ScrollView, StyleSheet, Text, View, ImageBackground } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useMemo, useState } from 'react';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 
 import { useTheme } from '@/hooks/use-theme';
 import {
@@ -10,6 +10,8 @@ import {
   ACTIVITY_TYPE_LABELS,
 } from '@/constants/workout-activities';
 import { getPublicCreatorWorkouts } from '@/services/creator-content';
+import { AppScreen } from '@/components/AppScreen';
+import SharedBottomNav from '@/components/SharedBottomNav';
 
 function getHrZoneColor(bpm: number): string {
   if (bpm >= 170) return '#EF4444';
@@ -28,7 +30,6 @@ function getHrZoneLabel(max: number): string {
 
 export default function WorkoutDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const router = useRouter();
   const theme = useTheme();
   const hexBg = theme.background.replace('#', '');
   const r = parseInt(hexBg.slice(0, 2), 16);
@@ -45,18 +46,12 @@ export default function WorkoutDetailScreen() {
 
   if (!activity) {
     return (
-      <View style={[styles.screen, { backgroundColor: theme.background }]}>
+      <AppScreen style={{ backgroundColor: theme.background }}>
         <View style={styles.content}>
-          <Pressable
-            style={[styles.backButton, { borderColor: theme.border, backgroundColor: theme.card }]}
-            onPress={() => router.back()}
-          >
-            <MaterialCommunityIcons name="chevron-left" size={20} color={theme.titleColor} />
-            <Text style={[styles.backLabel, { color: theme.titleColor }]}>Workouts</Text>
-          </Pressable>
           <Text style={[styles.notFoundText, { color: theme.subtitleColor }]}>Activiteit niet gevonden.</Text>
         </View>
-      </View>
+        <SharedBottomNav activeTab="disciplines" />
+      </AppScreen>
     );
   }
 
@@ -66,8 +61,8 @@ export default function WorkoutDetailScreen() {
   const avgHr = Math.round(activity.heartRateData.reduce((a, b) => a + b, 0) / activity.heartRateData.length);
 
   return (
-    <View style={[styles.screen, { backgroundColor: theme.background }]}>
-      <ScrollView showsVerticalScrollIndicator={false}>
+    <AppScreen style={{ backgroundColor: theme.background }}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
 
         {/* Hero */}
         <ImageBackground
@@ -81,15 +76,6 @@ export default function WorkoutDetailScreen() {
             end={{ x: 0.5, y: 1 }}
             style={styles.heroGradient}
           >
-            {/* Back button */}
-            <Pressable
-              style={styles.heroBackButton}
-              onPress={() => router.back()}
-            >
-              <MaterialCommunityIcons name="chevron-left" size={22} color="#FFFFFF" />
-              <Text style={styles.heroBackLabel}>Workouts</Text>
-            </Pressable>
-
             {/* Type badge */}
             <View style={[styles.heroBadge, { backgroundColor: `${activity.accentColor}22`, borderColor: `${activity.accentColor}55` }]}>
               <MaterialCommunityIcons name={activity.icon as any} size={15} color={activity.accentColor} />
@@ -216,34 +202,16 @@ export default function WorkoutDetailScreen() {
         </View>
         <View style={styles.bottomSpacer} />
       </ScrollView>
-    </View>
+      <SharedBottomNav activeTab="disciplines" />
+    </AppScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-  },
   content: {
     paddingHorizontal: 16,
     paddingTop: 20,
-  },
-
-  // Back button fallback (not found)
-  backButton: {
-    alignSelf: 'flex-start',
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    borderWidth: 1,
-    borderRadius: 999,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    marginBottom: 20,
-  },
-  backLabel: {
-    fontSize: 14,
-    fontWeight: '700',
+    paddingBottom: 100,
   },
   notFoundText: {
     fontSize: 16,
@@ -264,25 +232,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 28,
     paddingTop: 52,
-  },
-  heroBackButton: {
-    position: 'absolute',
-    top: 52,
-    left: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    backgroundColor: 'rgba(0,0,0,0.38)',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.22)',
-    borderRadius: 999,
-    paddingHorizontal: 12,
-    paddingVertical: 7,
-  },
-  heroBackLabel: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: '#FFFFFF',
   },
   heroBadge: {
     alignSelf: 'flex-start',

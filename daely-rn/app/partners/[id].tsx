@@ -1,15 +1,16 @@
 import React from 'react';
 import { View, Text, ScrollView, StyleSheet, Image, Pressable, Linking } from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import { PARTNERS } from '@/constants/partners';
 import { PARTNER_LOGO_ASSETS } from '@/constants/partner-logo-assets';
 import { useTheme } from '@/hooks/use-theme';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { AppScreen } from '@/components/AppScreen';
+import SharedBottomNav from '@/components/SharedBottomNav';
 
 export default function PartnerDetailScreen() {
 
   const { id } = useLocalSearchParams();
-  const router = useRouter();
   const theme = useTheme();
   // id kan een string of array zijn, altijd string pakken en lowercasen
   const idStr = Array.isArray(id) ? id[0] : id;
@@ -25,13 +26,9 @@ export default function PartnerDetailScreen() {
   }
 
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: theme.background }} contentContainerStyle={styles.container}>
-      <Pressable style={styles.backButton} onPress={() => router.back()}>
-        <MaterialCommunityIcons name="arrow-left" size={22} color={theme.titleColor} />
-        <Text style={[styles.backButtonText, { color: theme.titleColor }]}>Terug</Text>
-      </Pressable>
-
-      <View style={styles.header}>
+    <AppScreen style={{ backgroundColor: theme.background }}>
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.container}>
+        <View style={styles.header}>
         <Image
           source={PARTNER_LOGO_ASSETS[partner.id] ? PARTNER_LOGO_ASSETS[partner.id] : { uri: partner.image }}
           style={styles.logo}
@@ -98,28 +95,15 @@ export default function PartnerDetailScreen() {
         </View>
 
     </ScrollView>
-  );
+    <SharedBottomNav activeTab="community" />
+  </AppScreen>
+);
 }
 
 const styles = StyleSheet.create({
   container: {
     padding: 24,
-    paddingBottom: 40,
-  },
-  backButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    alignSelf: 'flex-start',
-    gap: 8,
-    borderRadius: 12,
-    borderWidth: 1,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    marginBottom: 16,
-  },
-  backButtonText: {
-    fontSize: 14,
-    fontWeight: '700',
+    paddingBottom: 100,
   },
   header: {
     alignItems: 'center',

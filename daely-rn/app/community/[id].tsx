@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { StyleSheet, ScrollView, View, Text, Pressable, Image, Linking } from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/use-theme';
 import { useAppContext } from '@/contexts/AppContext';
@@ -21,7 +21,6 @@ function openExternal(url?: string) {
 
 export default function CommunityCreatorScreen() {
   const theme = useTheme();
-  const router = useRouter();
   const { appSettings } = useAppContext();
   const params = useLocalSearchParams<{ id?: string | string[] }>();
   const id = Array.isArray(params.id) ? params.id[0] : params.id;
@@ -147,29 +146,16 @@ export default function CommunityCreatorScreen() {
         <Pressable style={styles.followBtn}>
           <Text style={styles.followBtnText}>Volgen</Text>
         </Pressable>
-      </View>
-      <View style={styles.bottomSpacer} />
+        <View style={styles.bottomSpacer} />
     </ScrollView>
     <SharedBottomNav activeTab="community" />
   </AppScreen>
-);
+  );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
   content: { paddingHorizontal: 16, paddingTop: 16, paddingBottom: 100 },
-  profileCard: {
-    alignSelf: 'flex-start',
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    borderWidth: 1,
-    borderRadius: 999,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    marginBottom: 16,
-  },
-  backText: { fontSize: 14, fontWeight: '700' },
   profileCard: {
     borderRadius: 24,
     padding: 20,

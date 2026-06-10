@@ -1,6 +1,6 @@
 import { StyleSheet, View, Text, Pressable, StatusBar, ScrollView, ImageBackground, Linking } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
 import { AppScreen } from '@/components/AppScreen';
 import SharedBottomNav from '@/components/SharedBottomNav';
@@ -148,7 +148,6 @@ function buildHeroImageUrl(name: string, categorie: string): string {
 }
 
 export default function ExerciseDetailScreen() {
-  const router = useRouter();
   const theme = useTheme();
   const params = useLocalSearchParams<{
     id?: string;

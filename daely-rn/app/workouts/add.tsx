@@ -10,6 +10,8 @@ import {
   ACTIVITY_TYPE_COLORS,
   type ActivityType,
 } from '@/constants/workout-activities';
+import { AppScreen } from '@/components/AppScreen';
+import SharedBottomNav from '@/components/SharedBottomNav';
 
 const ACTIVITY_TYPES: ActivityType[] = ['kracht', 'running', 'hyrox', 'herstel', 'mobility'];
 
@@ -214,21 +216,11 @@ export default function AddWorkoutScreen() {
   };
 
   return (
-    <ScrollView
-      style={[styles.screen, { backgroundColor: theme.background }]}
-      contentContainerStyle={styles.content}
-      keyboardShouldPersistTaps="handled"
-    >
-      <View style={styles.topRow}>
-        <Pressable
-          style={[styles.backButton, { backgroundColor: theme.card, borderColor: theme.border }]}
-          onPress={() => router.back()}
-        >
-          <MaterialCommunityIcons name="chevron-left" size={20} color={theme.titleColor} />
-          <Text style={[styles.backLabel, { color: theme.titleColor }]}>Terug</Text>
-        </Pressable>
-      </View>
-
+    <AppScreen style={{ backgroundColor: theme.background }}>
+      <ScrollView
+        contentContainerStyle={styles.content}
+        keyboardShouldPersistTaps="handled"
+      >
       <Text style={[styles.title, { color: theme.titleColor }]}>Log Training.</Text>
       <Text style={[styles.subtitle, { color: theme.subtitleColor }]}>{todayLabel}</Text>
 
@@ -340,24 +332,13 @@ export default function AddWorkoutScreen() {
         <Text style={styles.saveButtonText}>{isSaving ? 'Opslaan...' : 'Training opslaan'}</Text>
       </Pressable>
     </ScrollView>
-  );
+    <SharedBottomNav activeTab="disciplines" />
+  </AppScreen>
+);
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1 },
-  content: { paddingHorizontal: 16, paddingTop: 18, paddingBottom: 96 },
-  topRow: { marginBottom: 16 },
-  backButton: {
-    alignSelf: 'flex-start',
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    borderWidth: 1,
-    borderRadius: 999,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-  },
-  backLabel: { fontSize: 14, fontWeight: '700' },
+  content: { paddingHorizontal: 16, paddingTop: 18, paddingBottom: 100 },
   title: {
     fontSize: 54,
     lineHeight: 58,

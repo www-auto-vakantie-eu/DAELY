@@ -1,12 +1,14 @@
 // Partner overzichtspagina (was voorheen partners.tsx)
 import { useState } from 'react';
-import { ScrollView, StyleSheet, Text, View, Pressable, Image, type ImageSourcePropType } from 'react-native';
+import { ScrollView, StyleSheet, Text, View, Image, Pressable, type ImageSourcePropType } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
 import { PARTNERS } from '@/constants/partners';
 import type { PartnerBrand } from '@/constants/partners';
 import { PARTNER_LOGO_ASSETS } from '@/constants/partner-logo-assets';
+import { AppScreen } from '@/components/AppScreen';
+import SharedBottomNav from '@/components/SharedBottomNav';
 
 const PARTNER_FILTERS = ['Alles', 'Kleding', 'Voeding', 'Supplementen'] as const;
 
@@ -97,7 +99,6 @@ function PartnerOfferRow({ partner }: { partner: PartnerBrand }) {
 
 export default function PartnersListScreen() {
 	const theme = useTheme();
-	const router = useRouter();
 	const [activeFilter, setActiveFilter] = useState<(typeof PARTNER_FILTERS)[number]>('Alles');
 
 	const filteredPartners = PARTNERS.filter((partner) => {
@@ -110,21 +111,12 @@ export default function PartnersListScreen() {
 		: `${activeFilter.toUpperCase()} PARTNERS`;
 
 	return (
-		<View style={[styles.screen, { backgroundColor: theme.background }]}> 
-			<ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-				<View style={styles.content}>
-					<Pressable
-						style={[styles.backButton, { borderColor: theme.border, backgroundColor: theme.card }]}
-						onPress={() => router.back()}
-					>
-						<MaterialCommunityIcons name="arrow-left" size={18} color={theme.titleColor} />
-						<Text style={[styles.backButtonText, { color: theme.titleColor }]}>Terug</Text>
-					</Pressable>
-
-					<View style={styles.header}>
-						<Text style={[styles.title, { color: theme.titleColor }]}>Partners.</Text>
-						<Text style={[styles.subtitle, { color: theme.subtitleColor }]}>Korting bij onze partnermerken.</Text>
-					</View>
+		<AppScreen style={{ backgroundColor: theme.background }}>
+			<ScrollView style={styles.container} showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
+				<View style={styles.header}>
+					<Text style={[styles.title, { color: theme.titleColor }]}>Partners.</Text>
+					<Text style={[styles.subtitle, { color: theme.subtitleColor }]}>Korting bij onze partnermerken.</Text>
+				</View>
 
 					<ScrollView
 						horizontal
@@ -171,33 +163,18 @@ export default function PartnersListScreen() {
 					) : null}
 
 					<View style={styles.bottomSpacer} />
-				</View>
 			</ScrollView>
-		</View>
+			<SharedBottomNav activeTab="community" />
+		</AppScreen>
 	);
 }
 
 const styles = StyleSheet.create({
-	screen: { flex: 1 },
 	container: { flex: 1 },
 	content: {
 		paddingHorizontal: 16,
 		paddingTop: 24,
-	},
-	backButton: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		alignSelf: 'flex-start',
-		gap: 8,
-		borderRadius: 12,
-		borderWidth: 1,
-		paddingHorizontal: 12,
-		paddingVertical: 10,
-		marginBottom: 16,
-	},
-	backButtonText: {
-		fontSize: 14,
-		fontWeight: '700',
+		paddingBottom: 100,
 	},
 	header: { marginBottom: 16 },
 	title: {

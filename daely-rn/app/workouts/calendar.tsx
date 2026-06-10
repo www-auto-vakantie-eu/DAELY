@@ -6,6 +6,8 @@ import { useRouter } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
 import { useAppContext } from '@/contexts/AppContext';
 import { ACTIVITY_TYPE_LABELS, type WorkoutActivity } from '@/constants/workout-activities';
+import { AppScreen } from '@/components/AppScreen';
+import SharedBottomNav from '@/components/SharedBottomNav';
 
 type CalendarDay = {
   key: string;
@@ -94,18 +96,8 @@ export default function WorkoutCalendarScreen() {
   const selectedActivities = activitiesByDay[selectedIso] ?? [];
 
   return (
-    <View style={[styles.screen, { backgroundColor: theme.background }]}> 
+    <AppScreen style={{ backgroundColor: theme.background }}> 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <View style={styles.topRow}>
-          <Pressable
-            style={[styles.backButton, { backgroundColor: theme.card, borderColor: theme.border }]}
-            onPress={() => router.back()}
-          >
-            <MaterialCommunityIcons name="chevron-left" size={20} color={theme.titleColor} />
-            <Text style={[styles.backLabel, { color: theme.titleColor }]}>Terug</Text>
-          </Pressable>
-        </View>
-
         <Text style={[styles.title, { color: theme.titleColor }]}>Kalender.</Text>
         <Text style={[styles.subtitle, { color: theme.subtitleColor }]}>Je volledige maandplanning en trainingen.</Text>
 
@@ -220,35 +212,16 @@ export default function WorkoutCalendarScreen() {
           )}
         </View>
       </ScrollView>
-    </View>
+      <SharedBottomNav activeTab="disciplines" />
+    </AppScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-  },
   content: {
     paddingHorizontal: 16,
     paddingTop: 18,
-    paddingBottom: 96,
-  },
-  topRow: {
-    marginBottom: 16,
-  },
-  backButton: {
-    alignSelf: 'flex-start',
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    borderWidth: 1,
-    borderRadius: 999,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-  },
-  backLabel: {
-    fontSize: 14,
-    fontWeight: '700',
+    paddingBottom: 100,
   },
   title: {
     fontSize: 54,
