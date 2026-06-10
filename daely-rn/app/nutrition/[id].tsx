@@ -1,7 +1,8 @@
-import { StyleSheet, View, Text, ScrollView, ImageBackground, Platform } from 'react-native';
+import { StyleSheet, View, Text, ScrollView, ImageBackground, Platform, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useMemo, useState } from 'react';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/use-theme';
 import { NUTRITION_MEALS } from '@/constants/nutrition-meals';
 import { getPublicCreatorMeals } from '@/services/creator-content';
@@ -109,6 +110,7 @@ function prepTimeFromTags(tags: string[]): string {
 
 export default function NutritionMealScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const router = useRouter();
   const theme = useTheme();
   const [creatorMeals, setCreatorMeals] = useState<typeof NUTRITION_MEALS>([]);
 
@@ -169,6 +171,21 @@ export default function NutritionMealScreen() {
                 <Text style={[styles.statLabel, { color: theme.subtitleColor }]}>BEREIDTIJD</Text>
               </View>
             </View>
+
+            <TouchableOpacity
+              style={[styles.shareButton, { backgroundColor: theme.card, borderColor: theme.border }]}
+              onPress={() => router.push({
+                pathname: '/messages/share',
+                params: {
+                  linkedItemType: 'recipe',
+                  linkedItemId: meal.id,
+                  linkedItemTitle: meal.title,
+                },
+              })}
+            >
+              <MaterialCommunityIcons name="share-outline" size={20} color={theme.titleColor} />
+              <Text style={[styles.shareButtonText, { color: theme.titleColor }]}>Deel via berichten</Text>
+            </TouchableOpacity>
 
             <View style={[styles.recipeBlock, { backgroundColor: theme.card, borderColor: theme.border }]}>
               <Text style={[styles.blockTitle, { color: theme.titleColor }]}>Ingredienten</Text>
@@ -275,6 +292,21 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '700',
     letterSpacing: 1,
+  },
+  shareButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    borderRadius: 12,
+    marginTop: 18,
+    gap: 8,
+    borderWidth: 1,
+  },
+  shareButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
   },
   recipeBlock: {
     marginTop: 12,

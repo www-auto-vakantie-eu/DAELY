@@ -1,11 +1,12 @@
 import { StyleSheet, ScrollView, View, Text, Pressable } from 'react-native';
 import { useState } from 'react';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { useRouter, type Href } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
 import PageHeader from './components/PageHeader';
 import { AppScreen } from '@/components/AppScreen';
 import SharedBottomNav from '@/components/SharedBottomNav';
+import { createCoachThread } from '@/services/messages-storage';
 
 export default function FindCoachScreen() {
   const theme = useTheme();
@@ -116,6 +117,59 @@ export default function FindCoachScreen() {
             </View>
             <Pressable style={styles.cardButton} onPress={() => router.push('/feedback')}>
               <Text style={styles.cardButtonText}>Interesse doorgeven</Text>
+            </Pressable>
+          </View>
+
+          <View style={[styles.infoCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+            <Text style={[styles.infoTitle, { color: theme.titleColor }]}>Bericht een coach</Text>
+            <Text style={[styles.infoText, { color: theme.subtitleColor }]}>
+              Stuur een bericht naar een van onze beschikbare coaches.
+            </Text>
+          </View>
+
+          <View style={[styles.previewCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+            <View style={styles.cardHeader}>
+              <View style={styles.cardIconContainer}>
+                <MaterialCommunityIcons name="dumbbell" size={28} color="#EF4444" />
+              </View>
+              <View style={styles.cardContent}>
+                <Text style={[styles.cardTitle, { color: theme.titleColor }]}>Coach Krachttraining</Text>
+                <Text style={[styles.cardSubtitle, { color: theme.subtitleColor }]}>Specialiseert in krachttraining, uithoudingsvermogen en functionele fitness</Text>
+              </View>
+            </View>
+            <Pressable
+              style={styles.cardButton}
+              onPress={async () => {
+                const thread = await createCoachThread('Coach Krachttraining', 'Krachttraining');
+                if (thread) {
+                  router.push(`/messages/${thread.id}` as Href);
+                }
+              }}
+            >
+              <Text style={styles.cardButtonText}>Stuur bericht</Text>
+            </Pressable>
+          </View>
+
+          <View style={[styles.previewCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+            <View style={styles.cardHeader}>
+              <View style={styles.cardIconContainer}>
+                <MaterialCommunityIcons name="human-handsdown" size={28} color="#3B82F6" />
+              </View>
+              <View style={styles.cardContent}>
+                <Text style={[styles.cardTitle, { color: theme.titleColor }]}>Coach Mobiliteit</Text>
+                <Text style={[styles.cardSubtitle, { color: theme.subtitleColor }]}>Specialiseert in mobiliteit, herstel en blessurepreventie</Text>
+              </View>
+            </View>
+            <Pressable
+              style={styles.cardButton}
+              onPress={async () => {
+                const thread = await createCoachThread('Coach Mobiliteit', 'Mobiliteit');
+                if (thread) {
+                  router.push(`/messages/${thread.id}` as Href);
+                }
+              }}
+            >
+              <Text style={styles.cardButtonText}>Stuur bericht</Text>
             </Pressable>
           </View>
 

@@ -106,6 +106,21 @@ export default function ActivityDetailScreen() {
         )}
       </View>
 
+      <TouchableOpacity
+        style={[styles.shareButton, { backgroundColor: theme.card, borderColor: theme.border }]}
+        onPress={() => router.push({
+          pathname: '/messages/share',
+          params: {
+            linkedItemType: 'activity',
+            linkedItemId: activity.id,
+            linkedItemTitle: activity.workoutName || activity.disciplineName || 'Activiteit',
+          },
+        })}
+      >
+        <MaterialCommunityIcons name="share-outline" size={20} color={theme.titleColor} />
+        <Text style={[styles.shareButtonText, { color: theme.titleColor }]}>Deel via berichten</Text>
+      </TouchableOpacity>
+
       {activity.metrics?.workout ? (
         <View style={styles.metricCard}>
           <Text style={styles.metricTitle}>Workout</Text>
@@ -594,5 +609,21 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     marginLeft: 6,
+  },
+  shareButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    borderRadius: 12,
+    marginTop: 16,
+    marginBottom: 16,
+    gap: 8,
+    borderWidth: 1,
+  },
+  shareButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
   },
 });
