@@ -16,6 +16,9 @@ export interface Message {
   senderName: string;
   text: string;
   createdAt: string;
+  linkedItemType?: LinkedItemType;
+  linkedItemId?: string;
+  linkedItemTitle?: string;
 }
 
 export interface MessageThread {
@@ -493,5 +496,185 @@ export async function leaveGroup(groupId: string): Promise<void> {
     await AsyncStorage.setItem(MESSAGES_THREADS_KEY, JSON.stringify(threads));
   } catch (error) {
     console.error('Error leaving group:', error);
+  }
+}
+
+export async function createDirectThread(
+  participantName: string,
+  participantRole?: string
+): Promise<MessageThread | null> {
+  try {
+    const threads = await getMessageThreads();
+    
+    // Check if thread with this participant already exists
+    const existingThread = threads.find(
+      (t) => t.type === 'community' && t.participantName === participantName && !t.isGroup
+    );
+    
+    if (existingThread) {
+      return existingThread;
+    }
+
+    const newThread: MessageThread = {
+      id: `direct-${Date.now()}`,
+      type: 'community',
+      title: participantName,
+      participantName,
+      participantRole,
+      lastMessage: '',
+      updatedAt: new Date().toISOString(),
+      unreadCount: 0,
+      messages: [
+        {
+          id: `direct-${Date.now()}-1`,
+          senderType: 'system' as const,
+          senderName: 'DAELY',
+          text: `Gesprek gestart met ${participantName}.`,
+          createdAt: new Date().toISOString(),
+        },
+      ],
+    };
+
+    threads.unshift(newThread);
+    await AsyncStorage.setItem(MESSAGES_THREADS_KEY, JSON.stringify(threads));
+    
+    return newThread;
+  } catch (error) {
+    console.error('Error creating direct thread:', error);
+    return null;
+  }
+}
+
+export async function createSupportThread(): Promise<MessageThread | null> {
+  try {
+    const threads = await getMessageThreads();
+    
+    // Check if support thread already exists
+    const existingThread = threads.find((t) => t.type === 'support');
+    
+    if (existingThread) {
+      return existingThread;
+    }
+
+    const newThread: MessageThread = {
+      id: 'support-main',
+      type: 'support',
+      title: 'DAELY Klantenmanager',
+      participantName: 'DAELY Klantenmanager',
+      participantRole: 'Support Team',
+      lastMessage: '',
+      updatedAt: new Date().toISOString(),
+      unreadCount: 0,
+      messages: [
+        {
+          id: 'support-1',
+          senderType: 'system' as const,
+          senderName: 'DAELY',
+          text: 'Welkom bij DAELY Support. Hoe kunnen we je helpen?',
+          createdAt: new Date().toISOString(),
+        },
+      ],
+    };
+
+    threads.unshift(newThread);
+    await AsyncStorage.setItem(MESSAGES_THREADS_KEY, JSON.stringify(threads));
+    
+    return newThread;
+  } catch (error) {
+    console.error('Error creating support thread:', error);
+    return null;
+  }
+}
+
+export async function createCoachThread(
+  coachName: string,
+  coachSpecialty?: string
+): Promise<MessageThread | null> {
+  try {
+    const threads = await getMessageThreads();
+    
+    // Check if thread with this coach already exists
+    const existingThread = threads.find(
+      (t) => t.type === 'coach' && t.participantName === coachName
+    );
+    
+    if (existingThread) {
+      return existingThread;
+    }
+
+    const newThread: MessageThread = {
+      id: `coach-${Date.now()}`,
+      type: 'coach',
+      title: coachName,
+      participantName: coachName,
+      participantRole: coachSpecialty || 'Personal Coach',
+      lastMessage: '',
+      updatedAt: new Date().toISOString(),
+      unreadCount: 0,
+      messages: [
+        {
+          id: `coach-${Date.now()}-1`,
+          senderType: 'system' as const,
+          senderName: 'DAELY',
+          text: `Gesprek gestart met ${coachName}.`,
+          createdAt: new Date().toISOString(),
+        },
+      ],
+    };
+
+    threads.unshift(newThread);
+    await AsyncStorage.setItem(MESSAGES_THREADS_KEY, JSON.stringify(threads));
+    
+    return newThread;
+  } catch (error) {
+    console.error('Error creating coach thread:', error);
+    return null;
+  }
+}
+
+export async function shareItemToThread(
+  threadId: string,
+  linkedItemType: LinkedItemType,
+  linkedItemId: string,
+  linkedItemTitle: string,
+  messageText?: string
+): Promise<MessageThread | null> {
+  try {
+    const threads = await getMessageThreads();
+    const threadIndex = threads.findIndex((t) => t.id === threadId);
+    
+    if (threadIndex === -1) {
+      return null;
+    }
+
+    const newMessage: Message = {
+      id: `${threadId}-${Date.now()}`,
+      senderType: 'user' as const,
+      senderName: 'Ik',
+      text: messageText || `${linkedItemTitle} gedeeld`,
+      createdAt: new Date().toISOString(),
+      linkedItemType,
+      linkedItemId,
+      linkedItemTitle,
+    };
+
+    const updatedThread = {
+      ...threads[threadIndex],
+      messages: [...threads[threadIndex].messages, newMessage],
+      lastMessage: newMessage.text,
+      linkedItemType,
+      linkedItemId,
+      linkedItemTitle,
+      updatedAt: new Date().toISOString(),
+      unreadCount: (threads[threadIndex].unreadCount || 0) + 1,
+    };
+
+    threads[threadIndex] = updatedThread;
+    await AsyncStorage.setItem(MESSAGES_THREADS_KEY, JSON.stringify(threads));
+    
+    return updatedThread;
+  } catch (error) {
+    console.error('Error sharing item to thread:', error);
+    return null;
   }
 }

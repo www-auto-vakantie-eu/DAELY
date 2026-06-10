@@ -134,10 +134,17 @@ export default function MessagesScreen() {
           ))}
           <Pressable
             style={[styles.filterChip, styles.newGroupButton, { backgroundColor: '#2563EB' }]}
+            onPress={() => router.push('/messages/new' as Href)}
+          >
+            <MaterialCommunityIcons name="message-plus" size={16} color="#FFFFFF" />
+            <Text style={styles.newGroupButtonText}>Nieuw</Text>
+          </Pressable>
+          <Pressable
+            style={[styles.filterChip, styles.newGroupButton, { backgroundColor: '#8B5CF6' }]}
             onPress={() => router.push('/messages/new-group' as Href)}
           >
-            <MaterialCommunityIcons name="plus" size={16} color="#FFFFFF" />
-            <Text style={styles.newGroupButtonText}>Nieuw</Text>
+            <MaterialCommunityIcons name="account-multiple-plus" size={16} color="#FFFFFF" />
+            <Text style={styles.newGroupButtonText}>Groep</Text>
           </Pressable>
         </View>
 
