@@ -1,5 +1,6 @@
 
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Platform } from 'react-native';
 import { Tabs, useRouter } from 'expo-router';
 import React, { useEffect } from 'react';
 import { CustomTabBar } from '@/components/custom-tab-bar';
