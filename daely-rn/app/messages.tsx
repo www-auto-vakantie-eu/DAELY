@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, ScrollView, View, Text, Pressable } from 'react-native';
-import { useRouter, type Href } from 'expo-router';
+import { useRouter, type Href, useFocusEffect } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/use-theme';
 import { AppScreen } from '@/components/AppScreen';
@@ -73,6 +73,12 @@ export default function MessagesScreen() {
   useEffect(() => {
     loadThreads();
   }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      loadThreads();
+    }, [])
+  );
 
   async function loadThreads() {
     setIsLoading(true);

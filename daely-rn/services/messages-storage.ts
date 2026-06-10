@@ -182,3 +182,34 @@ export async function addMessage(threadId: string, text: string, senderName: str
     return null;
   }
 }
+
+export async function getUnreadMessageCount(): Promise<number> {
+  try {
+    const threads = await getMessageThreads();
+    return threads.reduce((total, thread) => total + (thread.unreadCount || 0), 0);
+  } catch (error) {
+    console.error('Error getting unread count:', error);
+    return 0;
+  }
+}
+
+export async function markThreadAsRead(threadId: string): Promise<void> {
+  try {
+    const threads = await getMessageThreads();
+    const threadIndex = threads.findIndex((t) => t.id === threadId);
+    
+    if (threadIndex === -1) {
+      return;
+    }
+
+    const updatedThread = {
+      ...threads[threadIndex],
+      unreadCount: 0,
+    };
+
+    threads[threadIndex] = updatedThread;
+    await AsyncStorage.setItem(MESSAGES_THREADS_KEY, JSON.stringify(threads));
+  } catch (error) {
+    console.error('Error marking thread as read:', error);
+  }
+}

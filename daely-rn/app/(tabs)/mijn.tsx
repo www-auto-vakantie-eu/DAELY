@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { ImageBackground, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useRouter, type Href } from 'expo-router';
+import { useRouter, type Href, useFocusEffect } from 'expo-router';
 
 import { useTheme } from '@/hooks/use-theme';
 import { AppScreen } from '@/components/AppScreen';
 import AppHeader from '../components/AppHeader';
 import { getPerformanceSummary, type PerformanceSummary } from '@/services/performance-summary';
+import { getUnreadMessageCount } from '@/services/messages-storage';
 
 type MyDomainCard = {
   id: string;
@@ -134,10 +135,18 @@ export default function MijnScreen() {
   const theme = useTheme();
   const router = useRouter();
   const [performanceSummary, setPerformanceSummary] = useState<PerformanceSummary | null>(null);
+  const [unreadMessageCount, setUnreadMessageCount] = useState(0);
 
   useEffect(() => {
     getPerformanceSummary().then(setPerformanceSummary);
+    getUnreadMessageCount().then(setUnreadMessageCount);
   }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      getUnreadMessageCount().then(setUnreadMessageCount);
+    }, [])
+  );
 
   const handleCardPress = (route: Href) => {
     router.push(route);
@@ -222,22 +231,29 @@ export default function MijnScreen() {
                 >
                   <View style={styles.heroTextBlock}>
                     {card.disabled ? <Text style={[styles.heroCategory, { color: card.accent }]}>Binnenkort</Text> : null}
-                    <Text style={[
-                      styles.heroTitle,
-                      card.id === 'progress' && { color: card.accent },
-                      card.id === 'workouts' && { color: '#2563EB' },
-                      card.id === 'my-programs' && { color: '#2563EB' },
-                      card.id === 'messages' && { color: '#8B5CF6' },
-                      card.id === 'nutrition' && { color: '#EF4444' },
-                      card.id === 'mind' && { color: '#8B5CF6' },
-                      card.id === 'stats' && { color: '#10B981' },
-                      card.id === 'orders' && { color: '#22C55E' },
-                      card.id === 'habits' && { color: '#F59E0B' },
-                      card.id === 'feedback' && { color: '#2563EB' },
-                      card.id === 'find-coach' && { color: '#10B981' },
-                      card.id === 'today-background' && { color: '#6366F1' },
-                      card.id === 'today-shortcuts' && { color: '#6366F1' },
-                    ]}>{card.title}</Text>
+                    <View style={styles.titleRow}>
+                      <Text style={[
+                        styles.heroTitle,
+                        card.id === 'progress' && { color: card.accent },
+                        card.id === 'workouts' && { color: '#2563EB' },
+                        card.id === 'my-programs' && { color: '#2563EB' },
+                        card.id === 'messages' && { color: '#8B5CF6' },
+                        card.id === 'nutrition' && { color: '#EF4444' },
+                        card.id === 'mind' && { color: '#8B5CF6' },
+                        card.id === 'stats' && { color: '#10B981' },
+                        card.id === 'orders' && { color: '#22C55E' },
+                        card.id === 'habits' && { color: '#F59E0B' },
+                        card.id === 'feedback' && { color: '#2563EB' },
+                        card.id === 'find-coach' && { color: '#10B981' },
+                        card.id === 'today-background' && { color: '#6366F1' },
+                        card.id === 'today-shortcuts' && { color: '#6366F1' },
+                      ]}>{card.title}</Text>
+                      {card.id === 'messages' && unreadMessageCount > 0 && (
+                        <View style={[styles.unreadBadge, { backgroundColor: '#EF4444' }]}>
+                          <Text style={styles.unreadBadgeText}>{unreadMessageCount}</Text>
+                        </View>
+                      )}
+                    </View>
                     <Text style={styles.heroDescription}>{card.description}</Text>
                   </View>
                 </LinearGradient>
@@ -283,6 +299,11 @@ const styles = StyleSheet.create({
   },
   heroTextBlock: {
     gap: 4,
+  },
+  titleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
   heroCategory: {
     fontSize: 11,
@@ -354,5 +375,17 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#2563EB',
     marginTop: 4,
+  },
+  unreadBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 10,
+    minWidth: 20,
+    alignItems: 'center',
+  },
+  unreadBadgeText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#FFFFFF',
   },
 });

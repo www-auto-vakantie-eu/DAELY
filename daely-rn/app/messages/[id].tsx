@@ -5,7 +5,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/use-theme';
 import { AppScreen } from '@/components/AppScreen';
 import SharedBottomNav from '@/components/SharedBottomNav';
-import { getMessageThreadById, addMessage, type MessageThread } from '@/services/messages-storage';
+import { getMessageThreadById, addMessage, markThreadAsRead, type MessageThread } from '@/services/messages-storage';
 
 function formatTime(isoString: string): string {
   const date = new Date(isoString);
@@ -63,6 +63,12 @@ export default function MessageThreadScreen() {
     setIsLoading(true);
     const loadedThread = await getMessageThreadById(id || '');
     setThread(loadedThread);
+    
+    // Mark thread as read when opened
+    if (id) {
+      await markThreadAsRead(id);
+    }
+    
     setIsLoading(false);
   }, [id]);
 
