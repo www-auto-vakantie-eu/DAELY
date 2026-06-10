@@ -137,12 +137,12 @@ export default function DisciplineProgramDetailScreen() {
   if (!program) {
     return (
       <AppScreen style={{ backgroundColor: theme.background }}>
-        <View style={styles.content}>
+        <ScrollView contentContainerStyle={styles.scrollContent}>
           <Text style={[styles.title, { color: theme.titleColor }]}>Programma niet gevonden</Text>
           <Text style={[styles.message, { color: theme.subtitleColor }]}>
             Dit programma kon niet worden geladen.
           </Text>
-        </View>
+        </ScrollView>
       </AppScreen>
     );
   }
@@ -150,7 +150,6 @@ export default function DisciplineProgramDetailScreen() {
   return (
     <AppScreen style={{ backgroundColor: theme.background }}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <View style={styles.content}>
         <View style={[styles.iconBox, { backgroundColor: '#2563EB22' }]}>
           <MaterialCommunityIcons name="calendar-week" size={48} color="#2563EB" />
         </View>
@@ -328,7 +327,6 @@ export default function DisciplineProgramDetailScreen() {
             })}
           </View>
         )}
-        </View>
         <SharedBottomNav activeTab="disciplines" />
       </ScrollView>
     </AppScreen>
@@ -336,15 +334,8 @@ export default function DisciplineProgramDetailScreen() {
 }
 
 const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-  },
   scrollContent: {
     paddingBottom: 100,
-  },
-  content: {
-    padding: 20,
-    paddingTop: 60,
   },
   title: {
     fontSize: 24,

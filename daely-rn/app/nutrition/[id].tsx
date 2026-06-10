@@ -122,11 +122,11 @@ export default function NutritionMealScreen() {
   if (!meal) {
     return (
       <AppScreen style={{ backgroundColor: theme.background }}>
-        <View style={styles.screen}>
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
           <View style={Platform.OS === 'web' ? styles.webContainer : undefined}>
             <Text style={[styles.notFoundTitle, { color: theme.titleColor }]}>Gerecht niet gevonden</Text>
           </View>
-        </View>
+        </ScrollView>
       </AppScreen>
     );
   }
@@ -137,9 +137,8 @@ export default function NutritionMealScreen() {
 
   return (
     <AppScreen style={{ backgroundColor: theme.background }}>
-      <View style={styles.screen}>
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-          <View style={Platform.OS === 'web' ? styles.webContainer : undefined}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+        <View style={Platform.OS === 'web' ? styles.webContainer : undefined}>
             <View style={styles.topArea}>
             <ImageBackground source={{ uri: meal.image }} style={styles.hero} imageStyle={styles.heroImage}>
               <LinearGradient colors={['rgba(0,0,0,0.02)', 'rgba(0,0,0,0.82)']} style={styles.heroOverlay}>
@@ -187,15 +186,13 @@ export default function NutritionMealScreen() {
 
           <View style={styles.bottomSpacer} />
           <SharedBottomNav activeTab="nutrition" />
-          </View>
-        </ScrollView>
-      </View>
+        </View>
+      </ScrollView>
     </AppScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1 },
   scrollContent: {
     paddingBottom: 100,
   },

@@ -82,9 +82,6 @@ export default function CreatorDetailScreen() {
           <View style={[styles.fallbackCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
             <MaterialCommunityIcons name="information" size={48} color={theme.subtitleColor} />
             <Text style={[styles.fallbackText, { color: theme.titleColor }]}>Creator niet gevonden</Text>
-            <Pressable style={[styles.fallbackCta, { backgroundColor: theme.tabBarActive }]} onPress={() => router.push('/(tabs)/community')}>
-              <Text style={styles.fallbackCtaText}>Terug naar Community</Text>
-            </Pressable>
           </View>
         </ScrollView>
       </AppScreen>
@@ -147,10 +144,6 @@ export default function CreatorDetailScreen() {
 
         {/* CTA */}
         <View style={styles.ctaSection}>
-          <Pressable style={[styles.ctaCard, { backgroundColor: theme.card, borderColor: theme.border }]} onPress={() => router.push('/(tabs)/community')}>
-            <MaterialCommunityIcons name="arrow-left" size={24} color={theme.titleColor} />
-            <Text style={[styles.ctaText, { color: theme.titleColor }]}>Terug naar Community</Text>
-          </Pressable>
           <Pressable style={[styles.ctaCard, { backgroundColor: theme.card, borderColor: theme.border }]} onPress={() => router.push('/tracker')}>
             <MaterialCommunityIcons name="run-fast" size={24} color={theme.titleColor} />
             <Text style={[styles.ctaText, { color: theme.titleColor }]}>Start activiteit</Text>
@@ -296,16 +289,6 @@ const styles = StyleSheet.create({
   },
   fallbackText: {
     fontSize: 18,
-    fontWeight: '600',
-  },
-  fallbackCta: {
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    borderRadius: 12,
-  },
-  fallbackCtaText: {
-    color: '#FFFFFF',
-    fontSize: 16,
     fontWeight: '600',
   },
 });
