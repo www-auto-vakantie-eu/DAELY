@@ -2,9 +2,9 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Tabs, useRouter } from 'expo-router';
 import React, { useEffect } from 'react';
-import { Platform, View } from 'react-native';
 import { CustomTabBar } from '@/components/custom-tab-bar';
 import { HapticTab } from '@/components/haptic-tab';
+import { AppScreen } from '@/components/AppScreen';
 import { useAppContext } from '@/contexts/AppContext';
 import { useTheme } from '@/hooks/use-theme';
 import { GlobalCartButton } from '../components/GlobalCartButton';
@@ -22,7 +22,7 @@ export default function TabLayout() {
   }, [isAppHydrated, isLoggedIn, router]);
 
   return (
-    <View style={{ flex: 1, maxWidth: 430, alignSelf: 'center', width: '100%' }}>
+    <AppScreen>
       <GlobalCartButton />
       <Tabs
         initialRouteName="index"
@@ -91,6 +91,6 @@ export default function TabLayout() {
         />
         {/* Progress tab verwijderd */}
       </Tabs>
-    </View>
+    </AppScreen>
   );
 }

@@ -7,7 +7,6 @@ import {
   ImageBackground,
   StatusBar,
   TextInput,
-  Platform,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -17,6 +16,7 @@ import { useState } from 'react';
 import PageHeader from '../components/PageHeader';
 import { DISCIPLINE_CONTENT } from '@/constants/discipline-content';
 import SharedBottomNav from '../../components/SharedBottomNav';
+import { AppScreen } from '@/components/AppScreen';
 
 type DisciplineDetail = {
   title: string;
@@ -306,17 +306,19 @@ export default function DisciplineScreen() {
 
   if (!discipline) {
     return (
-      <View style={[styles.screen, { backgroundColor: theme.background }]}>
-        <PageHeader title="Discipline" onSettingsPress={() => router.push('/(tabs)/athlete')} onSearchPress={() => router.push('/nutrition/search')} onCartPress={() => router.push('/(tabs)/cart')} />
-        <View style={[styles.fallbackCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <MaterialCommunityIcons name="help-circle-outline" size={48} color={theme.subtitleColor} />
-          <Text style={[styles.fallbackTitle, { color: theme.titleColor }]}>Discipline niet gevonden</Text>
+      <AppScreen>
+        <View style={[styles.screen, { backgroundColor: theme.background }]}>
+          <PageHeader title="Discipline" onSettingsPress={() => router.push('/(tabs)/athlete')} onSearchPress={() => router.push('/nutrition/search')} onCartPress={() => router.push('/(tabs)/cart')} />
+          <View style={[styles.fallbackCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+            <MaterialCommunityIcons name="help-circle-outline" size={48} color={theme.subtitleColor} />
+            <Text style={[styles.fallbackTitle, { color: theme.titleColor }]}>Discipline niet gevonden</Text>
           <Text style={[styles.fallbackText, { color: theme.subtitleColor }]}>Deze discipline bestaat niet of is niet beschikbaar.</Text>
           <Pressable style={[styles.fallbackButton, { backgroundColor: '#2563EB' }]} onPress={() => router.push('/(tabs)/disciplines')}>
             <Text style={styles.fallbackButtonText}>Bekijk disciplines</Text>
           </Pressable>
         </View>
       </View>
+    </AppScreen>
     );
   }
 
@@ -331,10 +333,10 @@ export default function DisciplineScreen() {
       : ['Alles', 'Borst', 'Biceps', 'Triceps', 'Schouders', 'Bovenrug', 'Onderrug', 'Buik', 'Billen', 'Benen'];
 
   return (
-    <View style={[styles.screen, { backgroundColor: theme.background }]}>
-      <StatusBar barStyle="light-content" />
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-        <View style={Platform.OS === 'web' ? styles.webContainer : undefined}>
+    <AppScreen>
+      <View style={[styles.screen, { backgroundColor: theme.background }]}>
+        <StatusBar barStyle="light-content" />
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
           {/* ── HERO HEADER ── */}
           <ImageBackground source={{ uri: discipline.heroImage }} style={styles.hero}>
           <LinearGradient
@@ -591,21 +593,16 @@ export default function DisciplineScreen() {
           )}
         </View>
         <View style={styles.bottomSpacer} />
-        </View>
       </ScrollView>
       <SharedBottomNav activeTab="disciplines" />
     </View>
+    </AppScreen>
   );
 }
 
 const styles = StyleSheet.create({
   screen: { flex: 1 },
   scrollContent: { paddingBottom: 80 },
-  webContainer: {
-    maxWidth: 430,
-    alignSelf: 'center',
-    width: '100%',
-  },
   hero: { width: '100%', height: 220 },
   heroGradient: {
     flex: 1,
