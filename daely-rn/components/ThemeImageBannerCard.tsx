@@ -46,7 +46,7 @@ export function ThemeImageBannerCard({ theme, isActive, onPress }: ThemeImageBan
       <ImageBackground
         source={bannerImage}
         style={styles.imageBackground}
-        resizeMode="stretch"
+        resizeMode="cover"
         imageStyle={styles.imageStyle}
       >
         {/* Selected state - check only, no large glow */}
@@ -78,9 +78,12 @@ const styles = StyleSheet.create({
     transform: [{ scale: 1.01 }],
   },
   imageBackground: {
-    width: '100%',
-    height: '100%',
+    width: '120%',
+    height: '120%',
     backgroundColor: 'transparent',
+    position: 'absolute',
+    top: '-10%',
+    left: '-10%',
   },
   imageStyle: {
     borderRadius: 32,
