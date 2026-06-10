@@ -127,6 +127,7 @@ export default function NutritionMealScreen() {
             <Text style={[styles.notFoundTitle, { color: theme.titleColor }]}>Gerecht niet gevonden</Text>
           </View>
         </ScrollView>
+        <SharedBottomNav activeTab="nutrition" />
       </AppScreen>
     );
   }
@@ -185,9 +186,9 @@ export default function NutritionMealScreen() {
           </View>
 
           <View style={styles.bottomSpacer} />
-          <SharedBottomNav activeTab="nutrition" />
         </View>
       </ScrollView>
+      <SharedBottomNav activeTab="nutrition" />
     </AppScreen>
   );
 }

@@ -173,10 +173,10 @@ export default function MindCategoryScreen() {
       </View>
 
       <View style={styles.bottomSpacer} />
-      <SharedBottomNav activeTab="mind" />
     </ScrollView>
-    </AppScreen>
-  );
+    <SharedBottomNav activeTab="mind" />
+  </AppScreen>
+);
 }
 
 const styles = StyleSheet.create({

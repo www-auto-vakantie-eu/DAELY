@@ -80,6 +80,7 @@ export default function ExerciseDetailScreen() {
             Deze oefening kon niet worden geladen.
           </Text>
         </View>
+        <SharedBottomNav activeTab="disciplines" />
       </AppScreen>
     );
   }
@@ -362,8 +363,8 @@ export default function ExerciseDetailScreen() {
           </View>
         )}
           </View>
-        <SharedBottomNav activeTab="disciplines" />
       </ScrollView>
+      <SharedBottomNav activeTab="disciplines" />
     </AppScreen>
   );
 }

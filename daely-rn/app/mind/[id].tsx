@@ -67,8 +67,8 @@ export default function MindProgramScreen() {
         </View>
 
         <View style={styles.bottomSpacer} />
-        <SharedBottomNav activeTab="mind" />
       </ScrollView>
+      <SharedBottomNav activeTab="mind" />
     </AppScreen>
   );
 }
