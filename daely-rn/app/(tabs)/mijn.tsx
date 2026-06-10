@@ -5,7 +5,7 @@ import { useRouter, type Href } from 'expo-router';
 
 import { useTheme } from '@/hooks/use-theme';
 import { AppScreen } from '@/components/AppScreen';
-import PageHeader from '../components/PageHeader';
+import AppHeader from '../components/AppHeader';
 import { getPerformanceSummary, type PerformanceSummary } from '@/services/performance-summary';
 
 type MyDomainCard = {
@@ -136,8 +136,8 @@ export default function MijnScreen() {
 
   return (
     <AppScreen style={{ backgroundColor: theme.background }}>
-      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-        <PageHeader
+      <ScrollView style={styles.container} showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
+        <AppHeader
           title="Mijn."
           subtitle="Alles op één plek."
           onSettingsPress={() => router.push('/(tabs)/athlete')}
@@ -243,6 +243,10 @@ export default function MijnScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  content: {
+    paddingHorizontal: 16,
+    paddingTop: 0,
   },
   cardsWrap: {
     padding: 16,

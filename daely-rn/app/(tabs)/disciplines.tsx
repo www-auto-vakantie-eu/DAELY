@@ -3,9 +3,9 @@ import { StyleSheet, ScrollView, View, Text, Pressable, ImageBackground, ImageSo
 import { useRouter } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
 import { AppScreen } from '@/components/AppScreen';
+import AppHeader from '../components/AppHeader';
 import { useAppContext } from '@/contexts/AppContext';
 import { resolveContentAudience, getGenderedDisciplineImage, type DisciplineMedia } from '@/lib/content-audience';
-import PageHeader from '../components/PageHeader';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const LIBRARY_ACTIONS = [
@@ -403,14 +403,13 @@ export default function DisciplinesScreen() {
 
   return (
     <AppScreen style={{ backgroundColor: theme.background }}>
-      <PageHeader
+      <AppHeader
         title="Bibliotheek."
         subtitle="Verbeter je oefeningen."
         onSettingsPress={() => router.push('/(tabs)/athlete')}
         onCartPress={() => router.push('/(tabs)/cart')}
       />
-      <ScrollView style={[styles.container, { backgroundColor: theme.background }]} showsVerticalScrollIndicator={false}>
-        <View style={styles.content}>
+      <ScrollView style={[styles.container, { backgroundColor: theme.background }]} showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
           {/* Quick Actions */}
           <View style={styles.quickActionsBlock}>
             <View style={styles.quickActionsRow}>
@@ -452,7 +451,6 @@ export default function DisciplinesScreen() {
             </Pressable>
           ))}
           <View style={styles.bottomSpacer} />
-        </View>
       </ScrollView>
     </AppScreen>
   );
@@ -462,7 +460,7 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   content: {
     paddingHorizontal: 16,
-    paddingTop: 24,
+    paddingTop: 0,
   },
   quickActionsBlock: {
     marginBottom: 8,

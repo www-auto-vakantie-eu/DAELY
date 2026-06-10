@@ -3,9 +3,9 @@ import { useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/use-theme';
 import { AppScreen } from '@/components/AppScreen';
+import AppHeader from '../components/AppHeader';
 import { useState, useMemo, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import PageHeader from '../components/PageHeader';
 
 type Tab = 'feed' | 'creators' | 'partners' | 'events';
 
@@ -324,7 +324,7 @@ export default function CommunityScreen() {
   return (
     <AppScreen style={{ backgroundColor: theme.background }}>
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <PageHeader
+        <AppHeader
           title="Community."
           subtitle="Atleet tot atleet."
           onSettingsPress={() => router.push('/(tabs)/athlete')}
@@ -665,7 +665,7 @@ export default function CommunityScreen() {
 const styles = StyleSheet.create({
   content: {
     paddingHorizontal: 16,
-    paddingTop: 20,
+    paddingTop: 0,
   },
   // Post Composer - Compact Trigger
   compactComposerCard: {

@@ -7,10 +7,10 @@ import { View, Text, StyleSheet, ScrollView, Pressable, ImageBackground } from '
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '@/hooks/use-theme';
 import { AppScreen } from '@/components/AppScreen';
+import AppHeader from '../components/AppHeader';
 import { NUTRITION_MEALS } from '@/constants/nutrition-meals';
 import { useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import PageHeader from '../components/PageHeader';
 
 
 const FILTER_CATEGORIES = [
@@ -99,10 +99,10 @@ export default function NutritionScreen() {
   return (
     <AppScreen style={{ backgroundColor: theme.background }}>
       <ScrollView style={styles.container}
-      contentContainerStyle={{ padding: 16 }}
+      contentContainerStyle={styles.content}
       showsVerticalScrollIndicator={false}
     >
-      <PageHeader
+      <AppHeader
         title="Voeding."
         subtitle="Beter eten, gezonder leven."
         onSettingsPress={() => router.push('/(tabs)/athlete')}
@@ -238,7 +238,7 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   content: {
     paddingHorizontal: 16,
-    paddingTop: 24,
+    paddingTop: 0,
   },
   headerRow: {
     flexDirection: 'row',

@@ -4,8 +4,8 @@ import { useRouter, useLocalSearchParams, useFocusEffect } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/use-theme';
 import { AppScreen } from '@/components/AppScreen';
+import AppHeader from '../components/AppHeader';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import PageHeader from '../components/PageHeader';
 import { Activity, getActivities } from 'services/activity-storage';
 import { useAppContext } from '@/contexts/AppContext';
 import { getNextProgramWorkout, NextProgramWorkout } from '@/services/user-programs-storage';
@@ -253,7 +253,7 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
   return (
     <AppScreen style={{ backgroundColor: theme.background }}>
       <ScrollView contentContainerStyle={styles.content}>
-      <PageHeader
+      <AppHeader
         title="Vandaag."
         subtitle="Jouw dag begint hier."
         onSettingsPress={() => router.push('/(tabs)/athlete')}
@@ -557,7 +557,7 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
 const styles = StyleSheet.create({
   content: {
     paddingHorizontal: 16,
-    paddingTop: 20,
+    paddingTop: 0,
   },
   dateLabel: {
     marginTop: 6,

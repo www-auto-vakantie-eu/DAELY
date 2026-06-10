@@ -2,8 +2,8 @@ import { StyleSheet, ScrollView, View, Text, Pressable, ImageBackground } from '
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '@/hooks/use-theme';
 import { AppScreen } from '@/components/AppScreen';
+import AppHeader from '../components/AppHeader';
 import { useRouter } from 'expo-router';
-import PageHeader from '../components/PageHeader';
 
 const MIND_ACTIONS = [
   { key: 'start', title: 'Sessie starten', subtitle: 'Kies een meditatie', route: '/(tabs)/mind' as any },
@@ -18,8 +18,8 @@ export default function MindScreen() {
 
   return (
     <AppScreen style={{ backgroundColor: theme.background }}>
-      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      <PageHeader
+      <ScrollView style={styles.container} showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
+      <AppHeader
         title="Mind."
         subtitle="Sterke geest, sterk lichaam."
         onSettingsPress={() => router.push('/(tabs)/athlete')}
@@ -213,8 +213,7 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 24,
+    paddingTop: 0,
   },
   card: {
     height: 210,
