@@ -5,8 +5,8 @@ import { AppScreen } from '@/components/AppScreen';
 import AppHeader from '../components/AppHeader';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { useState, useEffect } from 'react';
-import { getUnreadMessageCount } from '@/services/messages-storage';
 import React from 'react';
+import { getUnreadMessageCount } from '@/services/messages-storage';
 
 const MIND_ACTIONS = [
   { key: 'start', title: 'Sessie starten', subtitle: 'Kies een meditatie', route: '/(tabs)/mind' as any },

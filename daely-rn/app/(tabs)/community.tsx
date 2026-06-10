@@ -5,9 +5,9 @@ import { useTheme } from '@/hooks/use-theme';
 import { AppScreen } from '@/components/AppScreen';
 import AppHeader from '../components/AppHeader';
 import { useState, useMemo, useEffect } from 'react';
+import React from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getUnreadMessageCount } from '@/services/messages-storage';
-import React from 'react';
 
 type Tab = 'feed' | 'creators' | 'partners' | 'events';
 

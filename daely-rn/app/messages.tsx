@@ -112,41 +112,49 @@ export default function MessagesScreen() {
           onCartPress={() => router.push('/(tabs)/cart')}
         />
 
-        <View style={styles.filterRow}>
+        <View style={styles.actionRow}>
+          <Pressable
+            style={[styles.actionButton, styles.primaryActionButton, { backgroundColor: '#2563EB' }]}
+            onPress={() => router.push('/messages/new' as Href)}
+          >
+            <MaterialCommunityIcons name="message-plus" size={18} color="#FFFFFF" />
+            <Text style={styles.actionButtonText}>Nieuw bericht</Text>
+          </Pressable>
+          <Pressable
+            style={[styles.actionButton, styles.secondaryActionButton, { backgroundColor: '#8B5CF6' }]}
+            onPress={() => router.push('/messages/new-group' as Href)}
+          >
+            <MaterialCommunityIcons name="account-multiple-plus" size={18} color="#FFFFFF" />
+            <Text style={styles.actionButtonText}>Nieuwe groep</Text>
+          </Pressable>
+        </View>
+
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.filterRow}
+        >
           {FILTERS.map((filter) => (
             <Pressable
               key={filter.key}
               style={[
                 styles.filterChip,
-                activeFilter === filter.key && { backgroundColor: theme.card, borderColor: theme.border },
+                activeFilter === filter.key ? styles.filterChipActive : styles.filterChipInactive,
+                { borderColor: activeFilter === filter.key ? theme.tabBarActive : theme.border },
               ]}
               onPress={() => setActiveFilter(filter.key)}
             >
               <Text
                 style={[
                   styles.filterText,
-                  activeFilter === filter.key ? { color: theme.titleColor } : { color: theme.subtitleColor },
+                  activeFilter === filter.key ? { color: '#FFFFFF' } : { color: theme.subtitleColor },
                 ]}
               >
                 {filter.label}
               </Text>
             </Pressable>
           ))}
-          <Pressable
-            style={[styles.filterChip, styles.newGroupButton, { backgroundColor: '#2563EB' }]}
-            onPress={() => router.push('/messages/new' as Href)}
-          >
-            <MaterialCommunityIcons name="message-plus" size={16} color="#FFFFFF" />
-            <Text style={styles.newGroupButtonText}>Nieuw</Text>
-          </Pressable>
-          <Pressable
-            style={[styles.filterChip, styles.newGroupButton, { backgroundColor: '#8B5CF6' }]}
-            onPress={() => router.push('/messages/new-group' as Href)}
-          >
-            <MaterialCommunityIcons name="account-multiple-plus" size={16} color="#FFFFFF" />
-            <Text style={styles.newGroupButtonText}>Groep</Text>
-          </Pressable>
-        </View>
+        </ScrollView>
 
         {isLoading ? (
           <View style={styles.centerContent}>
@@ -238,33 +246,48 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 0,
   },
-  filterRow: {
+  actionRow: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
+    gap: 10,
     marginBottom: 16,
   },
-  filterChip: {
+  actionButton: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 16,
+    justifyContent: 'center',
+    gap: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+  },
+  actionButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#FFFFFF',
+  },
+  primaryActionButton: {},
+  secondaryActionButton: {},
+  filterRow: {
+    flexDirection: 'row',
+    gap: 8,
+    marginBottom: 20,
+  },
+  filterChip: {
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 20,
     borderWidth: 1,
-    borderColor: 'transparent',
+  },
+  filterChipActive: {
+    backgroundColor: '#2563EB',
+  },
+  filterChipInactive: {
+    backgroundColor: 'transparent',
   },
   filterText: {
     fontSize: 13,
-    fontWeight: '500',
-  },
-  newGroupButton: {
-    borderColor: '#2563EB',
-  },
-  newGroupButtonText: {
-    fontSize: 13,
     fontWeight: '600',
-    color: '#FFFFFF',
   },
   centerContent: {
     alignItems: 'center',

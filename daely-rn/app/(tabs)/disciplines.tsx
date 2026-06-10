@@ -7,8 +7,8 @@ import { useAppContext } from '@/contexts/AppContext';
 import { resolveContentAudience, getGenderedDisciplineImage, type DisciplineMedia } from '@/lib/content-audience';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useState, useEffect } from 'react';
-import { getUnreadMessageCount } from '@/services/messages-storage';
 import React from 'react';
+import { getUnreadMessageCount } from '@/services/messages-storage';
 
 const LIBRARY_ACTIONS = [
   {
