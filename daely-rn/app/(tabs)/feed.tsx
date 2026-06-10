@@ -87,8 +87,19 @@ export default function CommunityFeedScreen() {
               <MaterialCommunityIcons name="heart-outline" size={16} color={theme.subtitleColor} />
               <Text style={[styles.engagementText, { color: theme.subtitleColor }]}>{item.engagementCount}</Text>
             </View>
-            <Pressable style={styles.moreButton}>
-              <MaterialCommunityIcons name="dots-horizontal" size={16} color={theme.subtitleColor} />
+            <Pressable
+              style={styles.forwardButton}
+              onPress={() => router.push({
+                pathname: '/messages/share',
+                params: {
+                  linkedItemType: 'post',
+                  linkedItemId: item.id,
+                  linkedItemTitle: item.title || 'Feedpost',
+                },
+              })}
+            >
+              <MaterialCommunityIcons name="share-outline" size={16} color={theme.subtitleColor} />
+              <Text style={[styles.forwardButtonText, { color: theme.subtitleColor }]}>Doorsturen</Text>
             </Pressable>
           </View>
         </View>
@@ -134,8 +145,19 @@ export default function CommunityFeedScreen() {
               <MaterialCommunityIcons name="heart-outline" size={16} color={theme.subtitleColor} />
               <Text style={[styles.engagementText, { color: theme.subtitleColor }]}>{item.engagementCount}</Text>
             </View>
-            <Pressable style={styles.moreButton}>
-              <MaterialCommunityIcons name="dots-horizontal" size={16} color={theme.subtitleColor} />
+            <Pressable
+              style={styles.forwardButton}
+              onPress={() => router.push({
+                pathname: '/messages/share',
+                params: {
+                  linkedItemType: 'post',
+                  linkedItemId: item.id,
+                  linkedItemTitle: item.title || 'Feedpost',
+                },
+              })}
+            >
+              <MaterialCommunityIcons name="share-outline" size={16} color={theme.subtitleColor} />
+              <Text style={[styles.forwardButtonText, { color: theme.subtitleColor }]}>Doorsturen</Text>
             </Pressable>
           </View>
         </View>
@@ -175,8 +197,19 @@ export default function CommunityFeedScreen() {
               <MaterialCommunityIcons name="heart-outline" size={16} color={theme.subtitleColor} />
               <Text style={[styles.engagementText, { color: theme.subtitleColor }]}>{item.engagementCount}</Text>
             </View>
-            <Pressable style={styles.moreButton}>
-              <MaterialCommunityIcons name="dots-horizontal" size={16} color={theme.subtitleColor} />
+            <Pressable
+              style={styles.forwardButton}
+              onPress={() => router.push({
+                pathname: '/messages/share',
+                params: {
+                  linkedItemType: 'post',
+                  linkedItemId: item.id,
+                  linkedItemTitle: item.title || 'Feedpost',
+                },
+              })}
+            >
+              <MaterialCommunityIcons name="share-outline" size={16} color={theme.subtitleColor} />
+              <Text style={[styles.forwardButtonText, { color: theme.subtitleColor }]}>Doorsturen</Text>
             </Pressable>
           </View>
         </View>
@@ -331,6 +364,8 @@ const styles = StyleSheet.create({
   cardFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingTop: 10 },
   engagement: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   engagementText: { fontSize: 12, fontWeight: '600' },
+  forwardButton: { flexDirection: 'row', alignItems: 'center', gap: 6, padding: 4 },
+  forwardButtonText: { fontSize: 12, fontWeight: '600' },
   moreButton: { padding: 4 },
   emptyState: { alignItems: 'center', justifyContent: 'center', paddingVertical: 60, gap: 12 },
   emptyStateText: { fontSize: 14, fontWeight: '500' },

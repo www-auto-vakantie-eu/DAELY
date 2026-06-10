@@ -198,6 +198,16 @@ export default function MessageThreadScreen() {
                 >
                   {message.text}
                 </Text>
+                {message.linkedItemType && message.linkedItemTitle && (
+                  <View style={[styles.messageLinkedItem, { backgroundColor: message.senderType === 'user' ? 'rgba(255,255,255,0.15)' : theme.background, borderColor: message.senderType === 'user' ? 'rgba(255,255,255,0.2)' : theme.border }]}>
+                    <Text style={[styles.messageLinkedItemType, { color: message.senderType === 'user' ? 'rgba(255,255,255,0.8)' : theme.subtitleColor }]}>
+                      {message.linkedItemType?.toUpperCase()}
+                    </Text>
+                    <Text style={[styles.messageLinkedItemTitle, { color: message.senderType === 'user' ? '#FFFFFF' : theme.titleColor }]}>
+                      {message.linkedItemTitle}
+                    </Text>
+                  </View>
+                )}
                 <Text
                   style={[
                     styles.messageTime,
@@ -325,6 +335,22 @@ const styles = StyleSheet.create({
   },
   linkedItemTitle: {
     fontSize: 14,
+    fontWeight: '600',
+  },
+  messageLinkedItem: {
+    marginTop: 8,
+    padding: 10,
+    borderRadius: 8,
+    borderWidth: 1,
+  },
+  messageLinkedItemType: {
+    fontSize: 10,
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    marginBottom: 2,
+  },
+  messageLinkedItemTitle: {
+    fontSize: 13,
     fontWeight: '600',
   },
   messagesList: {

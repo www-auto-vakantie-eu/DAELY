@@ -236,6 +236,21 @@ export default function DisciplineProgramDetailScreen() {
                 Betaling wordt later gekoppeld.
               </Text>
             )}
+
+            <TouchableOpacity
+              style={[styles.shareButton, { backgroundColor: theme.card, borderColor: theme.border }]}
+              onPress={() => router.push({
+                pathname: '/messages/share',
+                params: {
+                  linkedItemType: 'program',
+                  linkedItemId: program.id,
+                  linkedItemTitle: program.name,
+                },
+              })}
+            >
+              <MaterialCommunityIcons name="share-outline" size={20} color={theme.titleColor} />
+              <Text style={[styles.shareButtonText, { color: theme.titleColor }]}>Deel via berichten</Text>
+            </TouchableOpacity>
           </View>
         )}
 
@@ -539,6 +554,21 @@ const styles = StyleSheet.create({
   startWorkoutButtonText: {
     color: '#FFFFFF',
     fontSize: 14,
+    fontWeight: '600',
+  },
+  shareButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    borderRadius: 12,
+    marginTop: 16,
+    gap: 8,
+    borderWidth: 1,
+  },
+  shareButtonText: {
+    fontSize: 16,
     fontWeight: '600',
   },
 });

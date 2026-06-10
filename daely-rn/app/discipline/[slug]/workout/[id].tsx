@@ -105,6 +105,21 @@ export default function DisciplineWorkoutDetailScreen() {
           <Text style={styles.startButtonText}>Start workout</Text>
         </TouchableOpacity>
 
+        <TouchableOpacity
+          style={[styles.shareButton, { backgroundColor: theme.card, borderColor: theme.border }]}
+          onPress={() => router.push({
+            pathname: '/messages/share',
+            params: {
+              linkedItemType: 'workout',
+              linkedItemId: id,
+              linkedItemTitle: workout.name,
+            },
+          })}
+        >
+          <MaterialCommunityIcons name="share-outline" size={20} color={theme.titleColor} />
+          <Text style={[styles.shareButtonText, { color: theme.titleColor }]}>Deel via berichten</Text>
+        </TouchableOpacity>
+
         <View style={[styles.placeholderContainer, { backgroundColor: theme.card, borderColor: theme.border }]}>
           <MaterialCommunityIcons name="information-outline" size={48} color={theme.subtitleColor} />
           <Text style={[styles.placeholderTitle, { color: theme.titleColor }]}>
@@ -204,6 +219,21 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '700',
+  },
+  shareButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    borderRadius: 12,
+    marginBottom: 24,
+    gap: 8,
+    borderWidth: 1,
+  },
+  shareButtonText: {
+    fontSize: 16,
+    fontWeight: '600',
   },
   placeholderContainer: {
     borderRadius: 12,
