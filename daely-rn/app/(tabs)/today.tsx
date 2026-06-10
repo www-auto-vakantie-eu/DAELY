@@ -17,6 +17,7 @@ import {
   HeroBackgroundOptionId,
 } from '@/constants/hero-background';
 import { TODAY_QUOTES } from '@/constants/today-quotes';
+import { getUnreadMessageCount } from '@/services/messages-storage';
 
 const SHORTCUTS_STORAGE_KEY = 'daely.today.shortcuts.v1';
 
@@ -125,6 +126,7 @@ export default function TodayScreen() {
   const [isFitbitConnected, setIsFitbitConnected] = useState(false);
   const [shortcuts, setShortcuts] = useState<ShortcutId[]>(DEFAULT_SHORTCUTS);
   const [showShortcutPicker, setShowShortcutPicker] = useState(false);
+  const [unreadMessageCount, setUnreadMessageCount] = useState(0);
   const [nextWorkout, setNextWorkout] = useState<NextProgramWorkout | null>(null);
   const [activeDraft, setActiveDraft] = useState<WorkoutDraft | null>(null);
 
@@ -143,10 +145,15 @@ export default function TodayScreen() {
     loadActiveDraft();
   }, [loadNextWorkout, loadActiveDraft]);
 
+  useEffect(() => {
+    getUnreadMessageCount().then(setUnreadMessageCount);
+  }, []);
+
   useFocusEffect(
     useCallback(() => {
       loadNextWorkout();
       loadActiveDraft();
+      getUnreadMessageCount().then(setUnreadMessageCount);
     }, [loadNextWorkout, loadActiveDraft])
   );
 
@@ -257,6 +264,9 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
         title="Vandaag."
         subtitle="Jouw dag begint hier."
         onSettingsPress={() => router.push('/(tabs)/athlete')}
+        showMessages
+        unreadMessagesCount={unreadMessageCount}
+        onMessagesPress={() => router.push('/messages')}
       />
 
       <View style={styles.heroWrap}>

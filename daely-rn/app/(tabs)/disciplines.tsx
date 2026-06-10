@@ -1,12 +1,14 @@
-
 import { StyleSheet, ScrollView, View, Text, Pressable, ImageBackground, ImageSourcePropType } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
 import { AppScreen } from '@/components/AppScreen';
 import AppHeader from '../components/AppHeader';
 import { useAppContext } from '@/contexts/AppContext';
 import { resolveContentAudience, getGenderedDisciplineImage, type DisciplineMedia } from '@/lib/content-audience';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useState, useEffect } from 'react';
+import { getUnreadMessageCount } from '@/services/messages-storage';
+import React from 'react';
 
 const LIBRARY_ACTIONS = [
   {
@@ -393,10 +395,21 @@ export default function DisciplinesScreen() {
   const { user, appSettings } = useAppContext();
   const theme = useTheme();
   const router = useRouter();
+  const [unreadMessageCount, setUnreadMessageCount] = useState(0);
   const visibleDisciplines = DISCIPLINES;
   const handleOpen = (slug: string) => {
     router.push({ pathname: '/discipline/[slug]', params: { slug } });
   };
+
+  useEffect(() => {
+    getUnreadMessageCount().then(setUnreadMessageCount);
+  }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      getUnreadMessageCount().then(setUnreadMessageCount);
+    }, [])
+  );
 
   // Bepaal content audience op basis van user profile en app settings
   const audience = resolveContentAudience(user, appSettings);
@@ -407,6 +420,9 @@ export default function DisciplinesScreen() {
         title="Bibliotheek."
         subtitle="Verbeter je oefeningen."
         onSettingsPress={() => router.push('/(tabs)/athlete')}
+        showMessages
+        unreadMessagesCount={unreadMessageCount}
+        onMessagesPress={() => router.push('/messages')}
       />
       <ScrollView style={[styles.container, { backgroundColor: theme.background }]} showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
           {/* Quick Actions */}

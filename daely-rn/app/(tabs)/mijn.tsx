@@ -159,6 +159,9 @@ export default function MijnScreen() {
           title="Mijn."
           subtitle="Alles op één plek."
           onSettingsPress={() => router.push('/(tabs)/athlete')}
+          showMessages
+          unreadMessagesCount={unreadMessageCount}
+          onMessagesPress={() => router.push('/messages')}
         />
 
         <View style={styles.cardsWrap}>

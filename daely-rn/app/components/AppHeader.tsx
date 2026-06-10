@@ -9,9 +9,12 @@ type AppHeaderProps = {
   showSettings?: boolean;
   showSearch?: boolean;
   showCart?: boolean;
+  showMessages?: boolean;
+  unreadMessagesCount?: number;
   onSettingsPress?: () => void;
   onSearchPress?: () => void;
   onCartPress?: () => void;
+  onMessagesPress?: () => void;
   rightActions?: React.ReactNode;
 };
 
@@ -21,9 +24,12 @@ export default function AppHeader({
   showSettings = true,
   showSearch,
   showCart = false,
+  showMessages = false,
+  unreadMessagesCount = 0,
   onSettingsPress,
   onSearchPress,
   onCartPress,
+  onMessagesPress,
   rightActions,
 }: AppHeaderProps) {
   const theme = useTheme();
@@ -58,6 +64,19 @@ export default function AppHeader({
             onPress={onCartPress}
           >
             <MaterialCommunityIcons name="shopping-outline" size={22} color={theme.titleColor} />
+          </Pressable>
+        ) : null}
+        {showMessages ? (
+          <Pressable
+            style={[styles.iconButton, { backgroundColor: theme.card, borderColor: theme.border }]}
+            onPress={onMessagesPress}
+          >
+            <MaterialCommunityIcons name="message-text-outline" size={22} color={theme.titleColor} />
+            {unreadMessagesCount > 0 && (
+              <View style={styles.badge}>
+                <Text style={styles.badgeText}>{unreadMessagesCount > 9 ? '9+' : unreadMessagesCount}</Text>
+              </View>
+            )}
           </Pressable>
         ) : null}
       </View>
@@ -101,5 +120,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     opacity: 1,
+  },
+  badge: {
+    position: 'absolute',
+    top: -2,
+    right: -2,
+    backgroundColor: '#EF4444',
+    minWidth: 18,
+    height: 18,
+    borderRadius: 9,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 4,
+  },
+  badgeText: {
+    color: '#FFFFFF',
+    fontSize: 10,
+    fontWeight: '700',
+    lineHeight: 12,
   },
 });

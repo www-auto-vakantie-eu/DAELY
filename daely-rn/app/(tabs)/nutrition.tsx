@@ -1,17 +1,13 @@
-
-
-
-
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, Pressable, ImageBackground } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '@/hooks/use-theme';
 import { AppScreen } from '@/components/AppScreen';
 import AppHeader from '../components/AppHeader';
 import { NUTRITION_MEALS } from '@/constants/nutrition-meals';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-
+import { getUnreadMessageCount } from '@/services/messages-storage';
 
 const FILTER_CATEGORIES = [
   { key: 'mealType', label: 'Maaltijd', options: ['Ontbijt', 'Lunch', 'Diner', 'Snack', 'Pre Workout', 'Post Workout', 'Herstel', 'Smoothies', 'Shakes'] },
@@ -68,6 +64,17 @@ export default function NutritionScreen() {
   const router = useRouter();
   const [activeFilterCategory, setActiveFilterCategory] = useState<FilterKey | null>(null);
   const [activeFilterChips, setActiveFilterChips] = useState<FilterChip[]>([]);
+  const [unreadMessageCount, setUnreadMessageCount] = useState(0);
+
+  useEffect(() => {
+    getUnreadMessageCount().then(setUnreadMessageCount);
+  }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      getUnreadMessageCount().then(setUnreadMessageCount);
+    }, [])
+  );
 
   // Filtered meals
   const filteredMeals = useMemo(() => {
@@ -106,6 +113,9 @@ export default function NutritionScreen() {
         title="Voeding."
         subtitle="Beter eten, gezonder leven."
         onSettingsPress={() => router.push('/(tabs)/athlete')}
+        showMessages
+        unreadMessagesCount={unreadMessageCount}
+        onMessagesPress={() => router.push('/messages')}
       />
       <View style={{ height: 16 }} />
 
@@ -139,7 +149,7 @@ export default function NutritionScreen() {
             >
               <Text style={[styles.filterTabText, { color: isActive ? theme.tabBarActive : theme.subtitleColor }]}>{category.label}</Text>
               {count > 0 && (
-                <View style={[styles.filterTabBadge, { backgroundColor: theme.tabBarActive }]}> 
+                <View style={[styles.filterTabBadge, { backgroundColor: theme.tabBarActive }]}>
                   <Text style={styles.filterTabBadgeText}>{count}</Text>
                 </View>
               )}
@@ -150,7 +160,7 @@ export default function NutritionScreen() {
 
       {/* Subfilters */}
       {activeCategory && (
-        <View style={[styles.subFilterPanel, { borderColor: theme.border, backgroundColor: theme.card }]}> 
+        <View style={[styles.subFilterPanel, { borderColor: theme.border, backgroundColor: theme.card }]}>
           <View style={styles.subFilterHeader}>
             <Text style={[styles.subFilterTitle, { color: theme.titleColor }]}>Subfilters</Text>
             {activeFilterChips.length > 0 && (
@@ -220,7 +230,7 @@ export default function NutritionScreen() {
       ))}
 
       {filteredMeals.length === 0 && (
-        <View style={[styles.emptyState, { borderColor: theme.border }]}> 
+        <View style={[styles.emptyState, { borderColor: theme.border }]}>
           <Text style={[styles.emptyTitle, { color: theme.titleColor }]}>Geen gerechten gevonden</Text>
           <Text style={[styles.emptySubtitle, { color: theme.subtitleColor }]}>Pas je filters aan om meer resultaten te zien.</Text>
         </View>

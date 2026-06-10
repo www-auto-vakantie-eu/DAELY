@@ -1,11 +1,13 @@
 import { ScrollView, StyleSheet, Text, View, Pressable, TextInput } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/use-theme';
 import { AppScreen } from '@/components/AppScreen';
 import AppHeader from '../components/AppHeader';
 import { useState, useMemo, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getUnreadMessageCount } from '@/services/messages-storage';
+import React from 'react';
 
 type Tab = 'feed' | 'creators' | 'partners' | 'events';
 
@@ -229,11 +231,22 @@ export default function CommunityScreen() {
   const router = useRouter();
   const theme = useTheme();
   const [activeTab, setActiveTab] = useState<Tab>('feed');
+  const [unreadMessageCount, setUnreadMessageCount] = useState(0);
 
   // Feed state
   const [localPosts, setLocalPosts] = useState<LocalPost[]>([]);
   const [postText, setPostText] = useState('');
   const [composerExpanded, setComposerExpanded] = useState(false);
+
+  useEffect(() => {
+    getUnreadMessageCount().then(setUnreadMessageCount);
+  }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      getUnreadMessageCount().then(setUnreadMessageCount);
+    }, [])
+  );
 
   // Load local posts on mount
   useEffect(() => {
@@ -328,6 +341,9 @@ export default function CommunityScreen() {
           title="Community."
           subtitle="Atleet tot atleet."
           onSettingsPress={() => router.push('/(tabs)/athlete')}
+          showMessages
+          unreadMessagesCount={unreadMessageCount}
+          onMessagesPress={() => router.push('/messages')}
         />
 
         {/* Tabs */}
