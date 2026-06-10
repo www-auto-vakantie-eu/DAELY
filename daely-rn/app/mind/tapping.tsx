@@ -62,9 +62,6 @@ export default function TappingScreen() {
         </View>
 
         <View style={styles.buttonRow}>
-          <Pressable style={styles.primaryButton} onPress={() => router.push('/(tabs)/mind')}>
-            <Text style={styles.primaryButtonText}>Terug naar Mind</Text>
-          </Pressable>
           <Pressable
             style={[styles.secondaryButton, { backgroundColor: theme.background, borderColor: theme.border }]}
             onPress={() => router.push('/feedback')}

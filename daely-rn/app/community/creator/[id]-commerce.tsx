@@ -3,13 +3,15 @@ import { useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/use-theme';
 import PageHeader from '../../components/PageHeader';
+import { AppScreen } from '@/components/AppScreen';
+import SharedBottomNav from '@/components/SharedBottomNav';
 
 export default function CreatorCommerceScreen() {
   const router = useRouter();
   const theme = useTheme();
 
   return (
-    <View style={[styles.screen, { backgroundColor: theme.background }]}>
+    <AppScreen style={{ backgroundColor: theme.background }}>
       <PageHeader
         title="Creator Commerce"
         onSettingsPress={() => router.push('/(tabs)/athlete')}
@@ -37,24 +39,17 @@ export default function CreatorCommerceScreen() {
             </Text>
           </View>
         </View>
-
-        <Pressable style={[styles.backButton, { backgroundColor: theme.card, borderColor: theme.border }]} onPress={() => router.back()}>
-          <MaterialCommunityIcons name="arrow-left" size={20} color={theme.titleColor} />
-          <Text style={[styles.backButtonText, { color: theme.titleColor }]}>Terug</Text>
-        </Pressable>
       </View>
-    </View>
+      <SharedBottomNav activeTab="community" />
+    </AppScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-  },
   content: {
-    flex: 1,
     padding: 16,
     paddingTop: 20,
+    paddingBottom: 100,
   },
   heroCard: {
     borderRadius: 16,
@@ -102,17 +97,5 @@ const styles = StyleSheet.create({
   noticeText: {
     fontSize: 14,
     lineHeight: 20,
-  },
-  backButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    padding: 16,
-    borderRadius: 12,
-    borderWidth: 1,
-  },
-  backButtonText: {
-    fontSize: 15,
-    fontWeight: '600',
   },
 });

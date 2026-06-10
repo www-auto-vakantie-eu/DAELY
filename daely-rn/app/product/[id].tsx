@@ -23,6 +23,8 @@ import {
   getSavedInfluencerCode,
   removeFavoriteProduct,
 } from '@/services/commerce-storage';
+import { AppScreen } from '@/components/AppScreen';
+import SharedBottomNav from '@/components/SharedBottomNav';
 
 let cartHydrated = false;
 
@@ -104,7 +106,7 @@ export default function ProductDetailScreen() {
 
   if (!product) {
     return (
-      <View style={[styles.screen, { backgroundColor: theme.background }]}>
+      <AppScreen style={{ backgroundColor: theme.background }}>
         <PageHeader
           title="Product"
           onCartPress={() => router.push('/(tabs)/cart')}
@@ -115,12 +117,10 @@ export default function ProductDetailScreen() {
           <View style={[styles.emptyCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
             <Text style={[styles.emptyTitle, { color: theme.titleColor }]}>Product niet gevonden</Text>
             <Text style={[styles.emptyText, { color: theme.subtitleColor }]}>Dit product bestaat niet of is verwijderd.</Text>
-            <Pressable style={styles.backButton} onPress={() => router.push('/shop')}>
-              <Text style={styles.backButtonText}>Terug naar shop</Text>
-            </Pressable>
           </View>
         </ScrollView>
-      </View>
+        <SharedBottomNav activeTab="community" />
+      </AppScreen>
     );
   }
 
@@ -162,7 +162,7 @@ export default function ProductDetailScreen() {
   };
 
   return (
-    <View style={[styles.screen, { backgroundColor: theme.background }]}>
+    <AppScreen style={{ backgroundColor: theme.background }}>
       <PageHeader
         title={product.name}
         onCartPress={() => router.push('/(tabs)/cart')}
@@ -283,22 +283,17 @@ export default function ProductDetailScreen() {
             <Pressable style={styles.linkButton} onPress={() => router.push('/(tabs)/cart')}>
               <Text style={styles.linkButtonText}>Naar winkelwagen</Text>
             </Pressable>
-            <Pressable style={styles.linkButton} onPress={() => router.push('/shop')}>
-              <Text style={styles.linkButtonText}>Terug naar shop</Text>
-            </Pressable>
           </View>
         </View>
       </ScrollView>
-    </View>
+      <SharedBottomNav activeTab="community" />
+    </AppScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-  },
   content: {
-    paddingBottom: 40,
+    paddingBottom: 100,
   },
   emptyCard: {
     margin: 16,

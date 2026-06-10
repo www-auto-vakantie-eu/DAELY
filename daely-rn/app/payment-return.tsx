@@ -3,13 +3,15 @@ import { useRouter } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
 import PageHeader from './components/PageHeader';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { AppScreen } from '@/components/AppScreen';
+import SharedBottomNav from '@/components/SharedBottomNav';
 
 export default function PaymentReturnScreen() {
   const theme = useTheme();
   const router = useRouter();
 
   return (
-    <View style={[styles.screen, { backgroundColor: theme.background }]}>
+    <AppScreen style={{ backgroundColor: theme.background }}>
       <PageHeader
         title="Betaling"
         onCartPress={() => router.push('/(tabs)/cart')}
@@ -23,7 +25,7 @@ export default function PaymentReturnScreen() {
           </View>
           <Text style={[styles.title, { color: theme.titleColor }]}>Binnenkort beschikbaar</Text>
           <Text style={[styles.description, { color: theme.subtitleColor }]}>
-            Betalingscontrole komt binnenkort beschikbaar. Bekijk je bestellingen of ga terug naar de shop.
+            Betalingscontrole komt binnenkort beschikbaar. Bekijk je bestellingen.
           </Text>
           <Pressable style={styles.button} onPress={() => router.push('/my-orders')}>
             <Text style={styles.buttonText}>Naar My Orders</Text>
@@ -33,17 +35,15 @@ export default function PaymentReturnScreen() {
           </Pressable>
         </View>
       </ScrollView>
-    </View>
+      <SharedBottomNav activeTab="community" />
+    </AppScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-  },
   content: {
     padding: 16,
-    paddingBottom: 40,
+    paddingBottom: 100,
   },
   card: {
     marginHorizontal: 16,

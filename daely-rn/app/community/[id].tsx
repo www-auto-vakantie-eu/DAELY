@@ -5,6 +5,8 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/use-theme';
 import { useAppContext } from '@/contexts/AppContext';
 import { fetchCommunityCreators, type CommunityCreator, type CountryCode } from '@/services/content-api';
+import { AppScreen } from '@/components/AppScreen';
+import SharedBottomNav from '@/components/SharedBottomNav';
 
 function formatFollowers(n: number): string {
   if (n >= 1000) return `${(n / 1000).toFixed(n % 1000 === 0 ? 0 : 1)}K`;
@@ -62,21 +64,23 @@ export default function CommunityCreatorScreen() {
 
   if (isLoading) {
     return (
-      <View style={[styles.container, { backgroundColor: theme.background, justifyContent: 'center', alignItems: 'center' }]}>
-        <Text style={[styles.notFound, { color: theme.subtitleColor }]}>Creator laden...</Text>
-      </View>
+      <AppScreen style={{ backgroundColor: theme.background }}>
+        <View style={[styles.container, { backgroundColor: theme.background, justifyContent: 'center', alignItems: 'center' }]}>
+          <Text style={[styles.notFound, { color: theme.subtitleColor }]}>Creator laden...</Text>
+        </View>
+        <SharedBottomNav activeTab="community" />
+      </AppScreen>
     );
   }
 
   if (!creator) {
     return (
-      <View style={[styles.container, { backgroundColor: theme.background }]}>
-        <Pressable style={[styles.backButton, { borderColor: theme.border, backgroundColor: theme.card }]} onPress={() => router.back()}>
-          <MaterialCommunityIcons name="arrow-left" size={20} color={theme.titleColor} />
-          <Text style={[styles.backText, { color: theme.titleColor }]}>Terug</Text>
-        </Pressable>
-        <Text style={[styles.notFound, { color: theme.subtitleColor }]}>Creator niet gevonden.</Text>
-      </View>
+      <AppScreen style={{ backgroundColor: theme.background }}>
+        <View style={[styles.container, { backgroundColor: theme.background }]}>
+          <Text style={[styles.notFound, { color: theme.subtitleColor }]}>Creator niet gevonden.</Text>
+        </View>
+        <SharedBottomNav activeTab="community" />
+      </AppScreen>
     );
   }
 
@@ -87,13 +91,8 @@ export default function CommunityCreatorScreen() {
   const youtube = socials.youtube;
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: theme.background }]} showsVerticalScrollIndicator={false}>
-      <View style={styles.content}>
-        <Pressable style={[styles.backButton, { borderColor: theme.border, backgroundColor: theme.card }]} onPress={() => router.back()}>
-          <MaterialCommunityIcons name="arrow-left" size={20} color={theme.titleColor} />
-          <Text style={[styles.backText, { color: theme.titleColor }]}>Terug</Text>
-        </Pressable>
-
+    <AppScreen style={{ backgroundColor: theme.background }}>
+      <ScrollView style={styles.container} showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
         <View style={[styles.profileCard, { backgroundColor: theme.card }]}>
           <View style={styles.avatarRing}>
             <Image source={{ uri: creator.image }} style={styles.avatar} />
@@ -151,13 +150,15 @@ export default function CommunityCreatorScreen() {
       </View>
       <View style={styles.bottomSpacer} />
     </ScrollView>
-  );
+    <SharedBottomNav activeTab="community" />
+  </AppScreen>
+);
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  content: { paddingHorizontal: 16, paddingTop: 16 },
-  backButton: {
+  content: { paddingHorizontal: 16, paddingTop: 16, paddingBottom: 100 },
+  profileCard: {
     alignSelf: 'flex-start',
     flexDirection: 'row',
     alignItems: 'center',

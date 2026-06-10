@@ -123,9 +123,6 @@ export default function FindCoachScreen() {
             <Pressable style={styles.primaryButton} onPress={() => router.push('/feedback')}>
               <Text style={styles.primaryButtonText}>Feedback geven</Text>
             </Pressable>
-            <Pressable style={styles.secondaryButton} onPress={() => router.push('/(tabs)/mijn')}>
-              <Text style={styles.secondaryButtonText}>Terug naar Mijn</Text>
-            </Pressable>
             <Pressable
               style={[styles.tertiaryButton, { backgroundColor: theme.background, borderColor: theme.border }]}
               onPress={() => router.push('/tracker')}

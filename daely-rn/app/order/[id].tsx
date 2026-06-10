@@ -4,7 +4,8 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
 import PageHeader from '../components/PageHeader';
-import { AppBottomMenu } from '@/components/AppBottomMenu';
+import { AppScreen } from '@/components/AppScreen';
+import SharedBottomNav from '@/components/SharedBottomNav';
 import { CommerceOrder } from '@/app/constants/commerce';
 import { getCommerceOrders } from '@/services/commerce-storage';
 
@@ -79,7 +80,7 @@ export default function OrderDetailScreen() {
 
   if (loading) {
     return (
-      <View style={[styles.screen, { backgroundColor: theme.background }]}>
+      <AppScreen style={{ backgroundColor: theme.background }}>
         <PageHeader
           title="Bestelling"
           onCartPress={() => router.push('/(tabs)/cart')}
@@ -89,13 +90,14 @@ export default function OrderDetailScreen() {
         <View style={styles.loadingContainer}>
           <Text style={[styles.loadingText, { color: theme.subtitleColor }]}>Laden...</Text>
         </View>
-      </View>
+        <SharedBottomNav activeTab="community" />
+      </AppScreen>
     );
   }
 
   if (!order) {
     return (
-      <View style={[styles.screen, { backgroundColor: theme.background }]}>
+      <AppScreen style={{ backgroundColor: theme.background }}>
         <PageHeader
           title="Bestelling"
           onCartPress={() => router.push('/(tabs)/cart')}
@@ -106,24 +108,22 @@ export default function OrderDetailScreen() {
           <View style={[styles.card, { backgroundColor: theme.card, borderColor: theme.border }]}>
             <Text style={[styles.title, { color: theme.titleColor }]}>Bestelling niet gevonden</Text>
             <Text style={[styles.description, { color: theme.subtitleColor }]}>Ga terug naar My Orders.</Text>
-            <Pressable style={styles.button} onPress={() => router.push('/my-orders')}>
-              <Text style={styles.buttonText}>Terug naar My Orders</Text>
-            </Pressable>
           </View>
         </ScrollView>
-      </View>
+        <SharedBottomNav activeTab="community" />
+      </AppScreen>
     );
   }
 
   return (
-    <View style={[styles.screen, { backgroundColor: theme.background }]}>
+    <AppScreen style={{ backgroundColor: theme.background }}>
       <PageHeader
         title="Bestelling"
         onCartPress={() => router.push('/(tabs)/cart')}
         showSearch={false}
         showSettings={false}
       />
-      <ScrollView contentContainerStyle={[styles.content, { paddingBottom: Platform.OS === 'ios' ? 80 : 60 }]} showsVerticalScrollIndicator={false}>
+      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <View style={[styles.heroCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
           <View style={styles.iconContainer}>
             <MaterialCommunityIcons name="package-variant" size={32} color="#2563EB" />
@@ -276,9 +276,6 @@ export default function OrderDetailScreen() {
         </View>
 
         <View style={styles.buttonContainer}>
-          <Pressable style={styles.button} onPress={() => router.push('/my-orders')}>
-            <Text style={styles.buttonText}>Terug naar My Orders</Text>
-          </Pressable>
           <Pressable
             style={[styles.secondaryButton, { backgroundColor: theme.background, borderColor: theme.border }]}
             onPress={() => router.push('/shop')}
@@ -287,8 +284,8 @@ export default function OrderDetailScreen() {
           </Pressable>
         </View>
       </ScrollView>
-      <AppBottomMenu activeRoute="shop" />
-    </View>
+      <SharedBottomNav activeTab="community" />
+    </AppScreen>
   );
 }
 
@@ -308,9 +305,6 @@ function getStatusBadgeColor(status: CommerceOrder['status']) {
 }
 
 const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-  },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -321,6 +315,7 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 16,
+    paddingBottom: 100,
   },
   card: {
     marginBottom: 20,

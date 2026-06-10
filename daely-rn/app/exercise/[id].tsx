@@ -2,6 +2,8 @@ import { StyleSheet, View, Text, Pressable, StatusBar, ScrollView, ImageBackgrou
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
+import { AppScreen } from '@/components/AppScreen';
+import SharedBottomNav from '@/components/SharedBottomNav';
 
 const DIFF_COLORS: Record<string, string> = {
   Beginner: '#10B981',
@@ -173,17 +175,13 @@ export default function ExerciseDetailScreen() {
   const heroImageUrl = buildHeroImageUrl(name, categorie);
 
   return (
-    <View style={[styles.screen, { backgroundColor: theme.background }]}>
+    <AppScreen style={{ backgroundColor: theme.background }}>
       <StatusBar barStyle="light-content" />
 
       <View style={[styles.header, { borderBottomColor: theme.border, backgroundColor: theme.background }]}>
-        <Pressable style={styles.backButton} onPress={() => router.back()}>
-          <MaterialCommunityIcons name="chevron-left" size={28} color={theme.titleColor} />
-          <Text style={[styles.backLabel, { color: theme.titleColor }]}>Terug</Text>
-        </Pressable>
       </View>
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView style={styles.content} showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
         <View style={[styles.card, { backgroundColor: theme.card, borderColor: theme.border }]}>
           <ImageBackground source={{ uri: heroImageUrl }} style={styles.heroImage} imageStyle={styles.heroImageInner}>
             <View style={styles.heroOverlay}>
@@ -267,12 +265,12 @@ export default function ExerciseDetailScreen() {
         </View>
         <View style={styles.bottomSpacer} />
       </ScrollView>
-    </View>
+      <SharedBottomNav activeTab="disciplines" />
+    </AppScreen>
   );
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1 },
   header: {
     paddingTop: 56,
     paddingHorizontal: 16,
@@ -287,6 +285,9 @@ const styles = StyleSheet.create({
   backLabel: {
     fontSize: 16,
     fontWeight: '600',
+  },
+  scrollContent: {
+    paddingBottom: 100,
   },
   content: {
     paddingHorizontal: 16,
