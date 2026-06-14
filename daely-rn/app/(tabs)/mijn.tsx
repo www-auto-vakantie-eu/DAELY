@@ -8,6 +8,7 @@ import { AppScreen } from '@/components/AppScreen';
 import AppHeader from '../components/AppHeader';
 import { getPerformanceSummary, type PerformanceSummary } from '@/services/performance-summary';
 import { getUnreadMessageCount } from '@/services/messages-storage';
+import { useAppContext } from '@/contexts/AppContext';
 
 type MyDomainCard = {
   id: string;
@@ -139,13 +140,33 @@ const MY_DOMAIN_CARDS: MyDomainCard[] = [
     image: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1200&q=80',
     route: '/(tabs)/community-sharing-settings',
   },
+  {
+    id: 'creator-studio',
+    title: 'Creator Studio',
+    description: 'Binnenkort: Challenges, code, groei en samenwerkingen.',
+    category: 'CREATOR',
+    accent: '#8B5CF6',
+    image: 'https://images.unsplash.com/photo-1556742393-d75f468bfcb0?auto=format&fit=crop&w=1200&q=80',
+    route: '/(tabs)/creator-studio',
+    disabled: true,
+  },
 ];
 
 export default function MijnScreen() {
   const theme = useTheme();
   const router = useRouter();
+  const { accountType } = useAppContext();
   const [performanceSummary, setPerformanceSummary] = useState<PerformanceSummary | null>(null);
   const [unreadMessageCount, setUnreadMessageCount] = useState(0);
+
+  // Filter cards based on account type
+  const filteredCards = MY_DOMAIN_CARDS.filter(card => {
+    // Creator Studio card only for influencer accounts
+    if (card.id === 'creator-studio') {
+      return accountType === 'influencer';
+    }
+    return true;
+  });
 
   useEffect(() => {
     getPerformanceSummary().then(setPerformanceSummary);
@@ -214,7 +235,7 @@ export default function MijnScreen() {
               </LinearGradient>
             </Pressable>
           )}
-          {MY_DOMAIN_CARDS.map((card) => (
+          {filteredCards.map((card) => (
             <Pressable
               key={card.id}
               style={({ pressed }) => [
