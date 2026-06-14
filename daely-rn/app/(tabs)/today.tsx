@@ -580,7 +580,7 @@ const styles = StyleSheet.create({
   },
   heroCard: {
     height: 210,
-    borderRadius: 16,
+    borderRadius: 20,
     overflow: 'hidden',
     backgroundColor: '#0F172A',
     position: 'relative',
@@ -859,8 +859,8 @@ const styles = StyleSheet.create({
   },
   sectionCard: {
     borderWidth: 1,
-    borderRadius: 14,
-    padding: 14,
+    borderRadius: 16,
+    padding: 16,
     marginBottom: 12,
   },
   sectionTitle: {

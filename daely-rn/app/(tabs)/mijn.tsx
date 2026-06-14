@@ -284,11 +284,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    paddingHorizontal: 16,
+    paddingHorizontal: 0,
     paddingTop: 0,
   },
   cardsWrap: {
-    padding: 16,
+    paddingHorizontal: 16,
+    paddingTop: 8,
   },
   verticalCard: {
     borderRadius: 20,
