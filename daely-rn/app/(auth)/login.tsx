@@ -237,7 +237,6 @@ export default function LoginScreen() {
               style={styles.logo}
               resizeMode="contain"
             />
-            <Text style={styles.logoName}>DAELY.</Text>
             <Text style={styles.logoSubtitle}>Strenght Health Performance</Text>
           </View>
 
