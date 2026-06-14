@@ -1,13 +1,15 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 
 import { useTheme } from '@/hooks/use-theme';
-import PageHeader from './components/PageHeader';
+import AppHeader from './components/AppHeader';
 import { Activity, getActivities } from 'services/activity-storage';
 import { getPerformanceSummary, PerformanceSummary } from 'services/performance-summary';
 import { AppScreen } from '@/components/AppScreen';
 import SharedBottomNav from '@/components/SharedBottomNav';
+import { getUnreadMessageCount } from '@/services/messages-storage';
 
 function formatDuration(seconds: number): string {
   const safeSeconds = Number.isFinite(seconds) ? Math.max(0, seconds) : 0;
@@ -86,6 +88,7 @@ export default function MyProgressScreen() {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [loading, setLoading] = useState(true);
   const [performanceSummary, setPerformanceSummary] = useState<PerformanceSummary | null>(null);
+  const [unreadMessageCount, setUnreadMessageCount] = useState(0);
 
   useEffect(() => {
     const load = async () => {
@@ -94,6 +97,8 @@ export default function MyProgressScreen() {
       setActivities(sorted);
       const summary = await getPerformanceSummary();
       setPerformanceSummary(summary);
+      const unread = await getUnreadMessageCount();
+      setUnreadMessageCount(unread);
       setLoading(false);
     };
 
@@ -135,20 +140,27 @@ export default function MyProgressScreen() {
   return (
     <AppScreen style={{ backgroundColor: theme.background }}>
       <ScrollView contentContainerStyle={styles.content}>
-        <PageHeader
+        <AppHeader
           title="Progressie"
+          subtitle="Jouw sportdashboard"
+          showMessages
+          unreadMessagesCount={unreadMessageCount}
+          onMessagesPress={() => router.push('/messages')}
           onSettingsPress={() => router.push('/(tabs)/athlete')}
-          onSearchPress={() => router.push('/nutrition/search')}
-          onCartPress={() => router.push('/(tabs)/cart')}
         />
 
-      <View style={[styles.heroCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-        <Text style={[styles.heroTitle, { color: theme.titleColor }]}>Jouw voortgang</Text>
-        <Text style={[styles.heroText, { color: theme.subtitleColor }]}>Bekijk hoe consistent je sport en welke stappen je zet.</Text>
+      <View style={styles.heroCard}>
+        <View style={styles.heroContent}>
+          <View style={styles.heroIconBadge}>
+            <MaterialCommunityIcons name="chart-line" size={24} color="#2563EB" />
+          </View>
+          <Text style={styles.heroTitle}>Jouw voortgang</Text>
+          <Text style={styles.heroText}>Bouw consistentie op met trainingen, PR&apos;s en activiteit.</Text>
+        </View>
       </View>
 
-      <View style={[styles.sectionCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-        <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Progressie-overzicht</Text>
+      <View style={styles.sectionCard}>
+        <Text style={styles.sectionTitle}>Progressie-overzicht</Text>
         {loading ? (
           <ActivityIndicator size="small" color="#2563EB" />
         ) : (
@@ -174,8 +186,8 @@ export default function MyProgressScreen() {
         )}
       </View>
 
-      <View style={[styles.sectionCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-        <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Consistentie</Text>
+      <View style={styles.sectionCard}>
+        <Text style={styles.sectionTitle}>Consistentie</Text>
         {loading ? (
           <ActivityIndicator size="small" color="#2563EB" />
         ) : (
@@ -188,13 +200,27 @@ export default function MyProgressScreen() {
               <Text style={styles.consistencyLabel}>Activiteiten vandaag</Text>
               <Text style={styles.consistencyValue}>{activitiesToday}</Text>
             </View>
-            <Text style={[styles.consistencyHint, { color: theme.subtitleColor }]}>Blijf bouwen aan je routine.</Text>
+            <View style={styles.weekDots}>
+              <View style={[styles.weekDot, activitiesThisWeek > 0 && styles.weekDotActive]} />
+              <View style={[styles.weekDot, activitiesThisWeek > 1 && styles.weekDotActive]} />
+              <View style={[styles.weekDot, activitiesThisWeek > 2 && styles.weekDotActive]} />
+              <View style={[styles.weekDot, activitiesThisWeek > 3 && styles.weekDotActive]} />
+              <View style={[styles.weekDot, activitiesThisWeek > 4 && styles.weekDotActive]} />
+              <View style={[styles.weekDot, activitiesThisWeek > 5 && styles.weekDotActive]} />
+              <View style={[styles.weekDot, activitiesThisWeek > 6 && styles.weekDotActive]} />
+            </View>
+            <Text style={styles.consistencyHint}>Blijf bouwen aan je routine.</Text>
           </View>
         )}
       </View>
 
-      <View style={[styles.sectionCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-        <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>PR Overzicht</Text>
+      <View style={styles.sectionCard}>
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>PR Overzicht</Text>
+          <View style={styles.sectionIconBadge}>
+            <MaterialCommunityIcons name="trophy" size={20} color="#F59E0B" />
+          </View>
+        </View>
         {loading ? (
           <ActivityIndicator size="small" color="#2563EB" />
         ) : (
@@ -223,8 +249,8 @@ export default function MyProgressScreen() {
       </View>
 
       {performanceSummary?.recentPersonalRecords && performanceSummary.recentPersonalRecords.length > 0 ? (
-        <View style={[styles.sectionCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Recente PR&apos;s</Text>
+        <View style={styles.sectionCard}>
+          <Text style={styles.sectionTitle}>Recente PR&apos;s</Text>
           <View style={styles.recentList}>
             {performanceSummary.recentPersonalRecords.slice(0, 10).map((pr) => (
               <View key={`${pr.exerciseName}-${pr.achievedAt}`} style={styles.recentCard}>
@@ -241,14 +267,20 @@ export default function MyProgressScreen() {
         </View>
       ) : null}
 
-      <View style={[styles.sectionCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-        <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Discipline-overzicht</Text>
+      <View style={styles.sectionCard}>
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Discipline-overzicht</Text>
+          <View style={styles.sectionIconBadge}>
+            <MaterialCommunityIcons name="chart-bar" size={20} color="#2563EB" />
+          </View>
+        </View>
         {loading ? (
           <ActivityIndicator size="small" color="#2563EB" />
         ) : hasNoProgress ? (
-          <View>
-            <Text style={[styles.emptyTitle, { color: theme.titleColor }]}>Nog geen progressie opgebouwd.</Text>
-            <Text style={[styles.emptyText, { color: theme.subtitleColor }]}>Start je eerste activiteit om je voortgang te zien.</Text>
+          <View style={styles.emptyState}>
+            <MaterialCommunityIcons name="chart-line" size={40} color="#DBEAFE" style={styles.emptyIcon} />
+            <Text style={styles.emptyTitle}>Nog geen progressie opgebouwd.</Text>
+            <Text style={styles.emptyText}>Start je eerste activiteit om je voortgang per discipline te zien.</Text>
           </View>
         ) : (
           <View style={styles.disciplineList}>
@@ -262,14 +294,15 @@ export default function MyProgressScreen() {
         )}
       </View>
 
-      <View style={[styles.sectionCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-        <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Recente voortgang</Text>
+      <View style={styles.sectionCard}>
+        <Text style={styles.sectionTitle}>Recente voortgang</Text>
         {loading ? (
           <ActivityIndicator size="small" color="#2563EB" />
         ) : hasNoProgress ? (
-          <View>
-            <Text style={[styles.emptyTitle, { color: theme.titleColor }]}>Nog geen progressie opgebouwd.</Text>
-            <Text style={[styles.emptyText, { color: theme.subtitleColor }]}>Start je eerste activiteit om je voortgang te zien.</Text>
+          <View style={styles.emptyState}>
+            <MaterialCommunityIcons name="history" size={40} color="#DBEAFE" style={styles.emptyIcon} />
+            <Text style={styles.emptyTitle}>Nog geen progressie opgebouwd.</Text>
+            <Text style={styles.emptyText}>Start je eerste activiteit om je voortgang te zien.</Text>
           </View>
         ) : (
           <View style={styles.recentList}>
@@ -299,9 +332,9 @@ export default function MyProgressScreen() {
           <Text style={styles.secondaryCtaBtnText}>Bekijk data</Text>
         </Pressable>
       </View>
-      <SharedBottomNav activeTab="mijn" />
       <View style={styles.bottomSpacer} />
     </ScrollView>
+    <SharedBottomNav activeTab="mijn" />
     </AppScreen>
   );
 }
@@ -312,76 +345,110 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingHorizontal: 16,
-    paddingTop: 16,
+    paddingTop: 0,
     paddingBottom: 100,
   },
   heroCard: {
+    backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderRadius: 14,
-    paddingHorizontal: 14,
-    paddingVertical: 14,
-    marginBottom: 12,
+    borderColor: '#DBEAFE',
+    borderRadius: 28,
+    paddingHorizontal: 24,
+    paddingVertical: 24,
+    marginTop: 12,
+    marginBottom: 20,
+  },
+  heroContent: {
+    gap: 12,
+  },
+  heroIconBadge: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: 'rgba(37, 99, 235, 0.1)',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   heroTitle: {
-    fontSize: 22,
+    fontSize: 26,
     fontWeight: '800',
-    marginBottom: 4,
+    color: '#0F172A',
+    lineHeight: 32,
   },
   heroText: {
-    fontSize: 14,
-    lineHeight: 20,
+    fontSize: 15,
+    lineHeight: 22,
+    color: '#64748B',
   },
   sectionCard: {
+    backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderRadius: 14,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    marginBottom: 12,
+    borderColor: '#E2E8F0',
+    borderRadius: 24,
+    paddingHorizontal: 20,
+    paddingVertical: 20,
+    marginBottom: 16,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 16,
+  },
+  sectionIconBadge: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#F8FAFC',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   sectionTitle: {
-    fontSize: 17,
+    fontSize: 18,
     fontWeight: '800',
-    marginBottom: 8,
+    color: '#0F172A',
+    lineHeight: 24,
   },
   statsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8,
+    gap: 12,
   },
   statCard: {
     width: '48%',
-    borderRadius: 10,
+    borderRadius: 16,
     backgroundColor: '#F8FAFC',
-    paddingHorizontal: 10,
-    paddingVertical: 10,
+    paddingHorizontal: 16,
+    paddingVertical: 16,
   },
   statCardFull: {
     width: '100%',
   },
   statLabel: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '600',
     color: '#64748B',
   },
   statValue: {
-    marginTop: 3,
-    fontSize: 19,
+    marginTop: 6,
+    fontSize: 28,
     fontWeight: '800',
-    color: '#0F172A',
+    color: '#2563EB',
+    lineHeight: 32,
   },
   statValueSmall: {
-    marginTop: 4,
-    fontSize: 14,
+    marginTop: 6,
+    fontSize: 16,
     fontWeight: '700',
-    color: '#0F172A',
+    color: '#2563EB',
   },
   statMeta: {
     marginTop: 2,
-    fontSize: 11,
+    fontSize: 12,
     color: '#64748B',
   },
   consistencyWrap: {
-    gap: 6,
+    gap: 12,
   },
   consistencyRow: {
     flexDirection: 'row',
@@ -389,102 +456,128 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   consistencyLabel: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '600',
     color: '#334155',
   },
   consistencyValue: {
-    fontSize: 18,
+    fontSize: 24,
     fontWeight: '800',
     color: '#2563EB',
+  },
+  weekDots: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 8,
+  },
+  weekDot: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: '#E2E8F0',
+  },
+  weekDotActive: {
+    backgroundColor: '#2563EB',
   },
   consistencyHint: {
     marginTop: 4,
     fontSize: 13,
-    fontWeight: '600',
+    fontWeight: '500',
+    color: '#64748B',
   },
   disciplineList: {
-    gap: 8,
+    gap: 10,
   },
   disciplineRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    borderRadius: 10,
+    borderRadius: 12,
     backgroundColor: '#F8FAFC',
-    paddingHorizontal: 10,
-    paddingVertical: 9,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
   },
   disciplineName: {
     color: '#0F172A',
-    fontSize: 14,
-    fontWeight: '700',
+    fontSize: 15,
+    fontWeight: '600',
   },
   disciplineCount: {
     color: '#2563EB',
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '800',
   },
   recentList: {
-    gap: 8,
+    gap: 10,
   },
   recentCard: {
-    borderRadius: 10,
+    borderRadius: 12,
     backgroundColor: '#F8FAFC',
-    paddingHorizontal: 10,
-    paddingVertical: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
   },
   recentTitle: {
     color: '#0F172A',
-    fontSize: 14,
-    fontWeight: '800',
+    fontSize: 15,
+    fontWeight: '700',
     marginBottom: 2,
   },
   recentMeta: {
     color: '#475569',
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '600',
   },
   recentSummary: {
-    marginTop: 3,
+    marginTop: 4,
     color: '#1E293B',
-    fontSize: 12,
+    fontSize: 13,
+  },
+  emptyState: {
+    alignItems: 'center',
+    paddingVertical: 24,
+    gap: 12,
+  },
+  emptyIcon: {
+    marginBottom: 4,
   },
   emptyTitle: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '800',
-    marginBottom: 2,
+    color: '#0F172A',
+    textAlign: 'center',
   },
   emptyText: {
-    fontSize: 13,
-    lineHeight: 19,
+    fontSize: 14,
+    lineHeight: 20,
+    color: '#64748B',
+    textAlign: 'center',
   },
   ctaRow: {
-    marginTop: 2,
-    gap: 8,
+    marginTop: 4,
+    gap: 12,
   },
   primaryCtaBtn: {
-    minHeight: 44,
-    borderRadius: 10,
+    minHeight: 48,
+    borderRadius: 16,
     backgroundColor: '#2563EB',
     alignItems: 'center',
     justifyContent: 'center',
   },
   primaryCtaBtnText: {
     color: '#FFFFFF',
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '800',
   },
   secondaryCtaBtn: {
-    minHeight: 42,
-    borderRadius: 10,
-    backgroundColor: '#E2E8F0',
+    minHeight: 48,
+    borderRadius: 16,
+    backgroundColor: '#F1F5F9',
     alignItems: 'center',
     justifyContent: 'center',
   },
   secondaryCtaBtnText: {
-    color: '#1E293B',
-    fontSize: 13,
+    color: '#0F172A',
+    fontSize: 15,
     fontWeight: '700',
   },
   bottomSpacer: {
