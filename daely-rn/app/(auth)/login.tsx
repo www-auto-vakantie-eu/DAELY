@@ -188,6 +188,33 @@ export default function LoginScreen() {
     router.replace('/(tabs)/today');
   };
 
+  const handleDevTestLoginCreator = async () => {
+    await updateUser({
+      gender: 'man',
+      name: 'Test Creator',
+      username: 'daely_creator',
+      role: 'DAELY Creator',
+      sportFocus: 'Fitness, padel & lifestyle',
+      bio: 'DAELY creator en sportieve ambassador die challenges, trainingen en motivatie deelt.',
+      creatorCode: 'DAELY-CREATOR-TEST',
+      referralCode: 'DAELY-CREATOR-TEST',
+      followers: 12840,
+      activeCreatorSubscribers: 342,
+      estimatedMonthlyEarnings: 338.58,
+      createdChallenges: 6,
+      sharedWorkouts: 18,
+      communityEngagement: 'Hoog',
+      creatorBadge: 'DAELY Creator',
+      creatorType: 'influencer-athlete',
+    });
+    await updateAppSettings({
+      photoPreference: 'man',
+    });
+    setAccountType('influencer');
+    setIsLoggedIn(true);
+    router.replace('/(tabs)/today');
+  };
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -307,6 +334,9 @@ export default function LoginScreen() {
                   </Pressable>
                   <Pressable style={styles.devTestLoginButton} onPress={handleDevTestLoginVrouw}>
                     <Text style={styles.devTestLoginButtonText}>Test Login Vrouw</Text>
+                  </Pressable>
+                  <Pressable style={styles.devTestLoginButton} onPress={handleDevTestLoginCreator}>
+                    <Text style={styles.devTestLoginButtonText}>Test Creator</Text>
                   </Pressable>
                 </>
               ) : null}
