@@ -347,25 +347,27 @@ export default function CommunityScreen() {
         />
 
         {/* Tabs */}
-        <View style={styles.tabRow}>
-          {(['feed', 'creators', 'partners', 'events'] as Tab[]).map((tab) => {
-            const isActive = activeTab === tab;
-            return (
-              <Pressable
-                key={tab}
-                style={[
-                  styles.tabButton,
-                  { backgroundColor: theme.card, borderColor: theme.border },
-                  isActive && { backgroundColor: theme.tabBarActive, borderColor: theme.tabBarActive },
-                ]}
-                onPress={() => setActiveTab(tab)}
-              >
-                <Text style={[styles.tabLabel, { color: isActive ? '#FFFFFF' : theme.titleColor }]}>
-                  {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                </Text>
-              </Pressable>
-            );
-          })}
+        <View style={styles.quickActionsBlock}>
+          <View style={styles.tabRow}>
+            {(['feed', 'creators', 'partners', 'events'] as Tab[]).map((tab) => {
+              const isActive = activeTab === tab;
+              return (
+                <Pressable
+                  key={tab}
+                  style={({ pressed }) => [
+                    styles.tabButton,
+                    { borderColor: isActive ? '#2563EB' : '#DBEAFE', backgroundColor: isActive ? '#2563EB' : '#FFFFFF' },
+                    pressed && { opacity: 0.85, transform: [{ scale: 0.98 }] },
+                  ]}
+                  onPress={() => setActiveTab(tab)}
+                >
+                  <Text style={[styles.tabLabel, { color: isActive ? '#FFFFFF' : '#1D4ED8' }]}>
+                    {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
         </View>
 
         {/* Feed Tab - X/Twitter-achtige berichtenfeed */}
@@ -498,14 +500,14 @@ export default function CommunityScreen() {
                 return (
                   <Pressable
                     key={filter}
-                    style={[
+                    style={({ pressed }) => [
                       styles.filterChip,
-                      { borderColor: theme.border, backgroundColor: theme.card },
-                      isActive && { backgroundColor: theme.tabBarActive, borderColor: theme.tabBarActive },
+                      { borderColor: isActive ? '#2563EB' : '#DBEAFE', backgroundColor: isActive ? '#2563EB' : '#FFFFFF' },
+                      pressed && { opacity: 0.8 },
                     ]}
                     onPress={() => setCreatorFilter(filter)}
                   >
-                    <Text style={[styles.filterChipText, { color: isActive ? '#FFFFFF' : theme.subtitleColor }]}>
+                    <Text style={[styles.filterChipText, { color: isActive ? '#FFFFFF' : '#1D4ED8' }]}>
                       {filter}
                     </Text>
                   </Pressable>
@@ -567,14 +569,14 @@ export default function CommunityScreen() {
                 return (
                   <Pressable
                     key={filter}
-                    style={[
+                    style={({ pressed }) => [
                       styles.filterChip,
-                      { borderColor: theme.border, backgroundColor: theme.card },
-                      isActive && { backgroundColor: theme.tabBarActive, borderColor: theme.tabBarActive },
+                      { borderColor: isActive ? '#2563EB' : '#DBEAFE', backgroundColor: isActive ? '#2563EB' : '#FFFFFF' },
+                      pressed && { opacity: 0.8 },
                     ]}
                     onPress={() => setPartnerFilter(filter)}
                   >
-                    <Text style={[styles.filterChipText, { color: isActive ? '#FFFFFF' : theme.subtitleColor }]}>
+                    <Text style={[styles.filterChipText, { color: isActive ? '#FFFFFF' : '#1D4ED8' }]}>
                       {filter}
                     </Text>
                   </Pressable>
@@ -766,25 +768,28 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#FFFFFF',
   },
+  quickActionsBlock: {
+    marginBottom: 8,
+    gap: 4,
+  },
   tabRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 8,
-    paddingHorizontal: 16,
-    paddingTop: 8,
-    marginBottom: 8,
+    marginBottom: 10,
   },
   tabButton: {
     width: '48.5%',
-    paddingVertical: 12,
+    paddingVertical: 10,
     paddingHorizontal: 12,
-    borderRadius: 14,
-    borderWidth: 1,
+    borderRadius: 16,
+    borderWidth: 1.5,
     alignItems: 'center',
+    minHeight: 64,
   },
   tabLabel: {
     fontSize: 14,
-    fontWeight: '700',
+    fontWeight: '800',
   },
   tabContent: {
     marginTop: 12,
@@ -874,14 +879,15 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   filterChip: {
-    paddingHorizontal: 14,
-    paddingVertical: 6,
-    borderRadius: 20,
-    borderWidth: 1,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 16,
+    borderWidth: 1.5,
+    minHeight: 44,
   },
   filterChipText: {
     fontSize: 13,
-    fontWeight: '600',
+    fontWeight: '700',
   },
   // Compact creators - Events card formaat
   creatorsSection: {

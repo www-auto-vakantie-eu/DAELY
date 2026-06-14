@@ -7,12 +7,13 @@ import { useRouter, useFocusEffect } from 'expo-router';
 import { useState, useEffect } from 'react';
 import React from 'react';
 import { getUnreadMessageCount } from '@/services/messages-storage';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const MIND_ACTIONS = [
-  { key: 'start', title: 'Sessie starten', subtitle: 'Kies een meditatie', route: '/(tabs)/mind' as any },
-  { key: 'routine', title: 'Routine maken', subtitle: 'Bouw je schema', route: '/(tabs)/mijn' as any },
-  { key: 'search', title: 'Mind zoeken', subtitle: 'Vind oefeningen', route: '/(tabs)/mind' as any },
-  { key: 'sessions', title: 'Mijn sessies', subtitle: 'Geschiedenis', route: '/(tabs)/mijn' as any },
+  { key: 'start', title: 'Sessie', subtitle: 'Meditatie', icon: 'play-circle-outline' as const, route: '/(tabs)/mind' as any },
+  { key: 'routine', title: 'Routine', subtitle: 'Schema maken', icon: 'calendar-clock' as const, route: '/(tabs)/mijn' as any },
+  { key: 'search', title: 'Zoeken', subtitle: 'Vind sessies', icon: 'text-search' as const, route: '/(tabs)/mind' as any },
+  { key: 'sessions', title: 'Sessies', subtitle: 'Historie', icon: 'history' as const, route: '/(tabs)/mijn' as any },
 ];
 
 export default function MindScreen() {
@@ -47,19 +48,26 @@ export default function MindScreen() {
           {MIND_ACTIONS.map((action) => (
             <Pressable
               key={action.key}
-              style={[styles.quickActionButton, { backgroundColor: theme.card, borderColor: theme.border }]}
+              style={({ pressed }) => [
+                styles.quickActionButton,
+                pressed && { opacity: 0.85, transform: [{ scale: 0.98 }] },
+              ]}
               onPress={() => router.push(action.route)}
             >
+              <View style={styles.quickActionIconBubble}>
+                <MaterialCommunityIcons name={action.icon} size={20} color="#FFFFFF" />
+              </View>
               <View style={styles.quickActionTextWrap}>
-                <Text style={[styles.quickActionText, { color: theme.titleColor }]}>{action.title}</Text>
-                <Text style={[styles.quickActionSubText, { color: theme.subtitleColor }]}>{action.subtitle}</Text>
+                <Text style={styles.quickActionText}>{action.title}</Text>
+                <Text style={styles.quickActionSubText}>{action.subtitle}</Text>
               </View>
             </Pressable>
           ))}
         </View>
       </View>
 
-      <View style={styles.content}>
+      {/* Categories */}
+      <View style={styles.quickActionsBlock}>
         <Pressable
           style={styles.card}
           onPress={() => router.push('/mind/category/breathing')}
@@ -76,7 +84,7 @@ export default function MindScreen() {
               style={styles.cardOverlay}
             >
               <Text style={styles.cardTitle}>Ademhaling</Text>
-              <Text style={styles.cardDescription}>Ademhalingsoefeningen voor focus en ontspanning</Text>
+              <Text style={styles.cardDescription}>Focus en ontspanning</Text>
             </LinearGradient>
           </ImageBackground>
         </Pressable>
@@ -97,7 +105,7 @@ export default function MindScreen() {
               style={styles.cardOverlay}
             >
               <Text style={styles.cardTitle}>Focus</Text>
-              <Text style={styles.cardDescription}>Focusoefeningen voor mentale scherpte</Text>
+              <Text style={styles.cardDescription}>Mentale scherpte</Text>
             </LinearGradient>
           </ImageBackground>
         </Pressable>
@@ -118,7 +126,7 @@ export default function MindScreen() {
               style={styles.cardOverlay}
             >
               <Text style={styles.cardTitle}>Tapping</Text>
-              <Text style={styles.cardDescription}>Tapping-sessies voor stressreductie en emotionele balans</Text>
+              <Text style={styles.cardDescription}>Stressreductie en balans</Text>
             </LinearGradient>
           </ImageBackground>
         </Pressable>
@@ -139,7 +147,7 @@ export default function MindScreen() {
               style={styles.cardOverlay}
             >
               <Text style={styles.cardTitle}>Herstel</Text>
-              <Text style={styles.cardDescription}>Herstelroutines voor beter slapen en regeneratie</Text>
+              <Text style={styles.cardDescription}>Slapen en regeneratie</Text>
             </LinearGradient>
           </ImageBackground>
         </Pressable>
@@ -160,7 +168,7 @@ export default function MindScreen() {
               style={styles.cardOverlay}
             >
               <Text style={styles.cardTitle}>Mindset</Text>
-              <Text style={styles.cardDescription}>Focus, discipline, zelfvertrouwen en rust</Text>
+              <Text style={styles.cardDescription}>Focus, discipline en rust</Text>
             </LinearGradient>
           </ImageBackground>
         </Pressable>
@@ -181,7 +189,7 @@ export default function MindScreen() {
               style={styles.cardOverlay}
             >
               <Text style={styles.cardTitle}>Bekende meditaties</Text>
-              <Text style={styles.cardDescription}>Ademfocus, visualisatie, dankbaarheid en meer</Text>
+              <Text style={styles.cardDescription}>Ademfocus, visualisatie en meer</Text>
             </LinearGradient>
           </ImageBackground>
         </Pressable>
@@ -206,15 +214,6 @@ export default function MindScreen() {
             </LinearGradient>
           </ImageBackground>
         </Pressable>
-
-        <View style={styles.buttonRow}>
-          <Pressable
-            style={[styles.secondaryButton, { backgroundColor: theme.background, borderColor: theme.border }]}
-            onPress={() => router.push('/feedback')}
-          >
-            <Text style={[styles.secondaryButtonText, { color: theme.titleColor }]}>Feedback geven</Text>
-          </Pressable>
-        </View>
       </View>
 
       <View style={styles.bottomSpacer} />
@@ -292,33 +291,48 @@ const styles = StyleSheet.create({
     height: 80,
   },
   quickActionsBlock: {
-    paddingHorizontal: 16,
-    paddingTop: 8,
     marginBottom: 8,
+    gap: 4,
   },
   quickActionsRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 8,
-    marginBottom: 8,
+    marginBottom: 10,
   },
   quickActionButton: {
     width: '48.5%',
-    borderRadius: 14,
-    paddingVertical: 12,
+    borderRadius: 16,
+    paddingVertical: 10,
     paddingHorizontal: 12,
-    borderWidth: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    minHeight: 64,
+    backgroundColor: '#2563EB',
+  },
+  quickActionIconBubble: {
+    width: 36,
+    height: 36,
+    borderRadius: 14,
+    backgroundColor: 'rgba(255,255,255,0.18)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
   },
   quickActionTextWrap: {
     flex: 1,
+    gap: 2,
+    minWidth: 0,
   },
   quickActionText: {
     fontSize: 14,
-    fontWeight: '700',
-    marginBottom: 2,
+    fontWeight: '800',
+    color: '#FFFFFF',
   },
   quickActionSubText: {
     fontSize: 11,
     fontWeight: '500',
+    color: 'rgba(255,255,255,0.85)',
   },
 });

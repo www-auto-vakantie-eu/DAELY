@@ -16,15 +16,13 @@ const LIBRARY_ACTIONS = [
     title: 'Oefening zoeken',
     subtitle: 'Zoek in alle oefeningen',
     icon: 'text-search' as const,
-    style: 'quickActionDarkRed' as const,
     route: '/exercises/search' as const,
   },
   {
     key: 'workout',
     title: 'Workout maken',
     subtitle: 'Maak je eigen workout',
-    icon: 'plus-circle-outline' as const,
-    style: 'quickActionDarkRed' as const,
+    icon: 'dumbbell' as const,
     route: '/workout/create' as const,
   },
   {
@@ -32,7 +30,6 @@ const LIBRARY_ACTIONS = [
     title: 'Doel trainen',
     subtitle: 'Train op je doel',
     icon: 'target' as const,
-    style: 'quickActionDarkRed' as const,
     route: '/goals' as const,
   },
   {
@@ -40,7 +37,6 @@ const LIBRARY_ACTIONS = [
     title: 'Aanbevolen',
     subtitle: 'Persoonlijke suggesties',
     icon: 'star' as const,
-    style: 'quickActionDarkRed' as const,
     route: '/recommended' as const,
   },
 ];
@@ -431,11 +427,14 @@ export default function DisciplinesScreen() {
               {LIBRARY_ACTIONS.map((action) => (
                 <Pressable
                   key={action.key}
-                  style={[styles.quickActionButton, styles[action.style]]}
+                  style={({ pressed }) => [
+                    styles.quickActionButton,
+                    pressed && { opacity: 0.85, transform: [{ scale: 0.98 }] },
+                  ]}
                   onPress={() => router.push(action.route as any)}
                 >
                   <View style={styles.quickActionIconBubble}>
-                    <MaterialCommunityIcons name={action.icon} size={18} color="#FFFFFF" />
+                    <MaterialCommunityIcons name={action.icon} size={20} color="#FFFFFF" />
                   </View>
                   <View style={styles.quickActionTextWrap}>
                     <Text style={styles.quickActionText}>{action.title}</Text>
@@ -489,34 +488,38 @@ const styles = StyleSheet.create({
   },
   quickActionButton: {
     width: '48.5%',
-    borderRadius: 14,
-    paddingVertical: 12,
+    borderRadius: 16,
+    paddingVertical: 10,
     paddingHorizontal: 12,
     flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: 8,
+    alignItems: 'center',
+    gap: 10,
+    minHeight: 64,
+    backgroundColor: '#2563EB',
   },
   quickActionIconBubble: {
-    width: 28,
-    height: 28,
-    borderRadius: 999,
-    backgroundColor: 'rgba(255,255,255,0.2)',
+    width: 36,
+    height: 36,
+    borderRadius: 14,
+    backgroundColor: 'rgba(255,255,255,0.18)',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 1,
+    flexShrink: 0,
   },
   quickActionTextWrap: {
     flex: 1,
     gap: 2,
+    minWidth: 0,
   },
   quickActionText: {
-    fontSize: 13,
-    fontWeight: '700',
+    fontSize: 14,
+    fontWeight: '800',
     color: '#FFFFFF',
   },
   quickActionSubText: {
     fontSize: 11,
-    color: 'rgba(255,255,255,0.8)',
+    fontWeight: '500',
+    color: 'rgba(255,255,255,0.85)',
   },
   quickActionPrimary: {
     backgroundColor: '#2563EB',

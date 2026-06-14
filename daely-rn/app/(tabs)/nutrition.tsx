@@ -26,34 +26,30 @@ type FilterChip = { key: FilterKey; value: string };
 const NUTRITION_ACTIONS = [
   {
     key: 'scan',
-    title: 'Barcode scannen',
-    subtitle: 'Snel product herkennen',
+    title: 'Barcode',
+    subtitle: 'Scan product',
     icon: 'barcode-scan' as const,
-    style: 'quickActionTertiary' as const,
     route: '/nutrition/scan' as const,
   },
   {
     key: 'search',
-    title: 'Handmatig zoeken',
-    subtitle: 'Zoek in meerdere bronnen',
+    title: 'Zoeken',
+    subtitle: 'Zoek product',
     icon: 'text-search' as const,
-    style: 'quickActionSearch' as const,
     route: '/nutrition/search' as const,
   },
   {
     key: 'add',
-    title: 'Zelf toevoegen',
-    subtitle: 'Maak een nieuw item',
+    title: 'Toevoegen',
+    subtitle: 'Nieuw item',
     icon: 'plus-circle-outline' as const,
-    style: 'quickActionPrimary' as const,
     route: '/nutrition/add' as const,
   },
   {
     key: 'logbook',
-    title: 'Mijn Voeding',
-    subtitle: 'Bekijk vandaag en totalen',
+    title: 'Mijn voeding',
+    subtitle: 'Bekijk totaal',
     icon: 'notebook-outline' as const,
-    style: 'quickActionSecondary' as const,
     route: '/my-nutrition' as const,
   },
 ];
@@ -121,9 +117,16 @@ export default function NutritionScreen() {
       <View style={styles.quickActionsBlock}>
         <View style={styles.quickActionsRow}>
           {NUTRITION_ACTIONS.map((action) => (
-            <Pressable key={action.key} style={[styles.quickActionButton, styles[action.style]]} onPress={() => router.push(action.route)}>
+            <Pressable
+              key={action.key}
+              style={({ pressed }) => [
+                styles.quickActionButton,
+                pressed && { opacity: 0.85, transform: [{ scale: 0.98 }] },
+              ]}
+              onPress={() => router.push(action.route)}
+            >
               <View style={styles.quickActionIconBubble}>
-                <MaterialCommunityIcons name={action.icon} size={18} color="#FFFFFF" />
+                <MaterialCommunityIcons name={action.icon} size={20} color="#FFFFFF" />
               </View>
               <View style={styles.quickActionTextWrap}>
                 <Text style={styles.quickActionText}>{action.title}</Text>
@@ -143,13 +146,17 @@ export default function NutritionScreen() {
           return (
             <Pressable
               key={category.key}
-              style={[styles.filterTab, { borderColor: theme.border, backgroundColor: theme.card }, isActive && { borderColor: theme.tabBarActive, backgroundColor: theme.tabBarActive + '1A' }]}
+              style={({ pressed }) => [
+                styles.filterTab,
+                { borderColor: isActive ? '#2563EB' : '#DBEAFE', backgroundColor: isActive ? '#2563EB' : '#FFFFFF' },
+                pressed && { opacity: 0.8 },
+              ]}
               onPress={() => setActiveFilterCategory(prev => (prev === category.key ? null : category.key))}
             >
-              <Text style={[styles.filterTabText, { color: isActive ? theme.tabBarActive : theme.subtitleColor }]}>{category.label}</Text>
+              <Text style={[styles.filterTabText, { color: isActive ? '#FFFFFF' : '#1D4ED8' }]}>{category.label}</Text>
               {count > 0 && (
-                <View style={[styles.filterTabBadge, { backgroundColor: theme.tabBarActive }]}>
-                  <Text style={styles.filterTabBadgeText}>{count}</Text>
+                <View style={[styles.filterTabBadge, { backgroundColor: '#FFFFFF' }]}>
+                  <Text style={[styles.filterTabBadgeText, { color: '#2563EB' }]}>{count}</Text>
                 </View>
               )}
             </Pressable>
@@ -174,10 +181,14 @@ export default function NutritionScreen() {
               return (
                 <Pressable
                   key={option}
-                  style={[styles.chip, { borderColor: selected ? theme.tabBarActive : theme.border, backgroundColor: selected ? theme.tabBarActive + '1A' : theme.card }]}
+                  style={({ pressed }) => [
+                    styles.chip,
+                    { borderColor: selected ? '#2563EB' : '#DBEAFE', backgroundColor: selected ? '#2563EB' : '#FFFFFF' },
+                    pressed && { opacity: 0.8 },
+                  ]}
                   onPress={() => handleFilterPress(activeCategory.key, option)}
                 >
-                  <Text style={[styles.chipText, { color: selected ? theme.tabBarActive : theme.subtitleColor }]}>{option}</Text>
+                  <Text style={[styles.chipText, { color: selected ? '#FFFFFF' : '#1D4ED8' }]}>{option}</Text>
                 </Pressable>
               );
             })}
@@ -192,10 +203,14 @@ export default function NutritionScreen() {
             {activeFilterChips.map(chip => (
               <Pressable
                 key={chip.key + chip.value}
-                style={[styles.activeFilterChip, { borderColor: theme.tabBarActive, backgroundColor: theme.tabBarActive + '20' }]}
+                style={({ pressed }) => [
+                  styles.activeFilterChip,
+                  { borderColor: '#2563EB', backgroundColor: '#EFF6FF' },
+                  pressed && { opacity: 0.8 },
+                ]}
                 onPress={() => handleFilterPress(chip.key, chip.value)}
               >
-                <Text style={[styles.activeFilterText, { color: theme.tabBarActive }]}>{chip.value}</Text>
+                <Text style={[styles.activeFilterText, { color: '#2563EB' }]}>{chip.value}</Text>
               </Pressable>
             ))}
           </ScrollView>
@@ -283,54 +298,43 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   quickActionsBlock: {
-    paddingHorizontal: 16,
-    paddingTop: 8,
     marginBottom: 8,
     gap: 4,
   },
   quickActionButton: {
     width: '48.5%',
-    borderRadius: 14,
-    paddingVertical: 12,
+    borderRadius: 16,
+    paddingVertical: 10,
     paddingHorizontal: 12,
     flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: 8,
+    alignItems: 'center',
+    gap: 10,
+    minHeight: 64,
+    backgroundColor: '#2563EB',
   },
   quickActionIconBubble: {
-    width: 28,
-    height: 28,
-    borderRadius: 999,
-    backgroundColor: 'rgba(255,255,255,0.2)',
+    width: 36,
+    height: 36,
+    borderRadius: 14,
+    backgroundColor: 'rgba(255,255,255,0.18)',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 1,
+    flexShrink: 0,
   },
   quickActionTextWrap: {
     flex: 1,
     gap: 2,
-  },
-  quickActionPrimary: {
-    backgroundColor: '#2563EB',
-  },
-  quickActionSecondary: {
-    backgroundColor: '#059669',
-  },
-  quickActionTertiary: {
-    backgroundColor: '#0EA5E9',
-  },
-  quickActionSearch: {
-    backgroundColor: '#7C3AED',
+    minWidth: 0,
   },
   quickActionText: {
-    color: '#FFFFFF',
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: '800',
+    color: '#FFFFFF',
   },
   quickActionSubText: {
-    color: 'rgba(255,255,255,0.86)',
-    fontSize: 10,
-    fontWeight: '600',
+    fontSize: 11,
+    fontWeight: '500',
+    color: 'rgba(255,255,255,0.85)',
   },
   filterBarSection: {
     marginBottom: 14,
@@ -341,16 +345,17 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
   filterTab: {
-    borderWidth: 1,
-    borderRadius: 999,
-    paddingVertical: 9,
+    borderWidth: 1.5,
+    borderRadius: 16,
+    paddingVertical: 8,
     paddingHorizontal: 12,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
+    minHeight: 44,
   },
   filterTabText: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '700',
   },
   filterTabBadge: {
@@ -466,14 +471,15 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   chip: {
-    borderWidth: 1,
-    borderRadius: 999,
+    borderWidth: 1.5,
+    borderRadius: 16,
     paddingHorizontal: 12,
     paddingVertical: 8,
+    minHeight: 44,
   },
   chipText: {
     fontSize: 13,
-    fontWeight: '600',
+    fontWeight: '700',
   },
   bottomSpacer: { height: 120 },
 });

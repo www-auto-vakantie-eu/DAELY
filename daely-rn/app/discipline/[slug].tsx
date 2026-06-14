@@ -362,14 +362,14 @@ export default function DisciplineScreen() {
             return (
               <Pressable
                 key={tab}
-                style={[
+                style={({ pressed }) => [
                   styles.tabButton,
-                  { borderColor: theme.border },
-                  isActive && { backgroundColor: theme.tabBarActive, borderColor: theme.tabBarActive },
+                  { borderColor: isActive ? '#2563EB' : '#DBEAFE', backgroundColor: isActive ? '#2563EB' : '#FFFFFF' },
+                  pressed && { opacity: 0.8 },
                 ]}
                 onPress={() => setActiveTab(tab)}
               >
-                <Text style={[styles.tabLabel, { color: isActive ? '#FFFFFF' : theme.subtitleColor }]}>
+                <Text style={[styles.tabLabel, { color: isActive ? '#FFFFFF' : '#1D4ED8' }]}>
                   {label}
                 </Text>
               </Pressable>
@@ -400,14 +400,14 @@ export default function DisciplineScreen() {
               return (
                 <Pressable
                   key={filter}
-                  style={[
+                  style={({ pressed }) => [
                     styles.filterChip,
-                    { borderColor: theme.border, backgroundColor: theme.card },
-                    isActive && { backgroundColor: theme.tabBarActive, borderColor: theme.tabBarActive },
+                    { borderColor: isActive ? '#2563EB' : '#DBEAFE', backgroundColor: isActive ? '#2563EB' : '#FFFFFF' },
+                    pressed && { opacity: 0.8 },
                   ]}
                   onPress={() => setActiveFilter(filter)}
                 >
-                  <Text style={[styles.filterChipText, { color: isActive ? '#FFFFFF' : theme.subtitleColor }]}>
+                  <Text style={[styles.filterChipText, { color: isActive ? '#FFFFFF' : '#1D4ED8' }]}>
                     {filter}
                   </Text>
                 </Pressable>
@@ -629,14 +629,14 @@ const styles = StyleSheet.create({
   heroTitle: { fontSize: 48, fontWeight: '900', letterSpacing: -1.5, lineHeight: 50, color: '#FFFFFF' },
   heroSubtitle: { marginTop: 4, fontSize: 14, fontWeight: '500', letterSpacing: 1, color: 'rgba(255,255,255,0.80)' },
   tabRow: { flexDirection: 'row', paddingHorizontal: 16, paddingTop: 16, paddingBottom: 4, gap: 10 },
-  tabButton: { flex: 1, paddingVertical: 10, borderRadius: 12, borderWidth: 1.5, alignItems: 'center' },
-  tabLabel: { fontSize: 13, fontWeight: '700' },
+  tabButton: { flex: 1, paddingVertical: 8, paddingHorizontal: 12, borderRadius: 16, borderWidth: 1.5, alignItems: 'center', minHeight: 44 },
+  tabLabel: { fontSize: 14, fontWeight: '700' },
   searchSection: { paddingHorizontal: 16, paddingTop: 14, paddingBottom: 4 },
   searchBar: { flexDirection: 'row', alignItems: 'center', gap: 10, borderRadius: 14, borderWidth: 1, paddingHorizontal: 14, paddingVertical: 11, marginBottom: 12 },
   searchInput: { flex: 1, fontSize: 14 },
   filterRow: { gap: 8, paddingBottom: 10 },
-  filterChip: { paddingHorizontal: 14, paddingVertical: 7, borderRadius: 20, borderWidth: 1.5 },
-  filterChipText: { fontSize: 12, fontWeight: '700' },
+  filterChip: { paddingHorizontal: 12, paddingVertical: 8, borderRadius: 16, borderWidth: 1.5, minHeight: 44 },
+  filterChipText: { fontSize: 13, fontWeight: '700' },
   contentArea: { paddingHorizontal: 16, paddingTop: 4 },
   sectionTitle: { fontSize: 20, fontWeight: '800', marginBottom: 3 },
   sectionSubtitle: { fontSize: 12, fontWeight: '500', marginBottom: 14 },
