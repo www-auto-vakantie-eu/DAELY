@@ -142,18 +142,35 @@ export default function NutritionMealScreen() {
     <AppScreen style={{ backgroundColor: theme.background }}>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
         <View style={Platform.OS === 'web' ? styles.webContainer : undefined}>
-          <ImageBackground source={{ uri: meal.image }} style={styles.hero}>
-            <LinearGradient colors={['rgba(0,0,0,0.25)', 'rgba(0,0,0,0.80)']} style={styles.heroGradient}>
-              <View style={styles.heroTextBlock}>
-                <Text style={styles.heroTitle}>{meal.title}</Text>
-                <Text style={styles.heroSubtitle}>{meal.kcal} KCAL    {meal.protein}G EIWIT    {prepTime}</Text>
-              </View>
-            </LinearGradient>
-          </ImageBackground>
+            <View style={styles.topArea}>
+            <ImageBackground source={{ uri: meal.image }} style={styles.hero} imageStyle={styles.heroImage}>
+              <LinearGradient colors={['rgba(0,0,0,0.02)', 'rgba(0,0,0,0.82)']} style={styles.heroOverlay}>
+                <View>
+                  <Text style={styles.heroTitle}>{meal.title}</Text>
+                  <Text style={styles.heroMeta}>{meal.kcal} KCAL    {meal.protein}G EIWIT</Text>
+                </View>
+              </LinearGradient>
+            </ImageBackground>
+          </View>
 
           <View style={styles.content}>
             <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Over dit gerecht</Text>
             <Text style={[styles.sectionText, { color: theme.subtitleColor }]}>{meal.description}</Text>
+
+            <View style={styles.statsRow}>
+              <View style={[styles.statCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+                <Text style={[styles.statValue, { color: theme.titleColor }]}>{meal.kcal}</Text>
+                <Text style={[styles.statLabel, { color: theme.subtitleColor }]}>KCAL</Text>
+              </View>
+              <View style={[styles.statCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+                <Text style={[styles.statValue, { color: theme.titleColor }]}>{meal.protein}g</Text>
+                <Text style={[styles.statLabel, { color: theme.subtitleColor }]}>Eiwit</Text>
+              </View>
+              <View style={[styles.statCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+                <Text style={[styles.statValueSmall, { color: theme.titleColor }]}>{prepTime}</Text>
+                <Text style={[styles.statLabel, { color: theme.subtitleColor }]}>BEREIDTIJD</Text>
+              </View>
+            </View>
 
             <TouchableOpacity
               style={[styles.shareButton, { backgroundColor: theme.card, borderColor: theme.border }]}
@@ -202,34 +219,38 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     width: '100%',
   },
-  hero: {
-    width: '100%',
-    height: 220,
-  },
-  heroGradient: {
-    flex: 1,
-    paddingTop: 56,
+  topArea: {
     paddingHorizontal: 16,
-    justifyContent: 'flex-end',
-    paddingBottom: 28,
+    paddingTop: 24,
   },
-  heroTextBlock: {
-    gap: 4,
-    alignSelf: 'flex-start',
+  hero: {
+    height: 290,
+    justifyContent: 'flex-end',
+    marginTop: 14,
+  },
+  heroImage: {
+    borderRadius: 40,
+  },
+  heroOverlay: {
+    borderRadius: 40,
+    justifyContent: 'flex-end',
+    paddingHorizontal: 18,
+    paddingBottom: 20,
+    paddingTop: 70,
   },
   heroTitle: {
-    fontSize: 48,
-    fontWeight: '900',
-    letterSpacing: -1.5,
-    lineHeight: 50,
     color: '#FFFFFF',
+    fontSize: 54,
+    lineHeight: 56,
+    letterSpacing: -1.8,
+    fontWeight: '900',
   },
-  heroSubtitle: {
-    marginTop: 4,
-    fontSize: 14,
-    fontWeight: '500',
+  heroMeta: {
+    color: 'rgba(255,255,255,0.88)',
+    marginTop: 8,
+    fontSize: 15,
+    fontWeight: '700',
     letterSpacing: 1,
-    color: 'rgba(255,255,255,0.80)',
   },
   content: {
     paddingHorizontal: 16,
@@ -244,6 +265,34 @@ const styles = StyleSheet.create({
     fontSize: 15,
     lineHeight: 22,
   },
+  statsRow: {
+    flexDirection: 'row',
+    gap: 10,
+    marginTop: 18,
+  },
+  statCard: {
+    flex: 1,
+    borderRadius: 16,
+    borderWidth: 1,
+    paddingVertical: 18,
+    paddingHorizontal: 14,
+  },
+  statValue: {
+    fontSize: 28,
+    lineHeight: 30,
+    fontWeight: '900',
+  },
+  statValueSmall: {
+    fontSize: 20,
+    lineHeight: 24,
+    fontWeight: '800',
+  },
+  statLabel: {
+    marginTop: 6,
+    fontSize: 12,
+    fontWeight: '700',
+    letterSpacing: 1,
+  },
   shareButton: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -251,7 +300,7 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     paddingHorizontal: 24,
     borderRadius: 12,
-    marginTop: 12,
+    marginTop: 18,
     gap: 8,
     borderWidth: 1,
   },
