@@ -308,10 +308,16 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
         {selectedShortcuts.map((shortcut) => (
             <Pressable
               key={shortcut.id}
-              style={[styles.shortcutCard, { backgroundColor: theme.card, borderColor: theme.border }]}
+              style={({ pressed }) => [
+                styles.shortcutCard,
+                { backgroundColor: theme.card, borderColor: theme.border },
+                pressed && styles.shortcutCardPressed,
+              ]}
               onPress={() => handleShortcutPress(shortcut.id)}
             >
-              <MaterialCommunityIcons name={shortcut.icon} size={20} color="#2563EB" />
+              <View style={[styles.shortcutIconContainer, { backgroundColor: '#DBEAFE' }]}>
+                <MaterialCommunityIcons name={shortcut.icon} size={22} color="#2563EB" />
+              </View>
               <Text style={[styles.shortcutLabel, { color: theme.titleColor }]}>{shortcut.label}</Text>
             </Pressable>
           ))}
@@ -398,10 +404,16 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
               </View>
             </View>
             <Pressable
-              style={[styles.startTrainingButton, { backgroundColor: '#E2E8F0' }]}
+              style={({ pressed }) => [
+                styles.startTrainingButton,
+                { backgroundColor: '#E2E8F0' },
+                pressed && styles.startTrainingButtonPressed,
+              ]}
               onPress={() => router.push('/my-programs')}
             >
+              <MaterialCommunityIcons name="calendar-multiselect" size={18} color="#1E3A8A" />
               <Text style={[styles.startTrainingButtonText, { color: '#1E3A8A' }]}>Bekijk programma&apos;s</Text>
+              <MaterialCommunityIcons name="chevron-right" size={18} color="#1E3A8A" />
             </Pressable>
           </View>
         </View>
@@ -449,17 +461,56 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
       <View style={[styles.sectionCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
         <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Aanbevolen voor vandaag</Text>
         <View style={styles.recommendationGrid}>
-          <Pressable style={[styles.recommendationCard, { backgroundColor: theme.background, borderColor: theme.border }]} onPress={() => router.push('/tracker')}>
-            <MaterialCommunityIcons name="run-fast" size={20} color="#2563EB" />
-            <Text style={[styles.recommendationText, { color: theme.titleColor }]}>Start een korte mobility sessie</Text>
+          <Pressable
+            style={({ pressed }) => [
+              styles.recommendationCard,
+              { backgroundColor: theme.background, borderColor: theme.border },
+              pressed && styles.recommendationCardPressed,
+            ]}
+            onPress={() => router.push('/tracker')}
+          >
+            <View style={[styles.recommendationIconContainer, { backgroundColor: '#DBEAFE' }]}>
+              <MaterialCommunityIcons name="run-fast" size={22} color="#2563EB" />
+            </View>
+            <View style={styles.recommendationContent}>
+              <Text style={[styles.recommendationTitle, { color: theme.titleColor }]}>Start een korte mobility sessie</Text>
+              <Text style={[styles.recommendationSubtitle, { color: theme.subtitleColor }]}>Verbeter je flexibiliteit</Text>
+            </View>
+            <MaterialCommunityIcons name="chevron-right" size={20} color={theme.subtitleColor} />
           </Pressable>
-          <Pressable style={[styles.recommendationCard, { backgroundColor: theme.background, borderColor: theme.border }]} onPress={() => router.push('/tracker')}>
-            <MaterialCommunityIcons name="calendar-check" size={20} color="#059669" />
-            <Text style={[styles.recommendationText, { color: theme.titleColor }]}>Plan je training</Text>
+          <Pressable
+            style={({ pressed }) => [
+              styles.recommendationCard,
+              { backgroundColor: theme.background, borderColor: theme.border },
+              pressed && styles.recommendationCardPressed,
+            ]}
+            onPress={() => router.push('/tracker')}
+          >
+            <View style={[styles.recommendationIconContainer, { backgroundColor: '#D1FAE5' }]}>
+              <MaterialCommunityIcons name="calendar-check" size={22} color="#059669" />
+            </View>
+            <View style={styles.recommendationContent}>
+              <Text style={[styles.recommendationTitle, { color: theme.titleColor }]}>Plan je training</Text>
+              <Text style={[styles.recommendationSubtitle, { color: theme.subtitleColor }]}>Bekijk je schema</Text>
+            </View>
+            <MaterialCommunityIcons name="chevron-right" size={20} color={theme.subtitleColor} />
           </Pressable>
-          <Pressable style={[styles.recommendationCard, { backgroundColor: theme.background, borderColor: theme.border }]} onPress={() => router.push('/nutrition/add')}>
-            <MaterialCommunityIcons name="food-apple" size={20} color="#F59E0B" />
-            <Text style={[styles.recommendationText, { color: theme.titleColor }]}>Bekijk je voedingsdoel</Text>
+          <Pressable
+            style={({ pressed }) => [
+              styles.recommendationCard,
+              { backgroundColor: theme.background, borderColor: theme.border },
+              pressed && styles.recommendationCardPressed,
+            ]}
+            onPress={() => router.push('/nutrition/add')}
+          >
+            <View style={[styles.recommendationIconContainer, { backgroundColor: '#FEF3C7' }]}>
+              <MaterialCommunityIcons name="food-apple" size={22} color="#F59E0B" />
+            </View>
+            <View style={styles.recommendationContent}>
+              <Text style={[styles.recommendationTitle, { color: theme.titleColor }]}>Bekijk je voedingsdoel</Text>
+              <Text style={[styles.recommendationSubtitle, { color: theme.subtitleColor }]}>Log je maaltijden</Text>
+            </View>
+            <MaterialCommunityIcons name="chevron-right" size={20} color={theme.subtitleColor} />
           </Pressable>
         </View>
       </View>
@@ -552,8 +603,16 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
             </View>
           </View>
         )}
-        <Pressable style={styles.linkButton} onPress={() => router.push('/data-link')}>
+        <Pressable
+          style={({ pressed }) => [
+            styles.linkButton,
+            pressed && styles.linkButtonPressed,
+          ]}
+          onPress={() => router.push('/data-link')}
+        >
+          <MaterialCommunityIcons name="link-variant" size={16} color="#1E3A8A" />
           <Text style={styles.linkButtonText}>Data koppelen</Text>
+          <MaterialCommunityIcons name="chevron-right" size={16} color="#1E3A8A" />
         </Pressable>
       </View>
 
@@ -762,12 +821,24 @@ const styles = StyleSheet.create({
   },
   shortcutCard: {
     flex: 1,
-    borderRadius: 12,
+    borderRadius: 16,
     borderWidth: 1,
     paddingVertical: 12,
     paddingHorizontal: 10,
     alignItems: 'center',
-    gap: 6,
+    gap: 8,
+  },
+  shortcutCardPressed: {
+    opacity: 0.7,
+    transform: [{ scale: 0.97 }],
+  },
+  shortcutIconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 4,
   },
   shortcutLabel: {
     fontSize: 12,
@@ -932,9 +1003,16 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     marginTop: 10,
     backgroundColor: '#E2E8F0',
-    borderRadius: 10,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  linkButtonPressed: {
+    opacity: 0.7,
+    transform: [{ scale: 0.98 }],
   },
   linkButtonText: {
     color: '#1E3A8A',
@@ -1039,10 +1117,32 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
-    padding: 12,
-    borderRadius: 12,
+    padding: 16,
+    borderRadius: 16,
     borderWidth: 1,
     borderColor: '#E2E8F0',
+  },
+  recommendationCardPressed: {
+    opacity: 0.7,
+    transform: [{ scale: 0.98 }],
+  },
+  recommendationIconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  recommendationContent: {
+    flex: 1,
+  },
+  recommendationTitle: {
+    fontSize: 15,
+    fontWeight: '700',
+    marginBottom: 2,
+  },
+  recommendationSubtitle: {
+    fontSize: 13,
   },
   recommendationText: {
     fontSize: 14,
@@ -1062,8 +1162,15 @@ const styles = StyleSheet.create({
   startTrainingButton: {
     paddingHorizontal: 16,
     paddingVertical: 10,
-    borderRadius: 8,
+    borderRadius: 10,
     alignSelf: 'center',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  startTrainingButtonPressed: {
+    opacity: 0.7,
+    transform: [{ scale: 0.98 }],
   },
   startTrainingButtonText: {
     color: '#FFFFFF',
