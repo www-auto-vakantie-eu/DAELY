@@ -85,10 +85,6 @@ export default function InstellingenScreen() {
         showSettings={false}
       />
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
-        <View>
-          <Text style={styles.pageTitle}>Instellingen</Text>
-          <Text style={styles.pageSubtitle}>BEHEER JE ACCOUNT</Text>
-        </View>
 
         {/* Sectie: Voorkeuren */}
         <Text style={styles.sectionLabel}>VOORKEUREN</Text>
@@ -381,22 +377,7 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingHorizontal: 16,
-    paddingTop: 60,
-  },
-  pageTitle: {
-    fontSize: 42,
-    fontWeight: '900',
-    color: '#0D0F1A',
-    letterSpacing: -1.5,
-    lineHeight: 44,
-  },
-  pageSubtitle: {
-    marginTop: 4,
-    marginBottom: 28,
-    fontSize: 11,
-    fontWeight: '700',
-    letterSpacing: 2,
-    color: '#6B7280',
+    paddingTop: 8,
   },
   sectionLabel: {
     fontSize: 11,

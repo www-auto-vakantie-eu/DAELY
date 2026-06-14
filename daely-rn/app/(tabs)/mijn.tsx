@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { ImageBackground, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useRouter, type Href, useFocusEffect } from 'expo-router';
+import { useRouter, type Href } from 'expo-router';
 
 import { useTheme } from '@/hooks/use-theme';
 import { AppScreen } from '@/components/AppScreen';
 import AppHeader from '../components/AppHeader';
 import { getPerformanceSummary, type PerformanceSummary } from '@/services/performance-summary';
-import { getUnreadMessageCount } from '@/services/messages-storage';
 import { useAppContext } from '@/contexts/AppContext';
 
 type MyDomainCard = {
@@ -34,7 +33,7 @@ const MY_DOMAIN_CARDS: MyDomainCard[] = [
   {
     id: 'workouts',
     title: 'Workouts',
-    description: 'Schema&apos;s, volume, progressie en volgende sessies.',
+    description: 'Schema\'s, volume, progressie en volgende sessies.',
     category: 'TRAINING',
     accent: '#2563EB',
     image: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&q=80',
@@ -42,8 +41,8 @@ const MY_DOMAIN_CARDS: MyDomainCard[] = [
   },
   {
     id: 'my-programs',
-    title: 'Mijn Programma&apos;s',
-    description: 'Actieve en voltooide trainingsschema&apos;s.',
+    title: 'Mijn programma\'s',
+    description: 'Actieve en voltooide trainingsschema\'s.',
     category: 'TRAINING',
     accent: '#2563EB',
     image: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1200&q=80',
@@ -58,15 +57,6 @@ const MY_DOMAIN_CARDS: MyDomainCard[] = [
     image: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&w=1200&q=80',
     route: '/my-clubs',
     disabled: true,
-  },
-  {
-    id: 'messages',
-    title: 'Berichten & support',
-    description: 'Chats met coaches, klantenmanager en sporters.',
-    category: 'BERICHTEN',
-    accent: '#8B5CF6',
-    image: 'https://images.unsplash.com/photo-1611606063065-ee7946f0787a?auto=format&fit=crop&w=1200&q=80',
-    route: '/messages',
   },
   {
     id: 'nutrition',
@@ -114,33 +104,6 @@ const MY_DOMAIN_CARDS: MyDomainCard[] = [
     route: '/habits',
   },
   {
-    id: 'today-background',
-    title: 'Achtergrond wijzigen',
-    description: 'Pas de achtergrond van je Vandaag-pagina aan.',
-    category: 'INSTELLINGEN',
-    accent: '#6366F1',
-    image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80',
-    route: '/(tabs)/today?open=background',
-  },
-  {
-    id: 'today-shortcuts',
-    title: 'Snelfuncties aanpassen',
-    description: 'Pas je 3 sneltoetsen op de Vandaag-pagina aan.',
-    category: 'INSTELLINGEN',
-    accent: '#6366F1',
-    image: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&q=80',
-    route: '/(tabs)/today?open=shortcuts',
-  },
-  {
-    id: 'community-sharing',
-    title: 'Community delen',
-    description: 'Bepaal wanneer DAELY je vraagt om updates te delen.',
-    category: 'INSTELLINGEN',
-    accent: '#F59E0B',
-    image: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1200&q=80',
-    route: '/(tabs)/community-sharing-settings',
-  },
-  {
     id: 'creator-studio',
     title: 'Creator Studio',
     description: 'Challenges, code, groei en samenwerkingen.',
@@ -156,7 +119,6 @@ export default function MijnScreen() {
   const router = useRouter();
   const { accountType } = useAppContext();
   const [performanceSummary, setPerformanceSummary] = useState<PerformanceSummary | null>(null);
-  const [unreadMessageCount, setUnreadMessageCount] = useState(0);
 
   // Filter cards based on account type
   const filteredCards = MY_DOMAIN_CARDS.filter(card => {
@@ -169,14 +131,7 @@ export default function MijnScreen() {
 
   useEffect(() => {
     getPerformanceSummary().then(setPerformanceSummary);
-    getUnreadMessageCount().then(setUnreadMessageCount);
   }, []);
-
-  useFocusEffect(
-    React.useCallback(() => {
-      getUnreadMessageCount().then(setUnreadMessageCount);
-    }, [])
-  );
 
   const handleCardPress = (route: Href) => {
     router.push(route);
@@ -190,7 +145,6 @@ export default function MijnScreen() {
           subtitle="Alles op één plek."
           onSettingsPress={() => router.push('/(tabs)/athlete')}
           showMessages
-          unreadMessagesCount={unreadMessageCount}
           onMessagesPress={() => router.push('/messages')}
         />
 
@@ -203,35 +157,28 @@ export default function MijnScreen() {
               ]}
               onPress={() => router.push('/my-progress')}
             >
-              <LinearGradient
-                colors={['rgba(37, 99, 235, 0.15)', 'rgba(37, 99, 235, 0.05)']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.performanceCardGradient}
-              >
-                <View style={styles.performanceCardContent}>
-                  <View style={styles.performanceCardHeader}>
-                    <Text style={[styles.performanceCardTitle, { color: '#2563EB' }]}>Mijn prestaties</Text>
-                  </View>
-                  <View style={styles.performanceCardStats}>
-                    <View style={styles.performanceStat}>
-                      <Text style={styles.performanceStatValue}>{performanceSummary.totalWorkoutActivities}</Text>
-                      <Text style={styles.performanceStatLabel}>workouts voltooid</Text>
-                    </View>
-                    <View style={styles.performanceStatDivider} />
-                    <View style={styles.performanceStat}>
-                      <Text style={styles.performanceStatValue}>{performanceSummary.totalPersonalRecords}</Text>
-                      <Text style={styles.performanceStatLabel}>PR&apos;s behaald</Text>
-                    </View>
-                  </View>
-                  {performanceSummary.latestPersonalRecord && (
-                    <Text style={styles.performanceLatestPr}>
-                      Laatste PR: {performanceSummary.latestPersonalRecord.exerciseName}
-                    </Text>
-                  )}
-                  <Text style={styles.performanceCardLink}>Bekijk prestaties</Text>
+              <View style={styles.performanceCardContent}>
+                <View style={styles.performanceCardHeader}>
+                  <Text style={styles.performanceCardTitle}>Mijn prestaties</Text>
                 </View>
-              </LinearGradient>
+                <View style={styles.performanceCardStats}>
+                  <View style={styles.performanceStat}>
+                    <Text style={styles.performanceStatValue}>{performanceSummary.totalWorkoutActivities}</Text>
+                    <Text style={styles.performanceStatLabel}>workouts voltooid</Text>
+                  </View>
+                  <View style={styles.performanceStatDivider} />
+                  <View style={styles.performanceStat}>
+                    <Text style={styles.performanceStatValue}>{performanceSummary.totalPersonalRecords}</Text>
+                    <Text style={styles.performanceStatLabel}>PR&apos;s behaald</Text>
+                  </View>
+                </View>
+                {performanceSummary.latestPersonalRecord && (
+                  <Text style={styles.performanceLatestPr}>
+                    Laatste PR: {performanceSummary.latestPersonalRecord.exerciseName}
+                  </Text>
+                )}
+                <Text style={styles.performanceCardLink}>Bekijk prestaties</Text>
+              </View>
             </Pressable>
           )}
           {filteredCards.map((card) => (
@@ -264,28 +211,7 @@ export default function MijnScreen() {
                   <View style={styles.heroTextBlock}>
                     {card.disabled ? <Text style={[styles.heroCategory, { color: card.accent }]}>Binnenkort</Text> : null}
                     <View style={styles.titleRow}>
-                      <Text style={[
-                        styles.heroTitle,
-                        card.id === 'progress' && { color: card.accent },
-                        card.id === 'workouts' && { color: '#2563EB' },
-                        card.id === 'my-programs' && { color: '#2563EB' },
-                        card.id === 'clubs-trainers' && { color: '#8B5CF6' },
-                        card.id === 'messages' && { color: '#8B5CF6' },
-                        card.id === 'nutrition' && { color: '#EF4444' },
-                        card.id === 'mind' && { color: '#8B5CF6' },
-                        card.id === 'stats' && { color: '#10B981' },
-                        card.id === 'orders' && { color: '#22C55E' },
-                        card.id === 'habits' && { color: '#F59E0B' },
-                        card.id === 'feedback' && { color: '#2563EB' },
-                        card.id === 'find-coach' && { color: '#10B981' },
-                        card.id === 'today-background' && { color: '#6366F1' },
-                        card.id === 'today-shortcuts' && { color: '#6366F1' },
-                      ]}>{card.title}</Text>
-                      {card.id === 'messages' && unreadMessageCount > 0 && (
-                        <View style={[styles.unreadBadge, { backgroundColor: '#EF4444' }]}>
-                          <Text style={styles.unreadBadgeText}>{unreadMessageCount}</Text>
-                        </View>
-                      )}
+                      <Text style={styles.heroTitle}>{card.title}</Text>
                     </View>
                     <Text style={styles.heroDescription}>{card.description}</Text>
                   </View>
@@ -312,32 +238,33 @@ const styles = StyleSheet.create({
     paddingTop: 8,
   },
   verticalCard: {
-    borderRadius: 20,
+    borderRadius: 24,
     overflow: 'hidden',
-    height: 210,
-    marginBottom: 14,
+    height: 220,
+    marginBottom: 16,
   },
   slideCardPressed: {
     transform: [{ scale: 0.98 }],
+    opacity: 0.92,
   },
   heroImage: {
     flex: 1,
   },
   heroImageStyle: {
-    borderRadius: 16,
+    borderRadius: 24,
   },
   heroOverlay: {
     flex: 1,
     justifyContent: 'flex-end',
-    padding: 16,
+    padding: 20,
   },
   heroTextBlock: {
-    gap: 4,
+    gap: 6,
   },
   titleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 10,
   },
   heroCategory: {
     fontSize: 11,
@@ -347,79 +274,73 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   heroTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: '800',
-    lineHeight: 22,
+    lineHeight: 24,
+    color: '#FFFFFF',
   },
   heroDescription: {
-    fontSize: 13,
-    lineHeight: 18,
-    color: '#E5E7EB',
+    fontSize: 14,
+    lineHeight: 20,
+    color: 'rgba(255,255,255,0.85)',
   },
   performanceCard: {
-    borderRadius: 20,
+    borderRadius: 24,
     overflow: 'hidden',
-    marginBottom: 14,
-    backgroundColor: 'rgba(37, 99, 235, 0.08)',
+    marginBottom: 16,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#DBEAFE',
   },
   performanceCardGradient: {
-    padding: 16,
+    padding: 20,
   },
   performanceCardContent: {
-    gap: 12,
+    gap: 16,
   },
   performanceCardHeader: {
-    marginBottom: 4,
+    marginBottom: 0,
   },
   performanceCardTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: '800',
-    lineHeight: 22,
+    lineHeight: 24,
+    color: '#0F172A',
   },
   performanceCardStats: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 16,
+    gap: 20,
   },
   performanceStat: {
     flex: 1,
   },
   performanceStatValue: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: '800',
-    color: '#E5E7EB',
-    lineHeight: 28,
+    color: '#2563EB',
+    lineHeight: 32,
   },
   performanceStatLabel: {
-    fontSize: 12,
-    color: '#9CA3AF',
+    fontSize: 13,
+    fontWeight: '500',
+    color: '#64748B',
     marginTop: 2,
   },
   performanceStatDivider: {
     width: 1,
-    height: 32,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    height: 36,
+    backgroundColor: '#DBEAFE',
   },
   performanceLatestPr: {
     fontSize: 13,
-    color: '#9CA3AF',
+    fontWeight: '500',
+    color: '#64748B',
   },
   performanceCardLink: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: '#2563EB',
-    marginTop: 4,
-  },
-  unreadBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 10,
-    minWidth: 20,
-    alignItems: 'center',
-  },
-  unreadBadgeText: {
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: '700',
-    color: '#FFFFFF',
+    color: '#2563EB',
+    marginTop: 8,
   },
 });
