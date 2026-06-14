@@ -6,7 +6,6 @@ import {
   Pressable,
   ImageBackground,
   StatusBar,
-  TextInput,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -300,7 +299,6 @@ export default function DisciplineScreen() {
   const router = useRouter();
   const theme = useTheme();
   const [activeTab, setActiveTab] = useState<'workouts' | 'oefeningen' | 'programmas'>('workouts');
-  const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('Alles');
   const discipline = DISCIPLINE_DATA[slug ?? ''];
 
@@ -377,23 +375,8 @@ export default function DisciplineScreen() {
           })}
         </View>
 
-        {/* ── ZOEKBALK + SPIERGROEP FILTER ── */}
-        <View style={[styles.searchSection, { backgroundColor: theme.background }]}> 
-          <View style={[styles.searchBar, { backgroundColor: theme.card, borderColor: theme.border }]}> 
-            <MaterialCommunityIcons name="magnify" size={20} color={theme.subtitleColor} />
-            <TextInput
-              style={[styles.searchInput, { color: theme.titleColor }]}
-              placeholder="Zoek oefeningen..."
-              placeholderTextColor={theme.subtitleColor}
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-            />
-            {searchQuery.length > 0 && (
-              <Pressable onPress={() => setSearchQuery('')}>
-                <MaterialCommunityIcons name="close-circle" size={18} color={theme.subtitleColor} />
-              </Pressable>
-            )}
-          </View>
+        {/* ── FILTER CHIPS ── */}
+        <View style={[styles.filterSection, { backgroundColor: theme.background }]}>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterRow}>
             {filterOptions.map((filter) => {
               const isActive = activeFilter === filter;
@@ -420,10 +403,6 @@ export default function DisciplineScreen() {
         <View style={styles.contentArea}>
           {activeTab === 'workouts' && (
             <>
-              <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Kant-en-klare Workouts</Text>
-              <Text style={[styles.sectionSubtitle, { color: theme.subtitleColor }]}>
-                {workoutsForDiscipline.length} workout{workoutsForDiscipline.length === 1 ? '' : 's'} beschikbaar
-              </Text>
               {workoutsForDiscipline.map((workout) => (
                 <Pressable
                   key={workout.id}
@@ -465,10 +444,6 @@ export default function DisciplineScreen() {
           )}
           {activeTab === 'oefeningen' && (
             <>
-              <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Oefeningen</Text>
-              <Text style={[styles.sectionSubtitle, { color: theme.subtitleColor }]}>
-                {exercisesForDiscipline.length} oefening{exercisesForDiscipline.length === 1 ? '' : 'en'} beschikbaar
-              </Text>
               {exercisesForDiscipline.length > 0 ? (
                 exercisesForDiscipline.map((exercise) => (
                   <Pressable
@@ -530,10 +505,6 @@ export default function DisciplineScreen() {
           )}
           {activeTab === 'programmas' && (
             <>
-              <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Programma&apos;s</Text>
-              <Text style={[styles.sectionSubtitle, { color: theme.subtitleColor }]}>
-                {programsForDiscipline.length} programma{programsForDiscipline.length === 1 ? '' : '&apos;s'} beschikbaar
-              </Text>
               {programsForDiscipline.length > 0 ? (
                 programsForDiscipline.map((program) => (
                   <Pressable
@@ -631,15 +602,11 @@ const styles = StyleSheet.create({
   tabRow: { flexDirection: 'row', paddingHorizontal: 16, paddingTop: 16, paddingBottom: 4, gap: 10 },
   tabButton: { flex: 1, paddingVertical: 8, paddingHorizontal: 12, borderRadius: 16, borderWidth: 1.5, alignItems: 'center', minHeight: 44 },
   tabLabel: { fontSize: 14, fontWeight: '700' },
-  searchSection: { paddingHorizontal: 16, paddingTop: 14, paddingBottom: 4 },
-  searchBar: { flexDirection: 'row', alignItems: 'center', gap: 10, borderRadius: 14, borderWidth: 1, paddingHorizontal: 14, paddingVertical: 11, marginBottom: 12 },
-  searchInput: { flex: 1, fontSize: 14 },
+  filterSection: { paddingHorizontal: 16, paddingTop: 12, paddingBottom: 4 },
   filterRow: { gap: 8, paddingBottom: 10 },
   filterChip: { paddingHorizontal: 12, paddingVertical: 8, borderRadius: 16, borderWidth: 1.5, minHeight: 44 },
   filterChipText: { fontSize: 13, fontWeight: '700' },
   contentArea: { paddingHorizontal: 16, paddingTop: 4 },
-  sectionTitle: { fontSize: 20, fontWeight: '800', marginBottom: 3 },
-  sectionSubtitle: { fontSize: 12, fontWeight: '500', marginBottom: 14 },
   workoutCard: { flexDirection: 'row', alignItems: 'center', borderRadius: 16, borderWidth: 1, padding: 14, marginBottom: 12, gap: 14 },
   cardPressed: { transform: [{ scale: 0.98 }], opacity: 0.92 },
   workoutIconBox: { width: 52, height: 52, borderRadius: 14, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
