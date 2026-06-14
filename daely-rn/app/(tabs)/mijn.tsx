@@ -143,12 +143,11 @@ const MY_DOMAIN_CARDS: MyDomainCard[] = [
   {
     id: 'creator-studio',
     title: 'Creator Studio',
-    description: 'Binnenkort: Challenges, code, groei en samenwerkingen.',
+    description: 'Challenges, code, groei en samenwerkingen.',
     category: 'CREATOR',
     accent: '#8B5CF6',
     image: 'https://images.unsplash.com/photo-1556742393-d75f468bfcb0?auto=format&fit=crop&w=1200&q=80',
-    route: '/(tabs)/creator-studio',
-    disabled: true,
+    route: '/creator-dashboard',
   },
 ];
 
