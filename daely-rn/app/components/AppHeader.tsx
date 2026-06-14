@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View, Image } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/use-theme';
 
@@ -36,9 +36,8 @@ export default function AppHeader({
 
   return (
     <View style={styles.headerRow}>
-      <View style={styles.titleContainer}>
-        <Text style={[styles.title, { color: theme.titleColor }]}>{title}</Text>
-        {subtitle && <Text style={[styles.subtitle, { color: theme.subtitleColor }]}>{subtitle}</Text>}
+      <View style={styles.logoContainer}>
+        <Image source={require('@/assets/images/logo.png')} style={styles.logo} resizeMode="contain" />
       </View>
       <View style={styles.actionsRow}>
         {rightActions}
@@ -88,25 +87,18 @@ const styles = StyleSheet.create({
   headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     marginBottom: 16,
     marginTop: 16,
     paddingHorizontal: 16,
   },
-  titleContainer: {
-    flexShrink: 1,
+  logoContainer: {
+    flexShrink: 0,
+    marginLeft: -16,
   },
-  title: {
-    fontSize: 28,
-    lineHeight: 34,
-    fontWeight: '700',
-    letterSpacing: -0.5,
-  },
-  subtitle: {
-    fontSize: 14,
-    lineHeight: 18,
-    fontWeight: '500',
-    marginTop: 2,
+  logo: {
+    height: 50,
+    width: 150,
   },
   actionsRow: {
     flexDirection: 'row',
