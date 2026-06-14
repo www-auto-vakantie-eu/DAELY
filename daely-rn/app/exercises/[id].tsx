@@ -234,31 +234,33 @@ export default function ExerciseDetailScreen() {
       <StatusBar barStyle="light-content" />
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
           {/* Media Hero Carousel */}
-          <View style={styles.mediaHeader}>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              pagingEnabled
-              snapToInterval={slideWidth}
-              snapToAlignment="start"
-              decelerationRate="fast"
-              onMomentumScrollEnd={(e) => {
-                const index = Math.round(e.nativeEvent.contentOffset.x / slideWidth);
-                setActiveMediaIndex(index);
-              }}
-            >
-              {mediaItems.map((item, index) => renderMediaSlide(item, index))}
-            </ScrollView>
-            <View style={styles.paginationDots}>
-              {mediaItems.map((_, index) => (
-                <View
-                  key={index}
-                  style={[
-                    styles.dot,
-                    { backgroundColor: index === activeMediaIndex ? '#FFFFFF' : 'rgba(255,255,255,0.5)' }
-                  ]}
-                />
-              ))}
+          <View style={styles.topArea}>
+            <View style={styles.mediaHeader}>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                pagingEnabled
+                snapToInterval={slideWidth}
+                snapToAlignment="start"
+                decelerationRate="fast"
+                onMomentumScrollEnd={(e) => {
+                  const index = Math.round(e.nativeEvent.contentOffset.x / slideWidth);
+                  setActiveMediaIndex(index);
+                }}
+              >
+                {mediaItems.map((item, index) => renderMediaSlide(item, index))}
+              </ScrollView>
+              <View style={styles.paginationDots}>
+                {mediaItems.map((_, index) => (
+                  <View
+                    key={index}
+                    style={[
+                      styles.dot,
+                      { backgroundColor: index === activeMediaIndex ? '#FFFFFF' : 'rgba(255,255,255,0.5)' }
+                    ]}
+                  />
+                ))}
+              </View>
             </View>
           </View>
 
@@ -376,9 +378,16 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingBottom: 100,
   },
+  topArea: {
+    paddingHorizontal: 16,
+    paddingTop: 24,
+  },
   mediaHeader: {
     height: 280,
     position: 'relative',
+    borderRadius: 32,
+    overflow: 'hidden',
+    marginTop: 14,
   },
   mediaSlide: {
     alignItems: 'center',

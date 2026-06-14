@@ -338,19 +338,21 @@ export default function DisciplineScreen() {
         <StatusBar barStyle="light-content" />
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
           {/* ── HERO HEADER ── */}
-          <ImageBackground source={{ uri: discipline.heroImage }} style={styles.hero}>
-          <LinearGradient
-            colors={['rgba(0,0,0,0.25)', 'rgba(0,0,0,0.80)']}
-            start={{ x: 0.5, y: 0 }}
-            end={{ x: 0.5, y: 1 }}
-            style={styles.heroGradient}
-          >
-            <View style={styles.heroTextBlock}>
-              <Text style={styles.heroTitle}>{discipline.title.toUpperCase()}</Text>
-              <Text style={styles.heroSubtitle}>{discipline.subtitle}</Text>
-            </View>
-          </LinearGradient>
-        </ImageBackground>
+          <View style={styles.topArea}>
+            <ImageBackground source={{ uri: discipline.heroImage }} style={styles.hero} imageStyle={styles.heroImage}>
+              <LinearGradient
+                colors={['rgba(0,0,0,0.25)', 'rgba(0,0,0,0.80)']}
+                start={{ x: 0.5, y: 0 }}
+                end={{ x: 0.5, y: 1 }}
+                style={styles.heroGradient}
+              >
+                <View style={styles.heroTextBlock}>
+                  <Text style={styles.heroTitle}>{discipline.title.toUpperCase()}</Text>
+                  <Text style={styles.heroSubtitle}>{discipline.subtitle}</Text>
+                </View>
+              </LinearGradient>
+            </ImageBackground>
+          </View>
 
         {/* ── TAB KNOPPEN ── */}
         <View style={[styles.tabRow, { backgroundColor: theme.background }]}>
@@ -603,13 +605,25 @@ export default function DisciplineScreen() {
 const styles = StyleSheet.create({
   screen: { flex: 1 },
   scrollContent: { paddingBottom: 80 },
-  hero: { width: '100%', height: 220 },
-  heroGradient: {
-    flex: 1,
-    paddingTop: 56,
+  topArea: {
     paddingHorizontal: 16,
+    paddingTop: 24,
+  },
+  hero: {
+    height: 290,
     justifyContent: 'flex-end',
-    paddingBottom: 28,
+    marginTop: 14,
+  },
+  heroImage: {
+    borderRadius: 40,
+  },
+  heroGradient: {
+    borderRadius: 40,
+    flex: 1,
+    paddingTop: 70,
+    paddingHorizontal: 18,
+    justifyContent: 'flex-end',
+    paddingBottom: 20,
   },
   heroTextBlock: { gap: 4, alignSelf: 'flex-start' },
   heroTitle: { fontSize: 48, fontWeight: '900', letterSpacing: -1.5, lineHeight: 50, color: '#FFFFFF' },
