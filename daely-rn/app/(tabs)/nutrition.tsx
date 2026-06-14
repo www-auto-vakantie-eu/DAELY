@@ -118,27 +118,6 @@ export default function NutritionScreen() {
         onMessagesPress={() => router.push('/messages')}
       />
 
-      <View style={styles.heroWrap}>
-        <ImageBackground
-          source={{ uri: 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=1200&q=80' }}
-          resizeMode="cover"
-          style={styles.heroCard}
-          imageStyle={styles.heroImage}
-        >
-          <LinearGradient
-            colors={['rgba(0,0,0,0.15)', 'rgba(0,0,0,0.75)']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 0, y: 1 }}
-            style={styles.heroOverlay}
-          >
-            <View style={styles.heroContent}>
-              <Text style={styles.heroTitle}>Voeding</Text>
-              <Text style={styles.heroSubtitle}>Beter eten, gezonder leven</Text>
-            </View>
-          </LinearGradient>
-        </ImageBackground>
-      </View>
-
       <View style={styles.quickActionsBlock}>
         <View style={styles.quickActionsRow}>
           {NUTRITION_ACTIONS.map((action) => (
@@ -269,40 +248,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 0,
   },
-  heroWrap: {
-    marginBottom: 12,
-  },
-  heroCard: {
-    height: 200,
-    borderRadius: 28,
-    overflow: 'hidden',
-    position: 'relative',
-  },
-  heroImage: {
-    borderRadius: 28,
-  },
-  heroOverlay: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    padding: 20,
-    paddingTop: 20,
-  },
-  heroContent: {
-    gap: 4,
-  },
-  heroTitle: {
-    fontSize: 32,
-    fontWeight: '900',
-    color: '#FFFFFF',
-    letterSpacing: -1,
-    lineHeight: 38,
-  },
-  heroSubtitle: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: 'rgba(255,255,255,0.9)',
-    lineHeight: 20,
-  },
   headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -339,6 +284,7 @@ const styles = StyleSheet.create({
   },
   quickActionsBlock: {
     paddingHorizontal: 16,
+    paddingTop: 8,
     marginBottom: 8,
     gap: 4,
   },
