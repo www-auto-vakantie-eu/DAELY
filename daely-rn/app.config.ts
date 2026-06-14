@@ -14,7 +14,7 @@ type ThemeVariant =
   | 'rogue';
 
 const THEME_ICON_MAP: Record<ThemeVariant, string> = {
-  default: './assets/images/icon.png',
+  default: './assets/images/logo.png',
   classic: './assets/images/logo.png',
   'zen-ink': './assets/images/theme-zen.ink.png',
   'forest-breath': './assets/images/theme-forest-breath.png',

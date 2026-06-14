@@ -502,6 +502,9 @@ const styles = StyleSheet.create({
   },
   gradient: {
     flex: 1,
+    maxWidth: 600,
+    width: '100%',
+    alignSelf: 'center',
   },
   scrollContent: {
     flexGrow: 1,

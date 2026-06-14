@@ -6,44 +6,8 @@ import { useRouter } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
 import { useFocusEffect } from '@react-navigation/native';
 import { getSettingsRequests, syncPendingSettingsRequests } from '@/services/settings-requests';
-
-function SettingsCartHeader({ theme, onSettings, onCart }: { theme: any; onSettings: () => void; onCart: () => void }) {
-  return (
-    <View style={{ flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', paddingHorizontal: 16, paddingTop: 24, paddingBottom: 8, backgroundColor: theme.background }}>
-      <Pressable
-        style={({ pressed }) => [{
-          width: 42,
-          height: 42,
-          borderRadius: 21,
-          borderWidth: 1,
-          alignItems: 'center',
-          justifyContent: 'center',
-          backgroundColor: theme.card,
-          borderColor: theme.border,
-          marginRight: 10,
-        }, pressed ? { opacity: 0.85 } : null]}
-        onPress={onSettings}
-      >
-        <MaterialCommunityIcons name="cog-outline" size={22} color={theme.titleColor} />
-      </Pressable>
-      <Pressable
-        style={({ pressed }) => [{
-          width: 42,
-          height: 42,
-          borderRadius: 21,
-          borderWidth: 1,
-          alignItems: 'center',
-          justifyContent: 'center',
-          backgroundColor: theme.card,
-          borderColor: theme.border,
-        }, pressed ? { opacity: 0.85 } : null]}
-        onPress={onCart}
-      >
-        <MaterialCommunityIcons name="shopping-outline" size={22} color={theme.titleColor} />
-      </Pressable>
-    </View>
-  );
-}
+import AppHeader from '../components/AppHeader';
+import { AppScreen } from '@/components/AppScreen';
 
 function formatSyncTimestamp(iso: string | null): string {
   if (!iso) {
@@ -115,11 +79,10 @@ export default function InstellingenScreen() {
   };
 
   return (
-    <View style={[styles.screen, { backgroundColor: theme.background }]}> 
-      <SettingsCartHeader
-        theme={theme}
-        onSettings={() => {}}
-        onCart={() => router.push('/(tabs)/cart')}
+    <AppScreen style={{ backgroundColor: theme.background }}>
+      <AppHeader
+        title="Instellingen"
+        showSettings={false}
       />
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
         <View>
@@ -404,7 +367,7 @@ export default function InstellingenScreen() {
 
         <View style={styles.bottomSpacer} />
       </ScrollView>
-    </View>
+    </AppScreen>
   );
 }
 
