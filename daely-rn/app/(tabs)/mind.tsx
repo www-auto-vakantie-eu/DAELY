@@ -70,6 +70,27 @@ export default function MindScreen() {
       <View style={styles.quickActionsBlock}>
         <Pressable
           style={styles.card}
+          onPress={() => router.push('/mind/category/prime')}
+        >
+          <ImageBackground
+            source={{ uri: 'https://images.unsplash.com/photo-1474418397713-7ede21d49118?auto=format&fit=crop&w=800&q=80' }}
+            style={styles.cardImage}
+            imageStyle={styles.cardImageStyle}
+          >
+            <LinearGradient
+              colors={['rgba(0,0,0,0.3)', 'rgba(0,0,0,0.7)']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 0, y: 1 }}
+              style={styles.cardOverlay}
+            >
+              <Text style={styles.cardTitle}>Prime</Text>
+              <Text style={styles.cardDescription}>Morning Activation</Text>
+            </LinearGradient>
+          </ImageBackground>
+        </Pressable>
+
+        <Pressable
+          style={styles.card}
           onPress={() => router.push('/mind/category/breathing')}
         >
           <ImageBackground
@@ -112,27 +133,6 @@ export default function MindScreen() {
 
         <Pressable
           style={styles.card}
-          onPress={() => router.push('/mind/tapping')}
-        >
-          <ImageBackground
-            source={{ uri: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=800&q=80' }}
-            style={styles.cardImage}
-            imageStyle={styles.cardImageStyle}
-          >
-            <LinearGradient
-              colors={['rgba(0,0,0,0.3)', 'rgba(0,0,0,0.7)']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 0, y: 1 }}
-              style={styles.cardOverlay}
-            >
-              <Text style={styles.cardTitle}>Tapping</Text>
-              <Text style={styles.cardDescription}>Stressreductie en balans</Text>
-            </LinearGradient>
-          </ImageBackground>
-        </Pressable>
-
-        <Pressable
-          style={styles.card}
           onPress={() => router.push('/mind/category/recovery')}
         >
           <ImageBackground
@@ -148,6 +148,27 @@ export default function MindScreen() {
             >
               <Text style={styles.cardTitle}>Herstel</Text>
               <Text style={styles.cardDescription}>Slapen en regeneratie</Text>
+            </LinearGradient>
+          </ImageBackground>
+        </Pressable>
+
+        <Pressable
+          style={styles.card}
+          onPress={() => router.push('/mind/category/sleep')}
+        >
+          <ImageBackground
+            source={{ uri: 'https://images.unsplash.com/photo-1511296923631-18b8bbcebe34?auto=format&fit=crop&w=800&q=80' }}
+            style={styles.cardImage}
+            imageStyle={styles.cardImageStyle}
+          >
+            <LinearGradient
+              colors={['rgba(0,0,0,0.3)', 'rgba(0,0,0,0.7)']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 0, y: 1 }}
+              style={styles.cardOverlay}
+            >
+              <Text style={styles.cardTitle}>Slaap</Text>
+              <Text style={styles.cardDescription}>Avondrust, ademhaling en nachtreset</Text>
             </LinearGradient>
           </ImageBackground>
         </Pressable>
@@ -175,6 +196,48 @@ export default function MindScreen() {
 
         <Pressable
           style={styles.card}
+          onPress={() => router.push('/mind/category/sport-performance')}
+        >
+          <ImageBackground
+            source={{ uri: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&w=800&q=80' }}
+            style={styles.cardImage}
+            imageStyle={styles.cardImageStyle}
+          >
+            <LinearGradient
+              colors={['rgba(0,0,0,0.3)', 'rgba(0,0,0,0.7)']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 0, y: 1 }}
+              style={styles.cardOverlay}
+            >
+              <Text style={styles.cardTitle}>Sport Performance</Text>
+              <Text style={styles.cardDescription}>Training en wedstrijd</Text>
+            </LinearGradient>
+          </ImageBackground>
+        </Pressable>
+
+        <Pressable
+          style={styles.card}
+          onPress={() => router.push('/mind/tapping')}
+        >
+          <ImageBackground
+            source={{ uri: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=800&q=80' }}
+            style={styles.cardImage}
+            imageStyle={styles.cardImageStyle}
+          >
+            <LinearGradient
+              colors={['rgba(0,0,0,0.3)', 'rgba(0,0,0,0.7)']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 0, y: 1 }}
+              style={styles.cardOverlay}
+            >
+              <Text style={styles.cardTitle}>Tapping</Text>
+              <Text style={styles.cardDescription}>Stressreductie en balans</Text>
+            </LinearGradient>
+          </ImageBackground>
+        </Pressable>
+
+        <Pressable
+          style={styles.card}
           onPress={() => router.push('/mind/category/meditations')}
         >
           <ImageBackground
@@ -196,10 +259,10 @@ export default function MindScreen() {
 
         <Pressable
           style={styles.card}
-          onPress={() => router.push('/mind/category/sleep')}
+          onPress={() => router.push('/mind/category/moments')}
         >
           <ImageBackground
-            source={{ uri: 'https://images.unsplash.com/photo-1511296923631-18b8bbcebe34?auto=format&fit=crop&w=800&q=80' }}
+            source={{ uri: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=800&q=80' }}
             style={styles.cardImage}
             imageStyle={styles.cardImageStyle}
           >
@@ -209,8 +272,8 @@ export default function MindScreen() {
               end={{ x: 0, y: 1 }}
               style={styles.cardOverlay}
             >
-              <Text style={styles.cardTitle}>Slaap</Text>
-              <Text style={styles.cardDescription}>Avondrust, ademhaling en nachtreset</Text>
+              <Text style={styles.cardTitle}>DAELY Moments</Text>
+              <Text style={styles.cardDescription}>Korte resets van 1-5 min</Text>
             </LinearGradient>
           </ImageBackground>
         </Pressable>
