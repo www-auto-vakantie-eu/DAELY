@@ -8,12 +8,13 @@ import {
   StatusBar,
   Image,
   ImageSourcePropType,
+  Dimensions,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import PageHeader from '../components/PageHeader';
 import { DISCIPLINE_CONTENT } from '@/constants/discipline-content';
 import SharedBottomNav from '../../components/SharedBottomNav';
@@ -348,6 +349,20 @@ export default function DisciplineScreen() {
   const [activeFilter, setActiveFilter] = useState('Alles');
   const discipline = DISCIPLINE_DATA[slug ?? ''];
 
+  const scrollRef = useRef<ScrollView>(null);
+
+  const scrollToTab = (tab: 'workouts' | 'oefeningen' | 'programmas') => {
+    const tabIndex = tab === 'workouts' ? 0 : tab === 'oefeningen' ? 1 : 2;
+    scrollRef.current?.scrollTo({ x: tabIndex * Dimensions.get('window').width, animated: true });
+  };
+
+  const handleScrollEnd = (event: any) => {
+    const offsetX = event.nativeEvent.contentOffset.x;
+    const pageIndex = Math.round(offsetX / Dimensions.get('window').width);
+    const tabs: ('workouts' | 'oefeningen' | 'programmas')[] = ['workouts', 'oefeningen', 'programmas'];
+    setActiveTab(tabs[pageIndex] || 'workouts');
+  };
+
   if (!discipline) {
     return (
       <AppScreen>
@@ -424,7 +439,10 @@ export default function DisciplineScreen() {
                   { borderColor: isActive ? '#2563EB' : '#E2E8F0', backgroundColor: isActive ? '#2563EB' : '#FFFFFF' },
                   pressed && { opacity: 0.8 },
                 ]}
-                onPress={() => setActiveTab(tab)}
+                onPress={() => {
+                  setActiveTab(tab);
+                  scrollToTab(tab);
+                }}
               >
                 <MaterialCommunityIcons name={tabIcons[tab] as any} size={16} color={isActive ? '#FFFFFF' : '#64748B'} />
                 <Text style={[styles.tabLabel, { color: isActive ? '#FFFFFF' : '#64748B' }]}>
@@ -436,33 +454,42 @@ export default function DisciplineScreen() {
         </View>
 
         {/* ── PREMIUM FILTER CHIPS ── */}
-        <View style={[styles.filterSection, { backgroundColor: theme.background }]}>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterRow}>
-            {filterOptions.map((filter) => {
-              const isActive = activeFilter === filter;
-              return (
-                <Pressable
-                  key={filter}
-                  style={({ pressed }) => [
-                    styles.filterChip,
-                    { borderColor: isActive ? '#2563EB' : '#E2E8F0', backgroundColor: isActive ? '#2563EB' : '#FFFFFF' },
-                    pressed && { opacity: 0.8 },
-                  ]}
-                  onPress={() => setActiveFilter(filter)}
-                >
-                  <Text style={[styles.filterChipText, { color: isActive ? '#FFFFFF' : '#64748B' }]}>
-                    {filter}
-                  </Text>
-                </Pressable>
-              );
-            })}
-          </ScrollView>
-        </View>
+        {activeTab === 'oefeningen' && (
+          <View style={[styles.filterSection, { backgroundColor: theme.background }]}>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterRow}>
+              {filterOptions.map((filter) => {
+                const isActive = activeFilter === filter;
+                return (
+                  <Pressable
+                    key={filter}
+                    style={({ pressed }) => [
+                      styles.filterChip,
+                      { borderColor: isActive ? '#2563EB' : '#E2E8F0', backgroundColor: isActive ? '#2563EB' : '#FFFFFF' },
+                      pressed && { opacity: 0.8 },
+                    ]}
+                    onPress={() => setActiveFilter(filter)}
+                  >
+                    <Text style={[styles.filterChipText, { color: isActive ? '#FFFFFF' : '#64748B' }]}>
+                      {filter}
+                    </Text>
+                  </Pressable>
+                );
+              })}
+            </ScrollView>
+          </View>
+        )}
 
         {/* ── CONTENT ── */}
         <View style={styles.contentArea}>
-          {activeTab === 'workouts' && (
-            <>
+          <ScrollView
+            ref={scrollRef}
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            onMomentumScrollEnd={handleScrollEnd}
+            bounces={false}
+          >
+            <View style={{ width: Dimensions.get('window').width, paddingHorizontal: 16 }}>
               {workoutsForDiscipline.map((workout) => (
                 <Pressable
                   key={workout.id}
@@ -495,10 +522,10 @@ export default function DisciplineScreen() {
                   <MaterialCommunityIcons name="chevron-right" size={20} color="#94A3B8" />
                 </Pressable>
               ))}
-            </>
-          )}
-          {activeTab === 'oefeningen' && (
-            <>
+            </View>
+
+            {/* Oefeningen */}
+            <View style={{ width: Dimensions.get('window').width, paddingHorizontal: 16 }}>
               {filteredExercises.length > 0 ? (
                 filteredExercises.map((exercise) => {
                   const hasThumbnail = exercise.mediaItems && exercise.mediaItems.length > 0 && exercise.mediaItems[0]?.thumbnail;
@@ -581,10 +608,10 @@ export default function DisciplineScreen() {
                   </View>
                 </View>
               )}
-            </>
-          )}
-          {activeTab === 'programmas' && (
-            <>
+            </View>
+
+            {/* Programma's */}
+            <View style={{ width: Dimensions.get('window').width, paddingHorizontal: 16 }}>
               {programsForDiscipline.length > 0 ? (
                 programsForDiscipline.map((program) => (
                   <Pressable
@@ -645,8 +672,8 @@ export default function DisciplineScreen() {
                   </View>
                 </View>
               )}
-            </>
-          )}
+            </View>
+          </ScrollView>
         </View>
         <View style={styles.bottomSpacer} />
       </ScrollView>
@@ -703,7 +730,7 @@ const styles = StyleSheet.create({
   filterRow: { gap: 8, paddingBottom: 12 },
   filterChip: { paddingHorizontal: 14, paddingVertical: 10, borderRadius: 999, borderWidth: 1.5, minHeight: 40 },
   filterChipText: { fontSize: 13, fontWeight: '600' },
-  contentArea: { paddingHorizontal: 16, paddingTop: 4 },
+  contentArea: { paddingTop: 4 },
   premiumCard: { flexDirection: 'row', alignItems: 'center', borderRadius: 22, borderWidth: 1, padding: 16, marginBottom: 12, gap: 14 },
   cardPressed: { transform: [{ scale: 0.98 }], opacity: 0.92 },
   thumbnailFallback: { width: 64, height: 64, borderRadius: 14, alignItems: 'center', justifyContent: 'center', flexShrink: 0, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 4, elevation: 1 },
