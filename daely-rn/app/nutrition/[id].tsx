@@ -224,15 +224,15 @@ const styles = StyleSheet.create({
     paddingTop: 24,
   },
   hero: {
-    height: 290,
+    height: 240,
     justifyContent: 'flex-end',
     marginTop: 14,
   },
   heroImage: {
-    borderRadius: 40,
+    borderRadius: 28,
   },
   heroOverlay: {
-    borderRadius: 40,
+    borderRadius: 28,
     justifyContent: 'flex-end',
     paddingHorizontal: 18,
     paddingBottom: 20,

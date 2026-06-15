@@ -247,6 +247,8 @@ const styles = StyleSheet.create({
     padding: 24,
     marginBottom: 24,
     alignItems: 'center',
+    minHeight: 180,
+    maxHeight: 240,
   },
   heroGradient: {
     borderRadius: 20,
