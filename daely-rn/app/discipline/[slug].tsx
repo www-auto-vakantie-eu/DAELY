@@ -20,7 +20,7 @@ import { DISCIPLINE_CONTENT } from '@/constants/discipline-content';
 import SharedBottomNav from '../../components/SharedBottomNav';
 import { AppScreen } from '@/components/AppScreen';
 
-// Local mapping for Fitness exercise thumbnails (batch 1 + batch 2)
+// Local mapping for Fitness exercise thumbnails (batch 1 + batch 2 + batch 3 back)
 const FITNESS_THUMBNAIL_MAP: Record<string, ImageSourcePropType> = {
   // Batch 1
   '1-1': require('@/assets/images/exercises/fitness/fitness-barbell-bench-press.png'),
@@ -28,7 +28,6 @@ const FITNESS_THUMBNAIL_MAP: Record<string, ImageSourcePropType> = {
   '4-1': require('@/assets/images/exercises/fitness/fitness-overhead-press.png'),
   '8-1': require('@/assets/images/exercises/fitness/fitness-barbell-squat.png'),
   '6-3': require('@/assets/images/exercises/fitness/fitness-deadlift.png'),
-  '5-5': require('@/assets/images/exercises/fitness/fitness-lat-pulldown.png'),
   '1-10': require('@/assets/images/exercises/fitness/fitness-dumbbell-press.png'),
   // Batch 2 - Barbell variants
   '1-3': require('@/assets/images/exercises/fitness/fitness-decline-barbell-bench-press.png'),
@@ -62,6 +61,23 @@ const FITNESS_THUMBNAIL_MAP: Record<string, ImageSourcePropType> = {
   '1-27': require('@/assets/images/exercises/fitness/fitness-decline-push-up.png'),
   '1-28': require('@/assets/images/exercises/fitness/fitness-ring-push-up.png'),
   '1-29': require('@/assets/images/exercises/fitness/fitness-chest-dips.png'),
+  // Batch 3 - Bovenrug (Back)
+  '5-1': require('@/assets/images/exercises/fitness/fitness-pull-up.png'),
+  '5-2': require('@/assets/images/exercises/fitness/fitness-chin-up.png'),
+  '5-5': require('@/assets/images/exercises/fitness/fitness-lat-pulldown-wide-grip.png'),
+  '5-6': require('@/assets/images/exercises/fitness/fitness-lat-pulldown-neutral-grip.png'),
+  '5-7': require('@/assets/images/exercises/fitness/fitness-single-arm-lat-pulldown.png'),
+  '5-8': require('@/assets/images/exercises/fitness/fitness-chest-supported-row.png'),
+  '5-9': require('@/assets/images/exercises/fitness/fitness-barbell-bent-over-row.png'),
+  '5-11': require('@/assets/images/exercises/fitness/fitness-t-bar-row.png'),
+  '5-12': require('@/assets/images/exercises/fitness/fitness-seated-cable-row.png'),
+  '5-14': require('@/assets/images/exercises/fitness/fitness-single-arm-dumbbell-row.png'),
+  '5-18': require('@/assets/images/exercises/fitness/fitness-straight-arm-pulldown.png'),
+  '5-19': require('@/assets/images/exercises/fitness/fitness-face-pull.png'),
+  '5-27': require('@/assets/images/exercises/fitness/fitness-seal-row.png'),
+  // Batch 3 - Onderrug (Lower Back)
+  '6-8': require('@/assets/images/exercises/fitness/fitness-back-extension.png'),
+  '6-28': require('@/assets/images/exercises/fitness/fitness-dumbbell-pullover.png'),
 };
 
 type DisciplineDetail = {
