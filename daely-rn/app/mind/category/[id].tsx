@@ -1,4 +1,5 @@
 import { StyleSheet, ScrollView, View, Text, TouchableOpacity } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
@@ -135,12 +136,17 @@ export default function MindCategoryScreen() {
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
         <View style={styles.content}>
           {/* Category Hero Card */}
-          <View style={[styles.categoryHeroCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-            <View style={styles.categoryIconBadge}>
-              <MaterialCommunityIcons name="meditation" size={32} color="#8B5CF6" />
-            </View>
-            <Text style={[styles.categoryTitle, { color: theme.titleColor }]}>{categoryName}</Text>
-            <Text style={[styles.categorySubtitle, { color: theme.subtitleColor }]}>
+          <View style={[styles.categoryHeroCard, { backgroundColor: theme.card, borderColor: '#E2E8F0' }]}>
+            <LinearGradient
+              colors={['rgba(139, 92, 246, 0.05)', 'rgba(139, 92, 246, 0.15)']}
+              style={styles.heroGradient}
+            >
+              <View style={styles.categoryIconBadge}>
+                <MaterialCommunityIcons name="meditation" size={32} color="#8B5CF6" />
+              </View>
+            </LinearGradient>
+            <Text style={[styles.categoryTitle, { color: '#0F172A' }]}>{categoryName}</Text>
+            <Text style={[styles.categorySubtitle, { color: '#64748B' }]}>
               {categoryId === 'prime' && 'Start je dag met energie, focus en intentie'}
               {categoryId === 'breathing' && 'Ademhalingsoefeningen voor rust, controle en focus'}
               {categoryId === 'focus' && 'Train je concentratie voor werk, studie en sport'}
@@ -156,9 +162,9 @@ export default function MindCategoryScreen() {
 
           {/* Mindset intro card */}
           {categoryId === 'mindset' && (
-            <View style={[styles.introCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-              <Text style={[styles.introTitle, { color: theme.titleColor }]}>Over Mindset</Text>
-              <Text style={[styles.introText, { color: theme.subtitleColor }]}>
+            <View style={[styles.introCard, { backgroundColor: theme.card, borderColor: '#E2E8F0' }]}>
+              <Text style={[styles.introTitle, { color: '#0F172A' }]}>Over Mindset</Text>
+              <Text style={[styles.introText, { color: '#64748B' }]}>
                 Jouw mindset is de basis voor alles wat je doet. Het bepaalt hoe je omgaat met uitdagingen, hoe je jouw doelen nastreeft en hoe je terugkomt na tegenslagen.
               </Text>
             </View>
@@ -168,43 +174,50 @@ export default function MindCategoryScreen() {
           {mockMeditations.map((meditation, index) => {
             if (meditation.isIntro) {
               return (
-                <View key={index} style={[styles.meditationCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-                  <View style={styles.meditationIconBadge}>
-                    <MaterialCommunityIcons name="information" size={20} color="#8B5CF6" />
+                <View key={index} style={[styles.premiumCard, { backgroundColor: theme.card, borderColor: '#E2E8F0' }]}>
+                  <View style={[styles.thumbnailFallback, { backgroundColor: '#F1F5F9' }]}>
+                    <MaterialCommunityIcons name="information" size={24} color="#64748B" />
                   </View>
-                  <View style={styles.meditationInfo}>
-                    <Text style={[styles.meditationTitle, { color: theme.titleColor }]}>{meditation.title}</Text>
-                    <Text style={[styles.meditationSubtitle, { color: theme.subtitleColor }]}>{meditation.subtitle}</Text>
+                  <View style={styles.cardInfo}>
+                    <Text style={[styles.cardTitle, { color: '#0F172A' }]}>{meditation.title}</Text>
+                    <Text style={[styles.cardSubtitle, { color: '#64748B' }]}>{meditation.subtitle}</Text>
                   </View>
                 </View>
               );
             }
 
+            const hasProgramId = meditation.programId && MIND_PROGRAMS.find(p => p.id === meditation.programId);
+
             return (
               <TouchableOpacity
                 key={index}
-                style={[styles.meditationCard, { backgroundColor: theme.card, borderColor: theme.border }]}
+                style={[styles.premiumCard, { backgroundColor: theme.card, borderColor: '#E2E8F0' }]}
                 onPress={() => handleCardPress(meditation.programId)}
               >
-                <View style={styles.meditationIconBadge}>
-                  <MaterialCommunityIcons name="play-circle" size={20} color="#8B5CF6" />
+                <View style={[styles.thumbnailFallback, { backgroundColor: '#F1F5F9' }]}>
+                  <MaterialCommunityIcons name="play-circle" size={24} color="#8B5CF6" />
                 </View>
-                <View style={styles.meditationInfo}>
-                  <Text style={[styles.meditationTitle, { color: theme.titleColor }]}>{meditation.title}</Text>
-                  <Text style={[styles.meditationSubtitle, { color: theme.subtitleColor }]}>{meditation.subtitle}</Text>
-                  {meditation.duration && (
-                    <View style={styles.meditationMeta}>
-                      <MaterialCommunityIcons name="clock-outline" size={14} color={theme.subtitleColor} />
-                      <Text style={[styles.meditationDuration, { color: theme.subtitleColor }]}>{meditation.duration}</Text>
+                <View style={styles.cardInfo}>
+                  <Text style={[styles.cardTitle, { color: '#0F172A' }]}>{meditation.title}</Text>
+                  <Text style={[styles.cardSubtitle, { color: '#64748B' }]}>{meditation.subtitle}</Text>
+                  <View style={styles.cardMeta}>
+                    {meditation.duration && (
+                      <View style={styles.metaTag}>
+                        <MaterialCommunityIcons name="clock-outline" size={12} color="#64748B" />
+                        <Text style={[styles.metaTagText, { color: '#64748B' }]}>{meditation.duration}</Text>
+                      </View>
+                    )}
+                    <View style={styles.metaTag}>
+                      <Text style={[styles.metaTagText, { color: '#8B5CF6' }]}>{meditation.type}</Text>
                     </View>
-                  )}
-                </View>
-                <View style={styles.meditationRightSection}>
-                  <View style={[styles.meditationTypeBadge, { backgroundColor: '#F1F5F9' }]}>
-                    <Text style={[styles.meditationTypeText, { color: theme.subtitleColor }]}>{meditation.type}</Text>
+                    {!hasProgramId && (
+                      <View style={styles.metaTag}>
+                        <Text style={[styles.metaTagText, { color: '#94A3B8' }]}>Binnenkort</Text>
+                      </View>
+                    )}
                   </View>
-                  <MaterialCommunityIcons name="chevron-right" size={20} color={theme.subtitleColor} />
                 </View>
+                <MaterialCommunityIcons name="chevron-right" size={20} color="#94A3B8" />
               </TouchableOpacity>
             );
           })}
@@ -222,32 +235,42 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: 100,
+    paddingBottom: 120,
   },
   content: {
     paddingHorizontal: 16,
-    paddingTop: 24,
+    paddingTop: 20,
   },
   categoryHeroCard: {
-    borderRadius: 24,
+    borderRadius: 28,
     borderWidth: 1,
     padding: 24,
     marginBottom: 24,
     alignItems: 'center',
   },
+  heroGradient: {
+    borderRadius: 20,
+    padding: 16,
+    marginBottom: 16,
+  },
   categoryIconBadge: {
     width: 64,
     height: 64,
     borderRadius: 32,
-    backgroundColor: '#F1F5F9',
+    backgroundColor: '#FFFFFF',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
   },
   categoryTitle: {
     fontSize: 28,
     fontWeight: '800',
     marginBottom: 8,
+    letterSpacing: -0.5,
   },
   categorySubtitle: {
     fontSize: 15,
@@ -255,9 +278,9 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   introCard: {
-    borderRadius: 16,
+    borderRadius: 20,
     borderWidth: 1,
-    padding: 16,
+    padding: 20,
     marginBottom: 24,
   },
   introTitle: {
@@ -268,6 +291,50 @@ const styles = StyleSheet.create({
   introText: {
     fontSize: 14,
     lineHeight: 22,
+  },
+  premiumCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 22,
+    borderWidth: 1,
+    padding: 16,
+    marginBottom: 12,
+    gap: 14,
+  },
+  thumbnailFallback: {
+    width: 56,
+    height: 56,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+  },
+  cardInfo: {
+    flex: 1,
+  },
+  cardTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    marginBottom: 4,
+  },
+  cardSubtitle: {
+    fontSize: 14,
+    marginBottom: 8,
+    lineHeight: 20,
+  },
+  cardMeta: {
+    flexDirection: 'row',
+    gap: 10,
+    flexWrap: 'wrap',
+  },
+  metaTag: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  metaTagText: {
+    fontSize: 12,
+    fontWeight: '600',
   },
   meditationCard: {
     borderRadius: 16,
@@ -320,6 +387,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   bottomSpacer: {
-    height: 20,
+    height: 120,
   },
 });
