@@ -1,4 +1,4 @@
-import { StyleSheet, ScrollView, View, Text, Pressable } from 'react-native';
+import { StyleSheet, ScrollView, View, Text } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
@@ -61,14 +61,6 @@ export default function TappingScreen() {
           </View>
         </View>
 
-        <View style={styles.buttonRow}>
-          <Pressable
-            style={[styles.secondaryButton, { backgroundColor: theme.background, borderColor: theme.border }]}
-            onPress={() => router.push('/feedback')}
-          >
-            <Text style={[styles.secondaryButtonText, { color: theme.titleColor }]}>Feedback geven</Text>
-          </Pressable>
-        </View>
       </View>
 
       <View style={styles.bottomSpacer} />
@@ -153,10 +145,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginLeft: 8,
   },
-  buttonRow: {
-    gap: 12,
-    marginTop: 8,
-  },
   primaryButton: {
     borderRadius: 14,
     backgroundColor: '#F4A259',
@@ -165,16 +153,6 @@ const styles = StyleSheet.create({
   },
   primaryButtonText: {
     color: '#fff',
-    fontWeight: '700',
-    fontSize: 16,
-  },
-  secondaryButton: {
-    borderRadius: 14,
-    borderWidth: 1,
-    paddingVertical: 14,
-    alignItems: 'center',
-  },
-  secondaryButtonText: {
     fontWeight: '700',
     fontSize: 16,
   },
