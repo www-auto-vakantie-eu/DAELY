@@ -6,6 +6,8 @@ import {
   Pressable,
   ImageBackground,
   StatusBar,
+  Image,
+  ImageSourcePropType,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -16,6 +18,17 @@ import PageHeader from '../components/PageHeader';
 import { DISCIPLINE_CONTENT } from '@/constants/discipline-content';
 import SharedBottomNav from '../../components/SharedBottomNav';
 import { AppScreen } from '@/components/AppScreen';
+
+// Local mapping for Fitness exercise thumbnails (batch 1)
+const FITNESS_THUMBNAIL_MAP: Record<string, ImageSourcePropType> = {
+  '1-1': require('@/assets/images/exercises/fitness/fitness-barbell-bench-press.png'),
+  '1-2': require('@/assets/images/exercises/fitness/fitness-incline-bench-press.png'),
+  '4-1': require('@/assets/images/exercises/fitness/fitness-overhead-press.png'),
+  '8-1': require('@/assets/images/exercises/fitness/fitness-barbell-squat.png'),
+  '6-3': require('@/assets/images/exercises/fitness/fitness-deadlift.png'),
+  '5-5': require('@/assets/images/exercises/fitness/fitness-lat-pulldown.png'),
+  '1-10': require('@/assets/images/exercises/fitness/fitness-dumbbell-press.png'),
+};
 
 type DisciplineDetail = {
   title: string;
@@ -330,6 +343,11 @@ export default function DisciplineScreen() {
       ? ['Alles', 'Man', 'Vrouw']
       : ['Alles', 'Borst', 'Biceps', 'Triceps', 'Schouders', 'Bovenrug', 'Onderrug', 'Buik', 'Billen', 'Benen'];
 
+  // Filter exercises based on activeFilter
+  const filteredExercises = activeFilter === 'Alles'
+    ? exercisesForDiscipline
+    : exercisesForDiscipline.filter(exercise => exercise.spiergroep === activeFilter);
+
   return (
     <AppScreen>
       <View style={[styles.screen, { backgroundColor: theme.background }]}>
@@ -448,9 +466,10 @@ export default function DisciplineScreen() {
           )}
           {activeTab === 'oefeningen' && (
             <>
-              {exercisesForDiscipline.length > 0 ? (
-                exercisesForDiscipline.map((exercise) => {
+              {filteredExercises.length > 0 ? (
+                filteredExercises.map((exercise) => {
                   const hasThumbnail = exercise.mediaItems && exercise.mediaItems.length > 0 && exercise.mediaItems[0]?.thumbnail;
+                  const localThumbnail = slug === 'fitness' ? FITNESS_THUMBNAIL_MAP[exercise.id] : null;
                   return (
                     <Pressable
                       key={exercise.id}
@@ -464,7 +483,13 @@ export default function DisciplineScreen() {
                         params: { id: exercise.id, disciplineSlug: slug },
                       })}
                     >
-                      {hasThumbnail ? (
+                      {localThumbnail ? (
+                        <Image
+                          source={localThumbnail}
+                          style={styles.thumbnailImage}
+                          resizeMode="cover"
+                        />
+                      ) : hasThumbnail ? (
                         <ImageBackground
                           source={{ uri: exercise.mediaItems![0].thumbnail }}
                           style={styles.thumbnailImage}
@@ -499,9 +524,13 @@ export default function DisciplineScreen() {
               ) : (
                 <View style={[styles.emptyState, { borderColor: '#E2E8F0' }]}>
                   <MaterialCommunityIcons name="dumbbell" size={48} color="#94A3B8" />
-                  <Text style={[styles.emptyTitle, { color: '#0F172A' }]}>Oefeningen voor {discipline.title}</Text>
+                  <Text style={[styles.emptyTitle, { color: '#0F172A' }]}>
+                    {activeFilter === 'Alles' ? `Oefeningen voor ${discipline.title}` : `Geen ${activeFilter} oefeningen`}
+                  </Text>
                   <Text style={[styles.emptySubtitle, { color: '#64748B' }]}>
-                    Oefeningen voor {discipline.title} komen binnenkort beschikbaar.
+                    {activeFilter === 'Alles'
+                      ? `Oefeningen voor ${discipline.title} komen binnenkort beschikbaar.`
+                      : 'Probeer een andere filter of kies "Alles".'}
                   </Text>
                   <View style={styles.emptyActionsRow}>
                     <Pressable
