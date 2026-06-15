@@ -23,7 +23,7 @@ const LIBRARY_ACTIONS = [
     title: 'Workout maken',
     subtitle: 'Maak je eigen workout',
     icon: 'dumbbell' as const,
-    route: '/workout/create' as const,
+    route: '/workouts/create' as const,
   },
   {
     key: 'goal',
