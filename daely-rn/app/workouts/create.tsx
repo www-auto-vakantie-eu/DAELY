@@ -1,11 +1,12 @@
 import { useState, useMemo } from 'react';
-import { StyleSheet, ScrollView, View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
+import { StyleSheet, ScrollView, View, Text, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
 import { DISCIPLINE_CONTENT } from '@/constants/discipline-content';
 import { AppScreen } from '@/components/AppScreen';
 import SharedBottomNav from '@/components/SharedBottomNav';
+import { saveCustomWorkoutTemplate, type CustomWorkoutTemplate } from '@/services/custom-workout-storage';
 
 type Exercise = {
   id: string;
@@ -32,6 +33,8 @@ export default function WorkoutBuilderScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedExerciseIds, setSelectedExerciseIds] = useState<Set<string>>(new Set());
   const [selectedExerciseConfigs, setSelectedExerciseConfigs] = useState<Record<string, ExerciseConfig>>({});
+  const [workoutName, setWorkoutName] = useState('');
+  const [workoutGoal, setWorkoutGoal] = useState('');
 
   // Collect all exercises from all disciplines
   const allExercises = useMemo(() => {
@@ -127,6 +130,48 @@ export default function WorkoutBuilderScreen() {
     const moreText = selectedExercises.length > 3 ? ` + ${selectedExercises.length - 3} meer` : '';
     
     alert(`Workout samengesteld:\n\n• ${selectedExerciseIds.size} oefeningen\n• ${totalSets} sets totaal\n\n${exerciseNames}${moreText}\n\nStart-flow wordt in de volgende stap gekoppeld.`);
+  };
+
+  const handleSaveWorkout = async () => {
+    if (selectedExerciseIds.size === 0) {
+      Alert.alert('Geen oefeningen', 'Selecteer eerst minimaal één oefening om je workout op te slaan.');
+      return;
+    }
+
+    const title = workoutName.trim() || 'Eigen workout';
+    const goal = workoutGoal.trim() || undefined;
+
+    const template: CustomWorkoutTemplate = {
+      id: `custom-${Date.now()}`,
+      title,
+      goal,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      exercises: selectedExercises.map((exercise) => {
+        const config = selectedExerciseConfigs[exercise.id];
+        return {
+          exerciseId: exercise.id,
+          exerciseName: exercise.name,
+          discipline: exercise.discipline,
+          spiergroep: exercise.spiergroep,
+          categorie: exercise.categorie,
+          moeilijkheid: exercise.moeilijkheid,
+          sets: config?.sets || '3',
+          reps: config?.reps || '10',
+          weightKg: config?.weightKg || '',
+          durationSeconds: config?.durationSeconds || '',
+          restSeconds: config?.restSeconds || '60',
+          note: config?.note || '',
+        };
+      }),
+    };
+
+    try {
+      await saveCustomWorkoutTemplate(template);
+      Alert.alert('Opgeslagen', `"${title}" is opgeslagen als eigen workout.`);
+    } catch {
+      Alert.alert('Fout', 'Er ging iets mis bij het opslaan van je workout.');
+    }
   };
 
   const getDifficultyColor = (difficulty: string) => {
@@ -277,6 +322,26 @@ export default function WorkoutBuilderScreen() {
             </View>
           </View>
 
+          {/* Workout Name and Goal */}
+          {selectedExerciseIds.size > 0 && (
+            <View style={styles.workoutMetaSection}>
+              <TextInput
+                style={[styles.workoutNameInput, { backgroundColor: theme.card, borderColor: theme.border, color: theme.titleColor }]}
+                placeholder="Naam van je workout"
+                placeholderTextColor={theme.subtitleColor}
+                value={workoutName}
+                onChangeText={setWorkoutName}
+              />
+              <TextInput
+                style={[styles.workoutGoalInput, { backgroundColor: theme.card, borderColor: theme.border, color: theme.titleColor }]}
+                placeholder="Doel (bijv. Full body, Kracht, Conditie)"
+                placeholderTextColor={theme.subtitleColor}
+                value={workoutGoal}
+                onChangeText={setWorkoutGoal}
+              />
+            </View>
+          )}
+
           {/* Your Workout Configuration Section */}
           {selectedExerciseIds.size > 0 && (
             <View style={styles.configSection}>
@@ -298,6 +363,14 @@ export default function WorkoutBuilderScreen() {
                 return <ConfigCard key={exercise.id} exercise={exercise} config={config} />;
               })}
             </View>
+          )}
+
+          {/* Save Workout Button */}
+          {selectedExerciseIds.size > 0 && (
+            <TouchableOpacity style={styles.saveButton} onPress={handleSaveWorkout}>
+              <MaterialCommunityIcons name="content-save" size={20} color="#FFFFFF" />
+              <Text style={styles.saveButtonText}>Opslaan als workout</Text>
+            </TouchableOpacity>
           )}
 
           {/* Exercise List */}
@@ -601,6 +674,42 @@ const styles = StyleSheet.create({
   },
   bottomSpacer: {
     height: 20,
+  },
+  workoutMetaSection: {
+    paddingHorizontal: 16,
+    marginBottom: 16,
+    gap: 12,
+  },
+  workoutNameInput: {
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    borderRadius: 16,
+    borderWidth: 1,
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  workoutGoalInput: {
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    borderRadius: 16,
+    borderWidth: 1,
+    fontSize: 14,
+  },
+  saveButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    backgroundColor: '#2563EB',
+    marginHorizontal: 16,
+    marginBottom: 16,
+    paddingVertical: 14,
+    borderRadius: 16,
+  },
+  saveButtonText: {
+    color: '#FFFFFF',
+    fontSize: 15,
+    fontWeight: '700',
   },
   ctaContainer: {
     position: 'absolute',

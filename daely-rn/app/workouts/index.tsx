@@ -5,6 +5,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import { useTheme } from '@/hooks/use-theme';
 import { type Activity, getActivities } from '@/services/activity-storage';
+import { getCustomWorkoutTemplates, type CustomWorkoutTemplate } from '@/services/custom-workout-storage';
 import PageHeader from '../components/PageHeader';
 import { AppScreen } from '@/components/AppScreen';
 import SharedBottomNav from '@/components/SharedBottomNav';
@@ -76,6 +77,7 @@ export default function WorkoutsIndexScreen() {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<(typeof CATEGORIES)[number] | null>(null);
   const [placeholderMessage, setPlaceholderMessage] = useState<string | null>(null);
+  const [customWorkouts, setCustomWorkouts] = useState<CustomWorkoutTemplate[]>([]);
 
   useEffect(() => {
     let isMounted = true;
@@ -91,6 +93,24 @@ export default function WorkoutsIndexScreen() {
       .catch(() => {
         if (!isMounted) return;
         setActivities([]);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    getCustomWorkoutTemplates()
+      .then((templates) => {
+        if (!isMounted) return;
+        setCustomWorkouts(templates);
+      })
+      .catch(() => {
+        if (!isMounted) return;
+        setCustomWorkouts([]);
       });
 
     return () => {
@@ -180,6 +200,37 @@ export default function WorkoutsIndexScreen() {
             );
           })}
         </View>
+
+        {customWorkouts.length > 0 && (
+          <>
+            <View style={styles.sectionHeader}>
+              <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Mijn workouts</Text>
+            </View>
+            {customWorkouts.map((template) => (
+              <Pressable
+                key={template.id}
+                style={[styles.customWorkoutCard, { backgroundColor: theme.card, borderColor: theme.border }]}
+              >
+                <View style={styles.customWorkoutTop}>
+                  <View style={styles.customWorkoutLeft}>
+                    <Text style={[styles.customWorkoutTitle, { color: theme.titleColor }]}>
+                      {template.title}
+                    </Text>
+                    {template.goal && (
+                      <Text style={[styles.customWorkoutGoal, { color: theme.subtitleColor }]}>
+                        {template.goal}
+                      </Text>
+                    )}
+                    <Text style={[styles.customWorkoutMeta, { color: theme.subtitleColor }]}>
+                      {template.exercises.length} oefeningen
+                    </Text>
+                  </View>
+                  <MaterialCommunityIcons name="dumbbell" size={24} color="#2563EB" />
+                </View>
+              </Pressable>
+            ))}
+          </>
+        )}
 
         <View style={styles.sectionHeader}>
           <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Recente workout-activiteiten</Text>
@@ -344,6 +395,32 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 14,
     lineHeight: 20,
+  },
+  customWorkoutCard: {
+    borderRadius: 16,
+    borderWidth: 1,
+    padding: 16,
+    marginBottom: 12,
+  },
+  customWorkoutTop: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  customWorkoutLeft: {
+    flex: 1,
+  },
+  customWorkoutTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    marginBottom: 4,
+  },
+  customWorkoutGoal: {
+    fontSize: 13,
+    marginBottom: 4,
+  },
+  customWorkoutMeta: {
+    fontSize: 13,
   },
   activityCard: {
     borderRadius: 16,
