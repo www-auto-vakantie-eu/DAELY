@@ -17,11 +17,21 @@ type Exercise = {
   instructions?: string[];
 };
 
+type ExerciseConfig = {
+  sets: string;
+  reps: string;
+  weightKg: string;
+  durationSeconds: string;
+  restSeconds: string;
+  note: string;
+};
+
 export default function WorkoutBuilderScreen() {
   const router = useRouter();
   const theme = useTheme();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedExerciseIds, setSelectedExerciseIds] = useState<Set<string>>(new Set());
+  const [selectedExerciseConfigs, setSelectedExerciseConfigs] = useState<Record<string, ExerciseConfig>>({});
 
   // Collect all exercises from all disciplines
   const allExercises = useMemo(() => {
@@ -70,13 +80,36 @@ export default function WorkoutBuilderScreen() {
   const toggleExercise = (exerciseId: string) => {
     setSelectedExerciseIds(prev => {
       const newSet = new Set(prev);
-      if (newSet.has(exerciseId)) {
-        newSet.delete(exerciseId);
-      } else {
-        newSet.add(exerciseId);
-      }
+      setSelectedExerciseConfigs(prevConfigs => {
+        const newConfigs = { ...prevConfigs };
+        if (newSet.has(exerciseId)) {
+          newSet.delete(exerciseId);
+          delete newConfigs[exerciseId];
+        } else {
+          newSet.add(exerciseId);
+          newConfigs[exerciseId] = {
+            sets: '3',
+            reps: '10',
+            weightKg: '',
+            durationSeconds: '',
+            restSeconds: '60',
+            note: '',
+          };
+        }
+        return newConfigs;
+      });
       return newSet;
     });
+  };
+
+  const updateConfig = (exerciseId: string, field: keyof ExerciseConfig, value: string) => {
+    setSelectedExerciseConfigs(prev => ({
+      ...prev,
+      [exerciseId]: {
+        ...prev[exerciseId],
+        [field]: value,
+      },
+    }));
   };
 
   const handleStartWorkout = () => {
@@ -84,9 +117,16 @@ export default function WorkoutBuilderScreen() {
       return;
     }
     
-    // For MVP: show alert that workout is ready
-    // In future: integrate with existing tracker/start-flow
-    alert(`Workout samengesteld met ${selectedExerciseIds.size} oefeningen.\n\nStart-flow wordt in de volgende stap gekoppeld.`);
+    // Calculate total sets
+    const totalSets = selectedExercises.reduce((sum, ex) => {
+      const config = selectedExerciseConfigs[ex.id];
+      return sum + parseInt(config?.sets || '0', 10);
+    }, 0);
+
+    const exerciseNames = selectedExercises.slice(0, 3).map(ex => ex.name).join(', ');
+    const moreText = selectedExercises.length > 3 ? ` + ${selectedExercises.length - 3} meer` : '';
+    
+    alert(`Workout samengesteld:\n\n• ${selectedExerciseIds.size} oefeningen\n• ${totalSets} sets totaal\n\n${exerciseNames}${moreText}\n\nStart-flow wordt in de volgende stap gekoppeld.`);
   };
 
   const getDifficultyColor = (difficulty: string) => {
@@ -103,6 +143,91 @@ export default function WorkoutBuilderScreen() {
       .split('-')
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
+  };
+
+  const ConfigCard = ({ exercise, config }: { exercise: Exercise; config: ExerciseConfig }) => {
+    return (
+      <View style={[styles.configCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+        <View style={styles.configHeader}>
+          <View style={styles.configHeaderLeft}>
+            <Text style={[styles.configTitle, { color: theme.titleColor }]}>{exercise.name}</Text>
+            <Text style={[styles.configSubtitle, { color: theme.subtitleColor }]}>
+              {formatDisciplineName(exercise.discipline)} • {exercise.spiergroep}
+            </Text>
+          </View>
+          <TouchableOpacity onPress={() => toggleExercise(exercise.id)}>
+            <MaterialCommunityIcons name="close-circle" size={24} color="#EF4444" />
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.configRow}>
+          <View style={styles.configInput}>
+            <Text style={[styles.configLabel, { color: theme.subtitleColor }]}>Sets</Text>
+            <TextInput
+              style={[styles.configInputField, { backgroundColor: '#F1F5F9', color: theme.titleColor }]}
+              value={config.sets}
+              onChangeText={(value) => updateConfig(exercise.id, 'sets', value)}
+              keyboardType="number-pad"
+            />
+          </View>
+          <View style={styles.configInput}>
+            <Text style={[styles.configLabel, { color: theme.subtitleColor }]}>Reps</Text>
+            <TextInput
+              style={[styles.configInputField, { backgroundColor: '#F1F5F9', color: theme.titleColor }]}
+              value={config.reps}
+              onChangeText={(value) => updateConfig(exercise.id, 'reps', value)}
+              keyboardType="number-pad"
+            />
+          </View>
+          <View style={styles.configInput}>
+            <Text style={[styles.configLabel, { color: theme.subtitleColor }]}>Gewicht (kg)</Text>
+            <TextInput
+              style={[styles.configInputField, { backgroundColor: '#F1F5F9', color: theme.titleColor }]}
+              value={config.weightKg}
+              onChangeText={(value) => updateConfig(exercise.id, 'weightKg', value)}
+              keyboardType="decimal-pad"
+              placeholder="0"
+              placeholderTextColor={theme.subtitleColor}
+            />
+          </View>
+        </View>
+
+        <View style={styles.configRow}>
+          <View style={styles.configInput}>
+            <Text style={[styles.configLabel, { color: theme.subtitleColor }]}>Tijd (sec)</Text>
+            <TextInput
+              style={[styles.configInputField, { backgroundColor: '#F1F5F9', color: theme.titleColor }]}
+              value={config.durationSeconds}
+              onChangeText={(value) => updateConfig(exercise.id, 'durationSeconds', value)}
+              keyboardType="number-pad"
+              placeholder="30"
+              placeholderTextColor={theme.subtitleColor}
+            />
+          </View>
+          <View style={styles.configInput}>
+            <Text style={[styles.configLabel, { color: theme.subtitleColor }]}>Rust (sec)</Text>
+            <TextInput
+              style={[styles.configInputField, { backgroundColor: '#F1F5F9', color: theme.titleColor }]}
+              value={config.restSeconds}
+              onChangeText={(value) => updateConfig(exercise.id, 'restSeconds', value)}
+              keyboardType="number-pad"
+            />
+          </View>
+        </View>
+
+        <View style={styles.configNote}>
+          <Text style={[styles.configLabel, { color: theme.subtitleColor }]}>Notitie</Text>
+          <TextInput
+            style={[styles.configNoteField, { backgroundColor: '#F1F5F9', color: theme.titleColor, borderColor: theme.border }]}
+            value={config.note}
+            onChangeText={(value) => updateConfig(exercise.id, 'note', value)}
+            placeholder="Techniek, tempo of persoonlijke focus"
+            placeholderTextColor={theme.subtitleColor}
+            multiline
+          />
+        </View>
+      </View>
+    );
   };
 
   return (
@@ -152,34 +277,26 @@ export default function WorkoutBuilderScreen() {
             </View>
           </View>
 
-          {/* Selected Overview */}
+          {/* Your Workout Configuration Section */}
           {selectedExerciseIds.size > 0 && (
-            <View style={[styles.selectedOverview, { backgroundColor: theme.card, borderColor: theme.border }]}>
-              <View style={styles.selectedHeader}>
-                <Text style={[styles.selectedTitle, { color: theme.titleColor }]}>
-                  Geselecteerd: {selectedExerciseIds.size}
+            <View style={styles.configSection}>
+              <View style={styles.configSectionHeader}>
+                <Text style={[styles.configSectionTitle, { color: theme.titleColor }]}>
+                  Jouw workout ({selectedExerciseIds.size})
                 </Text>
-                <TouchableOpacity onPress={() => setSelectedExerciseIds(new Set())}>
+                <TouchableOpacity onPress={() => {
+                  setSelectedExerciseIds(new Set());
+                  setSelectedExerciseConfigs({});
+                }}>
                   <Text style={styles.clearButton}>Wissen</Text>
                 </TouchableOpacity>
               </View>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.selectedList}>
-                {selectedExercises.slice(0, 10).map((exercise) => (
-                  <TouchableOpacity
-                    key={exercise.id}
-                    style={[styles.selectedChip, { backgroundColor: '#F1F5F9', borderColor: '#E2E8F0' }]}
-                    onPress={() => toggleExercise(exercise.id)}
-                  >
-                    <Text style={styles.selectedChipText}>{exercise.name}</Text>
-                    <MaterialCommunityIcons name="close" size={14} color="#64748B" />
-                  </TouchableOpacity>
-                ))}
-                {selectedExerciseIds.size > 10 && (
-                  <View style={[styles.selectedChip, { backgroundColor: '#F1F5F9', borderColor: '#E2E8F0' }]}>
-                    <Text style={styles.selectedChipText}>+{selectedExerciseIds.size - 10} meer</Text>
-                  </View>
-                )}
-              </ScrollView>
+              
+              {selectedExercises.map((exercise) => {
+                const config = selectedExerciseConfigs[exercise.id];
+                if (!config) return null;
+                return <ConfigCard key={exercise.id} exercise={exercise} config={config} />;
+              })}
             </View>
           )}
 
@@ -322,21 +439,18 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
   },
-  selectedOverview: {
-    marginHorizontal: 16,
+  configSection: {
+    paddingHorizontal: 16,
     marginBottom: 16,
-    padding: 16,
-    borderRadius: 16,
-    borderWidth: 1,
   },
-  selectedHeader: {
+  configSectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 12,
+    marginBottom: 16,
   },
-  selectedTitle: {
-    fontSize: 16,
+  configSectionTitle: {
+    fontSize: 18,
     fontWeight: '700',
   },
   clearButton: {
@@ -344,23 +458,60 @@ const styles = StyleSheet.create({
     color: '#EF4444',
     fontWeight: '600',
   },
-  selectedList: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  selectedChip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 20,
+  configCard: {
+    borderRadius: 16,
     borderWidth: 1,
+    padding: 16,
+    marginBottom: 12,
   },
-  selectedChipText: {
+  configHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 16,
+  },
+  configHeaderLeft: {
+    flex: 1,
+    marginRight: 8,
+  },
+  configTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    marginBottom: 4,
+  },
+  configSubtitle: {
     fontSize: 13,
+  },
+  configRow: {
+    flexDirection: 'row',
+    gap: 12,
+    marginBottom: 12,
+  },
+  configInput: {
+    flex: 1,
+  },
+  configLabel: {
+    fontSize: 12,
     fontWeight: '600',
-    color: '#0F172A',
+    marginBottom: 6,
+  },
+  configInputField: {
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderRadius: 10,
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  configNote: {
+    marginBottom: 0,
+  },
+  configNoteField: {
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    borderRadius: 10,
+    fontSize: 14,
+    minHeight: 60,
+    borderWidth: 1,
   },
   exerciseList: {
     paddingHorizontal: 16,
