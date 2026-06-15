@@ -75,48 +75,48 @@ export default function CreatorDetailScreen() {
   if (!creator) {
     return (
       <AppScreen style={{ backgroundColor: theme.background }}>
-        <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-          <View style={styles.headerRow}>
-            <Text style={[styles.headerTitle, { color: theme.titleColor }]}>Creator</Text>
-          </View>
-          <View style={[styles.fallbackCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-            <MaterialCommunityIcons name="information" size={48} color={theme.subtitleColor} />
-            <Text style={[styles.fallbackText, { color: theme.titleColor }]}>Creator niet gevonden</Text>
-          </View>
-        </ScrollView>
+        <View style={styles.container}>
+          <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} style={styles.scrollView}>
+            <View style={[styles.fallbackCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+              <MaterialCommunityIcons name="information" size={48} color={theme.subtitleColor} />
+              <Text style={[styles.fallbackText, { color: theme.titleColor }]}>Creator niet gevonden</Text>
+            </View>
+          </ScrollView>
+        </View>
       </AppScreen>
     );
   }
 
   return (
     <AppScreen style={{ backgroundColor: theme.background }}>
-      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <View style={styles.headerRow}>
-          <Text style={[styles.headerTitle, { color: theme.titleColor }]}>Creator</Text>
-        </View>
-
-        {/* Hero */}
-        <View style={[styles.heroCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-          <LinearGradient
-            colors={[`${creator.color}40`, `${creator.color}20`]}
-            style={styles.heroGradient}
-          >
-            <View style={styles.avatarContainer}>
-              <View style={[styles.avatar, { backgroundColor: `${creator.color}25`, borderColor: creator.color }]}>
-                <MaterialCommunityIcons name={creator.icon as any} size={48} color={creator.color} />
+      <View style={styles.container}>
+        <ScrollView 
+          contentContainerStyle={styles.scrollContent} 
+          showsVerticalScrollIndicator={false}
+          style={styles.scrollView}
+        >
+          {/* Hero */}
+          <View style={[styles.heroCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+            <LinearGradient
+              colors={[`${creator.color}40`, `${creator.color}20`]}
+              style={styles.heroGradient}
+            >
+              <View style={styles.avatarContainer}>
+                <View style={[styles.avatar, { backgroundColor: `${creator.color}25`, borderColor: creator.color }]}>
+                  <MaterialCommunityIcons name={creator.icon as any} size={48} color={creator.color} />
+                </View>
               </View>
+            </LinearGradient>
+            <View style={styles.heroContent}>
+              <View style={[styles.badge, { backgroundColor: '#F59E0B' }]}>
+                <Text style={styles.badgeText}>Samenwerking voorbereid</Text>
+              </View>
+              <Text style={[styles.name, { color: theme.titleColor }]}>{creator.name}</Text>
+              <Text style={[styles.type, { color: creator.color }]}>{creator.type}</Text>
+              <Text style={[styles.specialty, { color: theme.subtitleColor }]}>{creator.specialty}</Text>
+              <Text style={[styles.description, { color: theme.subtitleColor }]}>{creator.description}</Text>
             </View>
-          </LinearGradient>
-          <View style={styles.heroContent}>
-            <View style={[styles.badge, { backgroundColor: '#F59E0B' }]}>
-              <Text style={styles.badgeText}>Samenwerking voorbereid</Text>
-            </View>
-            <Text style={[styles.name, { color: theme.titleColor }]}>{creator.name}</Text>
-            <Text style={[styles.type, { color: creator.color }]}>{creator.type}</Text>
-            <Text style={[styles.specialty, { color: theme.subtitleColor }]}>{creator.specialty}</Text>
-            <Text style={[styles.description, { color: theme.subtitleColor }]}>{creator.description}</Text>
           </View>
-        </View>
 
         {/* What you'll find */}
         <View style={styles.sectionHeader}>
@@ -155,8 +155,9 @@ export default function CreatorDetailScreen() {
         </View>
 
         <View style={styles.bottomSpacer} />
-        <SharedBottomNav activeTab="community" />
       </ScrollView>
+      <SharedBottomNav activeTab="community" />
+    </View>
     </AppScreen>
   );
 }
@@ -164,6 +165,17 @@ export default function CreatorDetailScreen() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
+  },
+  container: {
+    flex: 1,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingHorizontal: 16,
+    paddingTop: 24,
+    paddingBottom: 100,
   },
   content: {
     paddingHorizontal: 16,

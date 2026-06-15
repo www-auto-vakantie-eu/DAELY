@@ -13,13 +13,14 @@ export default function EventHyroxScreen() {
 
   return (
     <AppScreen style={{ backgroundColor: theme.background }}>
-      <ScrollView style={styles.container} showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-        <PageHeader
-          title="HYROX"
-          onSettingsPress={() => router.push('/(tabs)/athlete')}
-          onSearchPress={() => router.push('/nutrition/search')}
-          onCartPress={() => router.push('/(tabs)/cart')}
-        />
+      <View style={styles.outerContainer}>
+        <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+          <PageHeader
+            title="HYROX"
+            onSettingsPress={() => router.push('/(tabs)/athlete')}
+            onSearchPress={() => router.push('/nutrition/search')}
+            onCartPress={() => router.push('/(tabs)/cart')}
+          />
 
         <View style={styles.content}>
           <View style={[styles.heroCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
@@ -93,14 +94,21 @@ export default function EventHyroxScreen() {
         </View>
 
         <View style={styles.bottomSpacer} />
-        <SharedBottomNav activeTab="today" />
       </ScrollView>
+      <SharedBottomNav activeTab="today" />
+    </View>
     </AppScreen>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+  },
+  outerContainer: {
+    flex: 1,
+  },
+  scrollView: {
     flex: 1,
   },
   scrollContent: {

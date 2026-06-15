@@ -68,27 +68,27 @@ export default function PartnerDetailScreen() {
   if (!partner) {
     return (
       <AppScreen style={{ backgroundColor: theme.background }}>
-        <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-          <View style={styles.headerRow}>
-            <Text style={[styles.headerTitle, { color: theme.titleColor }]}>Partner</Text>
-          </View>
-          <View style={[styles.fallbackCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-            <MaterialCommunityIcons name="information" size={48} color={theme.subtitleColor} />
-            <Text style={[styles.fallbackText, { color: theme.titleColor }]}>Partner niet gevonden</Text>
-          </View>
-        </ScrollView>
+        <View style={styles.container}>
+          <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} style={styles.scrollView}>
+            <View style={[styles.fallbackCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+              <MaterialCommunityIcons name="information" size={48} color={theme.subtitleColor} />
+              <Text style={[styles.fallbackText, { color: theme.titleColor }]}>Partner niet gevonden</Text>
+            </View>
+          </ScrollView>
+        </View>
       </AppScreen>
     );
   }
 
   return (
     <AppScreen style={{ backgroundColor: theme.background }}>
-      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        <View style={styles.headerRow}>
-          <Text style={[styles.headerTitle, { color: theme.titleColor }]}>Partner</Text>
-        </View>
-
-        {/* Hero */}
+      <View style={styles.container}>
+        <ScrollView 
+          contentContainerStyle={styles.scrollContent} 
+          showsVerticalScrollIndicator={false}
+          style={styles.scrollView}
+        >
+          {/* Hero */}
         <View style={[styles.heroCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
           <LinearGradient
             colors={[`${partner.color}40`, `${partner.color}20`]}
@@ -167,8 +167,9 @@ export default function PartnerDetailScreen() {
         </View>
 
         <View style={styles.bottomSpacer} />
-        <SharedBottomNav activeTab="community" />
       </ScrollView>
+      <SharedBottomNav activeTab="community" />
+    </View>
     </AppScreen>
   );
 }
@@ -176,6 +177,17 @@ export default function PartnerDetailScreen() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
+  },
+  container: {
+    flex: 1,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingHorizontal: 16,
+    paddingTop: 24,
+    paddingBottom: 100,
   },
   content: {
     paddingHorizontal: 16,
