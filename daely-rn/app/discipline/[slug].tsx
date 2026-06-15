@@ -19,8 +19,9 @@ import { DISCIPLINE_CONTENT } from '@/constants/discipline-content';
 import SharedBottomNav from '../../components/SharedBottomNav';
 import { AppScreen } from '@/components/AppScreen';
 
-// Local mapping for Fitness exercise thumbnails (batch 1)
+// Local mapping for Fitness exercise thumbnails (batch 1 + batch 2)
 const FITNESS_THUMBNAIL_MAP: Record<string, ImageSourcePropType> = {
+  // Batch 1
   '1-1': require('@/assets/images/exercises/fitness/fitness-barbell-bench-press.png'),
   '1-2': require('@/assets/images/exercises/fitness/fitness-incline-bench-press.png'),
   '4-1': require('@/assets/images/exercises/fitness/fitness-overhead-press.png'),
@@ -28,6 +29,38 @@ const FITNESS_THUMBNAIL_MAP: Record<string, ImageSourcePropType> = {
   '6-3': require('@/assets/images/exercises/fitness/fitness-deadlift.png'),
   '5-5': require('@/assets/images/exercises/fitness/fitness-lat-pulldown.png'),
   '1-10': require('@/assets/images/exercises/fitness/fitness-dumbbell-press.png'),
+  // Batch 2 - Barbell variants
+  '1-3': require('@/assets/images/exercises/fitness/fitness-decline-barbell-bench-press.png'),
+  '1-4': require('@/assets/images/exercises/fitness/fitness-close-grip-bench-press.png'),
+  '1-5': require('@/assets/images/exercises/fitness/fitness-wide-grip-bench-press.png'),
+  '1-6': require('@/assets/images/exercises/fitness/fitness-reverse-grip-bench-press.png'),
+  '1-7': require('@/assets/images/exercises/fitness/fitness-paused-bench-press.png'),
+  '1-8': require('@/assets/images/exercises/fitness/fitness-tempo-bench-press.png'),
+  '1-9': require('@/assets/images/exercises/fitness/fitness-spoto-press.png'),
+  '1-30': require('@/assets/images/exercises/fitness/fitness-svend-press.png'),
+  // Batch 2 - Dumbbell variants
+  '1-11': require('@/assets/images/exercises/fitness/fitness-incline-dumbbell-press.png'),
+  '1-12': require('@/assets/images/exercises/fitness/fitness-decline-dumbbell-press.png'),
+  '1-13': require('@/assets/images/exercises/fitness/fitness-neutral-grip-dumbbell-press.png'),
+  '1-14': require('@/assets/images/exercises/fitness/fitness-single-arm-dumbbell-press.png'),
+  '1-15': require('@/assets/images/exercises/fitness/fitness-dumbbell-fly.png'),
+  '1-16': require('@/assets/images/exercises/fitness/fitness-incline-dumbbell-fly.png'),
+  // Batch 2 - Machine variants
+  '1-17': require('@/assets/images/exercises/fitness/fitness-machine-chest-press.png'),
+  '1-18': require('@/assets/images/exercises/fitness/fitness-incline-machine-press.png'),
+  '1-19': require('@/assets/images/exercises/fitness/fitness-hammer-strength-chest-press.png'),
+  '1-20': require('@/assets/images/exercises/fitness/fitness-machine-pec-fly.png'),
+  // Batch 2 - Cable variants
+  '1-21': require('@/assets/images/exercises/fitness/fitness-cable-chest-fly.png'),
+  '1-22': require('@/assets/images/exercises/fitness/fitness-cable-crossover.png'),
+  '1-23': require('@/assets/images/exercises/fitness/fitness-low-to-high-cable-fly.png'),
+  '1-24': require('@/assets/images/exercises/fitness/fitness-high-to-low-cable-fly.png'),
+  // Batch 2 - Bodyweight variants
+  '1-25': require('@/assets/images/exercises/fitness/fitness-push-up.png'),
+  '1-26': require('@/assets/images/exercises/fitness/fitness-wide-push-up.png'),
+  '1-27': require('@/assets/images/exercises/fitness/fitness-decline-push-up.png'),
+  '1-28': require('@/assets/images/exercises/fitness/fitness-ring-push-up.png'),
+  '1-29': require('@/assets/images/exercises/fitness/fitness-chest-dips.png'),
 };
 
 type DisciplineDetail = {
