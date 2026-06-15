@@ -70,7 +70,6 @@ export default function MindProgramScreen() {
           {/* Duration Selector */}
           {program.durationOptions && program.durationOptions.length > 0 && (
             <View style={styles.durationSelectorContainer}>
-              <Text style={[styles.durationSelectorTitle, { color: theme.titleColor }]}>Kies duur</Text>
               <View style={styles.durationOptionsRow}>
                 {program.durationOptions.map((option) => (
                   <TouchableOpacity
