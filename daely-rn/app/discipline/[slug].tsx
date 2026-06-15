@@ -375,7 +375,7 @@ export default function DisciplineScreen() {
                 ]}
                 onPress={() => setActiveTab(tab)}
               >
-                <MaterialCommunityIcons name={tabIcons[tab] as any} size={18} color={isActive ? '#FFFFFF' : '#64748B'} />
+                <MaterialCommunityIcons name={tabIcons[tab] as any} size={16} color={isActive ? '#FFFFFF' : '#64748B'} />
                 <Text style={[styles.tabLabel, { color: isActive ? '#FFFFFF' : '#64748B' }]}>
                   {label}
                 </Text>
@@ -472,23 +472,23 @@ export default function DisciplineScreen() {
                         />
                       ) : (
                         <View style={[styles.thumbnailFallback, { backgroundColor: '#E2E8F0' }]}>
-                          <MaterialCommunityIcons name="dumbbell" size={28} color="#2563EB" />
+                          <MaterialCommunityIcons name="dumbbell" size={30} color="#2563EB" />
                         </View>
                       )}
                       <View style={styles.cardInfo}>
                         <Text style={[styles.cardTitle, { color: '#0F172A' }]}>{exercise.name}</Text>
                         <View style={styles.cardMeta}>
-                          <View style={styles.metaTag}>
-                            <MaterialCommunityIcons name="human" size={12} color="#64748B" />
-                            <Text style={[styles.metaTagText, { color: '#64748B' }]}>{exercise.spiergroep}</Text>
+                          <View style={[styles.metaTag, { backgroundColor: '#DBEAFE' }]}>
+                            <MaterialCommunityIcons name="human" size={12} color="#2563EB" />
+                            <Text style={[styles.metaTagText, { color: '#2563EB' }]}>{exercise.spiergroep}</Text>
                           </View>
-                          <View style={styles.metaTag}>
+                          <View style={[styles.metaTag, { backgroundColor: '#F1F5F9' }]}>
                             <MaterialCommunityIcons name="tag" size={12} color="#64748B" />
                             <Text style={[styles.metaTagText, { color: '#64748B' }]}>{exercise.categorie}</Text>
                           </View>
-                          <View style={styles.metaTag}>
-                            <MaterialCommunityIcons name="lightning-bolt" size={12} color={'#F59E0B'} />
-                            <Text style={[styles.metaTagText, { color: '#F59E0B' }]}>{exercise.moeilijkheid}</Text>
+                          <View style={[styles.metaTag, { backgroundColor: '#FEF3C7' }]}>
+                            <MaterialCommunityIcons name="lightning-bolt" size={12} color={'#D97706'} />
+                            <Text style={[styles.metaTagText, { color: '#D97706' }]}>{exercise.moeilijkheid}</Text>
                           </View>
                         </View>
                       </View>
@@ -635,7 +635,7 @@ const styles = StyleSheet.create({
   heroTitle: { fontSize: 32, fontWeight: '800', letterSpacing: -0.5, lineHeight: 38, color: '#FFFFFF' },
   heroPayoff: { fontSize: 14, fontWeight: '500', letterSpacing: 0.5, color: 'rgba(255,255,255,0.85)' },
   tabRow: { flexDirection: 'row', paddingHorizontal: 16, paddingTop: 20, paddingBottom: 8, gap: 8 },
-  tabButton: { flex: 1, paddingVertical: 10, paddingHorizontal: 8, borderRadius: 18, borderWidth: 1.5, alignItems: 'center', minHeight: 48, gap: 6 },
+  tabButton: { flex: 1, paddingVertical: 10, paddingHorizontal: 8, borderRadius: 18, borderWidth: 1.5, alignItems: 'center', minHeight: 48, gap: 8 },
   tabLabel: { fontSize: 13, fontWeight: '700' },
   filterSection: { paddingHorizontal: 16, paddingTop: 8, paddingBottom: 4 },
   filterRow: { gap: 8, paddingBottom: 12 },
@@ -644,14 +644,14 @@ const styles = StyleSheet.create({
   contentArea: { paddingHorizontal: 16, paddingTop: 4 },
   premiumCard: { flexDirection: 'row', alignItems: 'center', borderRadius: 22, borderWidth: 1, padding: 16, marginBottom: 12, gap: 14 },
   cardPressed: { transform: [{ scale: 0.98 }], opacity: 0.92 },
-  thumbnailFallback: { width: 64, height: 64, borderRadius: 14, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
+  thumbnailFallback: { width: 64, height: 64, borderRadius: 14, alignItems: 'center', justifyContent: 'center', flexShrink: 0, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 4, elevation: 1 },
   thumbnailImage: { width: 64, height: 64, borderRadius: 14, overflow: 'hidden', flexShrink: 0 },
   thumbnailImageInner: { borderRadius: 14 },
   iconBadge: { width: 56, height: 56, borderRadius: 16, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   cardInfo: { flex: 1 },
   cardTitle: { fontSize: 16, fontWeight: '700', marginBottom: 8 },
   cardMeta: { flexDirection: 'row', gap: 12, flexWrap: 'wrap' },
-  metaTag: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  metaTag: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 8, paddingVertical: 4, borderRadius: 999 },
   metaTagText: { fontSize: 12, fontWeight: '600' },
   emptyState: { marginTop: 24, alignItems: 'center', paddingVertical: 56, paddingHorizontal: 24, borderRadius: 24, borderWidth: 1.5, borderStyle: 'dashed', gap: 12 },
   emptyTitle: { fontSize: 18, fontWeight: '700' },
