@@ -101,17 +101,6 @@ export default function MindProgramScreen() {
             </View>
           )}
 
-          <View style={styles.statsRow}>
-            <View style={[styles.statCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-              <Text style={[styles.statValue, { color: theme.titleColor }]}>{displayMinutes}</Text>
-              <Text style={[styles.statLabel, { color: theme.subtitleColor }]}>MINUTEN</Text>
-            </View>
-            <View style={[styles.statCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-              <Text style={[styles.statValue, { color: theme.titleColor }]}>{program.sessions}</Text>
-              <Text style={[styles.statLabel, { color: theme.subtitleColor }]}>SESSIES</Text>
-            </View>
-          </View>
-
           {program.steps && program.steps.length > 0 ? (
             <View style={styles.stepsSection}>
               <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Stappen</Text>
