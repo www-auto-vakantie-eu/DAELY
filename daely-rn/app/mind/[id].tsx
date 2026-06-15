@@ -1,15 +1,38 @@
-import { StyleSheet, View, Text, ScrollView, ImageBackground } from 'react-native';
+import { StyleSheet, View, Text, ScrollView, ImageBackground, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
 import { AppScreen } from '@/components/AppScreen';
-import { MIND_PROGRAMS } from '@/constants/mind-programs';
+import { MIND_PROGRAMS, MindDurationOption } from '@/constants/mind-programs';
 import SharedBottomNav from '@/components/SharedBottomNav';
+import { useState } from 'react';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 export default function MindProgramScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const theme = useTheme();
   const program = MIND_PROGRAMS.find((item) => item.id === id);
+
+  // Initialize selected duration option
+  const getInitialDurationOption = (): MindDurationOption | null => {
+    if (!program?.durationOptions || program.durationOptions.length === 0) {
+      return null;
+    }
+    const defaultId = program.defaultDurationOptionId || 'standard';
+    return program.durationOptions.find(opt => opt.id === defaultId) || program.durationOptions[0];
+  };
+
+  const [selectedDurationOption, setSelectedDurationOption] = useState<MindDurationOption | null>(getInitialDurationOption());
+
+  // Get display minutes (from selected option or fallback to program.minutes)
+  const displayMinutes = selectedDurationOption?.minutes || program?.minutes || 0;
+
+  // Handle start meditation (placeholder for now - no audio player)
+  const handleStartMeditation = () => {
+    // Placeholder: duration is selected but no audio player yet
+    console.log(`Start meditation: ${program.title} - ${displayMinutes} min`);
+    // Future: Implement audio player with selectedDurationOption
+  };
 
   if (!program) {
     return (
@@ -23,23 +46,65 @@ export default function MindProgramScreen() {
     <AppScreen style={{ backgroundColor: theme.background }}>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
         <View style={styles.topArea}>
-          <ImageBackground source={{ uri: program.image }} style={styles.hero} imageStyle={styles.heroImage}>
-            <LinearGradient colors={['rgba(0,0,0,0.02)', 'rgba(0,0,0,0.82)']} style={styles.heroOverlay}>
-              <View>
-                <Text style={styles.heroTitle}>{program.title}</Text>
-                <Text style={styles.heroMeta}>{program.minutes} MIN    {program.sessions} SESSIES</Text>
-              </View>
-            </LinearGradient>
-          </ImageBackground>
+          <TouchableOpacity
+            style={styles.heroContainer}
+            onPress={handleStartMeditation}
+            activeOpacity={0.9}
+          >
+            <ImageBackground source={{ uri: program.image }} style={styles.hero} imageStyle={styles.heroImage}>
+              <LinearGradient colors={['rgba(0,0,0,0.02)', 'rgba(0,0,0,0.82)']} style={styles.heroOverlay}>
+                <View style={styles.playButtonContainer}>
+                  <View style={styles.playButton}>
+                    <MaterialCommunityIcons name="play" size={48} color="#FFFFFF" />
+                  </View>
+                </View>
+              </LinearGradient>
+            </ImageBackground>
+          </TouchableOpacity>
         </View>
 
         <View style={styles.content}>
-          <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Over dit programma</Text>
+          <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>{program.title}</Text>
           <Text style={[styles.sectionText, { color: theme.subtitleColor }]}>{program.description}</Text>
+
+          {/* Duration Selector */}
+          {program.durationOptions && program.durationOptions.length > 0 && (
+            <View style={styles.durationSelectorContainer}>
+              <Text style={[styles.durationSelectorTitle, { color: theme.titleColor }]}>Kies duur</Text>
+              <View style={styles.durationOptionsRow}>
+                {program.durationOptions.map((option) => (
+                  <TouchableOpacity
+                    key={option.id}
+                    style={[
+                      styles.durationOptionCard,
+                      selectedDurationOption?.id === option.id && styles.durationOptionCardSelected,
+                      { backgroundColor: theme.card, borderColor: theme.border }
+                    ]}
+                    onPress={() => setSelectedDurationOption(option)}
+                  >
+                    <Text style={[
+                      styles.durationOptionLabel,
+                      selectedDurationOption?.id === option.id && styles.durationOptionLabelSelected,
+                      { color: selectedDurationOption?.id === option.id ? '#8B5CF6' : theme.titleColor }
+                    ]}>
+                      {option.label}
+                    </Text>
+                    <Text style={[
+                      styles.durationOptionDescription,
+                      selectedDurationOption?.id === option.id && styles.durationOptionDescriptionSelected,
+                      { color: theme.subtitleColor }
+                    ]}>
+                      {option.description}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+          )}
 
           <View style={styles.statsRow}>
             <View style={[styles.statCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-              <Text style={[styles.statValue, { color: theme.titleColor }]}>{program.minutes}</Text>
+              <Text style={[styles.statValue, { color: theme.titleColor }]}>{displayMinutes}</Text>
               <Text style={[styles.statLabel, { color: theme.subtitleColor }]}>MINUTEN</Text>
             </View>
             <View style={[styles.statCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
@@ -81,20 +146,36 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 24,
   },
+  heroContainer: {
+    marginTop: 14,
+  },
   hero: {
     height: 290,
-    justifyContent: 'flex-end',
-    marginTop: 14,
+    justifyContent: 'center',
   },
   heroImage: {
     borderRadius: 40,
   },
   heroOverlay: {
     borderRadius: 40,
-    justifyContent: 'flex-end',
-    paddingHorizontal: 18,
-    paddingBottom: 20,
-    paddingTop: 70,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  playButtonContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  playButton: {
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+    backgroundColor: 'rgba(255, 255, 255, 0.25)',
+    borderWidth: 2,
+    borderColor: 'rgba(255, 255, 255, 0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backdropFilter: 'blur(10px)',
   },
   heroTitle: {
     color: '#FFFFFF',
@@ -122,6 +203,48 @@ const styles = StyleSheet.create({
   sectionText: {
     fontSize: 15,
     lineHeight: 22,
+  },
+  durationSelectorContainer: {
+    marginTop: 20,
+    marginBottom: 20,
+  },
+  durationSelectorTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    marginBottom: 12,
+  },
+  durationOptionsRow: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  durationOptionCard: {
+    flex: 1,
+    borderWidth: 1.5,
+    borderRadius: 16,
+    padding: 14,
+    alignItems: 'center',
+    minHeight: 80,
+  },
+  durationOptionCardSelected: {
+    borderWidth: 2,
+    borderColor: '#8B5CF6',
+    backgroundColor: 'rgba(139, 92, 246, 0.05)',
+  },
+  durationOptionLabel: {
+    fontSize: 16,
+    fontWeight: '700',
+    marginBottom: 6,
+  },
+  durationOptionLabelSelected: {
+    color: '#8B5CF6',
+  },
+  durationOptionDescription: {
+    fontSize: 12,
+    lineHeight: 16,
+    textAlign: 'center',
+  },
+  durationOptionDescriptionSelected: {
+    fontWeight: '600',
   },
   statsRow: {
     flexDirection: 'row',
