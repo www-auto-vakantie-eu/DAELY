@@ -347,20 +347,25 @@ export default function DisciplineScreen() {
   const theme = useTheme();
   const [activeTab, setActiveTab] = useState<'workouts' | 'oefeningen' | 'programmas'>('workouts');
   const [activeFilter, setActiveFilter] = useState('Alles');
+  const [carouselWidth, setCarouselWidth] = useState(0);
   const discipline = DISCIPLINE_DATA[slug ?? ''];
 
-  const scrollRef = useRef<ScrollView>(null);
+  const headerCarouselRef = useRef<ScrollView>(null);
 
-  const scrollToTab = (tab: 'workouts' | 'oefeningen' | 'programmas') => {
+  const scrollToHeaderCarousel = (tab: 'workouts' | 'oefeningen' | 'programmas') => {
+    if (carouselWidth === 0) return;
     const tabIndex = tab === 'workouts' ? 0 : tab === 'oefeningen' ? 1 : 2;
-    scrollRef.current?.scrollTo({ x: tabIndex * Dimensions.get('window').width, animated: true });
+    headerCarouselRef.current?.scrollTo({ x: tabIndex * carouselWidth, animated: true });
   };
 
-  const handleScrollEnd = (event: any) => {
+  const handleHeaderCarouselScroll = (event: any) => {
+    if (carouselWidth === 0) return;
     const offsetX = event.nativeEvent.contentOffset.x;
-    const pageIndex = Math.round(offsetX / Dimensions.get('window').width);
+    const pageIndex = Math.round(offsetX / carouselWidth);
+    const clampedIndex = Math.max(0, Math.min(2, pageIndex));
     const tabs: ('workouts' | 'oefeningen' | 'programmas')[] = ['workouts', 'oefeningen', 'programmas'];
-    setActiveTab(tabs[pageIndex] || 'workouts');
+    const tab = tabs[clampedIndex] || 'workouts';
+    setActiveTab(tab);
   };
 
   if (!discipline) {
@@ -401,57 +406,138 @@ export default function DisciplineScreen() {
       <View style={[styles.screen, { backgroundColor: theme.background }]}>
         <StatusBar barStyle="light-content" />
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-          {/* ── PREMIUM HERO HEADER ── */}
-          <View style={styles.topArea}>
-            <ImageBackground source={{ uri: discipline.heroImage }} style={styles.hero} imageStyle={styles.heroImage}>
-              <LinearGradient
-                colors={['rgba(0,0,0,0.15)', 'rgba(0,0,0,0.75)']}
-                start={{ x: 0.5, y: 0 }}
-                end={{ x: 0.5, y: 1 }}
-                style={styles.heroGradient}
-              >
-                <View style={styles.disciplineBadge}>
-                  <Text style={styles.disciplineBadgeText}>{discipline.title.toUpperCase()}</Text>
-                </View>
-                <View style={styles.heroTextBlock}>
-                  <Text style={styles.heroTitle}>{discipline.subtitle}</Text>
-                  <Text style={styles.heroPayoff}>Bouw je op. Presteer. Herhaal.</Text>
-                </View>
-              </LinearGradient>
-            </ImageBackground>
-          </View>
-
-        {/* ── PREMIUM TABS ── */}
-        <View style={[styles.tabRow, { backgroundColor: theme.background }]}>
-          {(['workouts', 'oefeningen', 'programmas'] as const).map((tab) => {
-            const isActive = activeTab === tab;
-            const label = tab === 'programmas' ? 'Programma\'s' : tab.charAt(0).toUpperCase() + tab.slice(1);
-            const tabIcons: Record<string, string> = {
-              workouts: 'dumbbell',
-              oefeningen: 'arm-flex',
-              programmas: 'calendar-week',
-            };
-            return (
+          {/* ── HEADER CAROUSEL ── */}
+          <View
+            style={styles.headerCarouselViewport}
+            onLayout={(event) => {
+              const width = event.nativeEvent.layout.width;
+              if (width > 0) {
+                setCarouselWidth(width);
+              }
+            }}
+          >
+            <ScrollView
+              ref={headerCarouselRef}
+              horizontal
+              pagingEnabled
+              showsHorizontalScrollIndicator={false}
+              onScroll={handleHeaderCarouselScroll}
+              scrollEventThrottle={16}
+              contentContainerStyle={styles.headerCarouselContent}
+            >
+              {/* Workouts Header Card */}
               <Pressable
-                key={tab}
-                style={({ pressed }) => [
-                  styles.tabButton,
-                  { borderColor: isActive ? '#2563EB' : '#E2E8F0', backgroundColor: isActive ? '#2563EB' : '#FFFFFF' },
-                  pressed && { opacity: 0.8 },
-                ]}
-                onPress={() => {
-                  setActiveTab(tab);
-                  scrollToTab(tab);
-                }}
+                onPress={() => { setActiveTab('workouts'); scrollToHeaderCarousel('workouts'); }}
+                style={{ width: carouselWidth || Dimensions.get('window').width, minWidth: carouselWidth || Dimensions.get('window').width }}
               >
-                <MaterialCommunityIcons name={tabIcons[tab] as any} size={16} color={isActive ? '#FFFFFF' : '#64748B'} />
-                <Text style={[styles.tabLabel, { color: isActive ? '#FFFFFF' : '#64748B' }]}>
-                  {label}
-                </Text>
+                <View style={styles.headerPage}>
+                  <ImageBackground
+                    source={{ uri: discipline.heroImage }}
+                    style={[
+                      styles.headerCard,
+                      { width: (carouselWidth || Dimensions.get('window').width) - 32 }
+                    ]}
+                    imageStyle={styles.headerCardImage}
+                  >
+                  <LinearGradient
+                    colors={['rgba(15, 23, 42, 0.3)', 'rgba(15, 23, 42, 0.85)']}
+                    start={{ x: 0.5, y: 0 }}
+                    end={{ x: 0.5, y: 1 }}
+                    style={styles.headerCardGradient}
+                  >
+                    <View style={styles.headerCardTextBlock}>
+                      <Text style={styles.headerCardDiscipline}>{discipline.title}</Text>
+                      <View style={styles.headerCardTitleRow}>
+                        <MaterialCommunityIcons name="dumbbell" size={20} color="#FFFFFF" />
+                        <Text style={styles.headerCardTitle}>Workouts</Text>
+                        <View style={styles.headerCardCountBadge}>
+                          <Text style={styles.headerCardCount}>{workoutsForDiscipline.length}</Text>
+                        </View>
+                      </View>
+                    </View>
+                  </LinearGradient>
+                  </ImageBackground>
+                </View>
               </Pressable>
-            );
-          })}
-        </View>
+
+              {/* Oefeningen Header Card */}
+              <Pressable
+                onPress={() => { setActiveTab('oefeningen'); scrollToHeaderCarousel('oefeningen'); }}
+                style={{ width: carouselWidth || Dimensions.get('window').width, minWidth: carouselWidth || Dimensions.get('window').width }}
+              >
+                <View style={styles.headerPage}>
+                  <ImageBackground
+                    source={{ uri: discipline.heroImage }}
+                    style={[
+                      styles.headerCard,
+                      { width: (carouselWidth || Dimensions.get('window').width) - 32 }
+                    ]}
+                    imageStyle={styles.headerCardImage}
+                  >
+                  <LinearGradient
+                    colors={['rgba(15, 23, 42, 0.3)', 'rgba(15, 23, 42, 0.85)']}
+                    start={{ x: 0.5, y: 0 }}
+                    end={{ x: 0.5, y: 1 }}
+                    style={styles.headerCardGradient}
+                  >
+                    <View style={styles.headerCardTextBlock}>
+                      <Text style={styles.headerCardDiscipline}>{discipline.title}</Text>
+                      <View style={styles.headerCardTitleRow}>
+                        <MaterialCommunityIcons name="arm-flex" size={20} color="#FFFFFF" />
+                        <Text style={styles.headerCardTitle}>Oefeningen</Text>
+                        <View style={styles.headerCardCountBadge}>
+                          <Text style={styles.headerCardCount}>{exercisesForDiscipline.length}</Text>
+                        </View>
+                      </View>
+                    </View>
+                  </LinearGradient>
+                  </ImageBackground>
+                </View>
+              </Pressable>
+
+              {/* Programma's Header Card */}
+              <Pressable
+                onPress={() => { setActiveTab('programmas'); scrollToHeaderCarousel('programmas'); }}
+                style={{ width: carouselWidth || Dimensions.get('window').width, minWidth: carouselWidth || Dimensions.get('window').width }}
+              >
+                <View style={styles.headerPage}>
+                  <ImageBackground
+                    source={{ uri: discipline.heroImage }}
+                    style={[
+                      styles.headerCard,
+                      { width: (carouselWidth || Dimensions.get('window').width) - 32 }
+                    ]}
+                    imageStyle={styles.headerCardImage}
+                  >
+                  <LinearGradient
+                    colors={['rgba(15, 23, 42, 0.3)', 'rgba(15, 23, 42, 0.85)']}
+                    start={{ x: 0.5, y: 0 }}
+                    end={{ x: 0.5, y: 1 }}
+                    style={styles.headerCardGradient}
+                  >
+                    <View style={styles.headerCardTextBlock}>
+                      <Text style={styles.headerCardDiscipline}>{discipline.title}</Text>
+                      <View style={styles.headerCardTitleRow}>
+                        <MaterialCommunityIcons name="calendar-week" size={20} color="#FFFFFF" />
+                        <Text style={styles.headerCardTitle}>Programma&apos;s</Text>
+                        <View style={styles.headerCardCountBadge}>
+                          <Text style={styles.headerCardCount}>{programsForDiscipline.length}</Text>
+                        </View>
+                      </View>
+                    </View>
+                  </LinearGradient>
+                  </ImageBackground>
+                </View>
+              </Pressable>
+            </ScrollView>
+
+            {/* Page Indicator */}
+            <View style={styles.pageIndicator}>
+              <View style={[styles.pageDot, activeTab === 'workouts' && styles.pageDotActive]} />
+              <View style={[styles.pageDot, activeTab === 'oefeningen' && styles.pageDotActive]} />
+              <View style={[styles.pageDot, activeTab === 'programmas' && styles.pageDotActive]} />
+            </View>
+          </View>
 
         {/* ── PREMIUM FILTER CHIPS ── */}
         {activeTab === 'oefeningen' && (
@@ -481,15 +567,8 @@ export default function DisciplineScreen() {
 
         {/* ── CONTENT ── */}
         <View style={styles.contentArea}>
-          <ScrollView
-            ref={scrollRef}
-            horizontal
-            pagingEnabled
-            showsHorizontalScrollIndicator={false}
-            onMomentumScrollEnd={handleScrollEnd}
-            bounces={false}
-          >
-            <View style={{ width: Dimensions.get('window').width, paddingHorizontal: 16 }}>
+          {activeTab === 'workouts' && (
+            <View style={{ paddingHorizontal: 16 }}>
               {workoutsForDiscipline.map((workout) => (
                 <Pressable
                   key={workout.id}
@@ -522,10 +601,20 @@ export default function DisciplineScreen() {
                   <MaterialCommunityIcons name="chevron-right" size={20} color="#94A3B8" />
                 </Pressable>
               ))}
+              {workoutsForDiscipline.length === 0 && (
+                <View style={[styles.emptyState, { borderColor: '#E2E8F0' }]}>
+                  <MaterialCommunityIcons name="dumbbell" size={48} color="#94A3B8" />
+                  <Text style={[styles.emptyTitle, { color: '#0F172A' }]}>Workouts voor {discipline.title}</Text>
+                  <Text style={[styles.emptySubtitle, { color: '#64748B' }]}>
+                    Workouts voor {discipline.title} komen binnenkort beschikbaar.
+                  </Text>
+                </View>
+              )}
             </View>
+          )}
 
-            {/* Oefeningen */}
-            <View style={{ width: Dimensions.get('window').width, paddingHorizontal: 16 }}>
+          {activeTab === 'oefeningen' && (
+            <View style={{ paddingHorizontal: 16 }}>
               {filteredExercises.length > 0 ? (
                 filteredExercises.map((exercise) => {
                   const hasThumbnail = exercise.mediaItems && exercise.mediaItems.length > 0 && exercise.mediaItems[0]?.thumbnail;
@@ -609,9 +698,10 @@ export default function DisciplineScreen() {
                 </View>
               )}
             </View>
+          )}
 
-            {/* Programma's */}
-            <View style={{ width: Dimensions.get('window').width, paddingHorizontal: 16 }}>
+          {activeTab === 'programmas' && (
+            <View style={{ paddingHorizontal: 16 }}>
               {programsForDiscipline.length > 0 ? (
                 programsForDiscipline.map((program) => (
                   <Pressable
@@ -673,7 +763,7 @@ export default function DisciplineScreen() {
                 </View>
               )}
             </View>
-          </ScrollView>
+          )}
         </View>
         <View style={styles.bottomSpacer} />
       </ScrollView>
@@ -686,46 +776,58 @@ export default function DisciplineScreen() {
 const styles = StyleSheet.create({
   screen: { flex: 1 },
   scrollContent: { paddingBottom: 80 },
-  topArea: {
-    paddingHorizontal: 16,
-    paddingTop: 24,
+  headerCarouselViewport: {
+    width: '100%',
+    overflow: 'hidden',
   },
-  hero: {
-    height: 240,
-    justifyContent: 'flex-end',
-    marginTop: 16,
-  },
-  heroImage: {
-    borderRadius: 28,
-  },
-  heroGradient: {
-    borderRadius: 28,
+  headerCarouselContainer: { paddingTop: 24, marginBottom: 8 },
+  headerCarouselContent: { gap: 0 },
+  headerPage: {
     flex: 1,
-    paddingTop: 80,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  headerCard: {
+    height: 220,
+    borderRadius: 28,
+    overflow: 'hidden',
+  },
+  headerCardImage: { borderRadius: 28 },
+  headerCardGradient: {
+    flex: 1,
+    paddingTop: 60,
     paddingHorizontal: 20,
     justifyContent: 'flex-end',
-    paddingBottom: 24,
+    paddingBottom: 20,
   },
-  disciplineBadge: {
-    backgroundColor: 'rgba(37, 99, 235, 0.9)',
-    paddingHorizontal: 16,
-    paddingVertical: 6,
+  headerCardBadge: {
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
     borderRadius: 999,
     alignSelf: 'flex-start',
-    marginBottom: 12,
+    marginBottom: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backdropFilter: 'blur(8px)',
   },
-  disciplineBadgeText: {
-    fontSize: 12,
-    fontWeight: '700',
-    letterSpacing: 1.5,
-    color: '#FFFFFF',
+  headerCardBadgeText: { fontSize: 10, fontWeight: '700', color: '#FFFFFF' },
+  headerCardTextBlock: { gap: 6, alignSelf: 'flex-start' },
+  headerCardDiscipline: { fontSize: 11, fontWeight: '600', letterSpacing: 0.5, color: 'rgba(255,255,255,0.7)', textTransform: 'uppercase' },
+  headerCardTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  headerCardTitle: { fontSize: 24, fontWeight: '800', letterSpacing: -0.5, lineHeight: 30, color: '#FFFFFF' },
+  headerCardCountBadge: {
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 999,
+    backdropFilter: 'blur(8px)',
   },
-  heroTextBlock: { gap: 6, alignSelf: 'flex-start' },
-  heroTitle: { fontSize: 32, fontWeight: '800', letterSpacing: -0.5, lineHeight: 38, color: '#FFFFFF' },
-  heroPayoff: { fontSize: 14, fontWeight: '500', letterSpacing: 0.5, color: 'rgba(255,255,255,0.85)' },
-  tabRow: { flexDirection: 'row', paddingHorizontal: 16, paddingTop: 20, paddingBottom: 8, gap: 8 },
-  tabButton: { flex: 1, paddingVertical: 10, paddingHorizontal: 8, borderRadius: 18, borderWidth: 1.5, alignItems: 'center', minHeight: 48, gap: 8 },
-  tabLabel: { fontSize: 13, fontWeight: '700' },
+  headerCardCount: { fontSize: 12, fontWeight: '700', color: '#FFFFFF' },
+  pageIndicator: { flexDirection: 'row', justifyContent: 'center', gap: 6, paddingTop: 8, paddingBottom: 4 },
+  pageDot: { width: 5, height: 5, borderRadius: 2.5, backgroundColor: '#E2E8F0' },
+  pageDotActive: { backgroundColor: '#2563EB' },
   filterSection: { paddingHorizontal: 16, paddingTop: 8, paddingBottom: 4 },
   filterRow: { gap: 8, paddingBottom: 12 },
   filterChip: { paddingHorizontal: 14, paddingVertical: 10, borderRadius: 999, borderWidth: 1.5, minHeight: 40 },
