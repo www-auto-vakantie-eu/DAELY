@@ -7,6 +7,75 @@ import { AppScreen } from '@/components/AppScreen';
 import SharedBottomNav from '@/components/SharedBottomNav';
 import { MIND_PROGRAMS } from '@/constants/mind-programs';
 
+// Helper component for gradient cards with Soft Aurora Ribbon style
+function MindAuroraCard({ children, style }: { children: React.ReactNode, style?: any }) {
+  return (
+    <View style={[styles.premiumCardWrapper, style]}>
+      {/* Background gradient layer - absolute full-cover */}
+      <LinearGradient
+        colors={['#E8E6FF', '#D0CCFF', '#B8B4FF']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.premiumCardBackground}
+        pointerEvents="none"
+      >
+        {/* Top-left purple-blue ribbon */}
+        <LinearGradient
+          colors={['rgba(168, 162, 255, 0.55)', 'rgba(200, 195, 255, 0.12)']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.ribbonTop}
+          pointerEvents="none"
+        />
+        {/* Mid-card purple-pink ribbon */}
+        <LinearGradient
+          colors={['rgba(220, 180, 255, 0.42)', 'rgba(200, 195, 255, 0.20)']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.ribbonMid}
+          pointerEvents="none"
+        />
+        {/* Periwinkle ribbon - diagonal top-right */}
+        <LinearGradient
+          colors={['rgba(168, 162, 255, 0.75)', 'rgba(200, 195, 255, 0.38)']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.ribbonBlue}
+          pointerEvents="none"
+        />
+        {/* Purple-pink ribbon - diagonal bottom-left */}
+        <LinearGradient
+          colors={['rgba(220, 180, 255, 0.65)', 'rgba(230, 200, 255, 0.30)']}
+          start={{ x: 0, y: 1 }}
+          end={{ x: 1, y: 0 }}
+          style={styles.ribbonRose}
+          pointerEvents="none"
+        />
+        {/* Right-side accent ribbon */}
+        <LinearGradient
+          colors={['rgba(180, 170, 255, 0.38)', 'rgba(255, 255, 255, 0.05)']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.ribbonRight}
+          pointerEvents="none"
+        />
+        {/* Soft white highlight overlay */}
+        <LinearGradient
+          colors={['rgba(255, 255, 255, 0.28)', 'rgba(255, 255, 255, 0.06)']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0, y: 1 }}
+          style={styles.ribbonHighlight}
+          pointerEvents="none"
+        />
+      </LinearGradient>
+      {/* Content layer - above background */}
+      <View style={styles.premiumCardContent}>
+        {children}
+      </View>
+    </View>
+  );
+}
+
 export default function MindCategoryScreen() {
   const theme = useTheme();
   const router = useRouter();
@@ -174,7 +243,7 @@ export default function MindCategoryScreen() {
           {mockMeditations.map((meditation, index) => {
             if (meditation.isIntro) {
               return (
-                <View key={index} style={[styles.premiumCard, { backgroundColor: theme.card, borderColor: '#E2E8F0' }]}>
+                <MindAuroraCard key={index}>
                   <View style={[styles.thumbnailFallback, { backgroundColor: '#F1F5F9' }]}>
                     <MaterialCommunityIcons name="information" size={24} color="#64748B" />
                   </View>
@@ -182,7 +251,7 @@ export default function MindCategoryScreen() {
                     <Text style={[styles.cardTitle, { color: '#0F172A' }]}>{meditation.title}</Text>
                     <Text style={[styles.cardSubtitle, { color: '#64748B' }]}>{meditation.subtitle}</Text>
                   </View>
-                </View>
+                </MindAuroraCard>
               );
             }
 
@@ -191,22 +260,22 @@ export default function MindCategoryScreen() {
             return (
               <TouchableOpacity
                 key={index}
-                style={[styles.premiumCard, { backgroundColor: theme.card, borderColor: '#E2E8F0' }]}
                 onPress={() => handleCardPress(meditation.programId)}
               >
-                <View style={[styles.thumbnailFallback, { backgroundColor: '#F1F5F9' }]}>
-                  <MaterialCommunityIcons name="play-circle" size={24} color="#8B5CF6" />
-                </View>
-                <View style={styles.cardInfo}>
-                  <Text style={[styles.cardTitle, { color: '#0F172A' }]}>{meditation.title}</Text>
-                  <Text style={[styles.cardSubtitle, { color: '#64748B' }]}>{meditation.subtitle}</Text>
-                  <View style={styles.cardMeta}>
-                    {meditation.duration && (
-                      <View style={styles.metaTag}>
-                        <MaterialCommunityIcons name="clock-outline" size={12} color="#64748B" />
-                        <Text style={[styles.metaTagText, { color: '#64748B' }]}>{meditation.duration}</Text>
-                      </View>
-                    )}
+                <MindAuroraCard>
+                  <View style={[styles.thumbnailFallback, { backgroundColor: '#F1F5F9' }]}>
+                    <MaterialCommunityIcons name="play-circle" size={24} color="#8B5CF6" />
+                  </View>
+                  <View style={styles.cardInfo}>
+                    <Text style={[styles.cardTitle, { color: '#0F172A' }]}>{meditation.title}</Text>
+                    <Text style={[styles.cardSubtitle, { color: '#64748B' }]}>{meditation.subtitle}</Text>
+                    <View style={styles.cardMeta}>
+                      {meditation.duration && (
+                        <View style={styles.metaTag}>
+                          <MaterialCommunityIcons name="clock-outline" size={12} color="#64748B" />
+                          <Text style={[styles.metaTagText, { color: '#64748B' }]}>{meditation.duration}</Text>
+                        </View>
+                      )}
                     <View style={styles.metaTag}>
                       <Text style={[styles.metaTagText, { color: '#8B5CF6' }]}>{meditation.type}</Text>
                     </View>
@@ -216,8 +285,9 @@ export default function MindCategoryScreen() {
                       </View>
                     )}
                   </View>
-                </View>
-                <MaterialCommunityIcons name="chevron-right" size={20} color="#94A3B8" />
+                  </View>
+                  <MaterialCommunityIcons name="chevron-right" size={20} color="#94A3B8" />
+                </MindAuroraCard>
               </TouchableOpacity>
             );
           })}
@@ -303,6 +373,84 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     gap: 14,
   },
+  premiumCardWrapper: {
+    borderRadius: 22,
+    borderWidth: 0,
+    marginBottom: 12,
+    overflow: 'hidden',
+    shadowColor: '#6B5B95',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 2,
+    position: 'relative',
+    width: '100%',
+  },
+  premiumCardBackground: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    borderRadius: 22,
+    overflow: 'hidden',
+  },
+  premiumCardContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    position: 'relative',
+    zIndex: 1,
+    width: '100%',
+    gap: 14,
+  },
+  ribbonTop: {
+    position: 'absolute',
+    top: '-10%',
+    left: '-15%',
+    width: '170%',
+    height: '60%',
+    transform: [{ rotate: '15deg' }],
+  },
+  ribbonMid: {
+    position: 'absolute',
+    top: '30%',
+    left: '-10%',
+    width: '160%',
+    height: '20%',
+    transform: [{ rotate: '-10deg' }],
+  },
+  ribbonBlue: {
+    position: 'absolute',
+    top: '-8%',
+    left: '-8%',
+    width: '150%',
+    height: '80%',
+    transform: [{ rotate: '25deg' }],
+  },
+  ribbonRose: {
+    position: 'absolute',
+    bottom: '-8%',
+    right: '-8%',
+    width: '150%',
+    height: '80%',
+    transform: [{ rotate: '-20deg' }],
+  },
+  ribbonRight: {
+    position: 'absolute',
+    top: '-6%',
+    right: '-12%',
+    width: '140%',
+    height: '60%',
+    transform: [{ rotate: '-5deg' }],
+  },
+  ribbonHighlight: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
   thumbnailFallback: {
     width: 56,
     height: 56,
@@ -313,6 +461,7 @@ const styles = StyleSheet.create({
   },
   cardInfo: {
     flex: 1,
+    gap: 4,
   },
   cardTitle: {
     fontSize: 16,
