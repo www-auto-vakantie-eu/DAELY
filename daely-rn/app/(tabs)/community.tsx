@@ -393,7 +393,7 @@ export default function CommunityScreen() {
                 <View
                   style={[
                     styles.headerCard,
-                    { width: (carouselWidth || Dimensions.get('window').width) - 32, backgroundColor: '#1E3A8A' }
+                    { width: carouselWidth || Dimensions.get('window').width, backgroundColor: '#1E3A8A' }
                   ]}
                 >
                   <LinearGradient
@@ -426,7 +426,7 @@ export default function CommunityScreen() {
                 <View
                   style={[
                     styles.headerCard,
-                    { width: (carouselWidth || Dimensions.get('window').width) - 32, backgroundColor: '#5B21B6' }
+                    { width: carouselWidth || Dimensions.get('window').width, backgroundColor: '#5B21B6' }
                   ]}
                 >
                   <LinearGradient
@@ -459,7 +459,7 @@ export default function CommunityScreen() {
                 <View
                   style={[
                     styles.headerCard,
-                    { width: (carouselWidth || Dimensions.get('window').width) - 32, backgroundColor: '#B45309' }
+                    { width: carouselWidth || Dimensions.get('window').width, backgroundColor: '#B45309' }
                   ]}
                 >
                   <LinearGradient
@@ -492,7 +492,7 @@ export default function CommunityScreen() {
                 <View
                   style={[
                     styles.headerCard,
-                    { width: (carouselWidth || Dimensions.get('window').width) - 32, backgroundColor: '#065F46' }
+                    { width: carouselWidth || Dimensions.get('window').width, backgroundColor: '#065F46' }
                   ]}
                 >
                   <LinearGradient
@@ -937,7 +937,6 @@ const styles = StyleSheet.create({
   // Header Carousel
   headerCarouselViewport: {
     width: '100%',
-    paddingHorizontal: 16,
     overflow: 'hidden',
     marginBottom: 12,
   },
@@ -953,6 +952,7 @@ const styles = StyleSheet.create({
     height: 220,
     borderRadius: 28,
     overflow: 'hidden',
+    marginHorizontal: 16,
   },
   headerCardGradient: {
     flex: 1,
