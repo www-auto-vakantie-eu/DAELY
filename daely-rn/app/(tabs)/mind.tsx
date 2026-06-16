@@ -54,13 +54,20 @@ export default function MindScreen() {
               ]}
               onPress={() => router.push(action.route)}
             >
-              <View style={styles.quickActionIconBubble}>
-                <MaterialCommunityIcons name={action.icon} size={20} color="#FFFFFF" />
-              </View>
-              <View style={styles.quickActionTextWrap}>
-                <Text style={styles.quickActionText}>{action.title}</Text>
-                <Text style={styles.quickActionSubText}>{action.subtitle}</Text>
-              </View>
+              <LinearGradient
+                colors={['#E8E6FF', '#D0CCFF', '#B8B4FF']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.quickActionButtonGradient}
+              >
+                <View style={styles.quickActionIconBubble}>
+                  <MaterialCommunityIcons name={action.icon} size={20} color="#4A3A8C" />
+                </View>
+                <View style={styles.quickActionTextWrap}>
+                  <Text style={styles.quickActionText}>{action.title}</Text>
+                  <Text style={styles.quickActionSubText}>{action.subtitle}</Text>
+                </View>
+              </LinearGradient>
             </Pressable>
           ))}
         </View>
@@ -366,19 +373,33 @@ const styles = StyleSheet.create({
   quickActionButton: {
     width: '48.5%',
     borderRadius: 16,
-    paddingVertical: 10,
-    paddingHorizontal: 12,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
     minHeight: 64,
-    backgroundColor: '#2563EB',
+    overflow: 'hidden',
+    shadowColor: '#6B5B95',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  quickActionButtonGradient: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    width: '100%',
+    minHeight: 64,
   },
   quickActionIconBubble: {
     width: 36,
     height: 36,
     borderRadius: 14,
-    backgroundColor: 'rgba(255,255,255,0.18)',
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.9)',
     alignItems: 'center',
     justifyContent: 'center',
     flexShrink: 0,
@@ -391,11 +412,11 @@ const styles = StyleSheet.create({
   quickActionText: {
     fontSize: 14,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: '#1E1B4B',
   },
   quickActionSubText: {
     fontSize: 11,
     fontWeight: '500',
-    color: 'rgba(255,255,255,0.85)',
+    color: '#4A3A8C',
   },
 });
