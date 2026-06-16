@@ -14,18 +14,71 @@ type Tab = 'feed' | 'creators' | 'partners' | 'events';
 // AsyncStorage keys
 const COMMUNITY_POSTS_KEY = 'daely.community.posts.v1';
 
-// Helper component for gradient cards
+// Helper component for gradient cards with Soft Aurora Ribbon style
 function GradientCard({ children, style }: { children: React.ReactNode, style?: any }) {
   return (
     <View style={[styles.sectionCard, style]}>
+      {/* Background gradient layer - absolute full-cover */}
       <LinearGradient
-        colors={['#E8E6FF', '#D4D0FF']}
+        colors={['#E8E6FF', '#D0CCFF', '#B8B4FF']}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.sectionCardGradient}
+        pointerEvents="none"
       >
-        {children}
+        {/* Top-left purple-blue ribbon */}
+        <LinearGradient
+          colors={['rgba(168, 162, 255, 0.55)', 'rgba(200, 195, 255, 0.12)']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.ribbonTop}
+          pointerEvents="none"
+        />
+        {/* Mid-card purple-pink ribbon */}
+        <LinearGradient
+          colors={['rgba(220, 180, 255, 0.42)', 'rgba(200, 195, 255, 0.20)']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.ribbonMid}
+          pointerEvents="none"
+        />
+        {/* Periwinkle ribbon - diagonal top-right */}
+        <LinearGradient
+          colors={['rgba(168, 162, 255, 0.75)', 'rgba(200, 195, 255, 0.38)']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.ribbonBlue}
+          pointerEvents="none"
+        />
+        {/* Purple-pink ribbon - diagonal bottom-left */}
+        <LinearGradient
+          colors={['rgba(220, 180, 255, 0.65)', 'rgba(230, 200, 255, 0.30)']}
+          start={{ x: 0, y: 1 }}
+          end={{ x: 1, y: 0 }}
+          style={styles.ribbonRose}
+          pointerEvents="none"
+        />
+        {/* Right-side accent ribbon */}
+        <LinearGradient
+          colors={['rgba(180, 170, 255, 0.38)', 'rgba(255, 255, 255, 0.05)']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.ribbonRight}
+          pointerEvents="none"
+        />
+        {/* Soft white highlight overlay */}
+        <LinearGradient
+          colors={['rgba(255, 255, 255, 0.28)', 'rgba(255, 255, 255, 0.06)']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0, y: 1 }}
+          style={styles.ribbonHighlight}
+          pointerEvents="none"
+        />
       </LinearGradient>
+      {/* Content layer - above background */}
+      <View style={styles.cardContent}>
+        {children}
+      </View>
     </View>
   );
 }
@@ -1029,10 +1082,64 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginBottom: 12,
     overflow: 'hidden',
+    position: 'relative',
+    width: '100%',
   },
   sectionCardGradient: {
+    ...StyleSheet.absoluteFillObject,
     borderRadius: 20,
+  },
+  ribbonTop: {
+    position: 'absolute',
+    top: -60,
+    left: -80,
+    width: '170%',
+    height: '90%',
+    transform: [{ rotate: '15deg' }],
+  },
+  ribbonMid: {
+    position: 'absolute',
+    top: 35,
+    left: -60,
+    width: '160%',
+    height: 90,
+    transform: [{ rotate: '-10deg' }],
+  },
+  ribbonBlue: {
+    position: 'absolute',
+    top: -50,
+    left: -50,
+    width: '150%',
+    height: '150%',
+    transform: [{ rotate: '25deg' }],
+  },
+  ribbonRose: {
+    position: 'absolute',
+    bottom: -50,
+    right: -50,
+    width: '150%',
+    height: '150%',
+    transform: [{ rotate: '-20deg' }],
+  },
+  ribbonRight: {
+    position: 'absolute',
+    top: -40,
+    right: -70,
+    width: '140%',
+    height: '120%',
+    transform: [{ rotate: '-5deg' }],
+  },
+  ribbonHighlight: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+  cardContent: {
     padding: 16,
+    position: 'relative',
+    zIndex: 1,
   },
   // Feed - X/Twitter-achtige berichten
   feedPost: {
