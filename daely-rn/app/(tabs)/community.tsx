@@ -32,7 +32,7 @@ const FEED_ITEMS = [
     id: '1',
     name: 'Vriend/vriendin',
     handle: '@vriend',
-    time: 'Straks zichtbaar',
+    time: 'Community update',
     text: 'Vandaag mijn eerste 5 km gelopen. Kleine stap, groot gevoel.',
     icon: 'run-fast',
     color: '#2563EB',
@@ -41,7 +41,7 @@ const FEED_ITEMS = [
     id: '2',
     name: 'Familie support',
     handle: '@support',
-    time: 'Straks zichtbaar',
+    time: 'Community update',
     text: 'Nieuwe mobility routine opgeslagen voor herstel na training.',
     icon: 'heart',
     color: '#EF4444',
@@ -50,7 +50,7 @@ const FEED_ITEMS = [
     id: '3',
     name: 'Fitness creator',
     handle: '@fitness',
-    time: 'Straks zichtbaar',
+    time: 'Preview',
     text: 'Creator preview: deel straks workouts, tips en progressie met je volgers.',
     icon: 'dumbbell',
     color: '#F59E0B',
@@ -59,7 +59,7 @@ const FEED_ITEMS = [
     id: '4',
     name: 'Running athlete',
     handle: '@runner',
-    time: 'Straks zichtbaar',
+    time: 'Community update',
     text: 'Marathon training gaat goed. Klaar voor de volgende challenge.',
     icon: 'run',
     color: '#059669',
@@ -68,7 +68,7 @@ const FEED_ITEMS = [
     id: '5',
     name: 'DAELY Performance',
     handle: '@daely',
-    time: 'Straks zichtbaar',
+    time: 'Preview',
     text: 'DAELY Performance preview: straks vind je hier partnerupdates en sportvoordelen.',
     icon: 'lightning-bolt',
     color: '#8B5CF6',
@@ -77,7 +77,7 @@ const FEED_ITEMS = [
     id: '6',
     name: 'DAELY team',
     handle: '@daely',
-    time: 'Straks zichtbaar',
+    time: 'Preview',
     text: 'DAELY update: community, challenges en creators worden voorbereid.',
     icon: 'lightning-bolt',
     color: '#2563EB',
@@ -393,22 +393,24 @@ export default function CommunityScreen() {
                 <View
                   style={[
                     styles.headerCard,
-                    { width: (carouselWidth || Dimensions.get('window').width) - 32, backgroundColor: '#2563EB' }
+                    { width: (carouselWidth || Dimensions.get('window').width) - 32, backgroundColor: '#1E3A8A' }
                   ]}
                 >
                   <LinearGradient
-                    colors={['rgba(37, 99, 235, 0.8)', 'rgba(37, 99, 235, 0.95)']}
-                    start={{ x: 0.5, y: 0 }}
-                    end={{ x: 0.5, y: 1 }}
+                    colors={['rgba(30, 58, 138, 0.6)', 'rgba(37, 99, 235, 0.9)', 'rgba(30, 58, 138, 0.95)']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
                     style={styles.headerCardGradient}
                   >
                     <View style={styles.headerCardTextBlock}>
-                      <Text style={styles.headerCardContext}>Community</Text>
+                      <Text style={styles.headerCardContext}>COMMUNITY</Text>
+                      <View style={styles.headerCardIconContainer}>
+                        <MaterialCommunityIcons name="newspaper-variant" size={28} color="#FFFFFF" />
+                      </View>
                       <View style={styles.headerCardTitleRow}>
-                        <MaterialCommunityIcons name="newspaper" size={20} color="#FFFFFF" />
                         <Text style={styles.headerCardTitle}>Feed</Text>
                       </View>
-                      <Text style={styles.headerCardSubtitle}>Updates uit de DAELY community</Text>
+                      <Text style={styles.headerCardSubtitle}>Updates · Progressie · Sporters</Text>
                     </View>
                   </LinearGradient>
                 </View>
@@ -424,22 +426,24 @@ export default function CommunityScreen() {
                 <View
                   style={[
                     styles.headerCard,
-                    { width: (carouselWidth || Dimensions.get('window').width) - 32, backgroundColor: '#8B5CF6' }
+                    { width: (carouselWidth || Dimensions.get('window').width) - 32, backgroundColor: '#5B21B6' }
                   ]}
                 >
                   <LinearGradient
-                    colors={['rgba(139, 92, 246, 0.8)', 'rgba(139, 92, 246, 0.95)']}
-                    start={{ x: 0.5, y: 0 }}
-                    end={{ x: 0.5, y: 1 }}
+                    colors={['rgba(91, 33, 182, 0.6)', 'rgba(139, 92, 246, 0.9)', 'rgba(91, 33, 182, 0.95)']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
                     style={styles.headerCardGradient}
                   >
                     <View style={styles.headerCardTextBlock}>
-                      <Text style={styles.headerCardContext}>Community</Text>
+                      <Text style={styles.headerCardContext}>COMMUNITY</Text>
+                      <View style={styles.headerCardIconContainer}>
+                        <MaterialCommunityIcons name="account-star" size={28} color="#FFFFFF" />
+                      </View>
                       <View style={styles.headerCardTitleRow}>
-                        <MaterialCommunityIcons name="account" size={20} color="#FFFFFF" />
                         <Text style={styles.headerCardTitle}>Creators</Text>
                       </View>
-                      <Text style={styles.headerCardSubtitle}>Volg sporters, creators en coaches</Text>
+                      <Text style={styles.headerCardSubtitle}>Athletes · Coaches · Inspiratie</Text>
                     </View>
                   </LinearGradient>
                 </View>
@@ -455,22 +459,24 @@ export default function CommunityScreen() {
                 <View
                   style={[
                     styles.headerCard,
-                    { width: (carouselWidth || Dimensions.get('window').width) - 32, backgroundColor: '#F59E0B' }
+                    { width: (carouselWidth || Dimensions.get('window').width) - 32, backgroundColor: '#B45309' }
                   ]}
                 >
                   <LinearGradient
-                    colors={['rgba(245, 158, 11, 0.8)', 'rgba(245, 158, 11, 0.95)']}
-                    start={{ x: 0.5, y: 0 }}
-                    end={{ x: 0.5, y: 1 }}
+                    colors={['rgba(180, 83, 9, 0.6)', 'rgba(245, 158, 11, 0.9)', 'rgba(180, 83, 9, 0.95)']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
                     style={styles.headerCardGradient}
                   >
                     <View style={styles.headerCardTextBlock}>
-                      <Text style={styles.headerCardContext}>Community</Text>
+                      <Text style={styles.headerCardContext}>COMMUNITY</Text>
+                      <View style={styles.headerCardIconContainer}>
+                        <MaterialCommunityIcons name="storefront" size={28} color="#FFFFFF" />
+                      </View>
                       <View style={styles.headerCardTitleRow}>
-                        <MaterialCommunityIcons name="office-building" size={20} color="#FFFFFF" />
                         <Text style={styles.headerCardTitle}>Partners</Text>
                       </View>
-                      <Text style={styles.headerCardSubtitle}>Merken en voordelen voor sporters</Text>
+                      <Text style={styles.headerCardSubtitle}>Merken · Gear · Samenwerkingen</Text>
                     </View>
                   </LinearGradient>
                 </View>
@@ -486,36 +492,30 @@ export default function CommunityScreen() {
                 <View
                   style={[
                     styles.headerCard,
-                    { width: (carouselWidth || Dimensions.get('window').width) - 32, backgroundColor: '#059669' }
+                    { width: (carouselWidth || Dimensions.get('window').width) - 32, backgroundColor: '#065F46' }
                   ]}
                 >
                   <LinearGradient
-                    colors={['rgba(5, 150, 105, 0.8)', 'rgba(5, 150, 105, 0.95)']}
-                    start={{ x: 0.5, y: 0 }}
-                    end={{ x: 0.5, y: 1 }}
+                    colors={['rgba(6, 95, 70, 0.6)', 'rgba(5, 150, 105, 0.9)', 'rgba(6, 95, 70, 0.95)']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
                     style={styles.headerCardGradient}
                   >
                     <View style={styles.headerCardTextBlock}>
-                      <Text style={styles.headerCardContext}>Community</Text>
+                      <Text style={styles.headerCardContext}>COMMUNITY</Text>
+                      <View style={styles.headerCardIconContainer}>
+                        <MaterialCommunityIcons name="medal" size={28} color="#FFFFFF" />
+                      </View>
                       <View style={styles.headerCardTitleRow}>
-                        <MaterialCommunityIcons name="trophy" size={20} color="#FFFFFF" />
                         <Text style={styles.headerCardTitle}>Events</Text>
                       </View>
-                      <Text style={styles.headerCardSubtitle}>Challenges, events en sportdagen</Text>
+                      <Text style={styles.headerCardSubtitle}>Challenges · HYROX · Sportevents</Text>
                     </View>
                   </LinearGradient>
                 </View>
               </View>
             </Pressable>
           </ScrollView>
-
-          {/* Page Indicator */}
-          <View style={styles.pageIndicator}>
-            <View style={[styles.pageDot, activeTab === 'feed' && styles.pageDotActive]} />
-            <View style={[styles.pageDot, activeTab === 'creators' && styles.pageDotActive]} />
-            <View style={[styles.pageDot, activeTab === 'partners' && styles.pageDotActive]} />
-            <View style={[styles.pageDot, activeTab === 'events' && styles.pageDotActive]} />
-          </View>
         </View>
 
         {/* Feed Tab - X/Twitter-achtige berichtenfeed */}
@@ -532,9 +532,11 @@ export default function CommunityScreen() {
                 </View>
                 <View style={styles.compactComposerContent}>
                   <Text style={[styles.compactComposerTitle, { color: theme.titleColor }]}>Deel een update</Text>
-                  <Text style={[styles.compactComposerSubtitle, { color: theme.subtitleColor }]}>Plaats iets op je feed wanneer jij dat wilt.</Text>
+                  <Text style={[styles.compactComposerSubtitle, { color: theme.subtitleColor }]}>Deel je workout, progressie of moment.</Text>
                 </View>
-                <MaterialCommunityIcons name="pencil" size={20} color={theme.subtitleColor} />
+                <View style={[styles.compactComposerButton, { backgroundColor: '#F1F5F9' }]}>
+                  <MaterialCommunityIcons name="pencil" size={18} color="#2563EB" />
+                </View>
               </Pressable>
             )}
 
@@ -837,15 +839,22 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
-    padding: 14,
-    borderRadius: 14,
+    padding: 16,
+    borderRadius: 20,
     borderWidth: 1,
+    borderColor: '#E2E8F0',
+    backgroundColor: '#FFFFFF',
     marginBottom: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 2,
   },
   compactComposerAvatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -853,12 +862,21 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   compactComposerTitle: {
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '600',
+    color: '#1E293B',
     marginBottom: 2,
   },
   compactComposerSubtitle: {
     fontSize: 13,
+    color: '#64748B',
+  },
+  compactComposerButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   // Post Composer - Expanded
   expandedComposerCard: {
@@ -919,8 +937,9 @@ const styles = StyleSheet.create({
   // Header Carousel
   headerCarouselViewport: {
     width: '100%',
+    paddingHorizontal: 16,
     overflow: 'hidden',
-    marginBottom: 8,
+    marginBottom: 12,
   },
   headerCarouselContent: {
     gap: 0,
@@ -937,88 +956,90 @@ const styles = StyleSheet.create({
   },
   headerCardGradient: {
     flex: 1,
-    paddingTop: 60,
+    paddingTop: 40,
     paddingHorizontal: 20,
     justifyContent: 'flex-end',
     paddingBottom: 20,
   },
   headerCardTextBlock: {
-    gap: 6,
+    gap: 8,
     alignSelf: 'flex-start',
   },
   headerCardContext: {
-    fontSize: 11,
-    fontWeight: '600',
-    letterSpacing: 0.5,
-    color: 'rgba(255,255,255,0.7)',
+    fontSize: 10,
+    fontWeight: '700',
+    letterSpacing: 1.5,
+    color: 'rgba(255,255,255,0.6)',
     textTransform: 'uppercase',
+  },
+  headerCardIconContainer: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: 'rgba(255,255,255,0.15)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 8,
   },
   headerCardTitleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
   },
   headerCardTitle: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: '800',
     letterSpacing: -0.5,
-    lineHeight: 30,
+    lineHeight: 32,
     color: '#FFFFFF',
   },
   headerCardSubtitle: {
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: '500',
-    color: 'rgba(255,255,255,0.85)',
-    lineHeight: 18,
-  },
-  pageIndicator: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: 6,
-    paddingTop: 8,
-    paddingBottom: 4,
-  },
-  pageDot: {
-    width: 5,
-    height: 5,
-    borderRadius: 2.5,
-    backgroundColor: '#E2E8F0',
-  },
-  pageDotActive: {
-    backgroundColor: '#2563EB',
+    color: 'rgba(255,255,255,0.75)',
+    lineHeight: 16,
+    letterSpacing: 0.3,
   },
   tabContent: {
     marginTop: 12,
   },
   // Feed - X/Twitter-achtige berichten
   feedPost: {
-    padding: 16,
-    borderRadius: 14,
+    padding: 18,
+    borderRadius: 24,
     borderWidth: 1,
-    marginBottom: 10,
+    borderColor: '#E2E8F0',
+    backgroundColor: '#FFFFFF',
+    marginBottom: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.04,
+    shadowRadius: 3,
+    elevation: 2,
   },
   feedHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 10,
   },
   feedAvatar: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 10,
+    marginRight: 12,
   },
   feedHeaderInfo: {
     flex: 1,
   },
   feedName: {
-    fontSize: 14,
-    fontWeight: '600',
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#1E293B',
   },
   feedHandle: {
     fontSize: 12,
+    color: '#64748B',
   },
   feedHeaderRight: {
     alignItems: 'flex-end',
@@ -1026,33 +1047,41 @@ const styles = StyleSheet.create({
   },
   feedTime: {
     fontSize: 11,
+    color: '#94A3B8',
   },
   feedBadge: {
-    paddingHorizontal: 6,
-    paddingVertical: 2,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
     borderRadius: 999,
   },
   feedBadgeText: {
     color: '#FFFFFF',
     fontSize: 10,
-    fontWeight: '600',
+    fontWeight: '700',
   },
   feedText: {
-    fontSize: 14,
-    lineHeight: 20,
-    marginBottom: 10,
+    fontSize: 15,
+    lineHeight: 22,
+    marginBottom: 12,
+    color: '#334155',
   },
   feedActions: {
     flexDirection: 'row',
-    gap: 24,
+    gap: 20,
   },
   feedAction: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 20,
+    backgroundColor: '#F8FAFC',
   },
   feedActionText: {
     fontSize: 12,
+    fontWeight: '600',
+    color: '#64748B',
   },
   // Search bar
   searchBar: {
