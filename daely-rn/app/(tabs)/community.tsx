@@ -1,13 +1,13 @@
-import { ScrollView, StyleSheet, Text, View, Pressable, TextInput } from 'react-native';
+import { ScrollView, StyleSheet, Text, View, Pressable, TextInput, Dimensions } from 'react-native';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/use-theme';
 import { AppScreen } from '@/components/AppScreen';
 import AppHeader from '../components/AppHeader';
-import { useState, useMemo, useEffect } from 'react';
-import React from 'react';
+import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getUnreadMessageCount } from '@/services/messages-storage';
+import { LinearGradient } from 'expo-linear-gradient';
 
 type Tab = 'feed' | 'creators' | 'partners' | 'events';
 
@@ -232,6 +232,25 @@ export default function CommunityScreen() {
   const theme = useTheme();
   const [activeTab, setActiveTab] = useState<Tab>('feed');
   const [unreadMessageCount, setUnreadMessageCount] = useState(0);
+  const [carouselWidth, setCarouselWidth] = useState(0);
+
+  const headerCarouselRef = useRef<ScrollView>(null);
+
+  const scrollToHeaderCarousel = (tab: Tab) => {
+    if (carouselWidth === 0) return;
+    const tabIndex = tab === 'feed' ? 0 : tab === 'creators' ? 1 : tab === 'partners' ? 2 : 3;
+    headerCarouselRef.current?.scrollTo({ x: tabIndex * carouselWidth, animated: true });
+  };
+
+  const handleHeaderCarouselScroll = (event: any) => {
+    if (carouselWidth === 0) return;
+    const offsetX = event.nativeEvent.contentOffset.x;
+    const pageIndex = Math.round(offsetX / carouselWidth);
+    const clampedIndex = Math.max(0, Math.min(3, pageIndex));
+    const tabs: Tab[] = ['feed', 'creators', 'partners', 'events'];
+    const tab = tabs[clampedIndex] || 'feed';
+    setActiveTab(tab);
+  };
 
   // Feed state
   const [localPosts, setLocalPosts] = useState<LocalPost[]>([]);
@@ -243,7 +262,7 @@ export default function CommunityScreen() {
   }, []);
 
   useFocusEffect(
-    React.useCallback(() => {
+    useCallback(() => {
       getUnreadMessageCount().then(setUnreadMessageCount);
     }, [])
   );
@@ -346,27 +365,156 @@ export default function CommunityScreen() {
           onMessagesPress={() => router.push('/messages')}
         />
 
-        {/* Tabs */}
-        <View style={styles.quickActionsBlock}>
-          <View style={styles.tabRow}>
-            {(['feed', 'creators', 'partners', 'events'] as Tab[]).map((tab) => {
-              const isActive = activeTab === tab;
-              return (
-                <Pressable
-                  key={tab}
-                  style={({ pressed }) => [
-                    styles.tabButton,
-                    { borderColor: isActive ? '#2563EB' : '#DBEAFE', backgroundColor: isActive ? '#2563EB' : '#FFFFFF' },
-                    pressed && { opacity: 0.85, transform: [{ scale: 0.98 }] },
+        {/* ── HEADER CAROUSEL ── */}
+        <View
+          style={styles.headerCarouselViewport}
+          onLayout={(event) => {
+            const width = event.nativeEvent.layout.width;
+            if (width > 0) {
+              setCarouselWidth(width);
+            }
+          }}
+        >
+          <ScrollView
+            ref={headerCarouselRef}
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            onScroll={handleHeaderCarouselScroll}
+            scrollEventThrottle={16}
+            contentContainerStyle={styles.headerCarouselContent}
+          >
+            {/* Feed Header Card */}
+            <Pressable
+              onPress={() => { setActiveTab('feed'); scrollToHeaderCarousel('feed'); }}
+              style={{ width: carouselWidth || Dimensions.get('window').width, minWidth: carouselWidth || Dimensions.get('window').width }}
+            >
+              <View style={styles.headerPage}>
+                <View
+                  style={[
+                    styles.headerCard,
+                    { width: (carouselWidth || Dimensions.get('window').width) - 32, backgroundColor: '#2563EB' }
                   ]}
-                  onPress={() => setActiveTab(tab)}
                 >
-                  <Text style={[styles.tabLabel, { color: isActive ? '#FFFFFF' : '#1D4ED8' }]}>
-                    {tab.charAt(0).toUpperCase() + tab.slice(1)}
-                  </Text>
-                </Pressable>
-              );
-            })}
+                  <LinearGradient
+                    colors={['rgba(37, 99, 235, 0.8)', 'rgba(37, 99, 235, 0.95)']}
+                    start={{ x: 0.5, y: 0 }}
+                    end={{ x: 0.5, y: 1 }}
+                    style={styles.headerCardGradient}
+                  >
+                    <View style={styles.headerCardTextBlock}>
+                      <Text style={styles.headerCardContext}>Community</Text>
+                      <View style={styles.headerCardTitleRow}>
+                        <MaterialCommunityIcons name="newspaper" size={20} color="#FFFFFF" />
+                        <Text style={styles.headerCardTitle}>Feed</Text>
+                      </View>
+                      <Text style={styles.headerCardSubtitle}>Updates uit de DAELY community</Text>
+                    </View>
+                  </LinearGradient>
+                </View>
+              </View>
+            </Pressable>
+
+            {/* Creators Header Card */}
+            <Pressable
+              onPress={() => { setActiveTab('creators'); scrollToHeaderCarousel('creators'); }}
+              style={{ width: carouselWidth || Dimensions.get('window').width, minWidth: carouselWidth || Dimensions.get('window').width }}
+            >
+              <View style={styles.headerPage}>
+                <View
+                  style={[
+                    styles.headerCard,
+                    { width: (carouselWidth || Dimensions.get('window').width) - 32, backgroundColor: '#8B5CF6' }
+                  ]}
+                >
+                  <LinearGradient
+                    colors={['rgba(139, 92, 246, 0.8)', 'rgba(139, 92, 246, 0.95)']}
+                    start={{ x: 0.5, y: 0 }}
+                    end={{ x: 0.5, y: 1 }}
+                    style={styles.headerCardGradient}
+                  >
+                    <View style={styles.headerCardTextBlock}>
+                      <Text style={styles.headerCardContext}>Community</Text>
+                      <View style={styles.headerCardTitleRow}>
+                        <MaterialCommunityIcons name="account" size={20} color="#FFFFFF" />
+                        <Text style={styles.headerCardTitle}>Creators</Text>
+                      </View>
+                      <Text style={styles.headerCardSubtitle}>Volg sporters, creators en coaches</Text>
+                    </View>
+                  </LinearGradient>
+                </View>
+              </View>
+            </Pressable>
+
+            {/* Partners Header Card */}
+            <Pressable
+              onPress={() => { setActiveTab('partners'); scrollToHeaderCarousel('partners'); }}
+              style={{ width: carouselWidth || Dimensions.get('window').width, minWidth: carouselWidth || Dimensions.get('window').width }}
+            >
+              <View style={styles.headerPage}>
+                <View
+                  style={[
+                    styles.headerCard,
+                    { width: (carouselWidth || Dimensions.get('window').width) - 32, backgroundColor: '#F59E0B' }
+                  ]}
+                >
+                  <LinearGradient
+                    colors={['rgba(245, 158, 11, 0.8)', 'rgba(245, 158, 11, 0.95)']}
+                    start={{ x: 0.5, y: 0 }}
+                    end={{ x: 0.5, y: 1 }}
+                    style={styles.headerCardGradient}
+                  >
+                    <View style={styles.headerCardTextBlock}>
+                      <Text style={styles.headerCardContext}>Community</Text>
+                      <View style={styles.headerCardTitleRow}>
+                        <MaterialCommunityIcons name="office-building" size={20} color="#FFFFFF" />
+                        <Text style={styles.headerCardTitle}>Partners</Text>
+                      </View>
+                      <Text style={styles.headerCardSubtitle}>Merken en voordelen voor sporters</Text>
+                    </View>
+                  </LinearGradient>
+                </View>
+              </View>
+            </Pressable>
+
+            {/* Events Header Card */}
+            <Pressable
+              onPress={() => { setActiveTab('events'); scrollToHeaderCarousel('events'); }}
+              style={{ width: carouselWidth || Dimensions.get('window').width, minWidth: carouselWidth || Dimensions.get('window').width }}
+            >
+              <View style={styles.headerPage}>
+                <View
+                  style={[
+                    styles.headerCard,
+                    { width: (carouselWidth || Dimensions.get('window').width) - 32, backgroundColor: '#059669' }
+                  ]}
+                >
+                  <LinearGradient
+                    colors={['rgba(5, 150, 105, 0.8)', 'rgba(5, 150, 105, 0.95)']}
+                    start={{ x: 0.5, y: 0 }}
+                    end={{ x: 0.5, y: 1 }}
+                    style={styles.headerCardGradient}
+                  >
+                    <View style={styles.headerCardTextBlock}>
+                      <Text style={styles.headerCardContext}>Community</Text>
+                      <View style={styles.headerCardTitleRow}>
+                        <MaterialCommunityIcons name="trophy" size={20} color="#FFFFFF" />
+                        <Text style={styles.headerCardTitle}>Events</Text>
+                      </View>
+                      <Text style={styles.headerCardSubtitle}>Challenges, events en sportdagen</Text>
+                    </View>
+                  </LinearGradient>
+                </View>
+              </View>
+            </Pressable>
+          </ScrollView>
+
+          {/* Page Indicator */}
+          <View style={styles.pageIndicator}>
+            <View style={[styles.pageDot, activeTab === 'feed' && styles.pageDotActive]} />
+            <View style={[styles.pageDot, activeTab === 'creators' && styles.pageDotActive]} />
+            <View style={[styles.pageDot, activeTab === 'partners' && styles.pageDotActive]} />
+            <View style={[styles.pageDot, activeTab === 'events' && styles.pageDotActive]} />
           </View>
         </View>
 
@@ -768,28 +916,76 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#FFFFFF',
   },
-  quickActionsBlock: {
+  // Header Carousel
+  headerCarouselViewport: {
+    width: '100%',
+    overflow: 'hidden',
     marginBottom: 8,
-    gap: 4,
   },
-  tabRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-    marginBottom: 10,
+  headerCarouselContent: {
+    gap: 0,
   },
-  tabButton: {
-    width: '48.5%',
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    borderRadius: 16,
-    borderWidth: 1.5,
+  headerPage: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
-    minHeight: 64,
   },
-  tabLabel: {
-    fontSize: 14,
+  headerCard: {
+    height: 220,
+    borderRadius: 28,
+    overflow: 'hidden',
+  },
+  headerCardGradient: {
+    flex: 1,
+    paddingTop: 60,
+    paddingHorizontal: 20,
+    justifyContent: 'flex-end',
+    paddingBottom: 20,
+  },
+  headerCardTextBlock: {
+    gap: 6,
+    alignSelf: 'flex-start',
+  },
+  headerCardContext: {
+    fontSize: 11,
+    fontWeight: '600',
+    letterSpacing: 0.5,
+    color: 'rgba(255,255,255,0.7)',
+    textTransform: 'uppercase',
+  },
+  headerCardTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  headerCardTitle: {
+    fontSize: 24,
     fontWeight: '800',
+    letterSpacing: -0.5,
+    lineHeight: 30,
+    color: '#FFFFFF',
+  },
+  headerCardSubtitle: {
+    fontSize: 13,
+    fontWeight: '500',
+    color: 'rgba(255,255,255,0.85)',
+    lineHeight: 18,
+  },
+  pageIndicator: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 6,
+    paddingTop: 8,
+    paddingBottom: 4,
+  },
+  pageDot: {
+    width: 5,
+    height: 5,
+    borderRadius: 2.5,
+    backgroundColor: '#E2E8F0',
+  },
+  pageDotActive: {
+    backgroundColor: '#2563EB',
   },
   tabContent: {
     marginTop: 12,
