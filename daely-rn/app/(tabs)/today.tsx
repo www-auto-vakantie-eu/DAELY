@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { ScrollView, StyleSheet, Text, View, Pressable, ImageBackground } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter, useLocalSearchParams, useFocusEffect } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/use-theme';
@@ -82,6 +83,22 @@ function getTodayQuote() {
 
 function formatDateTime(value: string) {
   return new Date(value).toLocaleString('nl-NL');
+}
+
+// Helper component for gradient cards
+function GradientCard({ children, style }: { children: React.ReactNode, style?: any }) {
+  return (
+    <View style={[styles.sectionCard, style]}>
+      <LinearGradient
+        colors={['#E8E6FF', '#D4D0FF']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.sectionCardGradient}
+      >
+        {children}
+      </LinearGradient>
+    </View>
+  );
 }
 
 function getMetricsSummary(activity: Activity) {
@@ -310,22 +327,29 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
               key={shortcut.id}
               style={({ pressed }) => [
                 styles.shortcutCard,
-                { backgroundColor: theme.card, borderColor: theme.border },
+                { borderColor: theme.border },
                 pressed && styles.shortcutCardPressed,
               ]}
               onPress={() => handleShortcutPress(shortcut.id)}
             >
-              <View style={[styles.shortcutIconContainer, { backgroundColor: '#DBEAFE' }]}>
-                <MaterialCommunityIcons name={shortcut.icon} size={22} color="#2563EB" />
-              </View>
-              <Text style={[styles.shortcutLabel, { color: theme.titleColor }]}>{shortcut.label}</Text>
+              <LinearGradient
+                colors={['#E8E6FF', '#D4D0FF']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.shortcutCardGradient}
+              >
+                <View style={[styles.shortcutIconContainer, { backgroundColor: 'rgba(255, 255, 255, 0.6)' }]}>
+                  <MaterialCommunityIcons name={shortcut.icon} size={22} color="#4A3A8C" />
+                </View>
+                <Text style={[styles.shortcutLabel, { color: '#1E1B4B' }]}>{shortcut.label}</Text>
+              </LinearGradient>
             </Pressable>
           ))}
         </View>
 
       {/* Workout openstaand */}
       {activeDraft && activeDraft.status === 'active' && (
-        <View style={[styles.sectionCard, styles.nextWorkoutCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+        <GradientCard style={styles.nextWorkoutCard}>
           <View style={styles.nextWorkoutHeader}>
             <Text style={[styles.nextWorkoutLabel, { color: theme.subtitleColor }]}>WORKOUT OPENSTAAND</Text>
             <Text style={[styles.nextWorkoutProgram, { color: theme.titleColor }]}>{activeDraft.workoutName || 'Workout'}</Text>
@@ -354,12 +378,12 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
             <MaterialCommunityIcons name="play" size={20} color="#FFFFFF" />
             <Text style={styles.nextWorkoutButtonText}>Hervat workout</Text>
           </Pressable>
-        </View>
+      </GradientCard>
       )}
 
       {/* Volgende training */}
       {nextWorkout ? (
-        <View style={[styles.sectionCard, styles.nextWorkoutCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+        <GradientCard style={styles.nextWorkoutCard}>
           <View style={styles.nextWorkoutHeader}>
             <Text style={[styles.nextWorkoutLabel, { color: theme.subtitleColor }]}>VOLGENDE TRAINING</Text>
             <Text style={[styles.nextWorkoutProgram, { color: theme.titleColor }]}>{nextWorkout.program.name}</Text>
@@ -392,11 +416,11 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
             <MaterialCommunityIcons name="arrow-right" size={20} color="#FFFFFF" />
             <Text style={styles.nextWorkoutButtonText}>Start training</Text>
           </Pressable>
-        </View>
+      </GradientCard>
       ) : (
-        <View style={[styles.sectionCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+        <GradientCard style={styles.nextWorkoutCard}>
           <View style={styles.dailyStatusRow}>
-            <View style={[styles.dailyStatusItem, { backgroundColor: theme.background, borderColor: theme.border }]}>
+            <View style={[styles.dailyStatusItem, { backgroundColor: theme.background }]}>
               <MaterialCommunityIcons name="dumbbell" size={20} color="#2563EB" />
               <View style={styles.dailyStatusContent}>
                 <Text style={[styles.dailyStatusLabel, { color: theme.titleColor }]}>Training</Text>
@@ -416,20 +440,20 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
               <MaterialCommunityIcons name="chevron-right" size={18} color="#1E3A8A" />
             </Pressable>
           </View>
-        </View>
+        </GradientCard>
       )}
 
       {/* Jouw dag vandaag - andere items */}
-      <View style={[styles.sectionCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+      <GradientCard>
         <View style={styles.dailyStatusRow}>
-          <View style={[styles.dailyStatusItem, { backgroundColor: theme.background, borderColor: theme.border }]}>
+          <View style={[styles.dailyStatusItem, { backgroundColor: theme.background }]}>
             <MaterialCommunityIcons name="silverware-fork-knife" size={20} color="#059669" />
             <View style={styles.dailyStatusContent}>
               <Text style={[styles.dailyStatusLabel, { color: theme.titleColor }]}>Voeding</Text>
               <Text style={[styles.dailyStatusValue, { color: theme.subtitleColor }]}>Log je eerste maaltijd</Text>
             </View>
           </View>
-          <View style={[styles.dailyStatusItem, { backgroundColor: theme.background, borderColor: theme.border }]}>
+          <View style={[styles.dailyStatusItem, { backgroundColor: theme.background }]}>
             <MaterialCommunityIcons name="meditation" size={20} color="#8B5CF6" />
             <View style={styles.dailyStatusContent}>
               <Text style={[styles.dailyStatusLabel, { color: theme.titleColor }]}>Herstel</Text>
@@ -437,10 +461,10 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
             </View>
           </View>
         </View>
-      </View>
+      </GradientCard>
 
       {/* Nieuw blok: Vandaag afronden */}
-      <View style={[styles.sectionCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+      <GradientCard>
         <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Vandaag afronden</Text>
         <View style={styles.dailyProgressRow}>
           <View style={styles.dailyProgressContent}>
@@ -455,16 +479,16 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
             <View style={[styles.dailyProgressDot, { backgroundColor: theme.border }]} />
           </View>
         </View>
-      </View>
+      </GradientCard>
 
       {/* Nieuw blok: Aanbevolen voor vandaag */}
-      <View style={[styles.sectionCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+      <GradientCard>
         <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Aanbevolen voor vandaag</Text>
         <View style={styles.recommendationGrid}>
           <Pressable
             style={({ pressed }) => [
               styles.recommendationCard,
-              { backgroundColor: theme.background, borderColor: theme.border },
+              { backgroundColor: theme.background },
               pressed && styles.recommendationCardPressed,
             ]}
             onPress={() => router.push('/tracker')}
@@ -481,7 +505,7 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
           <Pressable
             style={({ pressed }) => [
               styles.recommendationCard,
-              { backgroundColor: theme.background, borderColor: theme.border },
+              { backgroundColor: theme.background },
               pressed && styles.recommendationCardPressed,
             ]}
             onPress={() => router.push('/tracker')}
@@ -498,7 +522,7 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
           <Pressable
             style={({ pressed }) => [
               styles.recommendationCard,
-              { backgroundColor: theme.background, borderColor: theme.border },
+              { backgroundColor: theme.background },
               pressed && styles.recommendationCardPressed,
             ]}
             onPress={() => router.push('/nutrition/add')}
@@ -513,7 +537,7 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
             <MaterialCommunityIcons name="chevron-right" size={20} color={theme.subtitleColor} />
           </Pressable>
         </View>
-      </View>
+      </GradientCard>
 
         {showShortcutPicker ? (
           <View style={[styles.shortcutsPickerCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
@@ -557,7 +581,7 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
           </View>
         ) : null}
 
-      <View style={[styles.sectionCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+      <GradientCard>
         <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Vandaag actief</Text>
         {todayActivities.length > 0 ? (
           <>
@@ -581,9 +605,9 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
             </Pressable>
           </View>
         )}
-      </View>
+      </GradientCard>
 
-      <View style={[styles.sectionCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+      <GradientCard>
         <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Gekoppelde data</Text>
         <Text style={[styles.sectionHint, { color: theme.subtitleColor }]}>Overzicht van je huidige device-koppelingen.</Text>
         {!hasConnectedDevice ? (
@@ -614,7 +638,7 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
           <Text style={styles.linkButtonText}>Data koppelen</Text>
           <MaterialCommunityIcons name="chevron-right" size={16} color="#1E3A8A" />
         </Pressable>
-      </View>
+      </GradientCard>
 
       <View style={styles.bottomSpacer} />
     </ScrollView>
@@ -823,6 +847,11 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: 16,
     borderWidth: 1,
+    overflow: 'hidden',
+  },
+  shortcutCardGradient: {
+    flex: 1,
+    borderRadius: 16,
     paddingVertical: 12,
     paddingHorizontal: 10,
     alignItems: 'center',
@@ -929,10 +958,14 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   sectionCard: {
-    borderWidth: 1,
+    borderWidth: 0,
+    borderRadius: 16,
+    marginBottom: 12,
+    overflow: 'hidden',
+  },
+  sectionCardGradient: {
     borderRadius: 16,
     padding: 16,
-    marginBottom: 12,
   },
   sectionTitle: {
     fontSize: 17,
