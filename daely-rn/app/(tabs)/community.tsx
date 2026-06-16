@@ -14,6 +14,22 @@ type Tab = 'feed' | 'creators' | 'partners' | 'events';
 // AsyncStorage keys
 const COMMUNITY_POSTS_KEY = 'daely.community.posts.v1';
 
+// Helper component for gradient cards
+function GradientCard({ children, style }: { children: React.ReactNode, style?: any }) {
+  return (
+    <View style={[styles.sectionCard, style]}>
+      <LinearGradient
+        colors={['#E8E6FF', '#D4D0FF']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.sectionCardGradient}
+      >
+        {children}
+      </LinearGradient>
+    </View>
+  );
+}
+
 // Local post type
 type LocalPost = {
   id: string;
@@ -524,101 +540,109 @@ export default function CommunityScreen() {
             {/* Compact Composer Trigger */}
             {!composerExpanded && (
               <Pressable
-                style={[styles.compactComposerCard, { backgroundColor: theme.card, borderColor: theme.border }]}
+                style={({ pressed }) => pressed && { opacity: 0.9 }}
                 onPress={() => setComposerExpanded(true)}
               >
-                <View style={[styles.compactComposerAvatar, { backgroundColor: '#F59E0B20' }]}>
-                  <MaterialCommunityIcons name="account" size={24} color="#F59E0B" />
-                </View>
-                <View style={styles.compactComposerContent}>
-                  <Text style={[styles.compactComposerTitle, { color: theme.titleColor }]}>Deel een update</Text>
-                  <Text style={[styles.compactComposerSubtitle, { color: theme.subtitleColor }]}>Deel je workout, progressie of moment.</Text>
-                </View>
-                <View style={[styles.compactComposerButton, { backgroundColor: '#F1F5F9' }]}>
-                  <MaterialCommunityIcons name="pencil" size={18} color="#2563EB" />
-                </View>
+                <GradientCard>
+                  <View style={styles.compactComposerCard}>
+                    <View style={[styles.compactComposerAvatar, { backgroundColor: '#F59E0B20' }]}>
+                      <MaterialCommunityIcons name="account" size={24} color="#F59E0B" />
+                    </View>
+                    <View style={styles.compactComposerContent}>
+                      <Text style={[styles.compactComposerTitle, { color: theme.titleColor }]}>Deel een update</Text>
+                      <Text style={[styles.compactComposerSubtitle, { color: theme.subtitleColor }]}>Deel je workout, progressie of moment.</Text>
+                    </View>
+                    <View style={[styles.compactComposerButton, { backgroundColor: '#F1F5F9' }]}>
+                      <MaterialCommunityIcons name="pencil" size={18} color="#2563EB" />
+                    </View>
+                  </View>
+                </GradientCard>
               </Pressable>
             )}
 
             {/* Expanded Composer */}
             {composerExpanded && (
-              <View style={[styles.expandedComposerCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-                <View style={styles.expandedComposerHeader}>
-                  <View style={[styles.expandedComposerAvatar, { backgroundColor: '#F59E0B20' }]}>
-                    <MaterialCommunityIcons name="account" size={28} color="#F59E0B" />
+              <GradientCard>
+                <View style={styles.expandedComposerCard}>
+                  <View style={styles.expandedComposerHeader}>
+                    <View style={[styles.expandedComposerAvatar, { backgroundColor: '#F59E0B20' }]}>
+                      <MaterialCommunityIcons name="account" size={28} color="#F59E0B" />
+                    </View>
+                    <Text style={[styles.expandedComposerLabel, { color: theme.subtitleColor }]}>Nieuw bericht</Text>
+                    <Pressable onPress={handleCancel}>
+                      <MaterialCommunityIcons name="close" size={24} color={theme.subtitleColor} />
+                    </Pressable>
                   </View>
-                  <Text style={[styles.expandedComposerLabel, { color: theme.subtitleColor }]}>Nieuw bericht</Text>
-                  <Pressable onPress={handleCancel}>
-                    <MaterialCommunityIcons name="close" size={24} color={theme.subtitleColor} />
-                  </Pressable>
+                  <TextInput
+                    style={[styles.expandedComposerInput, { color: theme.titleColor, borderColor: theme.border }]}
+                    placeholder="Wat wil je delen?"
+                    placeholderTextColor={theme.subtitleColor}
+                    value={postText}
+                    onChangeText={setPostText}
+                    multiline
+                    maxLength={280}
+                    textAlignVertical="top"
+                  />
+                  <Text style={[styles.expandedComposerHint, { color: theme.subtitleColor }]}>
+                    Je deelt dit bewust op je feed.
+                  </Text>
+                  <View style={styles.expandedComposerActions}>
+                    <Pressable
+                      style={[styles.expandedComposerButton, styles.expandedComposerButtonCancel, { borderColor: theme.border }]}
+                      onPress={handleCancel}
+                    >
+                      <Text style={[styles.expandedComposerButtonText, { color: theme.subtitleColor }]}>Annuleren</Text>
+                    </Pressable>
+                    <Pressable
+                      style={[styles.expandedComposerButton, { backgroundColor: postText.trim() ? theme.tabBarActive : `${theme.tabBarActive}50` }]}
+                      onPress={handlePost}
+                      disabled={!postText.trim()}
+                    >
+                      <Text style={styles.expandedComposerButtonText}>Plaatsen</Text>
+                    </Pressable>
+                  </View>
                 </View>
-                <TextInput
-                  style={[styles.expandedComposerInput, { color: theme.titleColor, borderColor: theme.border }]}
-                  placeholder="Wat wil je delen?"
-                  placeholderTextColor={theme.subtitleColor}
-                  value={postText}
-                  onChangeText={setPostText}
-                  multiline
-                  maxLength={280}
-                  textAlignVertical="top"
-                />
-                <Text style={[styles.expandedComposerHint, { color: theme.subtitleColor }]}>
-                  Je deelt dit bewust op je feed.
-                </Text>
-                <View style={styles.expandedComposerActions}>
-                  <Pressable
-                    style={[styles.expandedComposerButton, styles.expandedComposerButtonCancel, { borderColor: theme.border }]}
-                    onPress={handleCancel}
-                  >
-                    <Text style={[styles.expandedComposerButtonText, { color: theme.subtitleColor }]}>Annuleren</Text>
-                  </Pressable>
-                  <Pressable
-                    style={[styles.expandedComposerButton, { backgroundColor: postText.trim() ? theme.tabBarActive : `${theme.tabBarActive}50` }]}
-                    onPress={handlePost}
-                    disabled={!postText.trim()}
-                  >
-                    <Text style={styles.expandedComposerButtonText}>Plaatsen</Text>
-                  </Pressable>
-                </View>
-              </View>
+              </GradientCard>
             )}
 
             {/* Feed Posts */}
             {combinedFeed.map((item) => (
-              <View key={item.id} style={[styles.feedPost, { backgroundColor: theme.card, borderColor: theme.border }]}>
-                <View style={styles.feedHeader}>
-                  <View style={[styles.feedAvatar, { backgroundColor: `${item.color}20` }]}>
-                    <MaterialCommunityIcons name={item.icon as any} size={24} color={item.color} />
+              <GradientCard key={item.id}>
+                <View style={styles.feedPost}>
+                  <View style={styles.feedHeader}>
+                    <View style={[styles.feedAvatar, { backgroundColor: `${item.color}20` }]}>
+                      <MaterialCommunityIcons name={item.icon as any} size={24} color={item.color} />
+                    </View>
+                    <View style={styles.feedHeaderInfo}>
+                      <Text style={[styles.feedName, { color: theme.titleColor }]}>{item.name}</Text>
+                      <Text style={[styles.feedHandle, { color: theme.subtitleColor }]}>{item.handle}</Text>
+                    </View>
+                    <View style={styles.feedHeaderRight}>
+                      <Text style={[styles.feedTime, { color: theme.subtitleColor }]}>{item.time}</Text>
+                      {(item as any).isOwn && (
+                        <View style={[styles.feedBadge, { backgroundColor: '#6B7280' }]}>
+                          <Text style={styles.feedBadgeText}>Privé preview</Text>
+                        </View>
+                      )}
+                    </View>
                   </View>
-                  <View style={styles.feedHeaderInfo}>
-                    <Text style={[styles.feedName, { color: theme.titleColor }]}>{item.name}</Text>
-                    <Text style={[styles.feedHandle, { color: theme.subtitleColor }]}>{item.handle}</Text>
-                  </View>
-                  <View style={styles.feedHeaderRight}>
-                    <Text style={[styles.feedTime, { color: theme.subtitleColor }]}>{item.time}</Text>
-                    {(item as any).isOwn && (
-                      <View style={[styles.feedBadge, { backgroundColor: '#6B7280' }]}>
-                        <Text style={styles.feedBadgeText}>Privé preview</Text>
-                      </View>
-                    )}
+                  <Text style={[styles.feedText, { color: theme.titleColor }]}>{item.text}</Text>
+                  <View style={styles.feedActions}>
+                    <Pressable style={styles.feedAction}>
+                      <MaterialCommunityIcons name="comment-outline" size={18} color={theme.subtitleColor} />
+                      <Text style={[styles.feedActionText, { color: theme.subtitleColor }]}>Reageren</Text>
+                    </Pressable>
+                    <Pressable style={styles.feedAction}>
+                      <MaterialCommunityIcons name="heart-outline" size={18} color={theme.subtitleColor} />
+                      <Text style={[styles.feedActionText, { color: theme.subtitleColor }]}>Support</Text>
+                    </Pressable>
+                    <Pressable style={styles.feedAction}>
+                      <MaterialCommunityIcons name="share-variant" size={18} color={theme.subtitleColor} />
+                      <Text style={[styles.feedActionText, { color: theme.subtitleColor }]}>Delen</Text>
+                    </Pressable>
                   </View>
                 </View>
-                <Text style={[styles.feedText, { color: theme.titleColor }]}>{item.text}</Text>
-                <View style={styles.feedActions}>
-                  <Pressable style={styles.feedAction}>
-                    <MaterialCommunityIcons name="comment-outline" size={18} color={theme.subtitleColor} />
-                    <Text style={[styles.feedActionText, { color: theme.subtitleColor }]}>Reageren</Text>
-                  </Pressable>
-                  <Pressable style={styles.feedAction}>
-                    <MaterialCommunityIcons name="heart-outline" size={18} color={theme.subtitleColor} />
-                    <Text style={[styles.feedActionText, { color: theme.subtitleColor }]}>Support</Text>
-                  </Pressable>
-                  <Pressable style={styles.feedAction}>
-                    <MaterialCommunityIcons name="share-variant" size={18} color={theme.subtitleColor} />
-                    <Text style={[styles.feedActionText, { color: theme.subtitleColor }]}>Delen</Text>
-                  </Pressable>
-                </View>
-              </View>
+              </GradientCard>
             ))}
           </View>
         )}
@@ -668,10 +692,10 @@ export default function CommunityScreen() {
             {/* Compact creators - Events card formaat */}
             <View style={styles.creatorsSection}>
               {filteredCreators.map((creator) => (
-                <Pressable
-                  key={creator.id}
-                  style={[styles.creatorCardCompact, { backgroundColor: theme.card, borderColor: theme.border }]}
-                  onPress={() => router.push(`/community/creator/${creator.id}` as any)}
+                <GradientCard key={creator.id}>
+                  <Pressable
+                    style={styles.creatorCardCompact}
+                    onPress={() => router.push(`/community/creator/${creator.id}` as any)}
                 >
                   <View style={[styles.creatorIconCompact, { backgroundColor: `${creator.color}15`, borderColor: `${creator.color}30` }]}>
                     <MaterialCommunityIcons name={creator.icon as any} size={32} color={creator.color} />
@@ -687,6 +711,7 @@ export default function CommunityScreen() {
                   </View>
                   <MaterialCommunityIcons name="chevron-right" size={24} color={theme.subtitleColor} />
                 </Pressable>
+                </GradientCard>
               ))}
             </View>
           </View>
@@ -737,10 +762,10 @@ export default function CommunityScreen() {
             {/* Partners - Events card formaat */}
             <View style={styles.partnersSection}>
               {filteredPartners.map((partner) => (
-                <Pressable
-                  key={partner.id}
-                  style={[styles.partnerCard, { backgroundColor: theme.card, borderColor: theme.border }]}
-                  onPress={() => router.push(`/community/partner/${partner.id}` as any)}
+                <GradientCard key={partner.id}>
+                  <Pressable
+                    style={styles.partnerCard}
+                    onPress={() => router.push(`/community/partner/${partner.id}` as any)}
                 >
                   <View style={[styles.partnerIcon, { backgroundColor: `${partner.color}15`, borderColor: `${partner.color}30` }]}>
                     <MaterialCommunityIcons name={partner.icon as any} size={32} color={partner.color} />
@@ -759,6 +784,7 @@ export default function CommunityScreen() {
                   </View>
                   <MaterialCommunityIcons name="chevron-right" size={24} color={theme.subtitleColor} />
                 </Pressable>
+                </GradientCard>
               ))}
             </View>
           </View>
@@ -769,10 +795,10 @@ export default function CommunityScreen() {
           <View style={styles.tabContent}>
             <View style={styles.eventsSection}>
               {EVENTS.map((event) => (
-                <Pressable
-                  key={event.id}
-                  style={[styles.eventCard, { backgroundColor: theme.card, borderColor: theme.border }]}
-                  onPress={() => router.push(event.route as any)}
+                <GradientCard key={event.id}>
+                  <Pressable
+                    style={styles.eventCard}
+                    onPress={() => router.push(event.route as any)}
                 >
                   <View style={[styles.eventIcon, { backgroundColor: `${event.accent}15`, borderColor: `${event.accent}30` }]}>
                     <MaterialCommunityIcons name="trophy" size={32} color={event.accent} />
@@ -791,6 +817,7 @@ export default function CommunityScreen() {
                   </View>
                   <MaterialCommunityIcons name="chevron-right" size={24} color={theme.subtitleColor} />
                 </Pressable>
+                </GradientCard>
               ))}
             </View>
           </View>
@@ -799,27 +826,33 @@ export default function CommunityScreen() {
         {/* Bottom CTA - alleen op Feed tab */}
         {activeTab === 'feed' && (
           <View style={styles.ctaSection}>
-            <Pressable
-              style={[styles.ctaCard, { backgroundColor: theme.card, borderColor: theme.border }]}
-              onPress={() => router.push('/tracker')}
-            >
-              <MaterialCommunityIcons name="run-fast" size={24} color={theme.titleColor} />
-              <Text style={[styles.ctaText, { color: theme.titleColor }]}>Start activiteit</Text>
-            </Pressable>
-            <Pressable
-              style={[styles.ctaCard, { backgroundColor: theme.card, borderColor: theme.border }]}
-              onPress={() => router.push('/feedback')}
-            >
-              <MaterialCommunityIcons name="chat-outline" size={24} color={theme.titleColor} />
-              <Text style={[styles.ctaText, { color: theme.titleColor }]}>Feedback geven</Text>
-            </Pressable>
-            <Pressable
-              style={[styles.ctaCard, { backgroundColor: theme.card, borderColor: theme.border }]}
-              onPress={() => router.push('/(tabs)/today')}
-            >
-              <MaterialCommunityIcons name="calendar-today" size={24} color={theme.titleColor} />
-              <Text style={[styles.ctaText, { color: theme.titleColor }]}>Naar Today</Text>
-            </Pressable>
+            <GradientCard>
+                <Pressable
+                  style={styles.ctaCard}
+                  onPress={() => router.push('/tracker')}
+                >
+                  <MaterialCommunityIcons name="run-fast" size={24} color={theme.titleColor} />
+                  <Text style={[styles.ctaText, { color: theme.titleColor }]}>Start activiteit</Text>
+                </Pressable>
+              </GradientCard>
+              <GradientCard>
+                <Pressable
+                  style={styles.ctaCard}
+                  onPress={() => router.push('/feedback')}
+                >
+                  <MaterialCommunityIcons name="chat-outline" size={24} color={theme.titleColor} />
+                  <Text style={[styles.ctaText, { color: theme.titleColor }]}>Feedback geven</Text>
+                </Pressable>
+              </GradientCard>
+              <GradientCard>
+                <Pressable
+                  style={styles.ctaCard}
+                  onPress={() => router.push('/(tabs)/today')}
+                >
+                  <MaterialCommunityIcons name="calendar-today" size={24} color={theme.titleColor} />
+                  <Text style={[styles.ctaText, { color: theme.titleColor }]}>Naar Today</Text>
+                </Pressable>
+              </GradientCard>
           </View>
         )}
 
@@ -839,17 +872,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
-    padding: 16,
+    padding: 0,
     borderRadius: 20,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    backgroundColor: '#FFFFFF',
-    marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 2,
   },
   compactComposerAvatar: {
     width: 44,
@@ -880,10 +904,8 @@ const styles = StyleSheet.create({
   },
   // Post Composer - Expanded
   expandedComposerCard: {
-    padding: 16,
+    padding: 0,
     borderRadius: 14,
-    borderWidth: 1,
-    marginBottom: 12,
   },
   expandedComposerHeader: {
     flexDirection: 'row',
@@ -1002,19 +1024,21 @@ const styles = StyleSheet.create({
   tabContent: {
     marginTop: 12,
   },
+  sectionCard: {
+    borderWidth: 0,
+    borderRadius: 20,
+    marginBottom: 12,
+    overflow: 'hidden',
+  },
+  sectionCardGradient: {
+    borderRadius: 20,
+    padding: 16,
+  },
   // Feed - X/Twitter-achtige berichten
   feedPost: {
     padding: 18,
     borderRadius: 24,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    backgroundColor: '#FFFFFF',
     marginBottom: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.04,
-    shadowRadius: 3,
-    elevation: 2,
   },
   feedHeader: {
     flexDirection: 'row',
@@ -1076,7 +1100,7 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     paddingHorizontal: 12,
     borderRadius: 20,
-    backgroundColor: '#F8FAFC',
+    backgroundColor: '#FFFFFF',
   },
   feedActionText: {
     fontSize: 12,
@@ -1122,9 +1146,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
-    padding: 14,
+    padding: 0,
     borderRadius: 14,
-    borderWidth: 1,
   },
   creatorIconCompact: {
     width: 52,
@@ -1132,7 +1155,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1,
+    borderWidth: 0,
   },
   creatorInfoCompact: {
     flex: 1,
@@ -1170,9 +1193,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
-    padding: 14,
+    padding: 0,
     borderRadius: 14,
-    borderWidth: 1,
   },
   partnerIcon: {
     width: 52,
@@ -1180,7 +1202,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1,
+    borderWidth: 0,
   },
   partnerInfo: {
     flex: 1,
@@ -1228,9 +1250,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
-    padding: 14,
+    padding: 0,
     borderRadius: 14,
-    borderWidth: 1,
   },
   eventIcon: {
     width: 52,
@@ -1238,7 +1259,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1,
+    borderWidth: 0,
   },
   eventInfo: {
     flex: 1,
@@ -1289,9 +1310,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
-    padding: 14,
+    padding: 0,
     borderRadius: 14,
-    borderWidth: 1,
   },
   ctaText: {
     fontSize: 14,
