@@ -8,11 +8,16 @@ import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getUnreadMessageCount } from '@/services/messages-storage';
 import { LinearGradient } from 'expo-linear-gradient';
+import { THEMES } from '@/constants/themes';
 
 type Tab = 'feed' | 'creators' | 'partners' | 'events';
 
 // AsyncStorage keys
 const COMMUNITY_POSTS_KEY = 'daely.community.posts.v1';
+
+// Get Pastel Calm Aurora theme tokens
+const pastelCalmTheme = THEMES.pastelCalm;
+const auroraGradient = pastelCalmTheme.gradients.aurora || ['#E8E6FF', '#D0CCFF', '#B8B4FF'];
 
 // Helper component for gradient cards with Soft Aurora Ribbon style
 function GradientCard({ children, style }: { children: React.ReactNode, style?: any }) {
@@ -20,7 +25,7 @@ function GradientCard({ children, style }: { children: React.ReactNode, style?: 
     <View style={[styles.sectionCard, style]}>
       {/* Background gradient layer - absolute full-cover */}
       <LinearGradient
-        colors={['#E8E6FF', '#D0CCFF', '#B8B4FF']}
+        colors={auroraGradient}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.sectionCardGradient}

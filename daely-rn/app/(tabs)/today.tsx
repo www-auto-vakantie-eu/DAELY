@@ -19,6 +19,7 @@ import {
 } from '@/constants/hero-background';
 import { TODAY_QUOTES } from '@/constants/today-quotes';
 import { getUnreadMessageCount } from '@/services/messages-storage';
+import { THEMES } from '@/constants/themes';
 
 const SHORTCUTS_STORAGE_KEY = 'daely.today.shortcuts.v1';
 
@@ -43,6 +44,12 @@ const SHORTCUT_OPTIONS: ShortcutOption[] = [
 ];
 
 const DEFAULT_SHORTCUTS: ShortcutId[] = ['nutrition', 'habits', 'stats'];
+
+// Get Pastel Calm Aurora theme tokens
+const pastelCalmTheme = THEMES.pastelCalm;
+const auroraGradient = pastelCalmTheme.gradients.aurora || ['#E8E6FF', '#D0CCFF', '#B8B4FF'];
+const auroraTitle = pastelCalmTheme.colors.auroraTitle || '#1E1B4B';
+const auroraSubtitle = pastelCalmTheme.colors.auroraSubtitle || '#4A3A8C';
 
 function formatTodayLabel() {
   const now = new Date();
@@ -91,7 +98,7 @@ function GradientCard({ children, style }: { children: React.ReactNode, style?: 
     <View style={[styles.sectionCard, style]}>
       {/* Background gradient layer - absolute full-cover */}
       <LinearGradient
-        colors={['#E8E6FF', '#D0CCFF', '#B8B4FF']}
+        colors={auroraGradient}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.sectionCardGradient}
@@ -386,7 +393,7 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
               onPress={() => handleShortcutPress(shortcut.id)}
             >
               <LinearGradient
-                colors={['#E8E6FF', '#D0CCFF', '#B8B4FF']}
+                colors={auroraGradient}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.shortcutCardGradient}
@@ -442,9 +449,9 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
                 />
                 <View style={styles.shortcutCardContent}>
                   <View style={[styles.shortcutIconContainer, { backgroundColor: 'rgba(255, 255, 255, 0.6)' }]}>
-                    <MaterialCommunityIcons name={shortcut.icon} size={22} color="#4A3A8C" />
+                    <MaterialCommunityIcons name={shortcut.icon} size={22} color={auroraSubtitle} />
                   </View>
-                  <Text style={[styles.shortcutLabel, { color: '#1E1B4B' }]}>{shortcut.label}</Text>
+                  <Text style={[styles.shortcutLabel, { color: auroraTitle }]}>{shortcut.label}</Text>
                 </View>
               </LinearGradient>
             </Pressable>

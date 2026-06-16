@@ -8,11 +8,20 @@ import { DISCIPLINE_CONTENT } from '@/constants/discipline-content';
 import { SPORT_DISCIPLINES } from '../../../constants/sport-disciplines';
 import { AppScreen } from '@/components/AppScreen';
 import SharedBottomNav from '@/components/SharedBottomNav';
+import { THEMES } from '@/constants/themes';
 
 export default function DisciplineWorkoutDetailScreen() {
   const { id, slug } = useLocalSearchParams<{ id: string; slug: string }>();
   const router = useRouter();
   const theme = useTheme();
+
+  // Get Pastel Calm Aurora theme tokens
+  const pastelCalmTheme = THEMES.pastelCalm;
+  const auroraGradient = pastelCalmTheme.gradients.aurora || ['#E8E6FF', '#D0CCFF', '#B8B4FF'];
+  const auroraTitle = pastelCalmTheme.colors.auroraTitle || '#1E1B4B';
+  const auroraSubtitle = pastelCalmTheme.colors.auroraSubtitle || '#4A3A8C';
+  const auroraHighlight = pastelCalmTheme.colors.auroraHighlight || '#6B5B95';
+  const auroraAccent = pastelCalmTheme.colors.auroraAccent || '#8B7CF6';
 
   const workout = React.useMemo(() => {
     if (!id || !slug) return null;
@@ -58,7 +67,7 @@ export default function DisciplineWorkoutDetailScreen() {
           {/* Workout Summary Card */}
           <View style={styles.summaryCard}>
             <LinearGradient
-              colors={['#E8E6FF', '#D0CCFF', '#B8B4FF']}
+              colors={auroraGradient}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.summaryCardGradient}
@@ -108,27 +117,27 @@ export default function DisciplineWorkoutDetailScreen() {
               {/* Content layer */}
               <View style={styles.summaryCardContent}>
                 <View style={[styles.iconBox, { backgroundColor: 'rgba(255, 255, 255, 0.7)', borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.9)' }]}>
-                  <MaterialCommunityIcons name={workout.icon as any} size={40} color="#4A3A8C" />
+                  <MaterialCommunityIcons name={workout.icon as any} size={40} color={auroraSubtitle} />
                 </View>
 
-                <Text style={styles.workoutName}>
+                <Text style={[styles.workoutName, { color: auroraTitle }]}>
                   {workout.name}
                 </Text>
 
-                <Text style={styles.muscle}>
+                <Text style={[styles.muscle, { color: auroraSubtitle }]}>
                   {workout.muscle}
                 </Text>
 
                 <View style={styles.metaContainer}>
                   <View style={styles.metaChip}>
-                    <MaterialCommunityIcons name="clock-outline" size={16} color="#4A3A8C" />
-                    <Text style={styles.metaText}>
+                    <MaterialCommunityIcons name="clock-outline" size={16} color={auroraSubtitle} />
+                    <Text style={[styles.metaText, { color: auroraSubtitle }]}>
                       {workout.duration}
                     </Text>
                   </View>
                   <View style={styles.metaChip}>
-                    <MaterialCommunityIcons name="dumbbell" size={16} color="#4A3A8C" />
-                    <Text style={styles.metaText}>
+                    <MaterialCommunityIcons name="dumbbell" size={16} color={auroraSubtitle} />
+                    <Text style={[styles.metaText, { color: auroraSubtitle }]}>
                       {workout.exercises} oefeningen
                     </Text>
                   </View>
@@ -136,8 +145,8 @@ export default function DisciplineWorkoutDetailScreen() {
 
                 {discipline && (
                   <View style={styles.disciplineContainer}>
-                    <Text style={styles.label}>Discipline</Text>
-                    <Text style={styles.disciplineName}>
+                    <Text style={[styles.label, { color: auroraHighlight }]}>Discipline</Text>
+                    <Text style={[styles.disciplineName, { color: auroraTitle }]}>
                       {discipline.name}
                     </Text>
                   </View>
@@ -153,7 +162,7 @@ export default function DisciplineWorkoutDetailScreen() {
             activeOpacity={0.8}
           >
             <LinearGradient
-              colors={['#6B5B95', '#8B7CF6']}
+              colors={[auroraHighlight, auroraAccent]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.startButtonGradient}
@@ -165,7 +174,7 @@ export default function DisciplineWorkoutDetailScreen() {
 
           {/* Share Button */}
           <TouchableOpacity
-            style={[styles.shareButton, { backgroundColor: theme.card, borderColor: '#E8E6FF' }]}
+            style={[styles.shareButton, { backgroundColor: theme.card, borderColor: auroraGradient[0] }]}
             onPress={() => router.push({
               pathname: '/messages/share',
               params: {
@@ -176,14 +185,14 @@ export default function DisciplineWorkoutDetailScreen() {
             })}
             activeOpacity={0.8}
           >
-            <MaterialCommunityIcons name="share-outline" size={20} color="#6B5B95" />
-            <Text style={[styles.shareButtonText, { color: '#6B5B95' }]}>Deel via berichten</Text>
+            <MaterialCommunityIcons name="share-outline" size={20} color={auroraHighlight} />
+            <Text style={[styles.shareButtonText, { color: auroraHighlight }]}>Deel via berichten</Text>
           </TouchableOpacity>
 
           {/* Exercise List Placeholder */}
-          <View style={[styles.placeholderContainer, { backgroundColor: theme.card, borderColor: '#E8E6FF' }]}>
-            <View style={[styles.placeholderIcon, { backgroundColor: '#E8E6FF' }]}>
-              <MaterialCommunityIcons name="information-outline" size={32} color="#6B5B95" />
+          <View style={[styles.placeholderContainer, { backgroundColor: theme.card, borderColor: auroraGradient[0] }]}>
+            <View style={[styles.placeholderIcon, { backgroundColor: auroraGradient[0] }]}>
+              <MaterialCommunityIcons name="information-outline" size={32} color={auroraHighlight} />
             </View>
             <Text style={[styles.placeholderTitle, { color: theme.titleColor }]}>
               De exacte oefenlijst
@@ -299,13 +308,11 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     marginBottom: 6,
     textAlign: 'center',
-    color: '#1E1B4B',
   },
   muscle: {
     fontSize: 15,
     marginBottom: 20,
     textAlign: 'center',
-    color: '#4A3A8C',
   },
   metaContainer: {
     flexDirection: 'row',
@@ -327,7 +334,6 @@ const styles = StyleSheet.create({
   metaText: {
     fontSize: 14,
     fontWeight: '500',
-    color: '#4A3A8C',
   },
   disciplineContainer: {
     marginBottom: 12,
@@ -338,12 +344,10 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     letterSpacing: 1,
     marginBottom: 4,
-    color: '#6B5B95',
   },
   disciplineName: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#1E1B4B',
   },
   startButton: {
     borderRadius: 16,

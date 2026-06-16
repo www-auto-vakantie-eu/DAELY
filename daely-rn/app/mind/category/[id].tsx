@@ -6,6 +6,11 @@ import { useTheme } from '@/hooks/use-theme';
 import { AppScreen } from '@/components/AppScreen';
 import SharedBottomNav from '@/components/SharedBottomNav';
 import { MIND_PROGRAMS } from '@/constants/mind-programs';
+import { THEMES } from '@/constants/themes';
+
+// Get Pastel Calm Aurora theme tokens
+const pastelCalmTheme = THEMES.pastelCalm;
+const auroraGradient = pastelCalmTheme.gradients.aurora || ['#E8E6FF', '#D0CCFF', '#B8B4FF'];
 
 // Helper component for gradient cards with Soft Aurora Ribbon style
 function MindAuroraCard({ children, style }: { children: React.ReactNode, style?: any }) {
@@ -13,7 +18,7 @@ function MindAuroraCard({ children, style }: { children: React.ReactNode, style?
     <View style={[styles.premiumCardWrapper, style]}>
       {/* Background gradient layer - absolute full-cover */}
       <LinearGradient
-        colors={['#E8E6FF', '#D0CCFF', '#B8B4FF']}
+        colors={auroraGradient}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.premiumCardBackground}

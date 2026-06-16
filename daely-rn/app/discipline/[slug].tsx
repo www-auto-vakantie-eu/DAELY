@@ -19,6 +19,7 @@ import PageHeader from '../components/PageHeader';
 import { DISCIPLINE_CONTENT } from '@/constants/discipline-content';
 import SharedBottomNav from '../../components/SharedBottomNav';
 import { AppScreen } from '@/components/AppScreen';
+import { THEMES } from '@/constants/themes';
 
 // Local mapping for Fitness exercise thumbnails (batch 1 + batch 2 + batch 3 back)
 const FITNESS_THUMBNAIL_MAP: Record<string, ImageSourcePropType> = {
@@ -449,6 +450,13 @@ const DISCIPLINE_DATA: Record<string, DisciplineDetail> = {
   },
 };
 
+// Get Pastel Calm Aurora theme tokens
+const pastelCalmTheme = THEMES.pastelCalm;
+const auroraGradient = pastelCalmTheme.gradients.aurora || ['#E8E6FF', '#D0CCFF', '#B8B4FF'];
+const auroraTitle = pastelCalmTheme.colors.auroraTitle || '#1E1B4B';
+const auroraSubtitle = pastelCalmTheme.colors.auroraSubtitle || '#4A3A8C';
+const auroraHighlight = pastelCalmTheme.colors.auroraHighlight || '#6B5B95';
+
 export default function DisciplineScreen() {
   const { slug } = useLocalSearchParams<{ slug: string }>();
   const router = useRouter();
@@ -689,7 +697,7 @@ export default function DisciplineScreen() {
                   <View style={styles.premiumCardInner}>
                     {/* Background gradient - absolute full-cover */}
                     <LinearGradient
-                      colors={['#E8E6FF', '#D0CCFF', '#B8B4FF']}
+                      colors={auroraGradient}
                       start={{ x: 0, y: 0 }}
                       end={{ x: 1, y: 1 }}
                       style={styles.premiumCardBackground}
@@ -747,23 +755,23 @@ export default function DisciplineScreen() {
                     {/* Content layer - above background */}
                     <View style={styles.premiumCardContent}>
                       <View style={[styles.iconBadge, { backgroundColor: 'rgba(255, 255, 255, 0.6)', borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.8)' }]}>
-                        <MaterialCommunityIcons name={workout.icon as any} size={20} color="#4A3A8C" />
+                        <MaterialCommunityIcons name={workout.icon as any} size={20} color={auroraSubtitle} />
                       </View>
                       <View style={styles.cardInfo}>
-                        <Text style={[styles.cardTitle, { color: '#1E1B4B' }]}>{workout.name}</Text>
+                        <Text style={[styles.cardTitle, { color: auroraTitle }]}>{workout.name}</Text>
                         <View style={styles.cardMeta}>
                           <View style={[styles.metaTag, { backgroundColor: 'rgba(255, 255, 255, 0.7)', borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.9)' }]}>
-                            <MaterialCommunityIcons name="arm-flex" size={9} color="#4A3A8C" />
-                            <Text style={[styles.metaTagText, { color: '#4A3A8C' }]}>{workout.muscle}</Text>
+                            <MaterialCommunityIcons name="arm-flex" size={9} color={auroraSubtitle} />
+                            <Text style={[styles.metaTagText, { color: auroraSubtitle }]}>{workout.muscle}</Text>
                           </View>
                           <View style={[styles.metaTag, { backgroundColor: 'rgba(255, 255, 255, 0.7)', borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.9)' }]}>
-                            <MaterialCommunityIcons name="clock-outline" size={9} color="#4A3A8C" />
-                            <Text style={[styles.metaTagText, { color: '#4A3A8C' }]}>{workout.duration}</Text>
+                            <MaterialCommunityIcons name="clock-outline" size={9} color={auroraSubtitle} />
+                            <Text style={[styles.metaTagText, { color: auroraSubtitle }]}>{workout.duration}</Text>
                           </View>
                         </View>
                       </View>
                       <View style={[styles.chevronButton, { backgroundColor: 'rgba(255, 255, 255, 0.9)', borderWidth: 1, borderColor: 'rgba(255, 255, 255, 1)', shadowColor: '#6B5B95', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.15, shadowRadius: 4 }]}>
-                        <MaterialCommunityIcons name="chevron-right" size={16} color="#6B5B95" />
+                        <MaterialCommunityIcons name="chevron-right" size={16} color={auroraHighlight} />
                       </View>
                     </View>
                   </View>
@@ -799,7 +807,7 @@ export default function DisciplineScreen() {
                       <View style={styles.premiumCardInner}>
                         {/* Background gradient - absolute full-cover */}
                         <LinearGradient
-                          colors={['#E8E6FF', '#D0CCFF', '#B8B4FF']}
+                          colors={auroraGradient}
                           start={{ x: 0, y: 0 }}
                           end={{ x: 1, y: 1 }}
                           style={styles.premiumCardBackground}
@@ -870,28 +878,28 @@ export default function DisciplineScreen() {
                             />
                           ) : (
                             <View style={[styles.thumbnailFallback, { backgroundColor: 'rgba(255, 255, 255, 0.6)', borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.8)' }]}>
-                              <MaterialCommunityIcons name="dumbbell" size={30} color="#4A3A8C" />
+                              <MaterialCommunityIcons name="dumbbell" size={30} color={auroraSubtitle} />
                             </View>
                           )}
                           <View style={styles.cardInfo}>
-                            <Text style={[styles.cardTitle, { color: '#1E1B4B' }]}>{exercise.name}</Text>
+                            <Text style={[styles.cardTitle, { color: auroraTitle }]}>{exercise.name}</Text>
                             <View style={styles.cardMeta}>
                               <View style={[styles.metaTag, { backgroundColor: 'rgba(255, 255, 255, 0.7)', borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.9)' }]}>
-                                <MaterialCommunityIcons name="human" size={10} color="#4A3A8C" />
-                                <Text style={[styles.metaTagText, { color: '#4A3A8C' }]}>{exercise.spiergroep}</Text>
+                                <MaterialCommunityIcons name="human" size={10} color={auroraSubtitle} />
+                                <Text style={[styles.metaTagText, { color: auroraSubtitle }]}>{exercise.spiergroep}</Text>
                               </View>
                               <View style={[styles.metaTag, { backgroundColor: 'rgba(255, 255, 255, 0.7)', borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.9)' }]}>
-                                <MaterialCommunityIcons name="tag" size={10} color="#4A3A8C" />
-                                <Text style={[styles.metaTagText, { color: '#4A3A8C' }]}>{exercise.categorie}</Text>
+                                <MaterialCommunityIcons name="tag" size={10} color={auroraSubtitle} />
+                                <Text style={[styles.metaTagText, { color: auroraSubtitle }]}>{exercise.categorie}</Text>
                               </View>
                               <View style={[styles.metaTag, { backgroundColor: 'rgba(255, 255, 255, 0.7)', borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.9)' }]}>
-                                <MaterialCommunityIcons name="lightning-bolt" size={10} color="#4A3A8C" />
-                                <Text style={[styles.metaTagText, { color: '#4A3A8C' }]}>{exercise.moeilijkheid}</Text>
+                                <MaterialCommunityIcons name="lightning-bolt" size={10} color={auroraSubtitle} />
+                                <Text style={[styles.metaTagText, { color: auroraSubtitle }]}>{exercise.moeilijkheid}</Text>
                               </View>
                             </View>
                           </View>
                           <View style={[styles.chevronButton, { backgroundColor: 'rgba(255, 255, 255, 0.9)', borderWidth: 1, borderColor: 'rgba(255, 255, 255, 1)', shadowColor: '#6B5B95', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.15, shadowRadius: 4 }]}>
-                            <MaterialCommunityIcons name="chevron-right" size={16} color="#6B5B95" />
+                            <MaterialCommunityIcons name="chevron-right" size={16} color={auroraHighlight} />
                           </View>
                         </View>
                       </View>
@@ -943,7 +951,7 @@ export default function DisciplineScreen() {
                     <View style={styles.premiumCardInner}>
                       {/* Background gradient - absolute full-cover */}
                       <LinearGradient
-                        colors={['#E8E6FF', '#D0CCFF', '#B8B4FF']}
+                        colors={auroraGradient}
                         start={{ x: 0, y: 0 }}
                         end={{ x: 1, y: 1 }}
                         style={styles.premiumCardBackground}
@@ -1001,27 +1009,27 @@ export default function DisciplineScreen() {
                       {/* Content layer - above background */}
                       <View style={styles.premiumCardContent}>
                         <View style={[styles.iconBadge, { backgroundColor: 'rgba(255, 255, 255, 0.6)', borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.8)' }]}>
-                          <MaterialCommunityIcons name="calendar-week" size={22} color="#4A3A8C" />
+                          <MaterialCommunityIcons name="calendar-week" size={22} color={auroraSubtitle} />
                         </View>
                         <View style={styles.cardInfo}>
-                          <Text style={[styles.cardTitle, { color: '#1E1B4B' }]}>{program.name}</Text>
+                          <Text style={[styles.cardTitle, { color: auroraTitle }]}>{program.name}</Text>
                           <View style={styles.cardMeta}>
                             <View style={[styles.metaTag, { backgroundColor: 'rgba(255, 255, 255, 0.7)', borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.9)' }]}>
-                              <MaterialCommunityIcons name="clock-outline" size={10} color="#4A3A8C" />
-                              <Text style={[styles.metaTagText, { color: '#4A3A8C' }]}>{program.duration}</Text>
+                              <MaterialCommunityIcons name="clock-outline" size={10} color={auroraSubtitle} />
+                              <Text style={[styles.metaTagText, { color: auroraSubtitle }]}>{program.duration}</Text>
                             </View>
                             <View style={[styles.metaTag, { backgroundColor: 'rgba(255, 255, 255, 0.7)', borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.9)' }]}>
-                              <MaterialCommunityIcons name="lightning-bolt" size={10} color="#4A3A8C" />
-                              <Text style={[styles.metaTagText, { color: '#4A3A8C' }]}>{program.level}</Text>
+                              <MaterialCommunityIcons name="lightning-bolt" size={10} color={auroraSubtitle} />
+                              <Text style={[styles.metaTagText, { color: auroraSubtitle }]}>{program.level}</Text>
                             </View>
                             <View style={[styles.metaTag, { backgroundColor: 'rgba(255, 255, 255, 0.7)', borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.9)' }]}>
-                              <MaterialCommunityIcons name="calendar-week" size={10} color="#4A3A8C" />
-                              <Text style={[styles.metaTagText, { color: '#4A3A8C' }]}>{program.weeks} weken</Text>
+                              <MaterialCommunityIcons name="calendar-week" size={10} color={auroraSubtitle} />
+                              <Text style={[styles.metaTagText, { color: auroraSubtitle }]}>{program.weeks} weken</Text>
                             </View>
                           </View>
                         </View>
                         <View style={[styles.chevronButton, { backgroundColor: 'rgba(255, 255, 255, 0.9)', borderWidth: 1, borderColor: 'rgba(255, 255, 255, 1)', shadowColor: '#6B5B95', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.15, shadowRadius: 4 }]}>
-                          <MaterialCommunityIcons name="chevron-right" size={16} color="#6B5B95" />
+                          <MaterialCommunityIcons name="chevron-right" size={16} color={auroraHighlight} />
                         </View>
                       </View>
                     </View>

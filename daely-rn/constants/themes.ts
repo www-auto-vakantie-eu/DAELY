@@ -31,6 +31,11 @@ export interface AppTheme {
     warning: string;
     danger: string;
     info: string;
+    // Aurora text colors (Pastel Calm only)
+    auroraTitle?: string;
+    auroraSubtitle?: string;
+    auroraHighlight?: string;
+    auroraAccent?: string;
   };
   gradients: {
     appBackground: string[];
@@ -38,6 +43,10 @@ export interface AppTheme {
     card: string[];
     button: string[];
     progress: string[];
+    // Aurora gradients (Pastel Calm only)
+    aurora?: string[];
+    auroraBlue?: string[];
+    auroraRose?: string[];
   };
   typography: {
     headingFontFamily: string;
@@ -119,6 +128,10 @@ export const THEMES: Record<ThemeId, AppTheme> = {
       warning: '#F59E0B',
       danger: '#EF4444',
       info: '#3B82F6',
+      auroraTitle: undefined,
+      auroraSubtitle: undefined,
+      auroraHighlight: undefined,
+      auroraAccent: undefined,
     },
     gradients: {
       appBackground: ['#F1F2F4', '#E5E7EB'],
@@ -126,6 +139,9 @@ export const THEMES: Record<ThemeId, AppTheme> = {
       card: ['#FFFFFF', '#F8FAFC'],
       button: ['#2563EB', '#1D4ED8'],
       progress: ['#2563EB', '#3B82F6'],
+      aurora: undefined,
+      auroraBlue: undefined,
+      auroraRose: undefined,
     },
     typography: {
       headingFontFamily: 'System',
@@ -205,6 +221,10 @@ export const THEMES: Record<ThemeId, AppTheme> = {
       warning: '#F59E0B',
       danger: '#EF4444',
       info: '#3B82F6',
+      auroraTitle: undefined,
+      auroraSubtitle: undefined,
+      auroraHighlight: undefined,
+      auroraAccent: undefined,
     },
     gradients: {
       appBackground: ['#FFFFFF', '#F8FAFC'],
@@ -212,6 +232,9 @@ export const THEMES: Record<ThemeId, AppTheme> = {
       card: ['#F8FAFC', '#F1F5F9'],
       button: ['#2563EB', '#1D4ED8'],
       progress: ['#2563EB', '#3B82F6'],
+      aurora: undefined,
+      auroraBlue: undefined,
+      auroraRose: undefined,
     },
     typography: {
       headingFontFamily: 'System',
@@ -291,6 +314,10 @@ export const THEMES: Record<ThemeId, AppTheme> = {
       warning: '#D97706',
       danger: '#DC2626',
       info: '#2563EB',
+      auroraTitle: undefined,
+      auroraSubtitle: undefined,
+      auroraHighlight: undefined,
+      auroraAccent: undefined,
     },
     gradients: {
       appBackground: ['#FFF1F2', '#FEE2E2'],
@@ -298,6 +325,9 @@ export const THEMES: Record<ThemeId, AppTheme> = {
       card: ['#FFFFFF', '#FEF2F2'],
       button: ['#DC2626', '#B91C1C'],
       progress: ['#DC2626', '#EF4444'],
+      aurora: undefined,
+      auroraBlue: undefined,
+      auroraRose: undefined,
     },
     typography: {
       headingFontFamily: 'System',
@@ -377,6 +407,11 @@ export const THEMES: Record<ThemeId, AppTheme> = {
       warning: '#E8B84A',
       danger: '#E87272',
       info: '#6B9FE8',
+      // Pastel Calm Aurora text colors
+      auroraTitle: '#1E1B4B',
+      auroraSubtitle: '#4A3A8C',
+      auroraHighlight: '#6B5B95',
+      auroraAccent: '#8B7CF6',
     },
     gradients: {
       appBackground: ['#F0EEFF', '#E8E6FF'],
@@ -384,6 +419,10 @@ export const THEMES: Record<ThemeId, AppTheme> = {
       card: ['#FFFFFF', '#F5F3FF'],
       button: ['#6B5B95', '#5A4A84'],
       progress: ['#6B5B95', '#9B8FC7'],
+      // Pastel Calm Aurora gradients for ribbon cards
+      aurora: ['#E8E6FF', '#D0CCFF', '#B8B4FF'],
+      auroraBlue: ['#EAF0FF', '#D7DDFF', '#C5CBFF'],
+      auroraRose: ['#F3E8FF', '#DED0FF', '#C8B8FF'],
     },
     typography: {
       headingFontFamily: 'System',
@@ -463,6 +502,10 @@ export const THEMES: Record<ThemeId, AppTheme> = {
       warning: '#F39C12',
       danger: '#C0392B',
       info: '#2980B9',
+      auroraTitle: undefined,
+      auroraSubtitle: undefined,
+      auroraHighlight: undefined,
+      auroraAccent: undefined,
     },
     gradients: {
       appBackground: ['#F5F0E8', '#EBE5D9'],
@@ -470,6 +513,9 @@ export const THEMES: Record<ThemeId, AppTheme> = {
       card: ['#FFFDF7', '#F8F3E8'],
       button: ['#1B2E6B', '#34495E'],
       progress: ['#E8622A', '#C0392B'],
+      aurora: undefined,
+      auroraBlue: undefined,
+      auroraRose: undefined,
     },
     typography: {
       headingFontFamily: 'System',
@@ -549,6 +595,10 @@ export const THEMES: Record<ThemeId, AppTheme> = {
       warning: '#D4A84A',
       danger: '#C4786A',
       info: '#7BA8C4',
+      auroraTitle: undefined,
+      auroraSubtitle: undefined,
+      auroraHighlight: undefined,
+      auroraAccent: undefined,
     },
     gradients: {
       appBackground: ['#FDF6EC', '#F5EAD8'],
@@ -556,6 +606,9 @@ export const THEMES: Record<ThemeId, AppTheme> = {
       card: ['#FFFAF3', '#FDF2E3'],
       button: ['#C89B72', '#A67B5B'],
       progress: ['#C89B72', '#D4A574'],
+      aurora: undefined,
+      auroraBlue: undefined,
+      auroraRose: undefined,
     },
     typography: {
       headingFontFamily: 'System',
@@ -635,6 +688,10 @@ export const THEMES: Record<ThemeId, AppTheme> = {
       warning: '#FBBF24',
       danger: '#F87171',
       info: '#60A5FA',
+      auroraTitle: undefined,
+      auroraSubtitle: undefined,
+      auroraHighlight: undefined,
+      auroraAccent: undefined,
     },
     gradients: {
       appBackground: ['#1A1A1A', '#242424'],
@@ -642,6 +699,9 @@ export const THEMES: Record<ThemeId, AppTheme> = {
       card: ['#2D2D2D', '#252525'],
       button: ['#FFFFFF', '#D0D0D0'],
       progress: ['#FFFFFF', '#B0B0B0'],
+      aurora: undefined,
+      auroraBlue: undefined,
+      auroraRose: undefined,
     },
     typography: {
       headingFontFamily: 'System',
@@ -721,6 +781,10 @@ export const THEMES: Record<ThemeId, AppTheme> = {
       warning: '#FBBF24',
       danger: '#F87171',
       info: '#60A5FA',
+      auroraTitle: undefined,
+      auroraSubtitle: undefined,
+      auroraHighlight: undefined,
+      auroraAccent: undefined,
     },
     gradients: {
       appBackground: ['#0F172A', '#1E293B'],
@@ -728,6 +792,9 @@ export const THEMES: Record<ThemeId, AppTheme> = {
       card: ['#1E293B', '#334155'],
       button: ['#38BDF8', '#0EA5E9'],
       progress: ['#38BDF8', '#22D3EE', '#818CF8'],
+      aurora: undefined,
+      auroraBlue: undefined,
+      auroraRose: undefined,
     },
     typography: {
       headingFontFamily: 'System',
@@ -807,6 +874,10 @@ export const THEMES: Record<ThemeId, AppTheme> = {
       warning: '#FBBF24',
       danger: '#EF4444',
       info: '#60A5FA',
+      auroraTitle: undefined,
+      auroraSubtitle: undefined,
+      auroraHighlight: undefined,
+      auroraAccent: undefined,
     },
     gradients: {
       appBackground: ['#1A0A0A', '#2D1515'],
@@ -814,6 +885,9 @@ export const THEMES: Record<ThemeId, AppTheme> = {
       card: ['#2D1515', '#3D1F1F'],
       button: ['#DC2626', '#B91C1C'],
       progress: ['#DC2626', '#EF4444', '#F87171'],
+      aurora: undefined,
+      auroraBlue: undefined,
+      auroraRose: undefined,
     },
     typography: {
       headingFontFamily: 'System',
@@ -893,6 +967,10 @@ export const THEMES: Record<ThemeId, AppTheme> = {
       warning: '#ECC94B',
       danger: '#E53E3E',
       info: '#4299E1',
+      auroraTitle: undefined,
+      auroraSubtitle: undefined,
+      auroraHighlight: undefined,
+      auroraAccent: undefined,
     },
     gradients: {
       appBackground: ['#FFF5F5', '#FED7D7'],
@@ -900,6 +978,9 @@ export const THEMES: Record<ThemeId, AppTheme> = {
       card: ['#FFFFFF', '#FFF5F5'],
       button: ['#E53E3E', '#C53030'],
       progress: ['#E53E3E', '#FC8181'],
+      aurora: undefined,
+      auroraBlue: undefined,
+      auroraRose: undefined,
     },
     typography: {
       headingFontFamily: 'System',
@@ -979,6 +1060,10 @@ export const THEMES: Record<ThemeId, AppTheme> = {
       warning: '#EAB308',
       danger: '#EF4444',
       info: '#3B82F6',
+      auroraTitle: undefined,
+      auroraSubtitle: undefined,
+      auroraHighlight: undefined,
+      auroraAccent: undefined,
     },
     gradients: {
       appBackground: ['#F7F7F7', '#E5E5E5'],
@@ -986,6 +1071,9 @@ export const THEMES: Record<ThemeId, AppTheme> = {
       card: ['#FFFFFF', '#FAFAFA'],
       button: ['#404040', '#262626'],
       progress: ['#404040', '#737373'],
+      aurora: undefined,
+      auroraBlue: undefined,
+      auroraRose: undefined,
     },
     typography: {
       headingFontFamily: 'System',
@@ -1065,6 +1153,10 @@ export const THEMES: Record<ThemeId, AppTheme> = {
       warning: '#FBBF24',
       danger: '#F87171',
       info: '#60A5FA',
+      auroraTitle: undefined,
+      auroraSubtitle: undefined,
+      auroraHighlight: undefined,
+      auroraAccent: undefined,
     },
     gradients: {
       appBackground: ['#0C1220', '#162032'],
@@ -1072,6 +1164,9 @@ export const THEMES: Record<ThemeId, AppTheme> = {
       card: ['#162032', '#1E293B'],
       button: ['#3B82F6', '#2563EB'],
       progress: ['#3B82F6', '#60A5FA', '#93C5FD'],
+      aurora: undefined,
+      auroraBlue: undefined,
+      auroraRose: undefined,
     },
     typography: {
       headingFontFamily: 'System',
@@ -1151,6 +1246,10 @@ export const THEMES: Record<ThemeId, AppTheme> = {
       warning: '#FBBF24',
       danger: '#F87171',
       info: '#60A5FA',
+      auroraTitle: undefined,
+      auroraSubtitle: undefined,
+      auroraHighlight: undefined,
+      auroraAccent: undefined,
     },
     gradients: {
       appBackground: ['#1A0B2E', '#2D1B4E'],
@@ -1158,6 +1257,9 @@ export const THEMES: Record<ThemeId, AppTheme> = {
       card: ['#2D1B4E', '#3D2B5E'],
       button: ['#8B5CF6', '#7C3AED'],
       progress: ['#8B5CF6', '#A78BFA', '#C4B5FD'],
+      aurora: undefined,
+      auroraBlue: undefined,
+      auroraRose: undefined,
     },
     typography: {
       headingFontFamily: 'System',
@@ -1237,6 +1339,10 @@ export const THEMES: Record<ThemeId, AppTheme> = {
       warning: '#FBBF24',
       danger: '#F87171',
       info: '#60A5FA',
+      auroraTitle: undefined,
+      auroraSubtitle: undefined,
+      auroraHighlight: undefined,
+      auroraAccent: undefined,
     },
     gradients: {
       appBackground: ['#1C1917', '#292524'],
@@ -1244,6 +1350,9 @@ export const THEMES: Record<ThemeId, AppTheme> = {
       card: ['#292524', '#44403C'],
       button: ['#D6D3D1', '#A8A29E'],
       progress: ['#D6D3D1', '#E7E5E4'],
+      aurora: undefined,
+      auroraBlue: undefined,
+      auroraRose: undefined,
     },
     typography: {
       headingFontFamily: 'System',
@@ -1323,6 +1432,10 @@ export const THEMES: Record<ThemeId, AppTheme> = {
       warning: '#FBBF24',
       danger: '#F87171',
       info: '#60A5FA',
+      auroraTitle: undefined,
+      auroraSubtitle: undefined,
+      auroraHighlight: undefined,
+      auroraAccent: undefined,
     },
     gradients: {
       appBackground: ['#022C22', '#064E3B'],
@@ -1330,6 +1443,9 @@ export const THEMES: Record<ThemeId, AppTheme> = {
       card: ['#064E3B', '#065F46'],
       button: ['#10B981', '#059669'],
       progress: ['#10B981', '#34D399', '#6EE7B7'],
+      aurora: undefined,
+      auroraBlue: undefined,
+      auroraRose: undefined,
     },
     typography: {
       headingFontFamily: 'System',
@@ -1409,6 +1525,10 @@ export const THEMES: Record<ThemeId, AppTheme> = {
       warning: '#F59E0B',
       danger: '#EF4444',
       info: '#0EA5E9',
+      auroraTitle: undefined,
+      auroraSubtitle: undefined,
+      auroraHighlight: undefined,
+      auroraAccent: undefined,
     },
     gradients: {
       appBackground: ['#F0F9FF', '#E0F2FE'],
@@ -1416,6 +1536,9 @@ export const THEMES: Record<ThemeId, AppTheme> = {
       card: ['#FFFFFF', '#F0F9FF'],
       button: ['#0EA5E9', '#0284C7'],
       progress: ['#0EA5E9', '#38BDF8'],
+      aurora: undefined,
+      auroraBlue: undefined,
+      auroraRose: undefined,
     },
     typography: {
       headingFontFamily: 'System',
