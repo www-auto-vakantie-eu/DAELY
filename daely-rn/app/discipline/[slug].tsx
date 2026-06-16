@@ -826,8 +826,9 @@ const styles = StyleSheet.create({
   headerCarouselViewport: {
     width: '100%',
     overflow: 'hidden',
+    marginTop: 24,
+    marginBottom: 8,
   },
-  headerCarouselContainer: { paddingTop: 24, marginBottom: 8 },
   headerCarouselContent: { gap: 0 },
   headerPage: {
     flex: 1,
