@@ -8,6 +8,8 @@ import { NUTRITION_MEALS } from '@/constants/nutrition-meals';
 import { useRouter, useFocusEffect } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { getUnreadMessageCount } from '@/services/messages-storage';
+import { useAppContext } from '@/contexts/AppContext';
+import { THEMES } from '@/constants/themes';
 
 const FILTER_CATEGORIES = [
   { key: 'mealType', label: 'Maaltijd', options: ['Ontbijt', 'Lunch', 'Diner', 'Snack', 'Pre Workout', 'Post Workout', 'Herstel', 'Smoothies', 'Shakes'] },
@@ -54,13 +56,31 @@ const NUTRITION_ACTIONS = [
   },
 ];
 
+// Helper to get theme-aware Quick Action button tokens
+function getQuickActionTokens(activeThemeId: string) {
+  const currentTheme = THEMES[activeThemeId as keyof typeof THEMES] || THEMES.classic;
+  const isClassic = currentTheme.id === 'classic';
+
+  // DAELY Classic Glow gradient for buttons
+  const classicGlowGradient = isClassic
+    ? ['#FFFFFF', '#F8FBFF', '#EFF6FF']
+    : ['#E8E6FF', '#D0CCFF', '#B8B4FF'];
+
+  return {
+    gradient: classicGlowGradient,
+    iconColor: isClassic ? '#2563EB' : '#4A3A8C',
+    shadowColor: isClassic ? '#0EA5E9' : '#6B5B95',
+  };
+}
 
 export default function NutritionScreen() {
   const theme = useTheme();
   const router = useRouter();
+  const { activeThemeId } = useAppContext();
   const [activeFilterCategory, setActiveFilterCategory] = useState<FilterKey | null>(null);
   const [activeFilterChips, setActiveFilterChips] = useState<FilterChip[]>([]);
   const [unreadMessageCount, setUnreadMessageCount] = useState(0);
+  const { gradient, iconColor, shadowColor } = getQuickActionTokens(activeThemeId);
 
   useEffect(() => {
     getUnreadMessageCount().then(setUnreadMessageCount);
@@ -121,18 +141,19 @@ export default function NutritionScreen() {
               key={action.key}
               style={({ pressed }) => [
                 styles.quickActionButton,
+                { shadowColor },
                 pressed && { opacity: 0.85, transform: [{ scale: 0.98 }] },
               ]}
               onPress={() => router.push(action.route)}
             >
               <LinearGradient
-                colors={['#E8E6FF', '#D0CCFF', '#B8B4FF']}
+                colors={gradient}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.quickActionButtonGradient}
               >
                 <View style={styles.quickActionIconBubble}>
-                  <MaterialCommunityIcons name={action.icon} size={20} color="#4A3A8C" />
+                  <MaterialCommunityIcons name={action.icon} size={20} color={iconColor} />
                 </View>
                 <View style={styles.quickActionTextWrap}>
                   <Text style={styles.quickActionText}>{action.title}</Text>
@@ -316,7 +337,6 @@ const styles = StyleSheet.create({
     gap: 10,
     minHeight: 64,
     overflow: 'hidden',
-    shadowColor: '#6B5B95',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
     shadowRadius: 8,
