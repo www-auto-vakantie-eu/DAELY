@@ -8,6 +8,7 @@ import { useState, useEffect } from 'react';
 import React from 'react';
 import { getUnreadMessageCount } from '@/services/messages-storage';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { THEMES } from '@/constants/themes';
 
 const MIND_ACTIONS = [
   { key: 'start', title: 'Sessie', subtitle: 'Meditatie', icon: 'play-circle-outline' as const, route: '/(tabs)/mind' as any },
@@ -16,10 +17,32 @@ const MIND_ACTIONS = [
   { key: 'sessions', title: 'Sessies', subtitle: 'Historie', icon: 'history' as const, route: '/(tabs)/mijn' as any },
 ];
 
+// Helper to get theme-aware quick action tokens
+function getQuickActionTokens(activeThemeId: string) {
+  const currentTheme = THEMES[activeThemeId as keyof typeof THEMES] || THEMES.classic;
+  const isClassic = currentTheme.id === 'classic';
+
+  // DAELY Classic Glow gradient for quick action cards
+  const classicGlowGradient = isClassic
+    ? ['#FFFFFF', '#F8FBFF', '#EFF6FF']
+    : ['#E8E6FF', '#D0CCFF', '#B8B4FF'];
+
+  return {
+    gradientColors: classicGlowGradient,
+    iconColor: isClassic ? '#2563EB' : '#4A3A8C',
+    iconBubbleBg: isClassic ? 'rgba(219, 234, 254, 0.8)' : 'rgba(255, 255, 255, 0.7)',
+    iconBubbleBorder: isClassic ? '#DBEAFE' : 'rgba(255, 255, 255, 0.9)',
+    titleColor: isClassic ? '#0F172A' : '#1E1B4B',
+    subtitleColor: isClassic ? '#475569' : '#4A3A8C',
+    shadowColor: isClassic ? '#0EA5E9' : '#6B5B95',
+  };
+}
+
 export default function MindScreen() {
   const theme = useTheme();
   const router = useRouter();
   const [unreadMessageCount, setUnreadMessageCount] = useState(0);
+  const quickActionTokens = getQuickActionTokens(theme.id);
 
   useEffect(() => {
     getUnreadMessageCount().then(setUnreadMessageCount);
@@ -50,22 +73,23 @@ export default function MindScreen() {
               key={action.key}
               style={({ pressed }) => [
                 styles.quickActionButton,
+                { shadowColor: quickActionTokens.shadowColor },
                 pressed && { opacity: 0.85, transform: [{ scale: 0.98 }] },
               ]}
               onPress={() => router.push(action.route)}
             >
               <LinearGradient
-                colors={['#E8E6FF', '#D0CCFF', '#B8B4FF']}
+                colors={quickActionTokens.gradientColors}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.quickActionButtonGradient}
               >
-                <View style={styles.quickActionIconBubble}>
-                  <MaterialCommunityIcons name={action.icon} size={20} color="#4A3A8C" />
+                <View style={[styles.quickActionIconBubble, { backgroundColor: quickActionTokens.iconBubbleBg, borderColor: quickActionTokens.iconBubbleBorder }]}>
+                  <MaterialCommunityIcons name={action.icon} size={20} color={quickActionTokens.iconColor} />
                 </View>
                 <View style={styles.quickActionTextWrap}>
-                  <Text style={styles.quickActionText}>{action.title}</Text>
-                  <Text style={styles.quickActionSubText}>{action.subtitle}</Text>
+                  <Text style={[styles.quickActionText, { color: quickActionTokens.titleColor }]}>{action.title}</Text>
+                  <Text style={[styles.quickActionSubText, { color: quickActionTokens.subtitleColor }]}>{action.subtitle}</Text>
                 </View>
               </LinearGradient>
             </Pressable>
@@ -378,7 +402,6 @@ const styles = StyleSheet.create({
     gap: 10,
     minHeight: 64,
     overflow: 'hidden',
-    shadowColor: '#6B5B95',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
     shadowRadius: 8,
@@ -397,9 +420,7 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 14,
-    backgroundColor: 'rgba(255, 255, 255, 0.7)',
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.9)',
     alignItems: 'center',
     justifyContent: 'center',
     flexShrink: 0,
@@ -412,11 +433,9 @@ const styles = StyleSheet.create({
   quickActionText: {
     fontSize: 14,
     fontWeight: '800',
-    color: '#1E1B4B',
   },
   quickActionSubText: {
     fontSize: 11,
     fontWeight: '500',
-    color: '#4A3A8C',
   },
 });
