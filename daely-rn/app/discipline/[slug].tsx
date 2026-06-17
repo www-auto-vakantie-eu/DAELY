@@ -338,6 +338,12 @@ const DISCIPLINE_DATA: Record<string, DisciplineDetail> = {
       icon: 'horse-variant',
       heroImage: 'https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=1200&q=80',
     },
+    crossfit: {
+      title: 'CrossFit',
+      subtitle: 'Functionele fitness, kracht & uithoudingsvermogen',
+      icon: 'dumbbell',
+      heroImage: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1200&q=80',
+    },
   fitness: {
     title: 'Fitness',
     subtitle: 'Kracht & Conditie',
