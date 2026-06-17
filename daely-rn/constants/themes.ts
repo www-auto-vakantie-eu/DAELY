@@ -316,10 +316,11 @@ export const THEMES: Record<ThemeId, AppTheme> = {
       warning: '#D97706',
       danger: '#DC2626',
       info: '#2563EB',
-      auroraTitle: undefined,
-      auroraSubtitle: undefined,
-      auroraHighlight: undefined,
-      auroraAccent: undefined,
+      // Force Aurora text colors
+      auroraTitle: '#7F1D1D',
+      auroraSubtitle: '#B91C1C',
+      auroraHighlight: '#EF4444',
+      auroraAccent: '#DC2626',
     },
     gradients: {
       appBackground: ['#FFF1F2', '#FEE2E2'],
@@ -327,9 +328,10 @@ export const THEMES: Record<ThemeId, AppTheme> = {
       card: ['#FFFFFF', '#FEF2F2'],
       button: ['#DC2626', '#B91C1C'],
       progress: ['#DC2626', '#EF4444'],
-      aurora: undefined,
-      auroraBlue: undefined,
-      auroraRose: undefined,
+      // Force Aurora gradients for ribbon cards
+      aurora: ['#FFFFFF', '#FFF1F2', '#FFE4E6'],
+      auroraBlue: ['rgba(254, 202, 202, 0.55)', 'rgba(254, 202, 202, 0.12)'],
+      auroraRose: ['rgba(239, 68, 68, 0.65)', 'rgba(239, 68, 68, 0.30)'],
     },
     typography: {
       headingFontFamily: 'System',

@@ -21,14 +21,17 @@ function GradientCard({ children, style }: { children: React.ReactNode, style?: 
   const { activeThemeId } = useAppContext();
   const currentTheme = THEMES[activeThemeId as keyof typeof THEMES] || THEMES.classic;
   const isClassic = currentTheme.id === 'classic';
+  const isForce = currentTheme.id === 'force';
 
-  // DAELY Classic Glow gradient for card backgrounds
+  // Theme-aware gradient for card backgrounds
   const classicGlowGradient = isClassic
     ? ['#FFFFFF', '#F8FBFF', '#EFF6FF']
-    : currentTheme.gradients.aurora || ['#E8E6FF', '#D0CCFF', '#B8B4FF'];
+    : isForce
+      ? currentTheme.gradients.aurora || ['#FFFFFF', '#FFF1F2', '#FFE4E6']
+      : currentTheme.gradients.aurora || ['#E8E6FF', '#D0CCFF', '#B8B4FF'];
 
   return (
-    <View style={[styles.sectionCard, style, { borderColor: isClassic ? '#DCEBFF' : undefined, shadowColor: isClassic ? '#0EA5E9' : undefined }]}>
+    <View style={[styles.sectionCard, style, { borderColor: isClassic ? '#DCEBFF' : isForce ? '#FECACA' : undefined, shadowColor: isClassic ? '#0EA5E9' : isForce ? '#EF4444' : undefined }]}>
       {/* Background gradient layer - absolute full-cover */}
       <LinearGradient
         colors={classicGlowGradient}
@@ -39,7 +42,7 @@ function GradientCard({ children, style }: { children: React.ReactNode, style?: 
       >
         {/* Top-left ribbon */}
         <LinearGradient
-          colors={isClassic ? ['rgba(37, 99, 235, 0.08)', 'rgba(14, 165, 233, 0.10)'] : ['rgba(168, 162, 255, 0.55)', 'rgba(200, 195, 255, 0.12)']}
+          colors={isClassic ? ['rgba(37, 99, 235, 0.08)', 'rgba(14, 165, 233, 0.10)'] : isForce ? (currentTheme.gradients.auroraBlue || ['rgba(254, 202, 202, 0.55)', 'rgba(254, 202, 202, 0.12)']) : ['rgba(168, 162, 255, 0.55)', 'rgba(200, 195, 255, 0.12)']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.ribbonTop}
@@ -47,7 +50,7 @@ function GradientCard({ children, style }: { children: React.ReactNode, style?: 
         />
         {/* Mid-card ribbon */}
         <LinearGradient
-          colors={isClassic ? ['rgba(219, 234, 254, 0.55)', 'rgba(240, 249, 255, 0.75)'] : ['rgba(220, 180, 255, 0.42)', 'rgba(200, 195, 255, 0.20)']}
+          colors={isClassic ? ['rgba(219, 234, 254, 0.55)', 'rgba(240, 249, 255, 0.75)'] : isForce ? ['rgba(254, 226, 226, 0.42)', 'rgba(254, 226, 226, 0.20)'] : ['rgba(220, 180, 255, 0.42)', 'rgba(200, 195, 255, 0.20)']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.ribbonMid}
@@ -55,7 +58,7 @@ function GradientCard({ children, style }: { children: React.ReactNode, style?: 
         />
         {/* Diagonal top-right ribbon */}
         <LinearGradient
-          colors={isClassic ? ['rgba(37, 99, 235, 0.08)', 'rgba(14, 165, 233, 0.10)'] : ['rgba(168, 162, 255, 0.75)', 'rgba(200, 195, 255, 0.38)']}
+          colors={isClassic ? ['rgba(37, 99, 235, 0.08)', 'rgba(14, 165, 233, 0.10)'] : isForce ? (currentTheme.gradients.auroraBlue || ['rgba(254, 202, 202, 0.75)', 'rgba(254, 202, 202, 0.38)']) : ['rgba(168, 162, 255, 0.75)', 'rgba(200, 195, 255, 0.38)']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.ribbonBlue}
@@ -63,7 +66,7 @@ function GradientCard({ children, style }: { children: React.ReactNode, style?: 
         />
         {/* Diagonal bottom-left ribbon */}
         <LinearGradient
-          colors={isClassic ? ['rgba(219, 234, 254, 0.55)', 'rgba(240, 249, 255, 0.75)'] : ['rgba(220, 180, 255, 0.65)', 'rgba(230, 200, 255, 0.30)']}
+          colors={isClassic ? ['rgba(219, 234, 254, 0.55)', 'rgba(240, 249, 255, 0.75)'] : isForce ? (currentTheme.gradients.auroraRose || ['rgba(239, 68, 68, 0.65)', 'rgba(239, 68, 68, 0.30)']) : ['rgba(220, 180, 255, 0.65)', 'rgba(230, 200, 255, 0.30)']}
           start={{ x: 0, y: 1 }}
           end={{ x: 1, y: 0 }}
           style={styles.ribbonRose}
@@ -71,7 +74,7 @@ function GradientCard({ children, style }: { children: React.ReactNode, style?: 
         />
         {/* Right-side accent ribbon */}
         <LinearGradient
-          colors={isClassic ? ['rgba(37, 99, 235, 0.08)', 'rgba(255, 255, 255, 0.05)'] : ['rgba(180, 170, 255, 0.38)', 'rgba(255, 255, 255, 0.05)']}
+          colors={isClassic ? ['rgba(37, 99, 235, 0.08)', 'rgba(255, 255, 255, 0.05)'] : isForce ? ['rgba(254, 202, 202, 0.38)', 'rgba(255, 255, 255, 0.05)'] : ['rgba(180, 170, 255, 0.38)', 'rgba(255, 255, 255, 0.05)']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.ribbonRight}
@@ -312,9 +315,10 @@ export default function CommunityScreen() {
   const theme = useTheme();
   const { activeThemeId } = useAppContext();
   const isClassic = THEMES[activeThemeId as keyof typeof THEMES]?.id === 'classic';
+  const isForce = THEMES[activeThemeId as keyof typeof THEMES]?.id === 'force';
 
-  const shortcutIconBg = isClassic ? 'rgba(219, 234, 254, 0.8)' : 'rgba(255, 255, 255, 0.6)';
-  const shortcutIconBorder = isClassic ? '#DBEAFE' : undefined;
+  const shortcutIconBg = isClassic ? 'rgba(219, 234, 254, 0.8)' : isForce ? 'rgba(254, 202, 202, 0.75)' : 'rgba(255, 255, 255, 0.6)';
+  const shortcutIconBorder = isClassic ? '#DBEAFE' : isForce ? '#FCA5A5' : undefined;
   const [activeTab, setActiveTab] = useState<Tab>('feed');
   const [unreadMessageCount, setUnreadMessageCount] = useState(0);
   const [carouselWidth, setCarouselWidth] = useState(0);
@@ -615,14 +619,14 @@ export default function CommunityScreen() {
                 <GradientCard>
                   <View style={styles.compactComposerCard}>
                     <View style={[styles.compactComposerAvatar, { backgroundColor: shortcutIconBg, borderColor: shortcutIconBorder }]}>
-                      <MaterialCommunityIcons name="account" size={24} color={isClassic ? '#2563EB' : '#F59E0B'} />
+                      <MaterialCommunityIcons name="account" size={24} color={isClassic ? '#2563EB' : isForce ? '#DC2626' : '#F59E0B'} />
                     </View>
                     <View style={styles.compactComposerContent}>
                       <Text style={[styles.compactComposerTitle, { color: theme.titleColor }]}>Deel een update</Text>
                       <Text style={[styles.compactComposerSubtitle, { color: theme.subtitleColor }]}>Deel je workout, progressie of moment.</Text>
                     </View>
                     <View style={[styles.compactComposerButton, { backgroundColor: shortcutIconBg, borderColor: shortcutIconBorder }]}>
-                      <MaterialCommunityIcons name="pencil" size={18} color={isClassic ? '#2563EB' : '#2563EB'} />
+                      <MaterialCommunityIcons name="pencil" size={18} color={isClassic ? '#2563EB' : isForce ? '#DC2626' : '#2563EB'} />
                     </View>
                   </View>
                 </GradientCard>
@@ -689,7 +693,7 @@ export default function CommunityScreen() {
                     <View style={styles.feedHeaderRight}>
                       <Text style={[styles.feedTime, { color: theme.subtitleColor }]}>{item.time}</Text>
                       {(item as any).isOwn && (
-                        <View style={[styles.feedBadge, { backgroundColor: isClassic ? '#94A3B8' : '#6B7280' }]}>
+                        <View style={[styles.feedBadge, { backgroundColor: isClassic ? '#94A3B8' : isForce ? '#B91C1C' : '#6B7280' }]}>
                           <Text style={styles.feedBadgeText}>Privé preview</Text>
                         </View>
                       )}

@@ -77,36 +77,47 @@ function isWorkoutActivity(activity: Activity): boolean {
 function getClassicGlowTokens(activeThemeId: string) {
   const currentTheme = THEMES[activeThemeId as keyof typeof THEMES] || THEMES.classic;
   const isClassic = currentTheme.id === 'classic';
+  const isForce = currentTheme.id === 'force';
 
   return {
     isClassic,
-    gradient: isClassic ? ['#FFFFFF', '#F8FBFF', '#EFF6FF'] : currentTheme.gradients.aurora || ['#E8E6FF', '#D0CCFF', '#B8B4FF'],
-    titleColor: isClassic ? '#0F172A' : (currentTheme.colors.auroraTitle || '#1E1B4B'),
-    subtitleColor: isClassic ? '#475569' : (currentTheme.colors.auroraSubtitle || '#4A3A8C'),
+    gradient: isClassic ? ['#FFFFFF', '#F8FBFF', '#EFF6FF'] : isForce ? (currentTheme.gradients.aurora || ['#FFFFFF', '#FFF1F2', '#FFE4E6']) : currentTheme.gradients.aurora || ['#E8E6FF', '#D0CCFF', '#B8B4FF'],
+    titleColor: isClassic ? '#0F172A' : (currentTheme.colors.auroraTitle || (isForce ? '#7F1D1D' : '#1E1B4B')),
+    subtitleColor: isClassic ? '#475569' : (currentTheme.colors.auroraSubtitle || (isForce ? '#B91C1C' : '#4A3A8C')),
     // Theme-aware ribbon colors
     ribbonTop: isClassic
       ? ['rgba(37, 99, 235, 0.08)', 'rgba(14, 165, 233, 0.10)']
-      : ['rgba(168, 162, 255, 0.55)', 'rgba(200, 195, 255, 0.12)'],
+      : isForce
+        ? (currentTheme.gradients.auroraBlue || ['rgba(254, 202, 202, 0.55)', 'rgba(254, 202, 202, 0.12)'])
+        : ['rgba(168, 162, 255, 0.55)', 'rgba(200, 195, 255, 0.12)'],
     ribbonMid: isClassic
       ? ['rgba(219, 234, 254, 0.55)', 'rgba(240, 249, 255, 0.75)']
-      : ['rgba(220, 180, 255, 0.42)', 'rgba(200, 195, 255, 0.20)'],
+      : isForce
+        ? ['rgba(254, 226, 226, 0.42)', 'rgba(254, 226, 226, 0.20)']
+        : ['rgba(220, 180, 255, 0.42)', 'rgba(200, 195, 255, 0.20)'],
     ribbonBlue: isClassic
       ? ['rgba(37, 99, 235, 0.08)', 'rgba(14, 165, 233, 0.10)']
-      : ['rgba(168, 162, 255, 0.75)', 'rgba(200, 195, 255, 0.38)'],
+      : isForce
+        ? (currentTheme.gradients.auroraBlue || ['rgba(254, 202, 202, 0.75)', 'rgba(254, 202, 202, 0.38)'])
+        : ['rgba(168, 162, 255, 0.75)', 'rgba(200, 195, 255, 0.38)'],
     ribbonRose: isClassic
       ? ['rgba(219, 234, 254, 0.55)', 'rgba(240, 249, 255, 0.75)']
-      : ['rgba(220, 180, 255, 0.65)', 'rgba(230, 200, 255, 0.30)'],
+      : isForce
+        ? (currentTheme.gradients.auroraRose || ['rgba(239, 68, 68, 0.65)', 'rgba(239, 68, 68, 0.30)'])
+        : ['rgba(220, 180, 255, 0.65)', 'rgba(230, 200, 255, 0.30)'],
     ribbonRight: isClassic
       ? ['rgba(37, 99, 235, 0.08)', 'rgba(255, 255, 255, 0.05)']
-      : ['rgba(180, 170, 255, 0.38)', 'rgba(255, 255, 255, 0.05)'],
+      : isForce
+        ? ['rgba(254, 202, 202, 0.38)', 'rgba(255, 255, 255, 0.05)']
+        : ['rgba(180, 170, 255, 0.38)', 'rgba(255, 255, 255, 0.05)'],
     ribbonHighlight: isClassic
       ? ['rgba(255, 255, 255, 0.70)', 'rgba(255, 255, 255, 0.30)']
       : ['rgba(255, 255, 255, 0.28)', 'rgba(255, 255, 255, 0.06)'],
     // Theme-aware shortcut card styling
-    shortcutBorderColor: isClassic ? '#DCEBFF' : undefined,
-    shortcutShadowColor: isClassic ? '#0EA5E9' : undefined,
-    shortcutIconBg: isClassic ? 'rgba(219, 234, 254, 0.8)' : 'rgba(255, 255, 255, 0.6)',
-    shortcutIconBorder: isClassic ? '#DBEAFE' : undefined,
+    shortcutBorderColor: isClassic ? '#DCEBFF' : isForce ? '#FECACA' : undefined,
+    shortcutShadowColor: isClassic ? '#0EA5E9' : isForce ? '#EF4444' : undefined,
+    shortcutIconBg: isClassic ? 'rgba(219, 234, 254, 0.8)' : isForce ? 'rgba(254, 202, 202, 0.75)' : 'rgba(255, 255, 255, 0.6)',
+    shortcutIconBorder: isClassic ? '#DBEAFE' : isForce ? '#FCA5A5' : undefined,
   };
 }
 

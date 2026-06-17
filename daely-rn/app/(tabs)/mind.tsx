@@ -21,20 +21,23 @@ const MIND_ACTIONS = [
 function getQuickActionTokens(activeThemeId: string) {
   const currentTheme = THEMES[activeThemeId as keyof typeof THEMES] || THEMES.classic;
   const isClassic = currentTheme.id === 'classic';
+  const isForce = currentTheme.id === 'force';
 
   // DAELY Classic Glow gradient for quick action cards
   const classicGlowGradient = isClassic
     ? ['#FFFFFF', '#F8FBFF', '#EFF6FF']
-    : ['#E8E6FF', '#D0CCFF', '#B8B4FF'];
+    : isForce
+      ? currentTheme.gradients.aurora || ['#FFFFFF', '#FFF1F2', '#FFE4E6']
+      : ['#E8E6FF', '#D0CCFF', '#B8B4FF'];
 
   return {
     gradientColors: classicGlowGradient,
-    iconColor: isClassic ? '#2563EB' : '#4A3A8C',
-    iconBubbleBg: isClassic ? 'rgba(219, 234, 254, 0.8)' : 'rgba(255, 255, 255, 0.7)',
-    iconBubbleBorder: isClassic ? '#DBEAFE' : 'rgba(255, 255, 255, 0.9)',
-    titleColor: isClassic ? '#0F172A' : '#1E1B4B',
-    subtitleColor: isClassic ? '#475569' : '#4A3A8C',
-    shadowColor: isClassic ? '#0EA5E9' : '#6B5B95',
+    iconColor: isClassic ? '#2563EB' : isForce ? '#DC2626' : '#4A3A8C',
+    iconBubbleBg: isClassic ? 'rgba(219, 234, 254, 0.8)' : isForce ? 'rgba(254, 202, 202, 0.75)' : 'rgba(255, 255, 255, 0.7)',
+    iconBubbleBorder: isClassic ? '#DBEAFE' : isForce ? '#FCA5A5' : 'rgba(255, 255, 255, 0.9)',
+    titleColor: isClassic ? '#0F172A' : isForce ? '#7F1D1D' : '#1E1B4B',
+    subtitleColor: isClassic ? '#475569' : isForce ? '#B91C1C' : '#4A3A8C',
+    shadowColor: isClassic ? '#0EA5E9' : isForce ? '#EF4444' : '#6B5B95',
   };
 }
 
