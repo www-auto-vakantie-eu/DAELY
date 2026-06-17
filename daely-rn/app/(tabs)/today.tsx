@@ -87,6 +87,11 @@ function getAuroraTokens(activeThemeId: string) {
     trainingIconColor: isClassic ? '#2563EB' : '#059669',
     nutritionIconBg: isClassic ? '#DBEAFE' : '#FEF3C7',
     nutritionIconColor: isClassic ? '#2563EB' : '#F59E0B',
+    // Theme-aware shortcut card styling
+    shortcutBorderColor: isClassic ? '#DCEBFF' : undefined,
+    shortcutShadowColor: isClassic ? '#0EA5E9' : undefined,
+    shortcutIconBg: isClassic ? 'rgba(219, 234, 254, 0.8)' : 'rgba(255, 255, 255, 0.6)',
+    shortcutIconBorder: isClassic ? '#DBEAFE' : undefined,
   };
 }
 
@@ -239,7 +244,7 @@ export default function TodayScreen() {
   const params = useLocalSearchParams<{ open?: string }>();
   const theme = useTheme();
   const { user, activeThemeId } = useAppContext();
-  const { auroraGradient, auroraTitle, auroraSubtitle, ribbonTop, ribbonMid, ribbonBlue, ribbonRose, ribbonRight, recoveryIconColor, mobilityIconBg, mobilityIconColor, trainingIconBg, trainingIconColor, nutritionIconBg, nutritionIconColor } = getAuroraTokens(activeThemeId);
+  const { auroraGradient, auroraTitle, auroraSubtitle, ribbonTop, ribbonMid, ribbonBlue, ribbonRose, ribbonRight, recoveryIconColor, mobilityIconBg, mobilityIconColor, trainingIconBg, trainingIconColor, nutritionIconBg, nutritionIconColor, shortcutBorderColor, shortcutShadowColor, shortcutIconBg, shortcutIconBorder } = getAuroraTokens(activeThemeId);
   const [activities, setActivities] = useState<Activity[]>([]);
   const [heroBackground, setHeroBackground] = useState<HeroBackgroundOptionId>('pureMinimal');
   const [isWhoopConnected, setIsWhoopConnected] = useState(false);
@@ -430,7 +435,7 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
               key={shortcut.id}
               style={({ pressed }) => [
                 styles.shortcutCard,
-                { borderColor: theme.border },
+                { borderColor: shortcutBorderColor || theme.border, shadowColor: shortcutShadowColor },
                 pressed && styles.shortcutCardPressed,
               ]}
               onPress={() => handleShortcutPress(shortcut.id)}
@@ -491,8 +496,8 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
                   pointerEvents="none"
                 />
                 <View style={styles.shortcutCardContent}>
-                  <View style={[styles.shortcutIconContainer, { backgroundColor: 'rgba(255, 255, 255, 0.6)' }]}>
-                    <MaterialCommunityIcons name={shortcut.icon} size={22} color={auroraSubtitle} />
+                  <View style={[styles.shortcutIconContainer, { backgroundColor: shortcutIconBg, borderColor: shortcutIconBorder }]}>
+                    <MaterialCommunityIcons name={shortcut.icon} size={24} color={auroraSubtitle} />
                   </View>
                   <Text style={[styles.shortcutLabel, { color: auroraTitle }]}>{shortcut.label}</Text>
                 </View>
@@ -1004,6 +1009,11 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     position: 'relative',
     width: '100%',
+    minHeight: 80,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 2,
   },
   shortcutCardGradient: {
     ...StyleSheet.absoluteFillObject,
@@ -1011,10 +1021,10 @@ const styles = StyleSheet.create({
   },
   shortcutCardContent: {
     flex: 1,
-    paddingVertical: 12,
-    paddingHorizontal: 10,
+    paddingVertical: 16,
+    paddingHorizontal: 12,
     alignItems: 'center',
-    gap: 8,
+    gap: 10,
     justifyContent: 'center',
     position: 'relative',
     zIndex: 1,
@@ -1024,15 +1034,16 @@ const styles = StyleSheet.create({
     transform: [{ scale: 0.97 }],
   },
   shortcutIconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 4,
+    marginBottom: 6,
+    borderWidth: 1,
   },
   shortcutLabel: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '700',
   },
   shortcutsPickerCard: {
