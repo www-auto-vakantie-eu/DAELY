@@ -599,10 +599,11 @@ export const THEMES: Record<ThemeId, AppTheme> = {
       warning: '#D4A84A',
       danger: '#C4786A',
       info: '#7BA8C4',
-      auroraTitle: undefined,
-      auroraSubtitle: undefined,
-      auroraHighlight: undefined,
-      auroraAccent: undefined,
+      // Sahara Dune Aurora text colors (softer, warmer)
+      auroraTitle: '#7A4E24',
+      auroraSubtitle: '#9A6B3A',
+      auroraHighlight: '#E7C99B',
+      auroraAccent: '#C89B72',
     },
     gradients: {
       appBackground: ['#FDF6EC', '#F5EAD8'],
@@ -610,9 +611,10 @@ export const THEMES: Record<ThemeId, AppTheme> = {
       card: ['#FFFAF3', '#FDF2E3'],
       button: ['#C89B72', '#A67B5B'],
       progress: ['#C89B72', '#D4A574'],
-      aurora: undefined,
-      auroraBlue: undefined,
-      auroraRose: undefined,
+      // Sahara Dune Aurora gradients for ribbon cards (softer, less contrast)
+      aurora: ['#FFFFFF', '#FDF8EF', '#F3E4CF'],
+      auroraBlue: ['rgba(232, 208, 176, 0.32)', 'rgba(232, 208, 176, 0.10)'],
+      auroraRose: ['rgba(212, 165, 116, 0.35)', 'rgba(212, 165, 116, 0.12)'],
     },
     typography: {
       headingFontFamily: 'System',

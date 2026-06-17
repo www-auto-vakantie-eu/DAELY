@@ -33,20 +33,22 @@ export default function InstellingenScreen() {
   const currentTheme = THEMES[activeThemeId as keyof typeof THEMES] || THEMES.classic;
   const isClassic = currentTheme.id === 'classic';
   const isForce = currentTheme.id === 'force';
+  const isSahara = currentTheme.id === 'saharaDune';
 
   const classicGlowGradient = isClassic
     ? ['#FFFFFF', '#F8FBFF', '#EFF6FF']
     : isForce
       ? currentTheme.gradients.aurora || ['#FFFFFF', '#FFF1F2', '#FFE4E6']
+      : isSahara ? (currentTheme.gradients.aurora || ['#FFFFFF', '#FDF8EF', '#F3E4CF'])
       : currentTheme.gradients.aurora || ['#E8E6FF', '#D0CCFF', '#B8B4FF'];
 
-  const sectionBorderColor = isClassic ? '#DCEBFF' : isForce ? '#FECACA' : undefined;
-  const sectionShadowColor = isClassic ? '#0EA5E9' : isForce ? '#EF4444' : undefined;
-  const iconColor = isClassic ? '#2563EB' : isForce ? '#DC2626' : currentTheme.colors.primary || '#6B7280';
+  const sectionBorderColor = isClassic ? '#DCEBFF' : isForce ? '#FECACA' : isSahara ? '#E8D0B0' : undefined;
+  const sectionShadowColor = isClassic ? '#0EA5E9' : isForce ? '#EF4444' : isSahara ? '#C89B72' : undefined;
+  const iconColor = isClassic ? '#2563EB' : isForce ? '#DC2626' : isSahara ? '#C89B72' : currentTheme.colors.primary || '#6B7280';
   const chevronColor = isClassic ? '#475569' : '#D1D5DB';
-  const titleColor = isClassic ? '#0F172A' : isForce ? '#7F1D1D' : theme.titleColor;
-  const subtitleColor = isClassic ? '#475569' : isForce ? '#B91C1C' : theme.subtitleColor;
-  const separatorColor = isClassic ? '#DBEAFE' : isForce ? '#FEE2E2' : '#E5E7EB';
+  const titleColor = isClassic ? '#0F172A' : isForce ? '#7F1D1D' : isSahara ? '#7A4E24' : theme.titleColor;
+  const subtitleColor = isClassic ? '#475569' : isForce ? '#B91C1C' : isSahara ? '#9A6B3A' : theme.subtitleColor;
+  const separatorColor = isClassic ? '#DBEAFE' : isForce ? '#FEE2E2' : isSahara ? '#E8D0B0' : '#E5E7EB';
   const [pendingSyncCount, setPendingSyncCount] = useState(0);
   const [syncInProgress, setSyncInProgress] = useState(false);
   const [syncStatusMessage, setSyncStatusMessage] = useState('Nog niet gesynchroniseerd in deze sessie.');

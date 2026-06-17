@@ -50,61 +50,74 @@ function getAuroraTokens(activeThemeId: string) {
   const currentTheme = THEMES[activeThemeId as keyof typeof THEMES] || THEMES.classic;
   const isClassic = currentTheme.id === 'classic';
   const isForce = currentTheme.id === 'force';
+  const isSahara = currentTheme.id === 'saharaDune';
 
   // Theme-aware gradient for card backgrounds
   const themeGradient = isClassic
     ? ['#FFFFFF', '#F8FBFF', '#EFF6FF']
     : isForce
       ? currentTheme.gradients.aurora || ['#FFFFFF', '#FFF1F2', '#FFE4E6']
-      : currentTheme.gradients.aurora || ['#E8E6FF', '#D0CCFF', '#B8B4FF'];
+      : isSahara
+        ? currentTheme.gradients.aurora || ['#FFFFFF', '#FDF8EF', '#F3E4CF']
+        : currentTheme.gradients.aurora || ['#E8E6FF', '#D0CCFF', '#B8B4FF'];
 
   return {
     auroraGradient: themeGradient,
-    auroraTitle: currentTheme.colors.auroraTitle || (isForce ? '#7F1D1D' : '#1E1B4B'),
-    auroraSubtitle: currentTheme.colors.auroraSubtitle || (isForce ? '#B91C1C' : '#4A3A8C'),
+    auroraTitle: currentTheme.colors.auroraTitle || (isSahara ? '#7A4E24' : isForce ? '#7F1D1D' : '#1E1B4B'),
+    auroraSubtitle: currentTheme.colors.auroraSubtitle || (isSahara ? '#9A6B3A' : isForce ? '#B91C1C' : '#4A3A8C'),
     // Theme-aware ribbon colors
     ribbonTop: isClassic
       ? ['rgba(37, 99, 235, 0.08)', 'rgba(14, 165, 233, 0.10)']
       : isForce
         ? (currentTheme.gradients.auroraBlue || ['rgba(254, 202, 202, 0.55)', 'rgba(254, 202, 202, 0.12)'])
-        : ['rgba(168, 162, 255, 0.55)', 'rgba(200, 195, 255, 0.12)'],
+        : isSahara
+          ? (currentTheme.gradients.auroraBlue || ['rgba(232, 208, 176, 0.32)', 'rgba(232, 208, 176, 0.10)'])
+          : ['rgba(168, 162, 255, 0.55)', 'rgba(200, 195, 255, 0.12)'],
     ribbonMid: isClassic
       ? ['rgba(219, 234, 254, 0.55)', 'rgba(240, 249, 255, 0.75)']
       : isForce
         ? ['rgba(254, 226, 226, 0.42)', 'rgba(254, 226, 226, 0.20)']
-        : ['rgba(220, 180, 255, 0.42)', 'rgba(200, 195, 255, 0.20)'],
+        : isSahara
+          ? ['rgba(245, 230, 211, 0.42)', 'rgba(245, 230, 211, 0.20)']
+          : ['rgba(220, 180, 255, 0.42)', 'rgba(200, 195, 255, 0.20)'],
     ribbonBlue: isClassic
       ? ['rgba(37, 99, 235, 0.08)', 'rgba(14, 165, 233, 0.10)']
       : isForce
         ? (currentTheme.gradients.auroraBlue || ['rgba(254, 202, 202, 0.75)', 'rgba(254, 202, 202, 0.38)'])
-        : ['rgba(168, 162, 255, 0.75)', 'rgba(200, 195, 255, 0.38)'],
+        : isSahara
+          ? (currentTheme.gradients.auroraBlue || ['rgba(232, 208, 176, 0.32)', 'rgba(232, 208, 176, 0.10)'])
+          : ['rgba(168, 162, 255, 0.75)', 'rgba(200, 195, 255, 0.38)'],
     ribbonRose: isClassic
       ? ['rgba(219, 234, 254, 0.55)', 'rgba(240, 249, 255, 0.75)']
       : isForce
         ? (currentTheme.gradients.auroraRose || ['rgba(239, 68, 68, 0.65)', 'rgba(239, 68, 68, 0.30)'])
-        : ['rgba(220, 180, 255, 0.65)', 'rgba(230, 200, 255, 0.30)'],
+        : isSahara
+          ? (currentTheme.gradients.auroraRose || ['rgba(212, 165, 116, 0.35)', 'rgba(212, 165, 116, 0.12)'])
+          : ['rgba(220, 180, 255, 0.65)', 'rgba(230, 200, 255, 0.30)'],
     ribbonRight: isClassic
       ? ['rgba(37, 99, 235, 0.08)', 'rgba(255, 255, 255, 0.05)']
       : isForce
         ? ['rgba(254, 202, 202, 0.38)', 'rgba(255, 255, 255, 0.05)']
-        : ['rgba(180, 170, 255, 0.38)', 'rgba(255, 255, 255, 0.05)'],
+        : isSahara
+          ? ['rgba(232, 208, 176, 0.38)', 'rgba(255, 255, 255, 0.05)']
+          : ['rgba(180, 170, 255, 0.38)', 'rgba(255, 255, 255, 0.05)'],
     ribbonHighlight: isClassic
       ? ['rgba(255, 255, 255, 0.70)', 'rgba(255, 255, 255, 0.30)']
       : ['rgba(255, 255, 255, 0.28)', 'rgba(255, 255, 255, 0.06)'],
     // Theme-aware icon colors
-    recoveryIconColor: isClassic ? '#0EA5E9' : isForce ? '#DC2626' : '#8B5CF6',
+    recoveryIconColor: isClassic ? '#0EA5E9' : isForce ? '#DC2626' : isSahara ? '#C89B72' : '#8B5CF6',
     // Theme-aware recommendation icon backgrounds
-    mobilityIconBg: isClassic ? '#DBEAFE' : isForce ? 'rgba(254, 202, 202, 0.75)' : '#DBEAFE',
-    mobilityIconColor: isClassic ? '#2563EB' : isForce ? '#DC2626' : '#2563EB',
-    trainingIconBg: isClassic ? '#DBEAFE' : isForce ? 'rgba(254, 202, 202, 0.75)' : '#D1FAE5',
-    trainingIconColor: isClassic ? '#2563EB' : isForce ? '#DC2626' : '#059669',
-    nutritionIconBg: isClassic ? '#DBEAFE' : isForce ? 'rgba(254, 202, 202, 0.75)' : '#FEF3C7',
-    nutritionIconColor: isClassic ? '#2563EB' : isForce ? '#DC2626' : '#F59E0B',
+    mobilityIconBg: isClassic ? '#DBEAFE' : isForce ? 'rgba(254, 202, 202, 0.75)' : isSahara ? 'rgba(245, 230, 211, 0.75)' : '#DBEAFE',
+    mobilityIconColor: isClassic ? '#2563EB' : isForce ? '#DC2626' : isSahara ? '#8B5A2B' : '#2563EB',
+    trainingIconBg: isClassic ? '#DBEAFE' : isForce ? 'rgba(254, 202, 202, 0.75)' : isSahara ? 'rgba(245, 230, 211, 0.75)' : '#D1FAE5',
+    trainingIconColor: isClassic ? '#2563EB' : isForce ? '#DC2626' : isSahara ? '#8B5A2B' : '#059669',
+    nutritionIconBg: isClassic ? '#DBEAFE' : isForce ? 'rgba(254, 202, 202, 0.75)' : isSahara ? 'rgba(245, 230, 211, 0.75)' : '#FEF3C7',
+    nutritionIconColor: isClassic ? '#2563EB' : isForce ? '#DC2626' : isSahara ? '#8B5A2B' : '#F59E0B',
     // Theme-aware shortcut card styling
-    shortcutBorderColor: isClassic ? '#DCEBFF' : isForce ? '#FECACA' : undefined,
-    shortcutShadowColor: isClassic ? '#0EA5E9' : isForce ? '#EF4444' : undefined,
-    shortcutIconBg: isClassic ? 'rgba(219, 234, 254, 0.8)' : isForce ? 'rgba(254, 202, 202, 0.75)' : 'rgba(255, 255, 255, 0.6)',
-    shortcutIconBorder: isClassic ? '#DBEAFE' : isForce ? '#FCA5A5' : undefined,
+    shortcutBorderColor: isClassic ? '#DCEBFF' : isForce ? '#FECACA' : isSahara ? '#E8D0B0' : undefined,
+    shortcutShadowColor: isClassic ? '#0EA5E9' : isForce ? '#EF4444' : isSahara ? '#C89B72' : undefined,
+    shortcutIconBg: isClassic ? 'rgba(219, 234, 254, 0.8)' : isForce ? 'rgba(254, 202, 202, 0.75)' : isSahara ? 'rgba(245, 230, 211, 0.75)' : 'rgba(255, 255, 255, 0.6)',
+    shortcutIconBorder: isClassic ? '#DBEAFE' : isForce ? '#FCA5A5' : isSahara ? '#E8D0B0' : undefined,
   };
 }
 
