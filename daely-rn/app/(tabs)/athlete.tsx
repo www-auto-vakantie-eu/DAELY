@@ -116,7 +116,9 @@ export default function InstellingenScreen() {
           <View style={styles.sectionContent}>
             <View style={styles.settingRow}>
               <MaterialCommunityIcons name="bell-outline" size={22} color={iconColor} />
-              <Text style={[styles.settingLabel, { color: titleColor }]}>Notificaties</Text>
+              <View style={styles.settingLabelContainer}>
+                <Text style={[styles.settingLabel, { color: titleColor }]}>Notificaties</Text>
+              </View>
               <Switch
                 value={appSettings.notificationsEnabled}
                 onValueChange={(value) => updateAppSetting('notificationsEnabled', value)}
@@ -127,13 +129,17 @@ export default function InstellingenScreen() {
             <View style={[styles.separator, { borderColor: separatorColor }]} />
             <Pressable style={styles.settingRow} onPress={() => router.push('/(tabs)/discipline-visibility-settings')}>
               <MaterialCommunityIcons name="eye-outline" size={22} color={iconColor} />
-              <Text style={[styles.settingLabel, { color: titleColor }]}>Discipline-knoppen tonen</Text>
+              <View style={styles.settingLabelContainer}>
+                <Text style={[styles.settingLabel, { color: titleColor }]}>Discipline-knoppen tonen</Text>
+              </View>
               <MaterialCommunityIcons name="chevron-right" size={22} color={chevronColor} />
             </Pressable>
             <View style={[styles.separator, { borderColor: separatorColor }]} />
             <Pressable style={styles.settingRow} onPress={() => router.push('/(tabs)/tab-visibility-settings')}>
               <MaterialCommunityIcons name="view-dashboard-outline" size={22} color={iconColor} />
-              <Text style={[styles.settingLabel, { color: titleColor }]}>Tabs tonen/verbergen</Text>
+              <View style={styles.settingLabelContainer}>
+                <Text style={[styles.settingLabel, { color: titleColor }]}>Tabs tonen/verbergen</Text>
+              </View>
               <MaterialCommunityIcons name="chevron-right" size={22} color={chevronColor} />
             </Pressable>
             <View style={[styles.separator, { borderColor: separatorColor }]} />
@@ -141,25 +147,33 @@ export default function InstellingenScreen() {
             <View style={[styles.separator, { borderColor: separatorColor }]} />
             <Pressable style={styles.settingRow} onPress={() => router.push('/(tabs)/notification-settings')}>
               <MaterialCommunityIcons name="tune-vertical" size={22} color={iconColor} />
-              <Text style={[styles.settingLabel, { color: titleColor }]}>Meldingen</Text>
+              <View style={styles.settingLabelContainer}>
+                <Text style={[styles.settingLabel, { color: titleColor }]}>Meldingen</Text>
+              </View>
               <MaterialCommunityIcons name="chevron-right" size={22} color={chevronColor} />
             </Pressable>
             <View style={[styles.separator, { borderColor: separatorColor }]} />
             <Pressable style={styles.settingRow} onPress={() => router.push('/(tabs)/accessibility-settings')}>
               <MaterialCommunityIcons name="human-handsup" size={22} color={iconColor} />
-              <Text style={[styles.settingLabel, { color: titleColor }]}>Toegankelijkheid</Text>
+              <View style={styles.settingLabelContainer}>
+                <Text style={[styles.settingLabel, { color: titleColor }]}>Toegankelijkheid</Text>
+              </View>
               <MaterialCommunityIcons name="chevron-right" size={22} color={chevronColor} />
             </Pressable>
             <View style={[styles.separator, { borderColor: separatorColor }]} />
             <Pressable style={styles.settingRow} onPress={() => router.push('/(tabs)/subscription-settings')}>
               <MaterialCommunityIcons name="credit-card-outline" size={22} color={iconColor} />
-              <Text style={[styles.settingLabel, { color: titleColor }]}>Abonnement beheren</Text>
+              <View style={styles.settingLabelContainer}>
+                <Text style={[styles.settingLabel, { color: titleColor }]}>Abonnement beheren</Text>
+              </View>
               <MaterialCommunityIcons name="chevron-right" size={22} color={chevronColor} />
             </Pressable>
             <View style={[styles.separator, { borderColor: separatorColor }]} />
             <View style={styles.settingRow}>
               <MaterialCommunityIcons name="volume-high" size={22} color={iconColor} />
-              <Text style={[styles.settingLabel, { color: titleColor }]}>Geluidseffecten</Text>
+              <View style={styles.settingLabelContainer}>
+                <Text style={[styles.settingLabel, { color: titleColor }]}>Geluidseffecten</Text>
+              </View>
               <Switch
                 value={appSettings.soundEffects}
                 onValueChange={(value) => updateAppSetting('soundEffects', value)}
@@ -171,13 +185,17 @@ export default function InstellingenScreen() {
             <View style={[styles.separator, { borderColor: separatorColor }]} />
             <Pressable style={styles.settingRow} onPress={() => router.push('/(tabs)/connected-devices')}>
               <MaterialCommunityIcons name="link-variant" size={22} color={iconColor} />
-              <Text style={[styles.settingLabel, { color: titleColor }]}>Gekoppelde apparaten</Text>
+              <View style={styles.settingLabelContainer}>
+                <Text style={[styles.settingLabel, { color: titleColor }]}>Gekoppelde apparaten</Text>
+              </View>
               <MaterialCommunityIcons name="chevron-right" size={22} color={chevronColor} />
             </Pressable>
             <View style={[styles.separator, { borderColor: separatorColor }]} />
             <Pressable style={styles.settingRow} onPress={() => router.push('/(tabs)/data-link')}>
               <MaterialCommunityIcons name="plus-circle-outline" size={22} color={iconColor} />
-              <Text style={[styles.settingLabel, { color: titleColor }]}>Koppel nieuw apparaat</Text>
+              <View style={styles.settingLabelContainer}>
+                <Text style={[styles.settingLabel, { color: titleColor }]}>Koppel nieuw apparaat</Text>
+              </View>
               <MaterialCommunityIcons name="chevron-right" size={22} color={chevronColor} />
             </Pressable>
             <View style={[styles.separator, { borderColor: separatorColor }]} />
@@ -205,37 +223,49 @@ export default function InstellingenScreen() {
           <View style={styles.sectionContent}>
             <Pressable style={styles.settingRow} onPress={() => router.push('/(tabs)/account-security')}>
               <MaterialCommunityIcons name="shield-account-outline" size={22} color={iconColor} />
-              <Text style={[styles.settingLabel, { color: titleColor }]}>Account & Beveiliging</Text>
+              <View style={styles.settingLabelContainer}>
+                <Text style={[styles.settingLabel, { color: titleColor }]}>Account & Beveiliging</Text>
+              </View>
               <MaterialCommunityIcons name="chevron-right" size={22} color={chevronColor} />
             </Pressable>
             <View style={[styles.separator, { borderColor: separatorColor }]} />
             <Pressable style={styles.settingRow} onPress={() => router.push('/(tabs)/privacy-consent')}>
               <MaterialCommunityIcons name="shield-outline" size={22} color={iconColor} />
-              <Text style={[styles.settingLabel, { color: titleColor }]}>Privacy & Toestemming</Text>
+              <View style={styles.settingLabelContainer}>
+                <Text style={[styles.settingLabel, { color: titleColor }]}>Privacy & Toestemming</Text>
+              </View>
               <MaterialCommunityIcons name="chevron-right" size={22} color={chevronColor} />
             </Pressable>
             <View style={[styles.separator, { borderColor: separatorColor }]} />
             <Pressable style={styles.settingRow} onPress={() => router.push('/(tabs)/language-region')}>
               <MaterialCommunityIcons name="translate" size={22} color={iconColor} />
-              <Text style={[styles.settingLabel, { color: titleColor }]}>Taal & Regio</Text>
+              <View style={styles.settingLabelContainer}>
+                <Text style={[styles.settingLabel, { color: titleColor }]}>Taal & Regio</Text>
+              </View>
               <MaterialCommunityIcons name="chevron-right" size={22} color={chevronColor} />
             </Pressable>
             <View style={[styles.separator, { borderColor: separatorColor }]} />
             <Pressable style={styles.settingRow} onPress={() => router.push('/(tabs)/themes')}>
               <MaterialCommunityIcons name="palette-outline" size={22} color={iconColor} />
-              <Text style={[styles.settingLabel, { color: titleColor }]}>Thema&apos;s</Text>
+              <View style={styles.settingLabelContainer}>
+                <Text style={[styles.settingLabel, { color: titleColor }]}>Thema&apos;s</Text>
+              </View>
               <MaterialCommunityIcons name="chevron-right" size={22} color={chevronColor} />
             </Pressable>
             <View style={[styles.separator, { borderColor: separatorColor }]} />
             <Pressable style={styles.settingRow} onPress={() => router.push('/(tabs)/visual-settings')}>
               <MaterialCommunityIcons name="eye-outline" size={22} color={iconColor} />
-              <Text style={[styles.settingLabel, { color: titleColor }]}>Visuele Instellingen</Text>
+              <View style={styles.settingLabelContainer}>
+                <Text style={[styles.settingLabel, { color: titleColor }]}>Visuele Instellingen</Text>
+              </View>
               <MaterialCommunityIcons name="chevron-right" size={22} color={chevronColor} />
             </Pressable>
             <View style={[styles.separator, { borderColor: separatorColor }]} />
             <Pressable style={styles.settingRow} onPress={() => router.push('/(tabs)/audio-settings')}>
               <MaterialCommunityIcons name="volume-high" size={22} color={iconColor} />
-              <Text style={[styles.settingLabel, { color: titleColor }]}>Audio Instellingen</Text>
+              <View style={styles.settingLabelContainer}>
+                <Text style={[styles.settingLabel, { color: titleColor }]}>Audio Instellingen</Text>
+              </View>
               <MaterialCommunityIcons name="chevron-right" size={22} color={chevronColor} />
             </Pressable>
           </View>
@@ -253,25 +283,33 @@ export default function InstellingenScreen() {
           <View style={styles.sectionContent}>
             <Pressable style={styles.settingRow} onPress={() => router.push('/(tabs)/legal-app-info')}>
               <MaterialCommunityIcons name="information-outline" size={22} color={iconColor} />
-              <Text style={[styles.settingLabel, { color: titleColor }]}>Juridisch & App-info</Text>
+              <View style={styles.settingLabelContainer}>
+                <Text style={[styles.settingLabel, { color: titleColor }]}>Juridisch & App-info</Text>
+              </View>
               <MaterialCommunityIcons name="chevron-right" size={22} color={chevronColor} />
             </Pressable>
             <View style={[styles.separator, { borderColor: separatorColor }]} />
             <Pressable style={styles.settingRow} onPress={() => router.push('/(tabs)/feedback-analytics')}>
               <MaterialCommunityIcons name="chart-box-outline" size={22} color={iconColor} />
-              <Text style={[styles.settingLabel, { color: titleColor }]}>Feedback Analytics</Text>
+              <View style={styles.settingLabelContainer}>
+                <Text style={[styles.settingLabel, { color: titleColor }]}>Feedback Analytics</Text>
+              </View>
               <MaterialCommunityIcons name="chevron-right" size={22} color={chevronColor} />
             </Pressable>
             <View style={[styles.separator, { borderColor: separatorColor }]} />
             <Pressable style={styles.settingRow} onPress={() => router.push('/(tabs)/legal-app-info')}>
               <MaterialCommunityIcons name="file-document-outline" size={22} color={iconColor} />
-              <Text style={[styles.settingLabel, { color: titleColor }]}>Privacybeleid</Text>
+              <View style={styles.settingLabelContainer}>
+                <Text style={[styles.settingLabel, { color: titleColor }]}>Privacybeleid</Text>
+              </View>
               <MaterialCommunityIcons name="chevron-right" size={22} color={chevronColor} />
             </Pressable>
             <View style={[styles.separator, { borderColor: separatorColor }]} />
             <Pressable style={styles.settingRow} onPress={() => router.push('/(tabs)/support-center')}>
               <MaterialCommunityIcons name="help-circle-outline" size={22} color={iconColor} />
-              <Text style={[styles.settingLabel, { color: titleColor }]}>Hulp & Support</Text>
+              <View style={styles.settingLabelContainer}>
+                <Text style={[styles.settingLabel, { color: titleColor }]}>Hulp & Support</Text>
+              </View>
             {pendingSyncCount > 0 ? (
               <View style={styles.pendingBadge}>
                 <Text style={styles.pendingBadgeText}>{pendingSyncCount}</Text>
@@ -315,9 +353,11 @@ export default function InstellingenScreen() {
             disabled={syncInProgress}
           >
             <MaterialCommunityIcons name="sync" size={22} color={iconColor} />
-            <Text style={[styles.settingLabel, styles.syncActionText, { color: titleColor }]}>
-              {syncInProgress ? 'Synchroniseren...' : 'Nu synchroniseren'}
-            </Text>
+            <View style={styles.settingLabelContainer}>
+              <Text style={[styles.settingLabel, styles.syncActionText, { color: titleColor }]}>
+                {syncInProgress ? 'Synchroniseren...' : 'Nu synchroniseren'}
+              </Text>
+            </View>
             <MaterialCommunityIcons name="chevron-right" size={22} color={chevronColor} />
           </Pressable>
         </View>
@@ -335,7 +375,9 @@ export default function InstellingenScreen() {
           <View style={styles.sectionContent}>
             <Pressable style={styles.settingRow} onPress={() => router.push('/(tabs)/qa-smoke')}>
               <MaterialCommunityIcons name="flask-outline" size={22} color={iconColor} />
-              <Text style={[styles.settingLabel, styles.syncActionText, { color: titleColor }]}>Open Smoke Test Center</Text>
+              <View style={styles.settingLabelContainer}>
+                <Text style={[styles.settingLabel, styles.syncActionText, { color: titleColor }]}>Open Smoke Test Center</Text>
+              </View>
               <MaterialCommunityIcons name="chevron-right" size={22} color={chevronColor} />
             </Pressable>
             {accountType === 'admin' ? (
@@ -343,7 +385,9 @@ export default function InstellingenScreen() {
                 <View style={[styles.separator, { borderColor: separatorColor }]} />
                 <Pressable style={styles.settingRow} onPress={() => router.push('/(tabs)/admin-review')}>
                   <MaterialCommunityIcons name="shield-check-outline" size={22} color={iconColor} />
-                <Text style={[styles.settingLabel, styles.syncActionText, { color: titleColor }]}>Open Admin Review</Text>
+                <View style={styles.settingLabelContainer}>
+                  <Text style={[styles.settingLabel, styles.syncActionText, { color: titleColor }]}>Open Admin Review</Text>
+                </View>
                 <MaterialCommunityIcons name="chevron-right" size={22} color={chevronColor} />
               </Pressable>
             </>
@@ -363,49 +407,65 @@ export default function InstellingenScreen() {
           <View style={styles.sectionContent}>
             <Pressable style={styles.settingRow} onPress={() => router.push('/(tabs)/goals')}>
               <MaterialCommunityIcons name="target" size={22} color={iconColor} />
-              <Text style={[styles.settingLabel, { color: titleColor }]}>Doelen</Text>
+              <View style={styles.settingLabelContainer}>
+                <Text style={[styles.settingLabel, { color: titleColor }]}>Doelen</Text>
+              </View>
               <MaterialCommunityIcons name="chevron-right" size={22} color={chevronColor} />
             </Pressable>
             <View style={[styles.separator, { borderColor: separatorColor }]} />
             <Pressable style={styles.settingRow} onPress={() => router.push('/(tabs)/training-level')}>
               <MaterialCommunityIcons name="dumbbell" size={22} color={iconColor} />
-              <Text style={[styles.settingLabel, { color: titleColor }]}>Trainingsniveau</Text>
+              <View style={styles.settingLabelContainer}>
+                <Text style={[styles.settingLabel, { color: titleColor }]}>Trainingsniveau</Text>
+              </View>
               <MaterialCommunityIcons name="chevron-right" size={22} color={chevronColor} />
             </Pressable>
             <View style={[styles.separator, { borderColor: separatorColor }]} />
             <Pressable style={styles.settingRow} onPress={() => router.push('/(tabs)/training-preferences')}>
               <MaterialCommunityIcons name="cog-outline" size={22} color={iconColor} />
-              <Text style={[styles.settingLabel, { color: titleColor }]}>Trainingsvoorkeuren</Text>
+              <View style={styles.settingLabelContainer}>
+                <Text style={[styles.settingLabel, { color: titleColor }]}>Trainingsvoorkeuren</Text>
+              </View>
               <MaterialCommunityIcons name="chevron-right" size={22} color={chevronColor} />
             </Pressable>
             <View style={[styles.separator, { borderColor: separatorColor }]} />
             <Pressable style={styles.settingRow} onPress={() => router.push('/(tabs)/equipment')}>
               <MaterialCommunityIcons name="weight-lifter" size={22} color={iconColor} />
-              <Text style={[styles.settingLabel, { color: titleColor }]}>Beschikbare apparatuur</Text>
+              <View style={styles.settingLabelContainer}>
+                <Text style={[styles.settingLabel, { color: titleColor }]}>Beschikbare apparatuur</Text>
+              </View>
               <MaterialCommunityIcons name="chevron-right" size={22} color={chevronColor} />
             </Pressable>
             <View style={[styles.separator, { borderColor: separatorColor }]} />
             <Pressable style={styles.settingRow} onPress={() => router.push('/(tabs)/body-stats')}>
               <MaterialCommunityIcons name="ruler" size={22} color={iconColor} />
-              <Text style={[styles.settingLabel, { color: titleColor }]}>Lichaamsgegevens & progressie</Text>
+              <View style={styles.settingLabelContainer}>
+                <Text style={[styles.settingLabel, { color: titleColor }]}>Lichaamsgegevens & progressie</Text>
+              </View>
               <MaterialCommunityIcons name="chevron-right" size={22} color={chevronColor} />
             </Pressable>
             <View style={[styles.separator, { borderColor: separatorColor }]} />
             <Pressable style={styles.settingRow} onPress={() => router.push('/(tabs)/injuries')}>
               <MaterialCommunityIcons name="bandage" size={22} color={iconColor} />
-              <Text style={[styles.settingLabel, { color: titleColor }]}>Blessures & beperkingen</Text>
+              <View style={styles.settingLabelContainer}>
+                <Text style={[styles.settingLabel, { color: titleColor }]}>Blessures & beperkingen</Text>
+              </View>
               <MaterialCommunityIcons name="chevron-right" size={22} color={chevronColor} />
             </Pressable>
             <View style={[styles.separator, { borderColor: separatorColor }]} />
             <Pressable style={styles.settingRow} onPress={() => router.push('/(tabs)/motivation')}>
               <MaterialCommunityIcons name="emoticon-happy-outline" size={22} color={iconColor} />
-              <Text style={[styles.settingLabel, { color: titleColor }]}>Motivatie & doelen</Text>
+              <View style={styles.settingLabelContainer}>
+                <Text style={[styles.settingLabel, { color: titleColor }]}>Motivatie & doelen</Text>
+              </View>
               <MaterialCommunityIcons name="chevron-right" size={22} color={chevronColor} />
             </Pressable>
             <View style={[styles.separator, { borderColor: separatorColor }]} />
             <Pressable style={styles.settingRow} onPress={() => router.push('/(tabs)/integrations')}>
               <MaterialCommunityIcons name="connection" size={22} color={iconColor} />
-              <Text style={[styles.settingLabel, { color: titleColor }]}>Integraties</Text>
+              <View style={styles.settingLabelContainer}>
+                <Text style={[styles.settingLabel, { color: titleColor }]}>Integraties</Text>
+              </View>
               <MaterialCommunityIcons name="chevron-right" size={22} color={chevronColor} />
             </Pressable>
           </View>
