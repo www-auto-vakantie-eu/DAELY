@@ -45,11 +45,15 @@ const SHORTCUT_OPTIONS: ShortcutOption[] = [
 
 const DEFAULT_SHORTCUTS: ShortcutId[] = ['nutrition', 'habits', 'stats'];
 
-// Get Pastel Calm Aurora theme tokens
-const pastelCalmTheme = THEMES.pastelCalm;
-const auroraGradient = pastelCalmTheme.gradients.aurora || ['#E8E6FF', '#D0CCFF', '#B8B4FF'];
-const auroraTitle = pastelCalmTheme.colors.auroraTitle || '#1E1B4B';
-const auroraSubtitle = pastelCalmTheme.colors.auroraSubtitle || '#4A3A8C';
+// Helper to get theme-aware Aurora tokens
+function getAuroraTokens(activeThemeId: string) {
+  const currentTheme = THEMES[activeThemeId as keyof typeof THEMES] || THEMES.classic;
+  return {
+    auroraGradient: currentTheme.gradients.aurora || ['#E8E6FF', '#D0CCFF', '#B8B4FF'],
+    auroraTitle: currentTheme.colors.auroraTitle || '#1E1B4B',
+    auroraSubtitle: currentTheme.colors.auroraSubtitle || '#4A3A8C',
+  };
+}
 
 function formatTodayLabel() {
   const now = new Date();
@@ -94,6 +98,9 @@ function formatDateTime(value: string) {
 
 // Helper component for gradient cards with Soft Aurora Ribbon style
 function GradientCard({ children, style }: { children: React.ReactNode, style?: any }) {
+  const { activeThemeId } = useAppContext();
+  const { auroraGradient } = getAuroraTokens(activeThemeId);
+
   return (
     <View style={[styles.sectionCard, style]}>
       {/* Background gradient layer - absolute full-cover */}
@@ -196,7 +203,8 @@ export default function TodayScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{ open?: string }>();
   const theme = useTheme();
-  const { user } = useAppContext();
+  const { user, activeThemeId } = useAppContext();
+  const { auroraGradient, auroraTitle, auroraSubtitle } = getAuroraTokens(activeThemeId);
   const [activities, setActivities] = useState<Activity[]>([]);
   const [heroBackground, setHeroBackground] = useState<HeroBackgroundOptionId>('pureMinimal');
   const [isWhoopConnected, setIsWhoopConnected] = useState(false);

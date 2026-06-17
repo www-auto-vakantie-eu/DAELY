@@ -3,17 +3,25 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
+import { useAppContext } from '@/contexts/AppContext';
 import { AppScreen } from '@/components/AppScreen';
 import SharedBottomNav from '@/components/SharedBottomNav';
 import { MIND_PROGRAMS } from '@/constants/mind-programs';
 import { THEMES } from '@/constants/themes';
 
-// Get Pastel Calm Aurora theme tokens
-const pastelCalmTheme = THEMES.pastelCalm;
-const auroraGradient = pastelCalmTheme.gradients.aurora || ['#E8E6FF', '#D0CCFF', '#B8B4FF'];
+// Helper to get theme-aware Aurora tokens
+function getAuroraTokens(activeThemeId: string) {
+  const currentTheme = THEMES[activeThemeId as keyof typeof THEMES] || THEMES.classic;
+  return {
+    auroraGradient: currentTheme.gradients.aurora || ['#E8E6FF', '#D0CCFF', '#B8B4FF'],
+  };
+}
 
 // Helper component for gradient cards with Soft Aurora Ribbon style
 function MindAuroraCard({ children, style }: { children: React.ReactNode, style?: any }) {
+  const { activeThemeId } = useAppContext();
+  const { auroraGradient } = getAuroraTokens(activeThemeId);
+
   return (
     <View style={[styles.premiumCardWrapper, style]}>
       {/* Background gradient layer - absolute full-cover */}

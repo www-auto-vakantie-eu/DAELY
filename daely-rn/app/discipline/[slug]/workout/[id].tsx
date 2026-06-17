@@ -4,24 +4,31 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/use-theme';
+import { useAppContext } from '@/contexts/AppContext';
 import { DISCIPLINE_CONTENT } from '@/constants/discipline-content';
 import { SPORT_DISCIPLINES } from '../../../constants/sport-disciplines';
 import { AppScreen } from '@/components/AppScreen';
 import SharedBottomNav from '@/components/SharedBottomNav';
 import { THEMES } from '@/constants/themes';
 
+// Helper to get theme-aware Aurora tokens
+function getAuroraTokens(activeThemeId: string) {
+  const currentTheme = THEMES[activeThemeId as keyof typeof THEMES] || THEMES.classic;
+  return {
+    auroraGradient: currentTheme.gradients.aurora || ['#E8E6FF', '#D0CCFF', '#B8B4FF'],
+    auroraTitle: currentTheme.colors.auroraTitle || '#1E1B4B',
+    auroraSubtitle: currentTheme.colors.auroraSubtitle || '#4A3A8C',
+    auroraHighlight: currentTheme.colors.auroraHighlight || '#6B5B95',
+    auroraAccent: currentTheme.colors.auroraAccent || '#8B7CF6',
+  };
+}
+
 export default function DisciplineWorkoutDetailScreen() {
   const { id, slug } = useLocalSearchParams<{ id: string; slug: string }>();
   const router = useRouter();
   const theme = useTheme();
-
-  // Get Pastel Calm Aurora theme tokens
-  const pastelCalmTheme = THEMES.pastelCalm;
-  const auroraGradient = pastelCalmTheme.gradients.aurora || ['#E8E6FF', '#D0CCFF', '#B8B4FF'];
-  const auroraTitle = pastelCalmTheme.colors.auroraTitle || '#1E1B4B';
-  const auroraSubtitle = pastelCalmTheme.colors.auroraSubtitle || '#4A3A8C';
-  const auroraHighlight = pastelCalmTheme.colors.auroraHighlight || '#6B5B95';
-  const auroraAccent = pastelCalmTheme.colors.auroraAccent || '#8B7CF6';
+  const { activeThemeId } = useAppContext();
+  const { auroraGradient, auroraTitle, auroraSubtitle, auroraHighlight, auroraAccent } = getAuroraTokens(activeThemeId);
 
   const workout = React.useMemo(() => {
     if (!id || !slug) return null;

@@ -2,6 +2,7 @@ import { ScrollView, StyleSheet, Text, View, Pressable, TextInput, Dimensions } 
 import { useRouter, useFocusEffect } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/use-theme';
+import { useAppContext } from '@/contexts/AppContext';
 import { AppScreen } from '@/components/AppScreen';
 import AppHeader from '../components/AppHeader';
 import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
@@ -15,12 +16,12 @@ type Tab = 'feed' | 'creators' | 'partners' | 'events';
 // AsyncStorage keys
 const COMMUNITY_POSTS_KEY = 'daely.community.posts.v1';
 
-// Get Pastel Calm Aurora theme tokens
-const pastelCalmTheme = THEMES.pastelCalm;
-const auroraGradient = pastelCalmTheme.gradients.aurora || ['#E8E6FF', '#D0CCFF', '#B8B4FF'];
-
 // Helper component for gradient cards with Soft Aurora Ribbon style
 function GradientCard({ children, style }: { children: React.ReactNode, style?: any }) {
+  const { activeThemeId } = useAppContext();
+  const currentTheme = THEMES[activeThemeId as keyof typeof THEMES] || THEMES.classic;
+  const auroraGradient = currentTheme.gradients.aurora || ['#E8E6FF', '#D0CCFF', '#B8B4FF'];
+
   return (
     <View style={[styles.sectionCard, style]}>
       {/* Background gradient layer - absolute full-cover */}

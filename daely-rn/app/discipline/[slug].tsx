@@ -14,6 +14,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useTheme } from '@/hooks/use-theme';
+import { useAppContext } from '@/contexts/AppContext';
 import { useState, useRef } from 'react';
 import PageHeader from '../components/PageHeader';
 import { DISCIPLINE_CONTENT } from '@/constants/discipline-content';
@@ -450,17 +451,23 @@ const DISCIPLINE_DATA: Record<string, DisciplineDetail> = {
   },
 };
 
-// Get Pastel Calm Aurora theme tokens
-const pastelCalmTheme = THEMES.pastelCalm;
-const auroraGradient = pastelCalmTheme.gradients.aurora || ['#E8E6FF', '#D0CCFF', '#B8B4FF'];
-const auroraTitle = pastelCalmTheme.colors.auroraTitle || '#1E1B4B';
-const auroraSubtitle = pastelCalmTheme.colors.auroraSubtitle || '#4A3A8C';
-const auroraHighlight = pastelCalmTheme.colors.auroraHighlight || '#6B5B95';
+// Helper to get theme-aware Aurora tokens
+function getAuroraTokens(activeThemeId: string) {
+  const currentTheme = THEMES[activeThemeId as keyof typeof THEMES] || THEMES.classic;
+  return {
+    auroraGradient: currentTheme.gradients.aurora || ['#E8E6FF', '#D0CCFF', '#B8B4FF'],
+    auroraTitle: currentTheme.colors.auroraTitle || '#1E1B4B',
+    auroraSubtitle: currentTheme.colors.auroraSubtitle || '#4A3A8C',
+    auroraHighlight: currentTheme.colors.auroraHighlight || '#6B5B95',
+  };
+}
 
 export default function DisciplineScreen() {
   const { slug } = useLocalSearchParams<{ slug: string }>();
   const router = useRouter();
   const theme = useTheme();
+  const { activeThemeId } = useAppContext();
+  const { auroraGradient, auroraTitle, auroraSubtitle, auroraHighlight } = getAuroraTokens(activeThemeId);
   const [activeTab, setActiveTab] = useState<'workouts' | 'oefeningen' | 'programmas'>('workouts');
   const [activeFilter, setActiveFilter] = useState('Alles');
   const [carouselWidth, setCarouselWidth] = useState(0);
