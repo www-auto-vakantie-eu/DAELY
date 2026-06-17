@@ -10,6 +10,7 @@ interface ThemeImageBannerCardProps {
 
 // Static asset mappings for themes that have image banners
 const THEME_BANNER_IMAGES: Record<string, any> = {
+  'classic': require('@/assets/themes/classic.png'),
   'force': require('@/assets/themes/force.png'),
   'pastelCalm': require('@/assets/themes/pastel_calm.png'),
   'retroSport': require('@/assets/themes/retro_sport.png'),

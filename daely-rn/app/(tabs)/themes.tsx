@@ -12,6 +12,7 @@ export default function ThemasScreen() {
   const theme = useTheme();
 
   const visibleThemes = [
+    'classic',
     'force',
     'pastelCalm',
     'retroSport',
