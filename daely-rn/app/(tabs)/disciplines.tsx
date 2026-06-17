@@ -10,6 +10,7 @@ import { useState, useEffect } from 'react';
 import React from 'react';
 import { getUnreadMessageCount } from '@/services/messages-storage';
 import { LinearGradient } from 'expo-linear-gradient';
+import { THEMES } from '@/constants/themes';
 
 const LIBRARY_ACTIONS = [
   {
@@ -41,6 +42,23 @@ const LIBRARY_ACTIONS = [
     route: '/recommended' as const,
   },
 ];
+
+// Helper to get theme-aware Quick Action button tokens
+function getQuickActionTokens(activeThemeId: string) {
+  const currentTheme = THEMES[activeThemeId as keyof typeof THEMES] || THEMES.classic;
+  const isClassic = currentTheme.id === 'classic';
+
+  // DAELY Classic Glow gradient for buttons
+  const classicGlowGradient = isClassic
+    ? ['#FFFFFF', '#F8FBFF', '#EFF6FF']
+    : ['#E8E6FF', '#D0CCFF', '#B8B4FF'];
+
+  return {
+    gradient: classicGlowGradient,
+    iconColor: isClassic ? '#2563EB' : '#4A3A8C',
+    shadowColor: isClassic ? '#0EA5E9' : '#6B5B95',
+  };
+}
 
 export const DISCIPLINES = [
   {
@@ -389,11 +407,12 @@ function getImageSource(image: string | ImageSourcePropType): ImageSourcePropTyp
 }
 
 export default function DisciplinesScreen() {
-  const { user, appSettings } = useAppContext();
+  const { user, appSettings, activeThemeId } = useAppContext();
   const theme = useTheme();
   const router = useRouter();
   const [unreadMessageCount, setUnreadMessageCount] = useState(0);
   const visibleDisciplines = DISCIPLINES;
+  const { gradient, iconColor, shadowColor } = getQuickActionTokens(activeThemeId);
   const handleOpen = (slug: string) => {
     router.push({ pathname: '/discipline/[slug]', params: { slug } });
   };
@@ -430,18 +449,19 @@ export default function DisciplinesScreen() {
                   key={action.key}
                   style={({ pressed }) => [
                     styles.quickActionButton,
+                    { shadowColor },
                     pressed && { opacity: 0.85, transform: [{ scale: 0.98 }] },
                   ]}
                   onPress={() => router.push(action.route as any)}
                 >
                   <LinearGradient
-                    colors={['#E8E6FF', '#D0CCFF', '#B8B4FF']}
+                    colors={gradient}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 1 }}
                     style={styles.quickActionButtonGradient}
                   >
                     <View style={styles.quickActionIconBubble}>
-                      <MaterialCommunityIcons name={action.icon} size={20} color="#4A3A8C" />
+                      <MaterialCommunityIcons name={action.icon} size={20} color={iconColor} />
                     </View>
                     <View style={styles.quickActionTextWrap}>
                       <Text style={styles.quickActionText}>{action.title}</Text>
@@ -502,7 +522,6 @@ const styles = StyleSheet.create({
     gap: 10,
     minHeight: 64,
     overflow: 'hidden',
-    shadowColor: '#6B5B95',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
     shadowRadius: 8,
