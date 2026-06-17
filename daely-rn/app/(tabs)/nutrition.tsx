@@ -73,6 +73,36 @@ function getQuickActionTokens(activeThemeId: string) {
   };
 }
 
+// Helper to get theme-aware Filter button tokens
+function getFilterTokens(activeThemeId: string) {
+  const currentTheme = THEMES[activeThemeId as keyof typeof THEMES] || THEMES.classic;
+  const isClassic = currentTheme.id === 'classic';
+
+  if (isClassic) {
+    return {
+      selectedBorderColor: '#2563EB',
+      selectedBackgroundColor: '#EFF6FF',
+      selectedTextColor: '#0F172A',
+      unselectedBorderColor: '#DCEBFF',
+      unselectedBackgroundColor: '#FFFFFF',
+      unselectedTextColor: '#475569',
+      badgeBackgroundColor: '#FFFFFF',
+      badgeTextColor: '#2563EB',
+    };
+  } else {
+    return {
+      selectedBorderColor: '#8B7CF6',
+      selectedBackgroundColor: '#E8E6FF',
+      selectedTextColor: '#4A3A8C',
+      unselectedBorderColor: '#E8E6FF',
+      unselectedBackgroundColor: '#FFFFFF',
+      unselectedTextColor: '#6B5B95',
+      badgeBackgroundColor: '#FFFFFF',
+      badgeTextColor: '#8B7CF6',
+    };
+  }
+}
+
 export default function NutritionScreen() {
   const theme = useTheme();
   const router = useRouter();
@@ -81,6 +111,7 @@ export default function NutritionScreen() {
   const [activeFilterChips, setActiveFilterChips] = useState<FilterChip[]>([]);
   const [unreadMessageCount, setUnreadMessageCount] = useState(0);
   const { gradient, iconColor, shadowColor } = getQuickActionTokens(activeThemeId);
+  const { selectedBorderColor, selectedBackgroundColor, selectedTextColor, unselectedBorderColor, unselectedBackgroundColor, unselectedTextColor, badgeBackgroundColor, badgeTextColor } = getFilterTokens(activeThemeId);
 
   useEffect(() => {
     getUnreadMessageCount().then(setUnreadMessageCount);
@@ -176,15 +207,15 @@ export default function NutritionScreen() {
               key={category.key}
               style={({ pressed }) => [
                 styles.filterTab,
-                { borderColor: isActive ? '#8B7CF6' : '#E8E6FF', backgroundColor: isActive ? '#E8E6FF' : '#FFFFFF' },
+                { borderColor: isActive ? selectedBorderColor : unselectedBorderColor, backgroundColor: isActive ? selectedBackgroundColor : unselectedBackgroundColor },
                 pressed && { opacity: 0.8 },
               ]}
               onPress={() => setActiveFilterCategory(prev => (prev === category.key ? null : category.key))}
             >
-              <Text style={[styles.filterTabText, { color: isActive ? '#4A3A8C' : '#6B5B95' }]}>{category.label}</Text>
+              <Text style={[styles.filterTabText, { color: isActive ? selectedTextColor : unselectedTextColor }]}>{category.label}</Text>
               {count > 0 && (
-                <View style={[styles.filterTabBadge, { backgroundColor: '#FFFFFF' }]}>
-                  <Text style={[styles.filterTabBadgeText, { color: '#8B7CF6' }]}>{count}</Text>
+                <View style={[styles.filterTabBadge, { backgroundColor: badgeBackgroundColor }]}>
+                  <Text style={[styles.filterTabBadgeText, { color: badgeTextColor }]}>{count}</Text>
                 </View>
               )}
             </Pressable>
@@ -211,12 +242,12 @@ export default function NutritionScreen() {
                   key={option}
                   style={({ pressed }) => [
                     styles.chip,
-                    { borderColor: selected ? '#8B7CF6' : '#E8E6FF', backgroundColor: selected ? '#E8E6FF' : '#FFFFFF' },
+                    { borderColor: selected ? selectedBorderColor : unselectedBorderColor, backgroundColor: selected ? selectedBackgroundColor : unselectedBackgroundColor },
                     pressed && { opacity: 0.8 },
                   ]}
                   onPress={() => handleFilterPress(activeCategory.key, option)}
                 >
-                  <Text style={[styles.chipText, { color: selected ? '#4A3A8C' : '#6B5B95' }]}>{option}</Text>
+                  <Text style={[styles.chipText, { color: selected ? selectedTextColor : unselectedTextColor }]}>{option}</Text>
                 </Pressable>
               );
             })}
