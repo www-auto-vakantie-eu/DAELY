@@ -482,14 +482,45 @@ const DISCIPLINE_DATA: Record<string, DisciplineDetail> = {
   },
 };
 
-// Helper to get theme-aware Aurora tokens
+// Helper to get theme-aware Aurora tokens (same as Today/Nutrition)
 function getAuroraTokens(activeThemeId: string) {
   const currentTheme = THEMES[activeThemeId as keyof typeof THEMES] || THEMES.classic;
+  const isClassic = currentTheme.id === 'classic';
+
+  // DAELY Classic Glow gradient for card backgrounds
+  const classicGlowGradient = isClassic
+    ? ['#FFFFFF', '#F8FBFF', '#EFF6FF']
+    : currentTheme.gradients.aurora || ['#E8E6FF', '#D0CCFF', '#B8B4FF'];
+
   return {
-    auroraGradient: currentTheme.gradients.aurora || ['#E8E6FF', '#D0CCFF', '#B8B4FF'],
-    auroraTitle: currentTheme.colors.auroraTitle || '#1E1B4B',
-    auroraSubtitle: currentTheme.colors.auroraSubtitle || '#4A3A8C',
+    auroraGradient: classicGlowGradient,
+    auroraTitle: isClassic ? '#0F172A' : (currentTheme.colors.auroraTitle || '#1E1B4B'),
+    auroraSubtitle: isClassic ? '#475569' : (currentTheme.colors.auroraSubtitle || '#4A3A8C'),
+    // Theme-aware ribbon colors
+    ribbonTop: isClassic
+      ? ['rgba(37, 99, 235, 0.08)', 'rgba(14, 165, 233, 0.10)']
+      : ['rgba(168, 162, 255, 0.55)', 'rgba(200, 195, 255, 0.12)'],
+    ribbonMid: isClassic
+      ? ['rgba(219, 234, 254, 0.55)', 'rgba(240, 249, 255, 0.75)']
+      : ['rgba(220, 180, 255, 0.42)', 'rgba(200, 195, 255, 0.20)'],
+    ribbonBlue: isClassic
+      ? ['rgba(37, 99, 235, 0.08)', 'rgba(14, 165, 233, 0.10)']
+      : ['rgba(168, 162, 255, 0.75)', 'rgba(200, 195, 255, 0.38)'],
+    ribbonRose: isClassic
+      ? ['rgba(219, 234, 254, 0.55)', 'rgba(240, 249, 255, 0.75)']
+      : ['rgba(220, 180, 255, 0.65)', 'rgba(230, 200, 255, 0.30)'],
+    ribbonRight: isClassic
+      ? ['rgba(37, 99, 235, 0.08)', 'rgba(255, 255, 255, 0.05)']
+      : ['rgba(180, 170, 255, 0.38)', 'rgba(255, 255, 255, 0.05)'],
+    ribbonHighlight: isClassic
+      ? ['rgba(255, 255, 255, 0.70)', 'rgba(255, 255, 255, 0.30)']
+      : ['rgba(255, 255, 255, 0.28)', 'rgba(255, 255, 255, 0.06)'],
     auroraHighlight: currentTheme.colors.auroraHighlight || '#6B5B95',
+    // Theme-aware shortcut card styling
+    shortcutBorderColor: isClassic ? '#DCEBFF' : undefined,
+    shortcutShadowColor: isClassic ? '#0EA5E9' : undefined,
+    shortcutIconBg: isClassic ? 'rgba(219, 234, 254, 0.8)' : 'rgba(255, 255, 255, 0.6)',
+    shortcutIconBorder: isClassic ? '#DBEAFE' : undefined,
   };
 }
 
@@ -498,7 +529,7 @@ export default function DisciplineScreen() {
   const router = useRouter();
   const theme = useTheme();
   const { activeThemeId } = useAppContext();
-  const { auroraGradient, auroraTitle, auroraSubtitle, auroraHighlight } = getAuroraTokens(activeThemeId);
+  const { auroraGradient, auroraTitle, auroraSubtitle, ribbonTop, ribbonMid, ribbonBlue, ribbonRose, ribbonRight, ribbonHighlight, shortcutBorderColor, shortcutShadowColor, shortcutIconBg, shortcutIconBorder } = getAuroraTokens(activeThemeId);
   const [activeTab, setActiveTab] = useState<'workouts' | 'oefeningen' | 'programmas'>('workouts');
   const [activeFilter, setActiveFilter] = useState('Alles');
   const [carouselWidth, setCarouselWidth] = useState(0);
@@ -726,7 +757,7 @@ export default function DisciplineScreen() {
               {workoutsForDiscipline.map((workout) => (
                 <Pressable
                   key={workout.id}
-                  style={({ pressed }) => [styles.premiumCardWrapper, pressed && styles.cardPressed]}
+                  style={({ pressed }) => [[styles.premiumCardWrapper, { borderColor: shortcutBorderColor, shadowColor: shortcutShadowColor }], pressed && styles.cardPressed]}
                   onPress={() => router.push({
                     pathname: '/discipline/[slug]/workout/[id]',
                     params: { slug, id: workout.id },
@@ -741,33 +772,33 @@ export default function DisciplineScreen() {
                       style={styles.premiumCardBackground}
                       pointerEvents="none"
                     >
-                      {/* Top-left purple-blue ribbon */}
+                      {/* Top-left ribbon */}
                       <LinearGradient
-                        colors={['rgba(168, 162, 255, 0.55)', 'rgba(200, 195, 255, 0.12)']}
+                        colors={ribbonTop}
                         start={{ x: 0, y: 0 }}
                         end={{ x: 1, y: 1 }}
                         style={styles.ribbonTop}
                         pointerEvents="none"
                       />
-                      {/* Mid-card purple-pink ribbon */}
+                      {/* Mid-card ribbon */}
                       <LinearGradient
-                        colors={['rgba(220, 180, 255, 0.42)', 'rgba(200, 195, 255, 0.20)']}
+                        colors={ribbonMid}
                         start={{ x: 0, y: 0 }}
                         end={{ x: 1, y: 1 }}
                         style={styles.ribbonMid}
                         pointerEvents="none"
                       />
-                      {/* Periwinkle ribbon - diagonal top-right */}
+                      {/* Diagonal top-right ribbon */}
                       <LinearGradient
-                        colors={['rgba(168, 162, 255, 0.75)', 'rgba(200, 195, 255, 0.38)']}
+                        colors={ribbonBlue}
                         start={{ x: 0, y: 0 }}
                         end={{ x: 1, y: 1 }}
                         style={styles.ribbonBlue}
                         pointerEvents="none"
                       />
-                      {/* Purple-pink ribbon - diagonal bottom-left */}
+                      {/* Diagonal bottom-left ribbon */}
                       <LinearGradient
-                        colors={['rgba(220, 180, 255, 0.65)', 'rgba(230, 200, 255, 0.30)']}
+                        colors={ribbonRose}
                         start={{ x: 0, y: 1 }}
                         end={{ x: 1, y: 0 }}
                         style={styles.ribbonRose}
@@ -775,7 +806,7 @@ export default function DisciplineScreen() {
                       />
                       {/* Right-side accent ribbon */}
                       <LinearGradient
-                        colors={['rgba(180, 170, 255, 0.38)', 'rgba(255, 255, 255, 0.05)']}
+                        colors={ribbonRight}
                         start={{ x: 0, y: 0 }}
                         end={{ x: 1, y: 1 }}
                         style={styles.ribbonRight}
@@ -783,7 +814,7 @@ export default function DisciplineScreen() {
                       />
                       {/* Soft white highlight overlay */}
                       <LinearGradient
-                        colors={['rgba(255, 255, 255, 0.28)', 'rgba(255, 255, 255, 0.06)']}
+                        colors={ribbonHighlight}
                         start={{ x: 0, y: 0 }}
                         end={{ x: 0, y: 1 }}
                         style={styles.ribbonHighlight}
@@ -792,24 +823,24 @@ export default function DisciplineScreen() {
                     </LinearGradient>
                     {/* Content layer - above background */}
                     <View style={styles.premiumCardContent}>
-                      <View style={[styles.iconBadge, { backgroundColor: 'rgba(255, 255, 255, 0.6)', borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.8)' }]}>
+                      <View style={[styles.iconBadge, { backgroundColor: shortcutIconBg, borderColor: shortcutIconBorder }]}>
                         <MaterialCommunityIcons name={workout.icon as any} size={20} color={auroraSubtitle} />
                       </View>
                       <View style={styles.cardInfo}>
                         <Text style={[styles.cardTitle, { color: auroraTitle }]}>{workout.name}</Text>
                         <View style={styles.cardMeta}>
-                          <View style={[styles.metaTag, { backgroundColor: 'rgba(255, 255, 255, 0.7)', borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.9)' }]}>
+                          <View style={[styles.metaTag, { backgroundColor: shortcutIconBg, borderColor: shortcutIconBorder }]}>
                             <MaterialCommunityIcons name="arm-flex" size={9} color={auroraSubtitle} />
                             <Text style={[styles.metaTagText, { color: auroraSubtitle }]}>{workout.muscle}</Text>
                           </View>
-                          <View style={[styles.metaTag, { backgroundColor: 'rgba(255, 255, 255, 0.7)', borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.9)' }]}>
+                          <View style={[styles.metaTag, { backgroundColor: shortcutIconBg, borderColor: shortcutIconBorder }]}>
                             <MaterialCommunityIcons name="clock-outline" size={9} color={auroraSubtitle} />
                             <Text style={[styles.metaTagText, { color: auroraSubtitle }]}>{workout.duration}</Text>
                           </View>
                         </View>
                       </View>
-                      <View style={[styles.chevronButton, { backgroundColor: 'rgba(255, 255, 255, 0.9)', borderWidth: 1, borderColor: 'rgba(255, 255, 255, 1)', shadowColor: '#6B5B95', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.15, shadowRadius: 4 }]}>
-                        <MaterialCommunityIcons name="chevron-right" size={16} color={auroraHighlight} />
+                      <View style={[styles.chevronButton, { backgroundColor: shortcutIconBg, borderColor: shortcutIconBorder, shadowColor: shortcutShadowColor }]}>
+                        <MaterialCommunityIcons name="chevron-right" size={16} color={auroraSubtitle} />
                       </View>
                     </View>
                   </View>
@@ -836,7 +867,7 @@ export default function DisciplineScreen() {
                   return (
                     <Pressable
                       key={exercise.id}
-                      style={({ pressed }) => [styles.premiumCardWrapper, pressed && styles.cardPressed]}
+                      style={({ pressed }) => [[styles.premiumCardWrapper, { borderColor: shortcutBorderColor, shadowColor: shortcutShadowColor }], pressed && styles.cardPressed]}
                       onPress={() => router.push({
                         pathname: '/exercises/[id]',
                         params: { id: exercise.id, disciplineSlug: slug },
@@ -851,33 +882,33 @@ export default function DisciplineScreen() {
                           style={styles.premiumCardBackground}
                           pointerEvents="none"
                         >
-                          {/* Top-left purple-blue ribbon */}
+                          {/* Top-left ribbon */}
                           <LinearGradient
-                            colors={['rgba(168, 162, 255, 0.55)', 'rgba(200, 195, 255, 0.12)']}
+                            colors={ribbonTop}
                             start={{ x: 0, y: 0 }}
                             end={{ x: 1, y: 1 }}
                             style={styles.ribbonTop}
                             pointerEvents="none"
                           />
-                          {/* Mid-card purple-pink ribbon */}
+                          {/* Mid-card ribbon */}
                           <LinearGradient
-                            colors={['rgba(220, 180, 255, 0.42)', 'rgba(200, 195, 255, 0.20)']}
+                            colors={ribbonMid}
                             start={{ x: 0, y: 0 }}
                             end={{ x: 1, y: 1 }}
                             style={styles.ribbonMid}
                             pointerEvents="none"
                           />
-                          {/* Periwinkle ribbon - diagonal top-right */}
+                          {/* Diagonal top-right ribbon */}
                           <LinearGradient
-                            colors={['rgba(168, 162, 255, 0.75)', 'rgba(200, 195, 255, 0.38)']}
+                            colors={ribbonBlue}
                             start={{ x: 0, y: 0 }}
                             end={{ x: 1, y: 1 }}
                             style={styles.ribbonBlue}
                             pointerEvents="none"
                           />
-                          {/* Purple-pink ribbon - diagonal bottom-left */}
+                          {/* Diagonal bottom-left ribbon */}
                           <LinearGradient
-                            colors={['rgba(220, 180, 255, 0.65)', 'rgba(230, 200, 255, 0.30)']}
+                            colors={ribbonRose}
                             start={{ x: 0, y: 1 }}
                             end={{ x: 1, y: 0 }}
                             style={styles.ribbonRose}
@@ -885,7 +916,7 @@ export default function DisciplineScreen() {
                           />
                           {/* Right-side accent ribbon */}
                           <LinearGradient
-                            colors={['rgba(180, 170, 255, 0.38)', 'rgba(255, 255, 255, 0.05)']}
+                            colors={ribbonRight}
                             start={{ x: 0, y: 0 }}
                             end={{ x: 1, y: 1 }}
                             style={styles.ribbonRight}
@@ -893,7 +924,7 @@ export default function DisciplineScreen() {
                           />
                           {/* Soft white highlight overlay */}
                           <LinearGradient
-                            colors={['rgba(255, 255, 255, 0.28)', 'rgba(255, 255, 255, 0.06)']}
+                            colors={ribbonHighlight}
                             start={{ x: 0, y: 0 }}
                             end={{ x: 0, y: 1 }}
                             style={styles.ribbonHighlight}
@@ -915,29 +946,29 @@ export default function DisciplineScreen() {
                               imageStyle={styles.thumbnailImageInner}
                             />
                           ) : (
-                            <View style={[styles.thumbnailFallback, { backgroundColor: 'rgba(255, 255, 255, 0.6)', borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.8)' }]}>
+                            <View style={[styles.thumbnailFallback, { backgroundColor: shortcutIconBg, borderColor: shortcutIconBorder }]}>
                               <MaterialCommunityIcons name="dumbbell" size={30} color={auroraSubtitle} />
                             </View>
                           )}
                           <View style={styles.cardInfo}>
                             <Text style={[styles.cardTitle, { color: auroraTitle }]}>{exercise.name}</Text>
                             <View style={styles.cardMeta}>
-                              <View style={[styles.metaTag, { backgroundColor: 'rgba(255, 255, 255, 0.7)', borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.9)' }]}>
+                              <View style={[styles.metaTag, { backgroundColor: shortcutIconBg, borderColor: shortcutIconBorder }]}>
                                 <MaterialCommunityIcons name="human" size={10} color={auroraSubtitle} />
                                 <Text style={[styles.metaTagText, { color: auroraSubtitle }]}>{exercise.spiergroep}</Text>
                               </View>
-                              <View style={[styles.metaTag, { backgroundColor: 'rgba(255, 255, 255, 0.7)', borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.9)' }]}>
+                              <View style={[styles.metaTag, { backgroundColor: shortcutIconBg, borderColor: shortcutIconBorder }]}>
                                 <MaterialCommunityIcons name="tag" size={10} color={auroraSubtitle} />
                                 <Text style={[styles.metaTagText, { color: auroraSubtitle }]}>{exercise.categorie}</Text>
                               </View>
-                              <View style={[styles.metaTag, { backgroundColor: 'rgba(255, 255, 255, 0.7)', borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.9)' }]}>
+                              <View style={[styles.metaTag, { backgroundColor: shortcutIconBg, borderColor: shortcutIconBorder }]}>
                                 <MaterialCommunityIcons name="lightning-bolt" size={10} color={auroraSubtitle} />
                                 <Text style={[styles.metaTagText, { color: auroraSubtitle }]}>{exercise.moeilijkheid}</Text>
                               </View>
                             </View>
                           </View>
-                          <View style={[styles.chevronButton, { backgroundColor: 'rgba(255, 255, 255, 0.9)', borderWidth: 1, borderColor: 'rgba(255, 255, 255, 1)', shadowColor: '#6B5B95', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.15, shadowRadius: 4 }]}>
-                            <MaterialCommunityIcons name="chevron-right" size={16} color={auroraHighlight} />
+                          <View style={[styles.chevronButton, { backgroundColor: shortcutIconBg, borderColor: shortcutIconBorder, shadowColor: shortcutShadowColor }]}>
+                            <MaterialCommunityIcons name="chevron-right" size={16} color={auroraSubtitle} />
                           </View>
                         </View>
                       </View>
@@ -980,7 +1011,7 @@ export default function DisciplineScreen() {
                 programsForDiscipline.map((program) => (
                   <Pressable
                     key={program.id}
-                    style={({ pressed }) => [styles.premiumCardWrapper, pressed && styles.cardPressed]}
+                    style={({ pressed }) => [[styles.premiumCardWrapper, { borderColor: shortcutBorderColor, shadowColor: shortcutShadowColor }], pressed && styles.cardPressed]}
                     onPress={() => router.push({
                       pathname: '/discipline/[slug]/program/[id]',
                       params: { slug, id: program.id },
@@ -995,33 +1026,33 @@ export default function DisciplineScreen() {
                         style={styles.premiumCardBackground}
                         pointerEvents="none"
                       >
-                        {/* Top-left purple-blue ribbon */}
+                        {/* Top-left ribbon */}
                         <LinearGradient
-                          colors={['rgba(168, 162, 255, 0.55)', 'rgba(200, 195, 255, 0.12)']}
+                          colors={ribbonTop}
                           start={{ x: 0, y: 0 }}
                           end={{ x: 1, y: 1 }}
                           style={styles.ribbonTop}
                           pointerEvents="none"
                         />
-                        {/* Mid-card purple-pink ribbon */}
+                        {/* Mid-card ribbon */}
                         <LinearGradient
-                          colors={['rgba(220, 180, 255, 0.42)', 'rgba(200, 195, 255, 0.20)']}
+                          colors={ribbonMid}
                           start={{ x: 0, y: 0 }}
                           end={{ x: 1, y: 1 }}
                           style={styles.ribbonMid}
                           pointerEvents="none"
                         />
-                        {/* Periwinkle ribbon - diagonal top-right */}
+                        {/* Diagonal top-right ribbon */}
                         <LinearGradient
-                          colors={['rgba(168, 162, 255, 0.75)', 'rgba(200, 195, 255, 0.38)']}
+                          colors={ribbonBlue}
                           start={{ x: 0, y: 0 }}
                           end={{ x: 1, y: 1 }}
                           style={styles.ribbonBlue}
                           pointerEvents="none"
                         />
-                        {/* Purple-pink ribbon - diagonal bottom-left */}
+                        {/* Diagonal bottom-left ribbon */}
                         <LinearGradient
-                          colors={['rgba(220, 180, 255, 0.65)', 'rgba(230, 200, 255, 0.30)']}
+                          colors={ribbonRose}
                           start={{ x: 0, y: 1 }}
                           end={{ x: 1, y: 0 }}
                           style={styles.ribbonRose}
@@ -1029,7 +1060,7 @@ export default function DisciplineScreen() {
                         />
                         {/* Right-side accent ribbon */}
                         <LinearGradient
-                          colors={['rgba(180, 170, 255, 0.38)', 'rgba(255, 255, 255, 0.05)']}
+                          colors={ribbonRight}
                           start={{ x: 0, y: 0 }}
                           end={{ x: 1, y: 1 }}
                           style={styles.ribbonRight}
@@ -1037,7 +1068,7 @@ export default function DisciplineScreen() {
                         />
                         {/* Soft white highlight overlay */}
                         <LinearGradient
-                          colors={['rgba(255, 255, 255, 0.28)', 'rgba(255, 255, 255, 0.06)']}
+                          colors={ribbonHighlight}
                           start={{ x: 0, y: 0 }}
                           end={{ x: 0, y: 1 }}
                           style={styles.ribbonHighlight}
@@ -1046,28 +1077,28 @@ export default function DisciplineScreen() {
                       </LinearGradient>
                       {/* Content layer - above background */}
                       <View style={styles.premiumCardContent}>
-                        <View style={[styles.iconBadge, { backgroundColor: 'rgba(255, 255, 255, 0.6)', borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.8)' }]}>
+                        <View style={[styles.iconBadge, { backgroundColor: shortcutIconBg, borderColor: shortcutIconBorder }]}>
                           <MaterialCommunityIcons name="calendar-week" size={22} color={auroraSubtitle} />
                         </View>
                         <View style={styles.cardInfo}>
                           <Text style={[styles.cardTitle, { color: auroraTitle }]}>{program.name}</Text>
                           <View style={styles.cardMeta}>
-                            <View style={[styles.metaTag, { backgroundColor: 'rgba(255, 255, 255, 0.7)', borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.9)' }]}>
+                            <View style={[styles.metaTag, { backgroundColor: shortcutIconBg, borderColor: shortcutIconBorder }]}>
                               <MaterialCommunityIcons name="clock-outline" size={10} color={auroraSubtitle} />
                               <Text style={[styles.metaTagText, { color: auroraSubtitle }]}>{program.duration}</Text>
                             </View>
-                            <View style={[styles.metaTag, { backgroundColor: 'rgba(255, 255, 255, 0.7)', borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.9)' }]}>
+                            <View style={[styles.metaTag, { backgroundColor: shortcutIconBg, borderColor: shortcutIconBorder }]}>
                               <MaterialCommunityIcons name="lightning-bolt" size={10} color={auroraSubtitle} />
                               <Text style={[styles.metaTagText, { color: auroraSubtitle }]}>{program.level}</Text>
                             </View>
-                            <View style={[styles.metaTag, { backgroundColor: 'rgba(255, 255, 255, 0.7)', borderWidth: 1, borderColor: 'rgba(255, 255, 255, 0.9)' }]}>
+                            <View style={[styles.metaTag, { backgroundColor: shortcutIconBg, borderColor: shortcutIconBorder }]}>
                               <MaterialCommunityIcons name="calendar-week" size={10} color={auroraSubtitle} />
                               <Text style={[styles.metaTagText, { color: auroraSubtitle }]}>{program.weeks} weken</Text>
                             </View>
                           </View>
                         </View>
-                        <View style={[styles.chevronButton, { backgroundColor: 'rgba(255, 255, 255, 0.9)', borderWidth: 1, borderColor: 'rgba(255, 255, 255, 1)', shadowColor: '#6B5B95', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.15, shadowRadius: 4 }]}>
-                          <MaterialCommunityIcons name="chevron-right" size={16} color={auroraHighlight} />
+                        <View style={[styles.chevronButton, { backgroundColor: shortcutIconBg, borderColor: shortcutIconBorder, shadowColor: shortcutShadowColor }]}>
+                          <MaterialCommunityIcons name="chevron-right" size={16} color={auroraSubtitle} />
                         </View>
                       </View>
                     </View>
@@ -1172,10 +1203,9 @@ const styles = StyleSheet.create({
   cardPressed: { transform: [{ scale: 0.98 }], opacity: 0.92 },
   premiumCardWrapper: {
     borderRadius: 24,
-    borderWidth: 0,
+    borderWidth: 1,
     marginBottom: 12,
     overflow: 'hidden',
-    shadowColor: '#6B5B95',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
     shadowRadius: 8,
