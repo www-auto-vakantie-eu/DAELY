@@ -48,10 +48,45 @@ const DEFAULT_SHORTCUTS: ShortcutId[] = ['nutrition', 'habits', 'stats'];
 // Helper to get theme-aware Aurora tokens
 function getAuroraTokens(activeThemeId: string) {
   const currentTheme = THEMES[activeThemeId as keyof typeof THEMES] || THEMES.classic;
+  const isClassic = currentTheme.id === 'classic';
+
+  // DAELY Classic Glow gradient for card backgrounds
+  const classicGlowGradient = isClassic
+    ? ['#FFFFFF', '#F8FBFF', '#EFF6FF']
+    : currentTheme.gradients.aurora || ['#E8E6FF', '#D0CCFF', '#B8B4FF'];
+
   return {
-    auroraGradient: currentTheme.gradients.aurora || ['#E8E6FF', '#D0CCFF', '#B8B4FF'],
+    auroraGradient: classicGlowGradient,
     auroraTitle: currentTheme.colors.auroraTitle || '#1E1B4B',
     auroraSubtitle: currentTheme.colors.auroraSubtitle || '#4A3A8C',
+    // Theme-aware ribbon colors
+    ribbonTop: isClassic
+      ? ['rgba(37, 99, 235, 0.08)', 'rgba(14, 165, 233, 0.10)']
+      : ['rgba(168, 162, 255, 0.55)', 'rgba(200, 195, 255, 0.12)'],
+    ribbonMid: isClassic
+      ? ['rgba(219, 234, 254, 0.55)', 'rgba(240, 249, 255, 0.75)']
+      : ['rgba(220, 180, 255, 0.42)', 'rgba(200, 195, 255, 0.20)'],
+    ribbonBlue: isClassic
+      ? ['rgba(37, 99, 235, 0.08)', 'rgba(14, 165, 233, 0.10)']
+      : ['rgba(168, 162, 255, 0.75)', 'rgba(200, 195, 255, 0.38)'],
+    ribbonRose: isClassic
+      ? ['rgba(219, 234, 254, 0.55)', 'rgba(240, 249, 255, 0.75)']
+      : ['rgba(220, 180, 255, 0.65)', 'rgba(230, 200, 255, 0.30)'],
+    ribbonRight: isClassic
+      ? ['rgba(37, 99, 235, 0.08)', 'rgba(255, 255, 255, 0.05)']
+      : ['rgba(180, 170, 255, 0.38)', 'rgba(255, 255, 255, 0.05)'],
+    ribbonHighlight: isClassic
+      ? ['rgba(255, 255, 255, 0.70)', 'rgba(255, 255, 255, 0.30)']
+      : ['rgba(255, 255, 255, 0.28)', 'rgba(255, 255, 255, 0.06)'],
+    // Theme-aware icon colors
+    recoveryIconColor: isClassic ? '#0EA5E9' : '#8B5CF6',
+    // Theme-aware recommendation icon backgrounds
+    mobilityIconBg: isClassic ? '#DBEAFE' : '#DBEAFE',
+    mobilityIconColor: isClassic ? '#2563EB' : '#2563EB',
+    trainingIconBg: isClassic ? '#DBEAFE' : '#D1FAE5',
+    trainingIconColor: isClassic ? '#2563EB' : '#059669',
+    nutritionIconBg: isClassic ? '#DBEAFE' : '#FEF3C7',
+    nutritionIconColor: isClassic ? '#2563EB' : '#F59E0B',
   };
 }
 
@@ -99,7 +134,7 @@ function formatDateTime(value: string) {
 // Helper component for gradient cards with Soft Aurora Ribbon style
 function GradientCard({ children, style }: { children: React.ReactNode, style?: any }) {
   const { activeThemeId } = useAppContext();
-  const { auroraGradient } = getAuroraTokens(activeThemeId);
+  const { auroraGradient, ribbonTop, ribbonMid, ribbonBlue, ribbonRose, ribbonRight, ribbonHighlight } = getAuroraTokens(activeThemeId);
 
   return (
     <View style={[styles.sectionCard, style]}>
@@ -111,33 +146,33 @@ function GradientCard({ children, style }: { children: React.ReactNode, style?: 
         style={styles.sectionCardGradient}
         pointerEvents="none"
       >
-        {/* Top-left purple-blue ribbon */}
+        {/* Top-left ribbon */}
         <LinearGradient
-          colors={['rgba(168, 162, 255, 0.55)', 'rgba(200, 195, 255, 0.12)']}
+          colors={ribbonTop}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.ribbonTop}
           pointerEvents="none"
         />
-        {/* Mid-card purple-pink ribbon */}
+        {/* Mid-card ribbon */}
         <LinearGradient
-          colors={['rgba(220, 180, 255, 0.42)', 'rgba(200, 195, 255, 0.20)']}
+          colors={ribbonMid}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.ribbonMid}
           pointerEvents="none"
         />
-        {/* Periwinkle ribbon - diagonal top-right */}
+        {/* Diagonal top-right ribbon */}
         <LinearGradient
-          colors={['rgba(168, 162, 255, 0.75)', 'rgba(200, 195, 255, 0.38)']}
+          colors={ribbonBlue}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.ribbonBlue}
           pointerEvents="none"
         />
-        {/* Purple-pink ribbon - diagonal bottom-left */}
+        {/* Diagonal bottom-left ribbon */}
         <LinearGradient
-          colors={['rgba(220, 180, 255, 0.65)', 'rgba(230, 200, 255, 0.30)']}
+          colors={ribbonRose}
           start={{ x: 0, y: 1 }}
           end={{ x: 1, y: 0 }}
           style={styles.ribbonRose}
@@ -145,7 +180,7 @@ function GradientCard({ children, style }: { children: React.ReactNode, style?: 
         />
         {/* Right-side accent ribbon */}
         <LinearGradient
-          colors={['rgba(180, 170, 255, 0.38)', 'rgba(255, 255, 255, 0.05)']}
+          colors={ribbonRight}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.ribbonRight}
@@ -153,7 +188,7 @@ function GradientCard({ children, style }: { children: React.ReactNode, style?: 
         />
         {/* Soft white highlight overlay */}
         <LinearGradient
-          colors={['rgba(255, 255, 255, 0.28)', 'rgba(255, 255, 255, 0.06)']}
+          colors={ribbonHighlight}
           start={{ x: 0, y: 0 }}
           end={{ x: 0, y: 1 }}
           style={styles.ribbonHighlight}
@@ -204,7 +239,7 @@ export default function TodayScreen() {
   const params = useLocalSearchParams<{ open?: string }>();
   const theme = useTheme();
   const { user, activeThemeId } = useAppContext();
-  const { auroraGradient, auroraTitle, auroraSubtitle } = getAuroraTokens(activeThemeId);
+  const { auroraGradient, auroraTitle, auroraSubtitle, ribbonTop, ribbonMid, ribbonBlue, ribbonRose, ribbonRight, recoveryIconColor, mobilityIconBg, mobilityIconColor, trainingIconBg, trainingIconColor, nutritionIconBg, nutritionIconColor } = getAuroraTokens(activeThemeId);
   const [activities, setActivities] = useState<Activity[]>([]);
   const [heroBackground, setHeroBackground] = useState<HeroBackgroundOptionId>('pureMinimal');
   const [isWhoopConnected, setIsWhoopConnected] = useState(false);
@@ -407,33 +442,33 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
                 style={styles.shortcutCardGradient}
                 pointerEvents="none"
               >
-                {/* Top-left purple-blue ribbon */}
+                {/* Top-left ribbon */}
                 <LinearGradient
-                  colors={['rgba(168, 162, 255, 0.55)', 'rgba(200, 195, 255, 0.12)']}
+                  colors={ribbonTop}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
                   style={styles.ribbonTop}
                   pointerEvents="none"
                 />
-                {/* Mid-card purple-pink ribbon */}
+                {/* Mid-card ribbon */}
                 <LinearGradient
-                  colors={['rgba(220, 180, 255, 0.42)', 'rgba(200, 195, 255, 0.20)']}
+                  colors={ribbonMid}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
                   style={styles.ribbonMid}
                   pointerEvents="none"
                 />
-                {/* Periwinkle ribbon - diagonal top-right */}
+                {/* Diagonal top-right ribbon */}
                 <LinearGradient
-                  colors={['rgba(168, 162, 255, 0.75)', 'rgba(200, 195, 255, 0.38)']}
+                  colors={ribbonBlue}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
                   style={styles.ribbonBlue}
                   pointerEvents="none"
                 />
-                {/* Purple-pink ribbon - diagonal bottom-left */}
+                {/* Diagonal bottom-left ribbon */}
                 <LinearGradient
-                  colors={['rgba(220, 180, 255, 0.65)', 'rgba(230, 200, 255, 0.30)']}
+                  colors={ribbonRose}
                   start={{ x: 0, y: 1 }}
                   end={{ x: 1, y: 0 }}
                   style={styles.ribbonRose}
@@ -441,7 +476,7 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
                 />
                 {/* Right-side accent ribbon */}
                 <LinearGradient
-                  colors={['rgba(180, 170, 255, 0.38)', 'rgba(255, 255, 255, 0.05)']}
+                  colors={ribbonRight}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
                   style={styles.ribbonRight}
@@ -549,14 +584,14 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
             <Pressable
               style={({ pressed }) => [
                 styles.startTrainingButton,
-                { backgroundColor: '#E2E8F0' },
+                { backgroundColor: theme.card },
                 pressed && styles.startTrainingButtonPressed,
               ]}
               onPress={() => router.push('/my-programs')}
             >
-              <MaterialCommunityIcons name="calendar-multiselect" size={18} color="#1E3A8A" />
-              <Text style={[styles.startTrainingButtonText, { color: '#1E3A8A' }]}>Bekijk programma&apos;s</Text>
-              <MaterialCommunityIcons name="chevron-right" size={18} color="#1E3A8A" />
+              <MaterialCommunityIcons name="calendar-multiselect" size={18} color={theme.colors.primary} />
+              <Text style={[styles.startTrainingButtonText, { color: theme.colors.primary }]}>Bekijk programma&apos;s</Text>
+              <MaterialCommunityIcons name="chevron-right" size={18} color={theme.colors.primary} />
             </Pressable>
           </View>
         </GradientCard>
@@ -573,7 +608,7 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
             </View>
           </View>
           <View style={[styles.dailyStatusItem, { backgroundColor: theme.background }]}>
-            <MaterialCommunityIcons name="meditation" size={20} color="#8B5CF6" />
+            <MaterialCommunityIcons name="meditation" size={20} color={recoveryIconColor} />
             <View style={styles.dailyStatusContent}>
               <Text style={[styles.dailyStatusLabel, { color: theme.titleColor }]}>Herstel</Text>
               <Text style={[styles.dailyStatusValue, { color: theme.subtitleColor }]}>Check hoe je je voelt</Text>
@@ -589,7 +624,7 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
           <View style={styles.dailyProgressContent}>
             <Text style={[styles.dailyProgressLabel, { color: theme.titleColor }]}>0 van 3 acties voltooid</Text>
             <View style={[styles.dailyProgressBar, { backgroundColor: theme.border }]}>
-              <View style={[styles.dailyProgressFill, { width: '0%', backgroundColor: '#2563EB' }]} />
+              <View style={[styles.dailyProgressFill, { width: '0%', backgroundColor: theme.colors.primary }]} />
             </View>
           </View>
           <View style={styles.dailyProgressDots}>
@@ -612,8 +647,8 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
             ]}
             onPress={() => router.push('/tracker')}
           >
-            <View style={[styles.recommendationIconContainer, { backgroundColor: '#DBEAFE' }]}>
-              <MaterialCommunityIcons name="run-fast" size={22} color="#2563EB" />
+            <View style={[styles.recommendationIconContainer, { backgroundColor: mobilityIconBg }]}>
+              <MaterialCommunityIcons name="run-fast" size={22} color={mobilityIconColor} />
             </View>
             <View style={styles.recommendationContent}>
               <Text style={[styles.recommendationTitle, { color: theme.titleColor }]}>Start een korte mobility sessie</Text>
@@ -629,8 +664,8 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
             ]}
             onPress={() => router.push('/tracker')}
           >
-            <View style={[styles.recommendationIconContainer, { backgroundColor: '#D1FAE5' }]}>
-              <MaterialCommunityIcons name="calendar-check" size={22} color="#059669" />
+            <View style={[styles.recommendationIconContainer, { backgroundColor: trainingIconBg }]}>
+              <MaterialCommunityIcons name="calendar-check" size={22} color={trainingIconColor} />
             </View>
             <View style={styles.recommendationContent}>
               <Text style={[styles.recommendationTitle, { color: theme.titleColor }]}>Plan je training</Text>
@@ -646,8 +681,8 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
             ]}
             onPress={() => router.push('/nutrition/add')}
           >
-            <View style={[styles.recommendationIconContainer, { backgroundColor: '#FEF3C7' }]}>
-              <MaterialCommunityIcons name="food-apple" size={22} color="#F59E0B" />
+            <View style={[styles.recommendationIconContainer, { backgroundColor: nutritionIconBg }]}>
+              <MaterialCommunityIcons name="food-apple" size={22} color={nutritionIconColor} />
             </View>
             <View style={styles.recommendationContent}>
               <Text style={[styles.recommendationTitle, { color: theme.titleColor }]}>Bekijk je voedingsdoel</Text>
