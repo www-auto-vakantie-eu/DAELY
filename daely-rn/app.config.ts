@@ -16,15 +16,15 @@ type ThemeVariant =
 const THEME_ICON_MAP: Record<ThemeVariant, string> = {
   default: './assets/images/logo.png',
   classic: './assets/images/logo.png',
-  'zen-ink': './assets/images/theme-zen.ink.png',
-  'forest-breath': './assets/images/theme-forest-breath.png',
-  force: './assets/images/theme-force.png',
-  'pure-luxury': './assets/images/theme-pure-luxury-logo.png',
-  innovation: './assets/images/theme-innovation-logo.png',
-  'pastel-calm': './assets/images/theme-pastel-calm-logo.png',
-  'retro-sport': './assets/images/theme-retro-sport-logo.png',
-  pulse: './assets/images/theme-pulse.png',
-  rogue: './assets/images/theme-rogue.png',
+  'zen-ink': './assets/images/logo.png',
+  'forest-breath': './assets/images/logo.png',
+  force: './assets/images/logo.png',
+  'pure-luxury': './assets/images/logo.png',
+  innovation: './assets/images/logo.png',
+  'pastel-calm': './assets/images/logo.png',
+  'retro-sport': './assets/images/logo.png',
+  pulse: './assets/images/logo.png',
+  rogue: './assets/images/logo.png',
 };
 
 const themeVariant = (process.env.THEME_VARIANT as ThemeVariant | undefined) ?? 'default';

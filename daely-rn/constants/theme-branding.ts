@@ -15,28 +15,28 @@ export const THEME_BRANDING: Record<ThemeId, ThemeBranding> = {
     launcherIcon: require('@/assets/images/icon.png'),
   },
   zenInk: {
-    loginLogo: require('@/assets/images/theme-zen.ink-logo.png'),
-    launcherIcon: require('@/assets/images/theme-zen.ink-logo.png'),
+    loginLogo: require('@/assets/images/logo.png'),
+    launcherIcon: require('@/assets/images/icon.png'),
   },
   force: {
-    loginLogo: require('@/assets/images/theme-force-logo.png'),
-    launcherIcon: require('@/assets/images/theme-force-logo.png'),
+    loginLogo: require('@/assets/images/logo.png'),
+    launcherIcon: require('@/assets/images/icon.png'),
   },
   pastelCalm: {
-    loginLogo: require('@/assets/images/theme-pastel-calm-logo.png'),
-    launcherIcon: require('@/assets/images/theme-pastel-calm-logo.png'),
+    loginLogo: require('@/assets/images/logo.png'),
+    launcherIcon: require('@/assets/images/icon.png'),
   },
   retroSport: {
-    loginLogo: require('@/assets/images/theme-retro-sport-logo.png'),
-    launcherIcon: require('@/assets/images/theme-retro-sport-logo.png'),
+    loginLogo: require('@/assets/images/logo.png'),
+    launcherIcon: require('@/assets/images/icon.png'),
   },
   saharaDune: {
-    loginLogo: require('@/assets/images/theme-dune-logo.png'),
-    launcherIcon: require('@/assets/images/theme-dune-logo.png'),
+    loginLogo: require('@/assets/images/logo.png'),
+    launcherIcon: require('@/assets/images/icon.png'),
   },
   aurora: {
-    loginLogo: require('@/assets/images/theme-innovation-logo.png'),
-    launcherIcon: require('@/assets/images/theme-innovation-logo.png'),
+    loginLogo: require('@/assets/images/logo.png'),
+    launcherIcon: require('@/assets/images/icon.png'),
   },
   ruby: {
     loginLogo: require('@/assets/images/logo.png'),
@@ -47,8 +47,8 @@ export const THEME_BRANDING: Record<ThemeId, ThemeBranding> = {
     launcherIcon: require('@/assets/images/icon.png'),
   },
   marble: {
-    loginLogo: require('@/assets/images/theme-pure-luxury-logo.png'),
-    launcherIcon: require('@/assets/images/theme-pure-luxury-logo.png'),
+    loginLogo: require('@/assets/images/logo.png'),
+    launcherIcon: require('@/assets/images/icon.png'),
   },
   sapphire: {
     loginLogo: require('@/assets/images/logo.png'),
@@ -59,16 +59,16 @@ export const THEME_BRANDING: Record<ThemeId, ThemeBranding> = {
     launcherIcon: require('@/assets/images/icon.png'),
   },
   volcanicAsh: {
-    loginLogo: require('@/assets/images/theme-ember-logo.png'),
-    launcherIcon: require('@/assets/images/theme-ember-logo.png'),
+    loginLogo: require('@/assets/images/logo.png'),
+    launcherIcon: require('@/assets/images/icon.png'),
   },
   venom: {
-    loginLogo: require('@/assets/images/theme-rogue-logo.png'),
-    launcherIcon: require('@/assets/images/theme-rogue-logo.png'),
+    loginLogo: require('@/assets/images/logo.png'),
+    launcherIcon: require('@/assets/images/icon.png'),
   },
   wave: {
-    loginLogo: require('@/assets/images/theme-pulse-logo.png'),
-    launcherIcon: require('@/assets/images/theme-pulse-logo.png'),
+    loginLogo: require('@/assets/images/logo.png'),
+    launcherIcon: require('@/assets/images/icon.png'),
   },
 };
 
