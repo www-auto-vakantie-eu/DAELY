@@ -9,21 +9,59 @@ import SharedBottomNav from '@/components/SharedBottomNav';
 import { MIND_PROGRAMS } from '@/constants/mind-programs';
 import { THEMES } from '@/constants/themes';
 
-// Helper to get theme-aware Aurora tokens
+// Helper to get theme-aware Aurora tokens (same as Today/Nutrition/Discipline)
 function getAuroraTokens(activeThemeId: string) {
   const currentTheme = THEMES[activeThemeId as keyof typeof THEMES] || THEMES.classic;
+  const isClassic = currentTheme.id === 'classic';
+
+  // DAELY Classic Glow gradient for card backgrounds
+  const classicGlowGradient = isClassic
+    ? ['#FFFFFF', '#F8FBFF', '#EFF6FF']
+    : currentTheme.gradients.aurora || ['#E8E6FF', '#D0CCFF', '#B8B4FF'];
+
   return {
-    auroraGradient: currentTheme.gradients.aurora || ['#E8E6FF', '#D0CCFF', '#B8B4FF'],
+    auroraGradient: classicGlowGradient,
+    auroraTitle: isClassic ? '#0F172A' : (currentTheme.colors.auroraTitle || '#1E1B4B'),
+    auroraSubtitle: isClassic ? '#475569' : (currentTheme.colors.auroraSubtitle || '#4A3A8C'),
+    // Theme-aware ribbon colors
+    ribbonTop: isClassic
+      ? ['rgba(37, 99, 235, 0.08)', 'rgba(14, 165, 233, 0.10)']
+      : ['rgba(168, 162, 255, 0.55)', 'rgba(200, 195, 255, 0.12)'],
+    ribbonMid: isClassic
+      ? ['rgba(219, 234, 254, 0.55)', 'rgba(240, 249, 255, 0.75)']
+      : ['rgba(220, 180, 255, 0.42)', 'rgba(200, 195, 255, 0.20)'],
+    ribbonBlue: isClassic
+      ? ['rgba(37, 99, 235, 0.08)', 'rgba(14, 165, 233, 0.10)']
+      : ['rgba(168, 162, 255, 0.75)', 'rgba(200, 195, 255, 0.38)'],
+    ribbonRose: isClassic
+      ? ['rgba(219, 234, 254, 0.55)', 'rgba(240, 249, 255, 0.75)']
+      : ['rgba(220, 180, 255, 0.65)', 'rgba(230, 200, 255, 0.30)'],
+    ribbonRight: isClassic
+      ? ['rgba(37, 99, 235, 0.08)', 'rgba(255, 255, 255, 0.05)']
+      : ['rgba(180, 170, 255, 0.38)', 'rgba(255, 255, 255, 0.05)'],
+    ribbonHighlight: isClassic
+      ? ['rgba(255, 255, 255, 0.70)', 'rgba(255, 255, 255, 0.30)']
+      : ['rgba(255, 255, 255, 0.28)', 'rgba(255, 255, 255, 0.06)'],
+    // Theme-aware shortcut card styling
+    shortcutBorderColor: isClassic ? '#DCEBFF' : undefined,
+    shortcutShadowColor: isClassic ? '#0EA5E9' : undefined,
+    shortcutIconBg: isClassic ? 'rgba(219, 234, 254, 0.8)' : 'rgba(255, 255, 255, 0.6)',
+    shortcutIconBorder: isClassic ? '#DBEAFE' : undefined,
+    // Category hero styling
+    heroIconColor: isClassic ? '#2563EB' : '#8B5CF6',
+    heroGradientColors: isClassic
+      ? ['rgba(37, 99, 235, 0.05)', 'rgba(14, 165, 233, 0.10)']
+      : ['rgba(139, 92, 246, 0.05)', 'rgba(139, 92, 246, 0.15)'],
   };
 }
 
 // Helper component for gradient cards with Soft Aurora Ribbon style
 function MindAuroraCard({ children, style }: { children: React.ReactNode, style?: any }) {
   const { activeThemeId } = useAppContext();
-  const { auroraGradient } = getAuroraTokens(activeThemeId);
+  const { auroraGradient, ribbonTop, ribbonMid, ribbonBlue, ribbonRose, ribbonRight, ribbonHighlight, shortcutBorderColor, shortcutShadowColor } = getAuroraTokens(activeThemeId);
 
   return (
-    <View style={[styles.premiumCardWrapper, style]}>
+    <View style={[styles.premiumCardWrapper, style, { borderColor: shortcutBorderColor, shadowColor: shortcutShadowColor }]}>
       {/* Background gradient layer - absolute full-cover */}
       <LinearGradient
         colors={auroraGradient}
@@ -32,33 +70,33 @@ function MindAuroraCard({ children, style }: { children: React.ReactNode, style?
         style={styles.premiumCardBackground}
         pointerEvents="none"
       >
-        {/* Top-left purple-blue ribbon */}
+        {/* Top-left ribbon */}
         <LinearGradient
-          colors={['rgba(168, 162, 255, 0.55)', 'rgba(200, 195, 255, 0.12)']}
+          colors={ribbonTop}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.ribbonTop}
           pointerEvents="none"
         />
-        {/* Mid-card purple-pink ribbon */}
+        {/* Mid-card ribbon */}
         <LinearGradient
-          colors={['rgba(220, 180, 255, 0.42)', 'rgba(200, 195, 255, 0.20)']}
+          colors={ribbonMid}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.ribbonMid}
           pointerEvents="none"
         />
-        {/* Periwinkle ribbon - diagonal top-right */}
+        {/* Diagonal top-right ribbon */}
         <LinearGradient
-          colors={['rgba(168, 162, 255, 0.75)', 'rgba(200, 195, 255, 0.38)']}
+          colors={ribbonBlue}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.ribbonBlue}
           pointerEvents="none"
         />
-        {/* Purple-pink ribbon - diagonal bottom-left */}
+        {/* Diagonal bottom-left ribbon */}
         <LinearGradient
-          colors={['rgba(220, 180, 255, 0.65)', 'rgba(230, 200, 255, 0.30)']}
+          colors={ribbonRose}
           start={{ x: 0, y: 1 }}
           end={{ x: 1, y: 0 }}
           style={styles.ribbonRose}
@@ -66,7 +104,7 @@ function MindAuroraCard({ children, style }: { children: React.ReactNode, style?
         />
         {/* Right-side accent ribbon */}
         <LinearGradient
-          colors={['rgba(180, 170, 255, 0.38)', 'rgba(255, 255, 255, 0.05)']}
+          colors={ribbonRight}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.ribbonRight}
@@ -74,7 +112,7 @@ function MindAuroraCard({ children, style }: { children: React.ReactNode, style?
         />
         {/* Soft white highlight overlay */}
         <LinearGradient
-          colors={['rgba(255, 255, 255, 0.28)', 'rgba(255, 255, 255, 0.06)']}
+          colors={ribbonHighlight}
           start={{ x: 0, y: 0 }}
           end={{ x: 0, y: 1 }}
           style={styles.ribbonHighlight}
@@ -92,8 +130,10 @@ function MindAuroraCard({ children, style }: { children: React.ReactNode, style?
 export default function MindCategoryScreen() {
   const theme = useTheme();
   const router = useRouter();
+  const { activeThemeId } = useAppContext();
   const params = useLocalSearchParams<{ id?: string | string[] }>();
   const categoryId = Array.isArray(params.id) ? params.id[0] : params.id;
+  const { auroraTitle, auroraSubtitle, heroIconColor, heroGradientColors, shortcutIconBg, shortcutIconBorder } = getAuroraTokens(activeThemeId);
 
   const getCategoryName = (id: string | undefined): string => {
     if (!id) return 'Mind';
@@ -218,17 +258,17 @@ export default function MindCategoryScreen() {
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
         <View style={styles.content}>
           {/* Category Hero Card */}
-          <View style={[styles.categoryHeroCard, { backgroundColor: theme.card, borderColor: '#E2E8F0' }]}>
+          <View style={[styles.categoryHeroCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
             <LinearGradient
-              colors={['rgba(139, 92, 246, 0.05)', 'rgba(139, 92, 246, 0.15)']}
+              colors={heroGradientColors}
               style={styles.heroGradient}
             >
-              <View style={styles.categoryIconBadge}>
-                <MaterialCommunityIcons name="meditation" size={32} color="#8B5CF6" />
+              <View style={[styles.categoryIconBadge, { backgroundColor: shortcutIconBg, borderColor: shortcutIconBorder }]}>
+                <MaterialCommunityIcons name="meditation" size={32} color={heroIconColor} />
               </View>
             </LinearGradient>
-            <Text style={[styles.categoryTitle, { color: '#0F172A' }]}>{categoryName}</Text>
-            <Text style={[styles.categorySubtitle, { color: '#64748B' }]}>
+            <Text style={[styles.categoryTitle, { color: auroraTitle }]}>{categoryName}</Text>
+            <Text style={[styles.categorySubtitle, { color: auroraSubtitle }]}>
               {categoryId === 'prime' && 'Start je dag met energie, focus en intentie'}
               {categoryId === 'breathing' && 'Ademhalingsoefeningen voor rust, controle en focus'}
               {categoryId === 'focus' && 'Train je concentratie voor werk, studie en sport'}
@@ -244,9 +284,9 @@ export default function MindCategoryScreen() {
 
           {/* Mindset intro card */}
           {categoryId === 'mindset' && (
-            <View style={[styles.introCard, { backgroundColor: theme.card, borderColor: '#E2E8F0' }]}>
-              <Text style={[styles.introTitle, { color: '#0F172A' }]}>Over Mindset</Text>
-              <Text style={[styles.introText, { color: '#64748B' }]}>
+            <View style={[styles.introCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
+              <Text style={[styles.introTitle, { color: auroraTitle }]}>Over Mindset</Text>
+              <Text style={[styles.introText, { color: auroraSubtitle }]}>
                 Jouw mindset is de basis voor alles wat je doet. Het bepaalt hoe je omgaat met uitdagingen, hoe je jouw doelen nastreeft en hoe je terugkomt na tegenslagen.
               </Text>
             </View>
@@ -257,12 +297,12 @@ export default function MindCategoryScreen() {
             if (meditation.isIntro) {
               return (
                 <MindAuroraCard key={index}>
-                  <View style={[styles.thumbnailFallback, { backgroundColor: '#F1F5F9' }]}>
-                    <MaterialCommunityIcons name="information" size={24} color="#64748B" />
+                  <View style={[styles.thumbnailFallback, { backgroundColor: shortcutIconBg, borderColor: shortcutIconBorder }]}>
+                    <MaterialCommunityIcons name="information" size={24} color={auroraSubtitle} />
                   </View>
                   <View style={styles.cardInfo}>
-                    <Text style={[styles.cardTitle, { color: '#0F172A' }]}>{meditation.title}</Text>
-                    <Text style={[styles.cardSubtitle, { color: '#64748B' }]}>{meditation.subtitle}</Text>
+                    <Text style={[styles.cardTitle, { color: auroraTitle }]}>{meditation.title}</Text>
+                    <Text style={[styles.cardSubtitle, { color: auroraSubtitle }]}>{meditation.subtitle}</Text>
                   </View>
                 </MindAuroraCard>
               );
@@ -276,30 +316,30 @@ export default function MindCategoryScreen() {
                 onPress={() => handleCardPress(meditation.programId)}
               >
                 <MindAuroraCard>
-                  <View style={[styles.thumbnailFallback, { backgroundColor: '#F1F5F9' }]}>
-                    <MaterialCommunityIcons name="play-circle" size={24} color="#8B5CF6" />
+                  <View style={[styles.thumbnailFallback, { backgroundColor: shortcutIconBg, borderColor: shortcutIconBorder }]}>
+                    <MaterialCommunityIcons name="play-circle" size={24} color={heroIconColor} />
                   </View>
                   <View style={styles.cardInfo}>
-                    <Text style={[styles.cardTitle, { color: '#0F172A' }]}>{meditation.title}</Text>
-                    <Text style={[styles.cardSubtitle, { color: '#64748B' }]}>{meditation.subtitle}</Text>
+                    <Text style={[styles.cardTitle, { color: auroraTitle }]}>{meditation.title}</Text>
+                    <Text style={[styles.cardSubtitle, { color: auroraSubtitle }]}>{meditation.subtitle}</Text>
                     <View style={styles.cardMeta}>
                       {meditation.duration && (
-                        <View style={styles.metaTag}>
-                          <MaterialCommunityIcons name="clock-outline" size={12} color="#64748B" />
-                          <Text style={[styles.metaTagText, { color: '#64748B' }]}>{meditation.duration}</Text>
+                        <View style={[styles.metaTag, { backgroundColor: shortcutIconBg, borderColor: shortcutIconBorder }]}>
+                          <MaterialCommunityIcons name="clock-outline" size={12} color={auroraSubtitle} />
+                          <Text style={[styles.metaTagText, { color: auroraSubtitle }]}>{meditation.duration}</Text>
                         </View>
                       )}
-                    <View style={styles.metaTag}>
-                      <Text style={[styles.metaTagText, { color: '#8B5CF6' }]}>{meditation.type}</Text>
+                    <View style={[styles.metaTag, { backgroundColor: shortcutIconBg, borderColor: shortcutIconBorder }]}>
+                      <Text style={[styles.metaTagText, { color: heroIconColor }]}>{meditation.type}</Text>
                     </View>
                     {!hasProgramId && (
-                      <View style={styles.metaTag}>
-                        <Text style={[styles.metaTagText, { color: '#94A3B8' }]}>Binnenkort</Text>
+                      <View style={[styles.metaTag, { backgroundColor: shortcutIconBg, borderColor: shortcutIconBorder }]}>
+                        <Text style={[styles.metaTagText, { color: auroraSubtitle }]}>Binnenkort</Text>
                       </View>
                     )}
                   </View>
                   </View>
-                  <MaterialCommunityIcons name="chevron-right" size={20} color="#94A3B8" />
+                  <MaterialCommunityIcons name="chevron-right" size={20} color={auroraSubtitle} />
                 </MindAuroraCard>
               </TouchableOpacity>
             );
@@ -342,10 +382,8 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 32,
-    backgroundColor: '#FFFFFF',
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
     shadowRadius: 8,
@@ -388,10 +426,9 @@ const styles = StyleSheet.create({
   },
   premiumCardWrapper: {
     borderRadius: 22,
-    borderWidth: 0,
+    borderWidth: 1,
     marginBottom: 12,
     overflow: 'hidden',
-    shadowColor: '#6B5B95',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
     shadowRadius: 8,
