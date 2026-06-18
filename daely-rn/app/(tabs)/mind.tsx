@@ -24,6 +24,7 @@ function getQuickActionTokens(activeThemeId: string) {
   const isForce = currentTheme.id === 'force';
   const isSahara = currentTheme.id === 'saharaDune';
   const isRetro = currentTheme.id === 'retroSport';
+  const isZen = currentTheme.id === 'zenInk';
 
   // DAELY Classic Glow gradient for quick action cards
   const classicGlowGradient = isClassic
@@ -32,16 +33,17 @@ function getQuickActionTokens(activeThemeId: string) {
       ? currentTheme.gradients.aurora || ['#FFFFFF', '#FFF1F2', '#FFE4E6']
       : isSahara ? (currentTheme.gradients.aurora || ['#FFFFFF', '#FDF8EF', '#F3E4CF'])
       : isRetro ? (currentTheme.gradients.aurora || ['#FFFDF7', '#F7F0E6', '#FBE3D0'])
+      : isZen ? (currentTheme.gradients.aurora || ['#3D3D3D', '#4A4A4A', '#5A5A5A'])
       : ['#E8E6FF', '#D0CCFF', '#B8B4FF'];
 
   return {
     gradientColors: classicGlowGradient,
-    iconColor: isClassic ? '#2563EB' : isForce ? '#DC2626' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : '#4A3A8C',
-    iconBubbleBg: isClassic ? 'rgba(219, 234, 254, 0.8)' : isForce ? 'rgba(254, 202, 202, 0.75)' : isSahara ? 'rgba(245, 230, 211, 0.75)' : isRetro ? 'rgba(255, 253, 247, 0.88)' : 'rgba(255, 255, 255, 0.7)',
-    iconBubbleBorder: isClassic ? '#DBEAFE' : isForce ? '#FCA5A5' : isSahara ? '#E8D0B0' : isRetro ? '#E7C0A3' : 'rgba(255, 255, 255, 0.9)',
-    titleColor: isClassic ? '#0F172A' : isForce ? '#7F1D1D' : isSahara ? '#7A4E24' : isRetro ? '#1B2E6B' : '#1E1B4B',
-    subtitleColor: isClassic ? '#475569' : isForce ? '#B91C1C' : isSahara ? '#9A6B3A' : isRetro ? '#B42318' : '#4A3A8C',
-    shadowColor: isClassic ? '#0EA5E9' : isForce ? '#EF4444' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : '#6B5B95',
+    iconColor: isClassic ? '#2563EB' : isForce ? '#DC2626' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? '#E5E7EB' : '#4A3A8C',
+    iconBubbleBg: isClassic ? 'rgba(219, 234, 254, 0.8)' : isForce ? 'rgba(254, 202, 202, 0.75)' : isSahara ? 'rgba(245, 230, 211, 0.75)' : isRetro ? 'rgba(255, 253, 247, 0.88)' : isZen ? 'rgba(255, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.7)',
+    iconBubbleBorder: isClassic ? '#DBEAFE' : isForce ? '#FCA5A5' : isSahara ? '#E8D0B0' : isRetro ? '#E7C0A3' : isZen ? 'rgba(255, 255, 255, 0.14)' : 'rgba(255, 255, 255, 0.9)',
+    titleColor: isClassic ? '#0F172A' : isForce ? '#7F1D1D' : isSahara ? '#7A4E24' : isRetro ? '#1B2E6B' : isZen ? '#E5E7EB' : '#1E1B4B',
+    subtitleColor: isClassic ? '#475569' : isForce ? '#B91C1C' : isSahara ? '#9A6B3A' : isRetro ? '#B42318' : isZen ? '#B0B0B0' : '#4A3A8C',
+    shadowColor: isClassic ? '#0EA5E9' : isForce ? '#EF4444' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? 'rgba(0, 0, 0, 0.45)' : '#6B5B95',
   };
 }
 

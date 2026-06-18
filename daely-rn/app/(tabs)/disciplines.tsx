@@ -50,6 +50,7 @@ function getQuickActionTokens(activeThemeId: string) {
   const isForce = currentTheme.id === 'force';
   const isSahara = currentTheme.id === 'saharaDune';
   const isRetro = currentTheme.id === 'retroSport';
+  const isZen = currentTheme.id === 'zenInk';
 
   // DAELY Classic Glow gradient for buttons
   const classicGlowGradient = isClassic
@@ -58,12 +59,17 @@ function getQuickActionTokens(activeThemeId: string) {
       ? currentTheme.gradients.aurora || ['#FFFFFF', '#FFF1F2', '#FFE4E6']
       : isSahara ? (currentTheme.gradients.aurora || ['#FFFFFF', '#FDF8EF', '#F3E4CF'])
       : isRetro ? (currentTheme.gradients.aurora || ['#FFFDF7', '#F7F0E6', '#FBE3D0'])
+      : isZen ? (currentTheme.gradients.aurora || ['#3D3D3D', '#4A4A4A', '#5A5A5A'])
       : ['#E8E6FF', '#D0CCFF', '#B8B4FF'];
 
   return {
     gradient: classicGlowGradient,
-    iconColor: isClassic ? '#2563EB' : isForce ? '#DC2626' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : '#4A3A8C',
-    shadowColor: isClassic ? '#0EA5E9' : isForce ? '#EF4444' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : '#6B5B95',
+    iconColor: isClassic ? '#2563EB' : isForce ? '#DC2626' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? '#F9FAFB' : '#4A3A8C',
+    iconBg: isClassic ? 'rgba(219, 234, 254, 0.7)' : isForce ? 'rgba(254, 202, 202, 0.7)' : isSahara ? 'rgba(245, 230, 211, 0.7)' : isRetro ? 'rgba(255, 253, 247, 0.7)' : isZen ? 'rgba(255, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.7)',
+    iconBorder: isClassic ? 'rgba(255, 255, 255, 0.9)' : isForce ? 'rgba(255, 255, 255, 0.9)' : isSahara ? 'rgba(255, 255, 255, 0.9)' : isRetro ? 'rgba(255, 255, 255, 0.9)' : isZen ? 'rgba(255, 255, 255, 0.16)' : 'rgba(255, 255, 255, 0.9)',
+    titleColor: isClassic ? '#0F172A' : isForce ? '#7F1D1D' : isSahara ? '#7A4E24' : isRetro ? '#1B2E6B' : isZen ? '#F9FAFB' : '#1E1B4B',
+    subtitleColor: isClassic ? '#475569' : isForce ? '#B91C1C' : isSahara ? '#9A6B3A' : isRetro ? '#B42318' : isZen ? '#D1D5DB' : '#4A3A8C',
+    shadowColor: isClassic ? '#0EA5E9' : isForce ? '#EF4444' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? '#000000' : '#6B5B95',
   };
 }
 
@@ -419,7 +425,7 @@ export default function DisciplinesScreen() {
   const router = useRouter();
   const [unreadMessageCount, setUnreadMessageCount] = useState(0);
   const visibleDisciplines = DISCIPLINES;
-  const { gradient, iconColor, shadowColor } = getQuickActionTokens(activeThemeId);
+  const { gradient, iconColor, iconBg, iconBorder, titleColor, subtitleColor, shadowColor } = getQuickActionTokens(activeThemeId);
   const handleOpen = (slug: string) => {
     router.push({ pathname: '/discipline/[slug]', params: { slug } });
   };
@@ -467,12 +473,12 @@ export default function DisciplinesScreen() {
                     end={{ x: 1, y: 1 }}
                     style={styles.quickActionButtonGradient}
                   >
-                    <View style={styles.quickActionIconBubble}>
+                    <View style={[styles.quickActionIconBubble, { backgroundColor: iconBg, borderColor: iconBorder }]}>
                       <MaterialCommunityIcons name={action.icon} size={20} color={iconColor} />
                     </View>
                     <View style={styles.quickActionTextWrap}>
-                      <Text style={styles.quickActionText}>{action.title}</Text>
-                      <Text style={styles.quickActionSubText}>{action.subtitle}</Text>
+                      <Text style={[styles.quickActionText, { color: titleColor }]}>{action.title}</Text>
+                      <Text style={[styles.quickActionSubText, { color: subtitleColor }]}>{action.subtitle}</Text>
                     </View>
                   </LinearGradient>
                 </Pressable>

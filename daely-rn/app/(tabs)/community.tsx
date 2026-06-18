@@ -24,6 +24,7 @@ function GradientCard({ children, style }: { children: React.ReactNode, style?: 
   const isForce = currentTheme.id === 'force';
   const isSahara = currentTheme.id === 'saharaDune';
   const isRetro = currentTheme.id === 'retroSport';
+  const isZen = currentTheme.id === 'zenInk';
 
   // Theme-aware gradient for card backgrounds
   const classicGlowGradient = isClassic
@@ -32,10 +33,11 @@ function GradientCard({ children, style }: { children: React.ReactNode, style?: 
       ? currentTheme.gradients.aurora || ['#FFFFFF', '#FFF1F2', '#FFE4E6']
       : isSahara ? (currentTheme.gradients.aurora || ['#FFFFFF', '#FDF8EF', '#F3E4CF'])
       : isRetro ? (currentTheme.gradients.aurora || ['#FFFDF7', '#F7F0E6', '#FBE3D0'])
+      : isZen ? (currentTheme.gradients.aurora || ['#111111', '#1A1A1A', '#2D2D2D'])
       : currentTheme.gradients.aurora || ['#E8E6FF', '#D0CCFF', '#B8B4FF'];
 
   return (
-    <View style={[styles.sectionCard, style, { borderColor: isClassic ? '#DCEBFF' : isForce ? '#FECACA' : isSahara ? '#E8D0B0' : isRetro ? '#E7C0A3' : undefined, shadowColor: isClassic ? '#0EA5E9' : isForce ? '#EF4444' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : undefined }]}>
+    <View style={[styles.sectionCard, style, { borderColor: isClassic ? '#DCEBFF' : isForce ? '#FECACA' : isSahara ? '#E8D0B0' : isRetro ? '#E7C0A3' : isZen ? 'rgba(255, 255, 255, 0.12)' : undefined, shadowColor: isClassic ? '#0EA5E9' : isForce ? '#EF4444' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? 'rgba(0, 0, 0, 0.45)' : undefined }]}>
       {/* Background gradient layer - absolute full-cover */}
       <LinearGradient
         colors={classicGlowGradient}
@@ -46,7 +48,7 @@ function GradientCard({ children, style }: { children: React.ReactNode, style?: 
       >
         {/* Top-left ribbon */}
         <LinearGradient
-          colors={isClassic ? ['rgba(37, 99, 235, 0.08)', 'rgba(14, 165, 233, 0.10)'] : isForce ? (currentTheme.gradients.auroraBlue || ['rgba(254, 202, 202, 0.55)', 'rgba(254, 202, 202, 0.12)']) : isSahara ? (currentTheme.gradients.auroraBlue || ['rgba(232, 208, 176, 0.32)', 'rgba(232, 208, 176, 0.10)']) : isRetro ? (currentTheme.gradients.auroraBlue || ['rgba(27, 46, 107, 0.16)', 'rgba(27, 46, 107, 0.04)']) : ['rgba(168, 162, 255, 0.55)', 'rgba(200, 195, 255, 0.12)']}
+          colors={isClassic ? ['rgba(37, 99, 235, 0.08)', 'rgba(14, 165, 233, 0.10)'] : isForce ? (currentTheme.gradients.auroraBlue || ['rgba(254, 202, 202, 0.55)', 'rgba(254, 202, 202, 0.12)']) : isSahara ? (currentTheme.gradients.auroraBlue || ['rgba(232, 208, 176, 0.32)', 'rgba(232, 208, 176, 0.10)']) : isRetro ? (currentTheme.gradients.auroraBlue || ['rgba(27, 46, 107, 0.16)', 'rgba(27, 46, 107, 0.04)']) : isZen ? (currentTheme.gradients.auroraBlue || ['rgba(255, 255, 255, 0.10)', 'rgba(255, 255, 255, 0.03)']) : ['rgba(168, 162, 255, 0.55)', 'rgba(200, 195, 255, 0.12)']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.ribbonTop}
@@ -54,7 +56,7 @@ function GradientCard({ children, style }: { children: React.ReactNode, style?: 
         />
         {/* Mid-card ribbon */}
         <LinearGradient
-          colors={isClassic ? ['rgba(219, 234, 254, 0.55)', 'rgba(240, 249, 255, 0.75)'] : isForce ? ['rgba(254, 226, 226, 0.42)', 'rgba(254, 226, 226, 0.20)'] : isSahara ? ['rgba(245, 230, 211, 0.42)', 'rgba(245, 230, 211, 0.20)'] : isRetro ? ['rgba(255, 253, 247, 0.42)', 'rgba(255, 253, 247, 0.20)'] : ['rgba(220, 180, 255, 0.42)', 'rgba(200, 195, 255, 0.20)']}
+          colors={isClassic ? ['rgba(219, 234, 254, 0.55)', 'rgba(240, 249, 255, 0.75)'] : isForce ? ['rgba(254, 226, 226, 0.42)', 'rgba(254, 226, 226, 0.20)'] : isSahara ? ['rgba(245, 230, 211, 0.42)', 'rgba(245, 230, 211, 0.20)'] : isRetro ? ['rgba(255, 253, 247, 0.42)', 'rgba(255, 253, 247, 0.20)'] : isZen ? ['rgba(255, 255, 255, 0.08)', 'rgba(255, 255, 255, 0.02)'] : ['rgba(220, 180, 255, 0.42)', 'rgba(200, 195, 255, 0.20)']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.ribbonMid}
@@ -62,7 +64,7 @@ function GradientCard({ children, style }: { children: React.ReactNode, style?: 
         />
         {/* Diagonal top-right ribbon */}
         <LinearGradient
-          colors={isClassic ? ['rgba(37, 99, 235, 0.08)', 'rgba(14, 165, 233, 0.10)'] : isForce ? (currentTheme.gradients.auroraBlue || ['rgba(254, 202, 202, 0.75)', 'rgba(254, 202, 202, 0.38)']) : isSahara ? (currentTheme.gradients.auroraBlue || ['rgba(232, 208, 176, 0.32)', 'rgba(232, 208, 176, 0.10)']) : isRetro ? (currentTheme.gradients.auroraBlue || ['rgba(27, 46, 107, 0.16)', 'rgba(27, 46, 107, 0.04)']) : ['rgba(168, 162, 255, 0.75)', 'rgba(200, 195, 255, 0.38)']}
+          colors={isClassic ? ['rgba(37, 99, 235, 0.08)', 'rgba(14, 165, 233, 0.10)'] : isForce ? (currentTheme.gradients.auroraBlue || ['rgba(254, 202, 202, 0.75)', 'rgba(254, 202, 202, 0.38)']) : isSahara ? (currentTheme.gradients.auroraBlue || ['rgba(232, 208, 176, 0.32)', 'rgba(232, 208, 176, 0.10)']) : isRetro ? (currentTheme.gradients.auroraBlue || ['rgba(27, 46, 107, 0.16)', 'rgba(27, 46, 107, 0.04)']) : isZen ? (currentTheme.gradients.auroraBlue || ['rgba(255, 255, 255, 0.10)', 'rgba(255, 255, 255, 0.03)']) : ['rgba(168, 162, 255, 0.75)', 'rgba(200, 195, 255, 0.38)']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.ribbonBlue}
@@ -70,7 +72,7 @@ function GradientCard({ children, style }: { children: React.ReactNode, style?: 
         />
         {/* Diagonal bottom-left ribbon */}
         <LinearGradient
-          colors={isClassic ? ['rgba(219, 234, 254, 0.55)', 'rgba(240, 249, 255, 0.75)'] : isForce ? (currentTheme.gradients.auroraRose || ['rgba(239, 68, 68, 0.65)', 'rgba(239, 68, 68, 0.30)']) : isSahara ? (currentTheme.gradients.auroraRose || ['rgba(212, 165, 116, 0.35)', 'rgba(212, 165, 116, 0.12)']) : isRetro ? (currentTheme.gradients.auroraRose || ['rgba(192, 57, 43, 0.22)', 'rgba(232, 98, 42, 0.06)']) : ['rgba(220, 180, 255, 0.65)', 'rgba(230, 200, 255, 0.30)']}
+          colors={isClassic ? ['rgba(219, 234, 254, 0.55)', 'rgba(240, 249, 255, 0.75)'] : isForce ? (currentTheme.gradients.auroraRose || ['rgba(239, 68, 68, 0.65)', 'rgba(239, 68, 68, 0.30)']) : isSahara ? (currentTheme.gradients.auroraRose || ['rgba(212, 165, 116, 0.35)', 'rgba(212, 165, 116, 0.12)']) : isRetro ? (currentTheme.gradients.auroraRose || ['rgba(192, 57, 43, 0.22)', 'rgba(232, 98, 42, 0.06)']) : isZen ? (currentTheme.gradients.auroraRose || ['rgba(156, 163, 175, 0.14)', 'rgba(156, 163, 175, 0.05)']) : ['rgba(220, 180, 255, 0.65)', 'rgba(230, 200, 255, 0.30)']}
           start={{ x: 0, y: 1 }}
           end={{ x: 1, y: 0 }}
           style={styles.ribbonRose}
@@ -78,7 +80,7 @@ function GradientCard({ children, style }: { children: React.ReactNode, style?: 
         />
         {/* Right-side accent ribbon */}
         <LinearGradient
-          colors={isClassic ? ['rgba(37, 99, 235, 0.08)', 'rgba(255, 255, 255, 0.05)'] : isForce ? ['rgba(254, 202, 202, 0.38)', 'rgba(255, 255, 255, 0.05)'] : isSahara ? ['rgba(245, 230, 211, 0.42)', 'rgba(245, 230, 211, 0.20)'] : isRetro ? ['rgba(255, 253, 247, 0.42)', 'rgba(255, 253, 247, 0.20)'] : ['rgba(180, 170, 255, 0.38)', 'rgba(255, 255, 255, 0.05)']}
+          colors={isClassic ? ['rgba(37, 99, 235, 0.08)', 'rgba(255, 255, 255, 0.05)'] : isForce ? ['rgba(254, 202, 202, 0.38)', 'rgba(255, 255, 255, 0.05)'] : isSahara ? ['rgba(245, 230, 211, 0.42)', 'rgba(245, 230, 211, 0.20)'] : isRetro ? ['rgba(255, 253, 247, 0.42)', 'rgba(255, 253, 247, 0.20)'] : isZen ? ['rgba(255, 255, 255, 0.08)', 'rgba(255, 255, 255, 0.02)'] : ['rgba(180, 170, 255, 0.38)', 'rgba(255, 255, 255, 0.05)']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.ribbonRight}
@@ -86,7 +88,7 @@ function GradientCard({ children, style }: { children: React.ReactNode, style?: 
         />
         {/* Soft white highlight overlay */}
         <LinearGradient
-          colors={isClassic ? ['rgba(255, 255, 255, 0.70)', 'rgba(255, 255, 255, 0.30)'] : ['rgba(255, 255, 255, 0.28)', 'rgba(255, 255, 255, 0.06)']}
+          colors={isClassic ? ['rgba(255, 255, 255, 0.70)', 'rgba(255, 255, 255, 0.30)'] : isZen ? ['rgba(0, 0, 0, 0.15)', 'rgba(0, 0, 0, 0.05)'] : ['rgba(255, 255, 255, 0.28)', 'rgba(255, 255, 255, 0.06)']}
           start={{ x: 0, y: 0 }}
           end={{ x: 0, y: 1 }}
           style={styles.ribbonHighlight}
@@ -322,9 +324,10 @@ export default function CommunityScreen() {
   const isForce = THEMES[activeThemeId as keyof typeof THEMES]?.id === 'force';
   const isSahara = THEMES[activeThemeId as keyof typeof THEMES]?.id === 'saharaDune';
   const isRetro = THEMES[activeThemeId as keyof typeof THEMES]?.id === 'retroSport';
+  const isZen = THEMES[activeThemeId as keyof typeof THEMES]?.id === 'zenInk';
 
-  const shortcutIconBg = isClassic ? 'rgba(219, 234, 254, 0.8)' : isForce ? 'rgba(254, 202, 202, 0.75)' : isSahara ? 'rgba(245, 230, 211, 0.75)' : isRetro ? 'rgba(255, 253, 247, 0.88)' : 'rgba(255, 255, 255, 0.6)';
-  const shortcutIconBorder = isClassic ? '#DBEAFE' : isForce ? '#FCA5A5' : isSahara ? '#E8D0B0' : isRetro ? '#E7C0A3' : undefined;
+  const shortcutIconBg = isClassic ? 'rgba(219, 234, 254, 0.8)' : isForce ? 'rgba(254, 202, 202, 0.75)' : isSahara ? 'rgba(245, 230, 211, 0.75)' : isRetro ? 'rgba(255, 253, 247, 0.88)' : isZen ? 'rgba(255, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.6)';
+  const shortcutIconBorder = isClassic ? '#DBEAFE' : isForce ? '#FCA5A5' : isSahara ? '#E8D0B0' : isRetro ? '#E7C0A3' : isZen ? 'rgba(255, 255, 255, 0.14)' : undefined;
   const [activeTab, setActiveTab] = useState<Tab>('feed');
   const [unreadMessageCount, setUnreadMessageCount] = useState(0);
   const [carouselWidth, setCarouselWidth] = useState(0);
