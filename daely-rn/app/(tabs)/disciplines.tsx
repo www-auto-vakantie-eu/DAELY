@@ -49,6 +49,7 @@ function getQuickActionTokens(activeThemeId: string) {
   const isClassic = currentTheme.id === 'classic';
   const isForce = currentTheme.id === 'force';
   const isSahara = currentTheme.id === 'saharaDune';
+  const isRetro = currentTheme.id === 'retroSport';
 
   // DAELY Classic Glow gradient for buttons
   const classicGlowGradient = isClassic
@@ -56,12 +57,13 @@ function getQuickActionTokens(activeThemeId: string) {
     : isForce
       ? currentTheme.gradients.aurora || ['#FFFFFF', '#FFF1F2', '#FFE4E6']
       : isSahara ? (currentTheme.gradients.aurora || ['#FFFFFF', '#FDF8EF', '#F3E4CF'])
+      : isRetro ? (currentTheme.gradients.aurora || ['#FFFDF7', '#F7F0E6', '#FBE3D0'])
       : ['#E8E6FF', '#D0CCFF', '#B8B4FF'];
 
   return {
     gradient: classicGlowGradient,
-    iconColor: isClassic ? '#2563EB' : isForce ? '#DC2626' : isSahara ? '#C89B72' : '#4A3A8C',
-    shadowColor: isClassic ? '#0EA5E9' : isForce ? '#EF4444' : isSahara ? '#C89B72' : '#6B5B95',
+    iconColor: isClassic ? '#2563EB' : isForce ? '#DC2626' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : '#4A3A8C',
+    shadowColor: isClassic ? '#0EA5E9' : isForce ? '#EF4444' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : '#6B5B95',
   };
 }
 

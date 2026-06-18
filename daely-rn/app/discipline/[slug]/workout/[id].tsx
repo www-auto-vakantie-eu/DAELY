@@ -17,6 +17,7 @@ function getAuroraTokens(activeThemeId: string) {
   const isClassic = currentTheme.id === 'classic';
   const isForce = currentTheme.id === 'force';
   const isSahara = currentTheme.id === 'saharaDune';
+  const isRetro = currentTheme.id === 'retroSport';
 
   return {
     auroraGradient: isClassic
@@ -25,17 +26,19 @@ function getAuroraTokens(activeThemeId: string) {
         ? (currentTheme.gradients.aurora || ['#FFFFFF', '#FFF1F2', '#FFE4E6'])
         : isSahara
           ? (currentTheme.gradients.aurora || ['#FFFFFF', '#FDF8EF', '#F3E4CF'])
+          : isRetro ? (currentTheme.gradients.aurora || ['#FFFDF7', '#F7F0E6', '#FBE3D0'])
           : (currentTheme.gradients.aurora || ['#E8E6FF', '#D0CCFF', '#B8B4FF']),
-    auroraTitle: isClassic ? '#0F172A' : (currentTheme.colors.auroraTitle || (isSahara ? '#7A4E24' : isForce ? '#7F1D1D' : '#1E1B4B')),
-    auroraSubtitle: isClassic ? '#475569' : (currentTheme.colors.auroraSubtitle || (isSahara ? '#9A6B3A' : isForce ? '#B91C1C' : '#4A3A8C')),
-    auroraHighlight: currentTheme.colors.auroraHighlight || (isSahara ? '#E7C99B' : isForce ? '#EF4444' : '#6B5B95'),
-    auroraAccent: currentTheme.colors.auroraAccent || (isSahara ? '#C89B72' : isForce ? '#DC2626' : '#8B7CF6'),
+    auroraTitle: isClassic ? '#0F172A' : (currentTheme.colors.auroraTitle || (isRetro ? '#1B2E6B' : isSahara ? '#7A4E24' : isForce ? '#7F1D1D' : '#1E1B4B')),
+    auroraSubtitle: isClassic ? '#475569' : (currentTheme.colors.auroraSubtitle || (isRetro ? '#B42318' : isSahara ? '#9A6B3A' : isForce ? '#B91C1C' : '#4A3A8C')),
+    auroraHighlight: currentTheme.colors.auroraHighlight || (isRetro ? '#E8622A' : isSahara ? '#E7C99B' : isForce ? '#EF4444' : '#6B5B95'),
+    auroraAccent: currentTheme.colors.auroraAccent || (isRetro ? '#C0392B' : isSahara ? '#C89B72' : isForce ? '#DC2626' : '#8B7CF6'),
     ribbonTop: isClassic
       ? ['rgba(37, 99, 235, 0.08)', 'rgba(14, 165, 233, 0.10)']
       : isForce
         ? (currentTheme.gradients.auroraBlue || ['rgba(254, 202, 202, 0.55)', 'rgba(254, 202, 202, 0.12)'])
         : isSahara
           ? (currentTheme.gradients.auroraBlue || ['rgba(232, 208, 176, 0.32)', 'rgba(232, 208, 176, 0.10)'])
+          : isRetro ? (currentTheme.gradients.auroraBlue || ['rgba(27, 46, 107, 0.16)', 'rgba(27, 46, 107, 0.04)'])
           : ['rgba(168, 162, 255, 0.55)', 'rgba(200, 195, 255, 0.12)'],
     ribbonMid: isClassic
       ? ['rgba(219, 234, 254, 0.55)', 'rgba(240, 249, 255, 0.75)']
@@ -43,6 +46,7 @@ function getAuroraTokens(activeThemeId: string) {
         ? ['rgba(254, 226, 226, 0.42)', 'rgba(254, 226, 226, 0.20)']
         : isSahara
           ? ['rgba(245, 230, 211, 0.42)', 'rgba(245, 230, 211, 0.20)']
+          : isRetro ? ['rgba(255, 253, 247, 0.42)', 'rgba(255, 253, 247, 0.20)']
           : ['rgba(220, 180, 255, 0.42)', 'rgba(200, 195, 255, 0.20)'],
     ribbonBlue: isClassic
       ? ['rgba(37, 99, 235, 0.08)', 'rgba(14, 165, 233, 0.10)']
@@ -50,6 +54,7 @@ function getAuroraTokens(activeThemeId: string) {
         ? (currentTheme.gradients.auroraBlue || ['rgba(254, 202, 202, 0.75)', 'rgba(254, 202, 202, 0.38)'])
         : isSahara
           ? (currentTheme.gradients.auroraBlue || ['rgba(232, 208, 176, 0.32)', 'rgba(232, 208, 176, 0.10)'])
+          : isRetro ? (currentTheme.gradients.auroraBlue || ['rgba(27, 46, 107, 0.16)', 'rgba(27, 46, 107, 0.04)'])
           : ['rgba(168, 162, 255, 0.75)', 'rgba(200, 195, 255, 0.38)'],
     ribbonRose: isClassic
       ? ['rgba(219, 234, 254, 0.55)', 'rgba(240, 249, 255, 0.75)']
@@ -57,6 +62,7 @@ function getAuroraTokens(activeThemeId: string) {
         ? (currentTheme.gradients.auroraRose || ['rgba(239, 68, 68, 0.65)', 'rgba(239, 68, 68, 0.30)'])
         : isSahara
           ? (currentTheme.gradients.auroraRose || ['rgba(212, 165, 116, 0.35)', 'rgba(212, 165, 116, 0.12)'])
+          : isRetro ? (currentTheme.gradients.auroraRose || ['rgba(192, 57, 43, 0.22)', 'rgba(232, 98, 42, 0.06)'])
           : ['rgba(220, 180, 255, 0.65)', 'rgba(230, 200, 255, 0.30)'],
     ribbonRight: isClassic
       ? ['rgba(37, 99, 235, 0.08)', 'rgba(255, 255, 255, 0.05)']
@@ -64,6 +70,7 @@ function getAuroraTokens(activeThemeId: string) {
         ? ['rgba(254, 202, 202, 0.38)', 'rgba(255, 255, 255, 0.05)']
         : isSahara
           ? ['rgba(232, 208, 176, 0.38)', 'rgba(255, 255, 255, 0.05)']
+          : isRetro ? ['rgba(255, 253, 247, 0.42)', 'rgba(255, 253, 247, 0.20)']
           : ['rgba(180, 170, 255, 0.38)', 'rgba(255, 255, 255, 0.05)'],
     ribbonHighlight: isClassic
       ? ['rgba(255, 255, 255, 0.70)', 'rgba(255, 255, 255, 0.30)']

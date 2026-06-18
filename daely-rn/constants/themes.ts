@@ -506,10 +506,11 @@ export const THEMES: Record<ThemeId, AppTheme> = {
       warning: '#F39C12',
       danger: '#C0392B',
       info: '#2980B9',
-      auroraTitle: undefined,
-      auroraSubtitle: undefined,
-      auroraHighlight: undefined,
-      auroraAccent: undefined,
+      // Retro Sport Aurora text colors (red/blue vintage sport)
+      auroraTitle: '#1B2E6B',
+      auroraSubtitle: '#B42318',
+      auroraHighlight: '#E8622A',
+      auroraAccent: '#C0392B',
     },
     gradients: {
       appBackground: ['#F5F0E8', '#EBE5D9'],
@@ -517,9 +518,10 @@ export const THEMES: Record<ThemeId, AppTheme> = {
       card: ['#FFFDF7', '#F8F3E8'],
       button: ['#1B2E6B', '#34495E'],
       progress: ['#E8622A', '#C0392B'],
-      aurora: undefined,
-      auroraBlue: undefined,
-      auroraRose: undefined,
+      // Retro Sport Aurora gradients for ribbon cards (subtle vintage sport)
+      aurora: ['#FFFDF7', '#F7F0E6', '#FBE3D0'],
+      auroraBlue: ['rgba(27, 46, 107, 0.16)', 'rgba(27, 46, 107, 0.04)'],
+      auroraRose: ['rgba(192, 57, 43, 0.22)', 'rgba(232, 98, 42, 0.06)'],
     },
     typography: {
       headingFontFamily: 'System',
