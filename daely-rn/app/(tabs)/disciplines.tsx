@@ -51,6 +51,7 @@ function getQuickActionTokens(activeThemeId: string) {
   const isSahara = currentTheme.id === 'saharaDune';
   const isRetro = currentTheme.id === 'retroSport';
   const isZen = currentTheme.id === 'zenInk';
+  const isSapphire = currentTheme.id === 'sapphire';
 
   // DAELY Classic Glow gradient for buttons
   const classicGlowGradient = isClassic
@@ -60,16 +61,30 @@ function getQuickActionTokens(activeThemeId: string) {
       : isSahara ? (currentTheme.gradients.aurora || ['#FFFFFF', '#FDF8EF', '#F3E4CF'])
       : isRetro ? (currentTheme.gradients.aurora || ['#FFFDF7', '#F7F0E6', '#FBE3D0'])
       : isZen ? (currentTheme.gradients.aurora || ['#3D3D3D', '#4A4A4A', '#5A5A5A'])
+      : isSapphire ? (currentTheme.gradients.aurora || ['#07111F', '#0C1220', '#162B4F'])
       : ['#E8E6FF', '#D0CCFF', '#B8B4FF'];
+
+  // Sapphire-specific shape tokens for quick actions
+  const quickActionRadius = isSapphire ? (currentTheme.colors.shortcutRadius || 12) : 16;
+  const quickActionIconRadius = isSapphire ? (currentTheme.colors.iconBubbleRadius || 12) : 14;
+  const quickActionShadowOpacity = isSapphire ? 0.32 : 0.08;
+  const quickActionShadowRadius = isSapphire ? 12 : 8;
+  const quickActionShadowOffset = isSapphire ? { width: 0, height: 4 } : { width: 0, height: 2 };
 
   return {
     gradient: classicGlowGradient,
-    iconColor: isClassic ? '#2563EB' : isForce ? '#DC2626' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? '#F9FAFB' : '#4A3A8C',
-    iconBg: isClassic ? 'rgba(219, 234, 254, 0.7)' : isForce ? 'rgba(254, 202, 202, 0.7)' : isSahara ? 'rgba(245, 230, 211, 0.7)' : isRetro ? 'rgba(255, 253, 247, 0.7)' : isZen ? 'rgba(255, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.7)',
-    iconBorder: isClassic ? 'rgba(255, 255, 255, 0.9)' : isForce ? 'rgba(255, 255, 255, 0.9)' : isSahara ? 'rgba(255, 255, 255, 0.9)' : isRetro ? 'rgba(255, 255, 255, 0.9)' : isZen ? 'rgba(255, 255, 255, 0.16)' : 'rgba(255, 255, 255, 0.9)',
-    titleColor: isClassic ? '#0F172A' : isForce ? '#7F1D1D' : isSahara ? '#7A4E24' : isRetro ? '#1B2E6B' : isZen ? '#F9FAFB' : '#1E1B4B',
-    subtitleColor: isClassic ? '#475569' : isForce ? '#B91C1C' : isSahara ? '#9A6B3A' : isRetro ? '#B42318' : isZen ? '#D1D5DB' : '#4A3A8C',
-    shadowColor: isClassic ? '#0EA5E9' : isForce ? '#EF4444' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? '#000000' : '#6B5B95',
+    iconColor: isClassic ? '#2563EB' : isForce ? '#DC2626' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? '#F9FAFB' : isSapphire ? '#EAF2FF' : '#4A3A8C',
+    iconBg: isClassic ? 'rgba(219, 234, 254, 0.7)' : isForce ? 'rgba(254, 202, 202, 0.7)' : isSahara ? 'rgba(245, 230, 211, 0.7)' : isRetro ? 'rgba(255, 253, 247, 0.7)' : isZen ? 'rgba(255, 255, 255, 0.08)' : isSapphire ? 'rgba(59, 130, 246, 0.14)' : 'rgba(255, 255, 255, 0.7)',
+    iconBorder: isClassic ? 'rgba(255, 255, 255, 0.9)' : isForce ? 'rgba(255, 255, 255, 0.9)' : isSahara ? 'rgba(255, 255, 255, 0.9)' : isRetro ? 'rgba(255, 255, 255, 0.9)' : isZen ? 'rgba(255, 255, 255, 0.16)' : isSapphire ? 'rgba(147, 197, 253, 0.24)' : 'rgba(255, 255, 255, 0.9)',
+    titleColor: isClassic ? '#0F172A' : isForce ? '#7F1D1D' : isSahara ? '#7A4E24' : isRetro ? '#1B2E6B' : isZen ? '#F9FAFB' : isSapphire ? '#EAF2FF' : '#1E1B4B',
+    subtitleColor: isClassic ? '#475569' : isForce ? '#B91C1C' : isSahara ? '#9A6B3A' : isRetro ? '#B42318' : isZen ? '#D1D5DB' : isSapphire ? '#BFDBFE' : '#4A3A8C',
+    shadowColor: isClassic ? '#0EA5E9' : isForce ? '#EF4444' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? '#000000' : isSapphire ? 'rgba(59, 130, 246, 0.24)' : '#6B5B95',
+    // Sapphire shape tokens
+    quickActionRadius,
+    quickActionIconRadius,
+    quickActionShadowOpacity,
+    quickActionShadowRadius,
+    quickActionShadowOffset,
   };
 }
 
@@ -425,7 +440,7 @@ export default function DisciplinesScreen() {
   const router = useRouter();
   const [unreadMessageCount, setUnreadMessageCount] = useState(0);
   const visibleDisciplines = DISCIPLINES;
-  const { gradient, iconColor, iconBg, iconBorder, titleColor, subtitleColor, shadowColor } = getQuickActionTokens(activeThemeId);
+  const { gradient, iconColor, iconBg, iconBorder, titleColor, subtitleColor, shadowColor, quickActionRadius, quickActionIconRadius, quickActionShadowOpacity, quickActionShadowRadius, quickActionShadowOffset } = getQuickActionTokens(activeThemeId);
   const handleOpen = (slug: string) => {
     router.push({ pathname: '/discipline/[slug]', params: { slug } });
   };
@@ -462,7 +477,7 @@ export default function DisciplinesScreen() {
                   key={action.key}
                   style={({ pressed }) => [
                     styles.quickActionButton,
-                    { shadowColor },
+                    { shadowColor, borderRadius: quickActionRadius, shadowOpacity: quickActionShadowOpacity, shadowRadius: quickActionShadowRadius, shadowOffset: quickActionShadowOffset },
                     pressed && { opacity: 0.85, transform: [{ scale: 0.98 }] },
                   ]}
                   onPress={() => router.push(action.route as any)}
@@ -471,9 +486,9 @@ export default function DisciplinesScreen() {
                     colors={gradient}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 1 }}
-                    style={styles.quickActionButtonGradient}
+                    style={[styles.quickActionButtonGradient, { borderRadius: quickActionRadius }]}
                   >
-                    <View style={[styles.quickActionIconBubble, { backgroundColor: iconBg, borderColor: iconBorder }]}>
+                    <View style={[styles.quickActionIconBubble, { backgroundColor: iconBg, borderColor: iconBorder, borderRadius: quickActionIconRadius }]}>
                       <MaterialCommunityIcons name={action.icon} size={20} color={iconColor} />
                     </View>
                     <View style={styles.quickActionTextWrap}>

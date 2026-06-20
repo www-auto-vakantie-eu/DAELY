@@ -117,6 +117,7 @@ function getAuroraTokens(activeThemeId: string) {
   const isSahara = currentTheme.id === 'saharaDune';
   const isRetro = currentTheme.id === 'retroSport';
   const isZen = currentTheme.id === 'zenInk';
+  const isSapphire = currentTheme.id === 'sapphire';
 
   // Theme-aware gradient for card backgrounds
   const themeGradient = isClassic
@@ -126,12 +127,19 @@ function getAuroraTokens(activeThemeId: string) {
       : isSahara ? (currentTheme.gradients.aurora || ['#FFFFFF', '#FDF8EF', '#F3E4CF'])
       : isRetro ? (currentTheme.gradients.aurora || ['#FFFDF7', '#F7F0E6', '#FBE3D0'])
       : isZen ? (currentTheme.gradients.aurora || ['#111111', '#1A1A1A', '#2D2D2D'])
+      : isSapphire ? (currentTheme.gradients.aurora || ['#07111F', '#0C1220', '#162B4F'])
       : currentTheme.gradients.aurora || ['#E8E6FF', '#D0CCFF', '#B8B4FF'];
+
+  // Sapphire-specific shape tokens
+  const cardRadius = isSapphire ? (currentTheme.colors.cardRadius || 14) : isRetro ? 16 : isSahara ? 16 : isForce ? 16 : isZen ? 14 : 16;
+  const cardBorderWidth = isSapphire ? (currentTheme.colors.cardBorderWidth || 1.5) : isRetro ? 1 : isSahara ? 1 : isForce ? 1 : isZen ? 1 : 1;
+  const iconBubbleRadius = isSapphire ? (currentTheme.colors.iconBubbleRadius || 12) : isRetro ? 14 : isSahara ? 14 : isForce ? 14 : isZen ? 10 : 14;
+  const shortcutRadius = isSapphire ? (currentTheme.colors.shortcutRadius || 12) : 16;
 
   return {
     auroraGradient: themeGradient,
-    auroraTitle: currentTheme.colors.auroraTitle || (isZen ? '#FFFFFF' : isRetro ? '#1B2E6B' : isSahara ? '#7A4E24' : isForce ? '#7F1D1D' : '#1E1B4B'),
-    auroraSubtitle: currentTheme.colors.auroraSubtitle || (isZen ? '#B0B0B0' : isRetro ? '#B42318' : isSahara ? '#9A6B3A' : isForce ? '#B91C1C' : '#4A3A8C'),
+    auroraTitle: currentTheme.colors.auroraTitle || (isZen ? '#FFFFFF' : isRetro ? '#1B2E6B' : isSahara ? '#7A4E24' : isForce ? '#7F1D1D' : isSapphire ? '#EAF2FF' : '#1E1B4B'),
+    auroraSubtitle: currentTheme.colors.auroraSubtitle || (isZen ? '#B0B0B0' : isRetro ? '#B42318' : isSahara ? '#9A6B3A' : isForce ? '#B91C1C' : isSapphire ? '#BFDBFE' : '#4A3A8C'),
     // Theme-aware ribbon colors
     ribbonTop: isClassic
       ? ['rgba(37, 99, 235, 0.08)', 'rgba(14, 165, 233, 0.10)']
@@ -140,6 +148,7 @@ function getAuroraTokens(activeThemeId: string) {
         : isSahara ? (currentTheme.gradients.auroraBlue || ['rgba(232, 208, 176, 0.32)', 'rgba(232, 208, 176, 0.10)'])
         : isRetro ? (currentTheme.gradients.auroraBlue || ['rgba(27, 46, 107, 0.16)', 'rgba(27, 46, 107, 0.04)'])
         : isZen ? (currentTheme.gradients.auroraBlue || ['rgba(255, 255, 255, 0.10)', 'rgba(255, 255, 255, 0.03)'])
+        : isSapphire ? (currentTheme.colors.glassLine1 || ['rgba(147, 197, 253, 0.04)', 'rgba(147, 197, 253, 0.01)'])
         : ['rgba(168, 162, 255, 0.55)', 'rgba(200, 195, 255, 0.12)'],
     ribbonMid: isClassic
       ? ['rgba(219, 234, 254, 0.55)', 'rgba(240, 249, 255, 0.75)']
@@ -148,6 +157,7 @@ function getAuroraTokens(activeThemeId: string) {
         : isSahara ? ['rgba(245, 230, 211, 0.42)', 'rgba(245, 230, 211, 0.20)']
         : isRetro ? ['rgba(255, 253, 247, 0.42)', 'rgba(255, 253, 247, 0.20)']
         : isZen ? ['rgba(255, 255, 255, 0.08)', 'rgba(255, 255, 255, 0.02)']
+        : isSapphire ? (currentTheme.colors.glassLine2 || ['rgba(59, 130, 246, 0.02)', 'rgba(59, 130, 246, 0.005)'])
         : ['rgba(220, 180, 255, 0.42)', 'rgba(200, 195, 255, 0.20)'],
     ribbonBlue: isClassic
       ? ['rgba(37, 99, 235, 0.08)', 'rgba(14, 165, 233, 0.10)']
@@ -156,6 +166,7 @@ function getAuroraTokens(activeThemeId: string) {
         : isSahara ? (currentTheme.gradients.auroraBlue || ['rgba(232, 208, 176, 0.32)', 'rgba(232, 208, 176, 0.10)'])
         : isRetro ? (currentTheme.gradients.auroraBlue || ['rgba(27, 46, 107, 0.16)', 'rgba(27, 46, 107, 0.04)'])
         : isZen ? (currentTheme.gradients.auroraBlue || ['rgba(255, 255, 255, 0.10)', 'rgba(255, 255, 255, 0.03)'])
+        : isSapphire ? (currentTheme.colors.glassLine3 || ['rgba(147, 197, 253, 0.02)', 'rgba(147, 197, 253, 0.005)'])
         : ['rgba(168, 162, 255, 0.75)', 'rgba(200, 195, 255, 0.38)'],
     ribbonRose: isClassic
       ? ['rgba(219, 234, 254, 0.55)', 'rgba(240, 249, 255, 0.75)']
@@ -164,6 +175,7 @@ function getAuroraTokens(activeThemeId: string) {
         : isSahara ? (currentTheme.gradients.auroraRose || ['rgba(212, 165, 116, 0.35)', 'rgba(212, 165, 116, 0.12)'])
         : isRetro ? (currentTheme.gradients.auroraRose || ['rgba(192, 57, 43, 0.22)', 'rgba(232, 98, 42, 0.06)'])
         : isZen ? (currentTheme.gradients.auroraRose || ['rgba(156, 163, 175, 0.14)', 'rgba(156, 163, 175, 0.05)'])
+        : isSapphire ? (currentTheme.colors.glassLine2 || ['rgba(59, 130, 246, 0.02)', 'rgba(59, 130, 246, 0.005)'])
         : ['rgba(220, 180, 255, 0.65)', 'rgba(230, 200, 255, 0.30)'],
     ribbonRight: isClassic
       ? ['rgba(37, 99, 235, 0.08)', 'rgba(255, 255, 255, 0.05)']
@@ -172,31 +184,50 @@ function getAuroraTokens(activeThemeId: string) {
         : isSahara ? ['rgba(245, 230, 211, 0.42)', 'rgba(245, 230, 211, 0.20)']
         : isRetro ? ['rgba(255, 253, 247, 0.42)', 'rgba(255, 253, 247, 0.20)']
         : isZen ? ['rgba(255, 255, 255, 0.08)', 'rgba(255, 255, 255, 0.02)']
+        : isSapphire ? (currentTheme.colors.glassLine3 || ['rgba(147, 197, 253, 0.02)', 'rgba(147, 197, 253, 0.005)'])
         : ['rgba(180, 170, 255, 0.38)', 'rgba(255, 255, 255, 0.05)'],
     ribbonHighlight: isClassic
       ? ['rgba(255, 255, 255, 0.70)', 'rgba(255, 255, 255, 0.30)']
+      : isSapphire ? (currentTheme.colors.glassGlow ? [currentTheme.colors.glassGlow, 'rgba(59, 130, 246, 0.005)'] : ['rgba(59, 130, 246, 0.02)', 'rgba(59, 130, 246, 0.005)'])
       : ['rgba(255, 255, 255, 0.28)', 'rgba(255, 255, 255, 0.06)'],
     // Theme-aware shortcut card styling
-    shortcutBorderColor: isClassic ? '#DCEBFF' : isForce ? '#FECACA' : isSahara ? '#E8D0B0' : isRetro ? '#E7C0A3' : isZen ? 'rgba(255, 255, 255, 0.12)' : undefined,
-    shortcutShadowColor: isClassic ? '#0EA5E9' : isForce ? '#EF4444' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? 'rgba(0, 0, 0, 0.45)' : undefined,
-    shortcutIconBg: isClassic ? 'rgba(219, 234, 254, 0.8)' : isForce ? 'rgba(254, 202, 202, 0.75)' : isSahara ? 'rgba(245, 230, 211, 0.75)' : isRetro ? 'rgba(255, 253, 247, 0.88)' : isZen ? 'rgba(255, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.6)',
-    shortcutIconBorder: isClassic ? '#DBEAFE' : isForce ? '#FCA5A5' : isSahara ? '#E8D0B0' : isRetro ? '#E7C0A3' : isZen ? 'rgba(255, 255, 255, 0.14)' : undefined,
+    shortcutBorderColor: isClassic ? '#DCEBFF' : isForce ? '#FECACA' : isSahara ? '#E8D0B0' : isRetro ? '#E7C0A3' : isZen ? 'rgba(255, 255, 255, 0.12)' : isSapphire ? (currentTheme.colors.glassBorder || 'rgba(147, 197, 253, 0.25)') : undefined,
+    shortcutShadowColor: isClassic ? '#0EA5E9' : isForce ? '#EF4444' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? 'rgba(0, 0, 0, 0.45)' : isSapphire ? (currentTheme.colors.glassShadow || 'rgba(59, 130, 246, 0.28)') : undefined,
+    shortcutIconBg: isClassic ? 'rgba(219, 234, 254, 0.8)' : isForce ? 'rgba(254, 202, 202, 0.75)' : isSahara ? 'rgba(245, 230, 211, 0.75)' : isRetro ? 'rgba(255, 253, 247, 0.88)' : isZen ? 'rgba(255, 255, 255, 0.08)' : isSapphire ? 'rgba(59, 130, 246, 0.14)' : 'rgba(255, 255, 255, 0.6)',
+    shortcutIconBorder: isClassic ? '#DBEAFE' : isForce ? '#FCA5A5' : isSahara ? '#E8D0B0' : isRetro ? '#E7C0A3' : isZen ? 'rgba(255, 255, 255, 0.14)' : isSapphire ? 'rgba(147, 197, 253, 0.24)' : undefined,
+    // Sapphire glass line flags
+    useThinLines: isSapphire,
+    // Sapphire shape tokens
+    cardRadius,
+    cardBorderWidth,
+    iconBubbleRadius,
+    shortcutRadius,
+    // New calm gemstone tokens for Sapphire
+    facetLarge: isSapphire ? (currentTheme.colors.facetLarge || 'rgba(147, 197, 253, 0.08)') : undefined,
+    facetMedium: isSapphire ? (currentTheme.colors.facetMedium || 'rgba(96, 165, 250, 0.06)') : undefined,
+    sapphireGlow: isSapphire ? (currentTheme.colors.sapphireGlow || 'rgba(59, 130, 246, 0.16)') : undefined,
   };
 }
 
 // Helper component for gradient cards with Soft Aurora Ribbon style
-function GradientCard({ children, style }: { children: React.ReactNode, style?: any }) {
+function GradientCard({ children, style, cardRadius }: { children: React.ReactNode, style?: any, cardRadius?: number }) {
   const theme = useTheme();
-  const { auroraGradient, ribbonTop, ribbonMid, ribbonBlue, ribbonRose, ribbonRight, ribbonHighlight } = getAuroraTokens(theme.id);
+  const { auroraGradient, ribbonTop, ribbonMid, ribbonBlue, ribbonRose, ribbonRight, ribbonHighlight, useThinLines, facetLarge, facetMedium, sapphireGlow } = getAuroraTokens(theme.id);
+
+  const ribbonStyleTop = useThinLines ? styles.thinRibbonTop : styles.ribbonTop;
+  const ribbonStyleMid = useThinLines ? styles.thinRibbonMid : styles.ribbonMid;
+  const ribbonStyleBlue = useThinLines ? styles.thinRibbonBlue : styles.ribbonBlue;
+  const ribbonStyleRose = useThinLines ? styles.thinRibbonRose : styles.ribbonRose;
+  const ribbonStyleRight = useThinLines ? styles.thinRibbonRight : styles.ribbonRight;
 
   return (
-    <View style={[styles.sectionCard, style]}>
+    <View style={[styles.sectionCard, style, { borderRadius: cardRadius || 16 }]}>
       {/* Background gradient layer - absolute full-cover */}
       <LinearGradient
         colors={auroraGradient}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
-        style={styles.sectionCardGradient}
+        style={[styles.sectionCardGradient, { borderRadius: cardRadius || 16 }]}
         pointerEvents="none"
       >
         {/* Top-left ribbon */}
@@ -204,7 +235,7 @@ function GradientCard({ children, style }: { children: React.ReactNode, style?: 
           colors={ribbonTop}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
-          style={styles.ribbonTop}
+          style={ribbonStyleTop}
           pointerEvents="none"
         />
         {/* Mid-card ribbon */}
@@ -212,7 +243,7 @@ function GradientCard({ children, style }: { children: React.ReactNode, style?: 
           colors={ribbonMid}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
-          style={styles.ribbonMid}
+          style={ribbonStyleMid}
           pointerEvents="none"
         />
         {/* Diagonal top-right ribbon */}
@@ -220,7 +251,7 @@ function GradientCard({ children, style }: { children: React.ReactNode, style?: 
           colors={ribbonBlue}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
-          style={styles.ribbonBlue}
+          style={ribbonStyleBlue}
           pointerEvents="none"
         />
         {/* Diagonal bottom-left ribbon */}
@@ -228,7 +259,7 @@ function GradientCard({ children, style }: { children: React.ReactNode, style?: 
           colors={ribbonRose}
           start={{ x: 0, y: 1 }}
           end={{ x: 1, y: 0 }}
-          style={styles.ribbonRose}
+          style={ribbonStyleRose}
           pointerEvents="none"
         />
         {/* Right-side accent ribbon */}
@@ -236,9 +267,23 @@ function GradientCard({ children, style }: { children: React.ReactNode, style?: 
           colors={ribbonRight}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
-          style={styles.ribbonRight}
+          style={ribbonStyleRight}
           pointerEvents="none"
         />
+        {/* Calm gemstone effects for Sapphire theme - max 3 layers */}
+        {useThinLines && sapphireGlow && (
+          <View style={[styles.sapphireGlowOverlay, { backgroundColor: sapphireGlow }]} pointerEvents="none" />
+        )}
+        {useThinLines && facetLarge && (
+          <View style={[styles.facetLarge, { backgroundColor: facetLarge }]} pointerEvents="none" />
+        )}
+        {useThinLines && facetMedium && (
+          <View style={[styles.facetMedium, { backgroundColor: facetMedium }]} pointerEvents="none" />
+        )}
+        {/* Subtle glass border for Sapphire theme */}
+        {useThinLines && (
+          <View style={styles.glassBorderOverlay} pointerEvents="none" />
+        )}
         {/* Soft white highlight overlay */}
         <LinearGradient
           colors={ribbonHighlight}
@@ -260,7 +305,7 @@ export default function NutritionMealScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const theme = useTheme();
-  const { auroraGradient, auroraTitle, auroraSubtitle, shortcutBorderColor, shortcutShadowColor, shortcutIconBg, shortcutIconBorder } = getAuroraTokens(theme.id);
+  const { auroraGradient, auroraTitle, auroraSubtitle, shortcutBorderColor, shortcutShadowColor, shortcutIconBg, shortcutIconBorder, cardRadius } = getAuroraTokens(theme.id);
   const [creatorMeals, setCreatorMeals] = useState<typeof NUTRITION_MEALS>([]);
 
   useEffect(() => {
@@ -404,14 +449,14 @@ export default function NutritionMealScreen() {
               </TouchableOpacity>
             )}
 
-            <GradientCard>
+            <GradientCard cardRadius={cardRadius}>
               <Text style={[styles.blockTitle, { color: theme.titleColor }]}>Ingredienten</Text>
               {ingredients.map((item) => (
                 <Text key={item} style={[styles.listText, { color: theme.subtitleColor }]}>• {item}</Text>
               ))}
             </GradientCard>
 
-            <GradientCard>
+            <GradientCard cardRadius={cardRadius}>
               <Text style={[styles.blockTitle, { color: theme.titleColor }]}>Bereidingswijze</Text>
               {steps.map((step, index) => (
                 <Text key={step} style={[styles.listText, { color: theme.subtitleColor }]}>{index + 1}. {step}</Text>
@@ -700,6 +745,86 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
+  },
+  // Thin ribbon styles for Sapphire theme
+  thinRibbonTop: {
+    position: 'absolute',
+    top: '-10%',
+    left: '-15%',
+    width: '200%',
+    height: '2px',
+    transform: [{ rotate: '15deg' }],
+  },
+  thinRibbonMid: {
+    position: 'absolute',
+    top: '30%',
+    left: '-10%',
+    width: '180%',
+    height: '1px',
+    transform: [{ rotate: '-10deg' }],
+  },
+  thinRibbonBlue: {
+    position: 'absolute',
+    top: '-8%',
+    left: '-8%',
+    width: '200%',
+    height: '2px',
+    transform: [{ rotate: '25deg' }],
+  },
+  thinRibbonRose: {
+    position: 'absolute',
+    bottom: '-8%',
+    right: '-8%',
+    width: '200%',
+    height: '2px',
+    transform: [{ rotate: '-20deg' }],
+  },
+  thinRibbonRight: {
+    position: 'absolute',
+    top: '-6%',
+    right: '-12%',
+    width: '180%',
+    height: '1px',
+    transform: [{ rotate: '-5deg' }],
+  },
+  // Calm gemstone styles for Sapphire theme
+  sapphireGlowOverlay: {
+    position: 'absolute',
+    top: '0%',
+    right: '0%',
+    width: '30%',
+    height: '30%',
+    borderRadius: 20,
+    opacity: 1,
+  },
+  facetLarge: {
+    position: 'absolute',
+    top: '10%',
+    left: '5%',
+    width: '50%',
+    height: '40%',
+    borderTopLeftRadius: 20,
+    opacity: 1,
+  },
+  facetMedium: {
+    position: 'absolute',
+    bottom: '15%',
+    right: '10%',
+    width: '40%',
+    height: '35%',
+    borderBottomRightRadius: 18,
+    opacity: 1,
+  },
+  glassBorderOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(147, 197, 253, 0.20)',
+    opacity: 1,
   },
   cardContent: {
     padding: 16,

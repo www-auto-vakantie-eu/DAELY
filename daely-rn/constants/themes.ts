@@ -1163,20 +1163,40 @@ export const THEMES: Record<ThemeId, AppTheme> = {
       warning: '#FBBF24',
       danger: '#F87171',
       info: '#60A5FA',
-      auroraTitle: undefined,
-      auroraSubtitle: undefined,
-      auroraHighlight: undefined,
-      auroraAccent: undefined,
+      // Sapphire Aurora text colors (deep sapphire / royal blue)
+      auroraTitle: '#EAF2FF',
+      auroraSubtitle: '#BFDBFE',
+      auroraHighlight: '#93C5FD',
+      auroraAccent: '#3B82F6',
+      // Sapphire custom shape tokens (faceted glass / gemstone)
+      cardRadius: 14,
+      cardBorderWidth: 1.5,
+      iconBubbleRadius: 12,
+      shortcutRadius: 12,
+      filterRadius: 16,
+      badgeRadius: 9999,
+      // Sapphire gemstone/facet tokens (rustige edelsteen effecten)
+      // Grote facetvlakken in plaats van vele kleine lijnen
+      facetLarge: 'rgba(96, 165, 250, 0.10)',
+      facetMedium: 'rgba(147, 197, 253, 0.07)',
+      facetSmall: 'rgba(59, 130, 246, 0.05)',
+      // Sapphire glow (één zachte glow, geen meerdere zones)
+      sapphireGlow: 'rgba(59, 130, 246, 0.16)',
+      // Sapphire glass border (subtiele rand)
+      glassBorder: 'rgba(147, 197, 253, 0.20)',
+      // Sapphire shadow (diepe maar subtiele schaduw)
+      glassShadow: 'rgba(29, 78, 216, 0.28)',
     },
     gradients: {
       appBackground: ['#0C1220', '#162032'],
       hero: ['#3B82F6', '#1D4ED8', '#1E3A8A'],
-      card: ['#162032', '#1E293B'],
+      card: ['#06101F', '#0C1220', '#102A4C'],
       button: ['#3B82F6', '#2563EB'],
       progress: ['#3B82F6', '#60A5FA', '#93C5FD'],
-      aurora: undefined,
-      auroraBlue: undefined,
-      auroraRose: undefined,
+      // Sapphire Aurora gradients for ribbon cards (rustige gemstone)
+      aurora: ['#06101F', '#0C1220', '#102A4C'],
+      auroraBlue: ['rgba(96, 165, 250, 0.10)', 'rgba(96, 165, 250, 0.03)'],
+      auroraRose: ['rgba(147, 197, 253, 0.07)', 'rgba(147, 197, 253, 0.02)'],
     },
     typography: {
       headingFontFamily: 'System',
@@ -1187,16 +1207,16 @@ export const THEMES: Record<ThemeId, AppTheme> = {
       bodyLetterSpacing: 0.1,
     },
     radius: {
-      sm: 8,
-      md: 12,
-      lg: 16,
-      xl: 20,
+      sm: 6,
+      md: 10,
+      lg: 14,
+      xl: 18,
       full: 9999,
     },
     shadows: {
-      card: { shadowColor: '#3B82F6', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.25, shadowRadius: 16, elevation: 4 },
-      button: { shadowColor: '#3B82F6', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.35, shadowRadius: 8, elevation: 3 },
-      glow: { shadowColor: '#3B82F6', shadowOffset: { width: 0, height: 0 }, shadowOpacity: 0.5, shadowRadius: 24, elevation: 0 },
+      card: { shadowColor: '#1D4ED8', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.32, shadowRadius: 20, elevation: 5 },
+      button: { shadowColor: '#3B82F6', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.42, shadowRadius: 12, elevation: 4 },
+      glow: { shadowColor: '#60A5FA', shadowOffset: { width: 0, height: 0 }, shadowOpacity: 0.6, shadowRadius: 32, elevation: 0 },
     },
     navigation: {
       tabBarBackground: '#162032',

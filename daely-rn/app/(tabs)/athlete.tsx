@@ -36,6 +36,7 @@ export default function InstellingenScreen() {
   const isSahara = currentTheme.id === 'saharaDune';
   const isRetro = currentTheme.id === 'retroSport';
   const isZen = currentTheme.id === 'zenInk';
+  const isSapphire = currentTheme.id === 'sapphire';
 
   const classicGlowGradient = isClassic
     ? ['#FFFFFF', '#F8FBFF', '#EFF6FF']
@@ -44,15 +45,16 @@ export default function InstellingenScreen() {
       : isSahara ? (currentTheme.gradients.aurora || ['#FFFFFF', '#FDF8EF', '#F3E4CF'])
       : isRetro ? (currentTheme.gradients.aurora || ['#FFFDF7', '#F7F0E6', '#FBE3D0'])
       : isZen ? (currentTheme.gradients.aurora || ['#111111', '#1A1A1A', '#2D2D2D'])
+      : isSapphire ? (currentTheme.gradients.aurora || ['#07111F', '#0C1220', '#162B4F'])
       : currentTheme.gradients.aurora || ['#E8E6FF', '#D0CCFF', '#B8B4FF'];
 
-  const sectionBorderColor = isClassic ? '#DCEBFF' : isForce ? '#FECACA' : isSahara ? '#E8D0B0' : isRetro ? '#E7C0A3' : isZen ? 'rgba(255, 255, 255, 0.12)' : undefined;
-  const sectionShadowColor = isClassic ? '#0EA5E9' : isForce ? '#EF4444' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? 'rgba(0, 0, 0, 0.45)' : undefined;
-  const iconColor = isClassic ? '#2563EB' : isForce ? '#DC2626' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? '#FFFFFF' : currentTheme.colors.primary || '#6B7280';
-  const chevronColor = isClassic ? '#475569' : '#D1D5DB';
-  const titleColor = isClassic ? '#0F172A' : isForce ? '#7F1D1D' : isSahara ? '#7A4E24' : isRetro ? '#1B2E6B' : isZen ? '#FFFFFF' : theme.titleColor;
-  const subtitleColor = isClassic ? '#475569' : isForce ? '#B91C1C' : isSahara ? '#9A6B3A' : isRetro ? '#B42318' : isZen ? '#B0B0B0' : theme.subtitleColor;
-  const separatorColor = isClassic ? '#DBEAFE' : isForce ? '#FEE2E2' : isSahara ? '#E8D0B0' : isRetro ? '#E7C0A3' : isZen ? 'rgba(255, 255, 255, 0.12)' : '#E5E7EB';
+  const sectionBorderColor = isClassic ? '#DCEBFF' : isForce ? '#FECACA' : isSahara ? '#E8D0B0' : isRetro ? '#E7C0A3' : isZen ? 'rgba(255, 255, 255, 0.12)' : isSapphire ? 'rgba(147, 197, 253, 0.22)' : undefined;
+  const sectionShadowColor = isClassic ? '#0EA5E9' : isForce ? '#EF4444' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? 'rgba(0, 0, 0, 0.45)' : isSapphire ? 'rgba(59, 130, 246, 0.24)' : undefined;
+  const iconColor = isClassic ? '#2563EB' : isForce ? '#DC2626' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? '#FFFFFF' : isSapphire ? '#EAF2FF' : currentTheme.colors.primary || '#6B7280';
+  const chevronColor = isClassic ? '#475569' : isSapphire ? '#93C5FD' : '#D1D5DB';
+  const titleColor = isClassic ? '#0F172A' : isForce ? '#7F1D1D' : isSahara ? '#7A4E24' : isRetro ? '#1B2E6B' : isZen ? '#FFFFFF' : isSapphire ? '#EAF2FF' : theme.titleColor;
+  const subtitleColor = isClassic ? '#475569' : isForce ? '#B91C1C' : isSahara ? '#9A6B3A' : isRetro ? '#B42318' : isZen ? '#B0B0B0' : isSapphire ? '#BFDBFE' : theme.subtitleColor;
+  const separatorColor = isClassic ? '#DBEAFE' : isForce ? '#FEE2E2' : isSahara ? '#E8D0B0' : isRetro ? '#E7C0A3' : isZen ? 'rgba(255, 255, 255, 0.12)' : isSapphire ? 'rgba(147, 197, 253, 0.24)' : '#E5E7EB';
   const [pendingSyncCount, setPendingSyncCount] = useState(0);
   const [syncInProgress, setSyncInProgress] = useState(false);
   const [syncStatusMessage, setSyncStatusMessage] = useState('Nog niet gesynchroniseerd in deze sessie.');

@@ -68,12 +68,19 @@ function getClassicGlowTokens(activeThemeId: string) {
   const isSahara = currentTheme.id === 'saharaDune';
   const isRetro = currentTheme.id === 'retroSport';
   const isZen = currentTheme.id === 'zenInk';
+  const isSapphire = currentTheme.id === 'sapphire';
+
+  // Sapphire-specific shape tokens
+  const cardRadius = isSapphire ? (currentTheme.colors.cardRadius || 14) : isRetro ? 16 : isSahara ? 16 : isForce ? 16 : isZen ? 14 : 16;
+  const cardBorderWidth = isSapphire ? (currentTheme.colors.cardBorderWidth || 1.5) : isRetro ? 1 : isSahara ? 1 : isForce ? 1 : isZen ? 1 : 1;
+  const iconBubbleRadius = isSapphire ? (currentTheme.colors.iconBubbleRadius || 12) : isRetro ? 14 : isSahara ? 14 : isForce ? 14 : isZen ? 10 : 14;
+  const shortcutRadius = isSapphire ? (currentTheme.colors.shortcutRadius || 12) : 16;
 
   return {
     isClassic,
-    gradient: isClassic ? ['#FFFFFF', '#F8FBFF', '#EFF6FF'] : isForce ? (currentTheme.gradients.aurora || ['#FFFFFF', '#FFF1F2', '#FFE4E6']) : isSahara ? (currentTheme.gradients.aurora || ['#FFFFFF', '#FDF8EF', '#F3E4CF']) : isRetro ? (currentTheme.gradients.aurora || ['#FFFDF7', '#F7F0E6', '#FBE3D0']) : isZen ? (currentTheme.gradients.aurora || ['#111111', '#1A1A1A', '#2D2D2D']) : currentTheme.gradients.aurora || ['#E8E6FF', '#D0CCFF', '#B8B4FF'],
-    titleColor: isClassic ? '#0F172A' : (currentTheme.colors.auroraTitle || (isZen ? '#FFFFFF' : isRetro ? '#1B2E6B' : isSahara ? '#7A4E24' : isForce ? '#7F1D1D' : '#1E1B4B')),
-    subtitleColor: isClassic ? '#475569' : (currentTheme.colors.auroraSubtitle || (isZen ? '#B0B0B0' : isRetro ? '#B42318' : isSahara ? '#9A6B3A' : isForce ? '#B91C1C' : '#4A3A8C')),
+    gradient: isClassic ? ['#FFFFFF', '#F8FBFF', '#EFF6FF'] : isForce ? (currentTheme.gradients.aurora || ['#FFFFFF', '#FFF1F2', '#FFE4E6']) : isSahara ? (currentTheme.gradients.aurora || ['#FFFFFF', '#FDF8EF', '#F3E4CF']) : isRetro ? (currentTheme.gradients.aurora || ['#FFFDF7', '#F7F0E6', '#FBE3D0']) : isZen ? (currentTheme.gradients.aurora || ['#111111', '#1A1A1A', '#2D2D2D']) : isSapphire ? (currentTheme.gradients.aurora || ['#07111F', '#0C1220', '#162B4F']) : currentTheme.gradients.aurora || ['#E8E6FF', '#D0CCFF', '#B8B4FF'],
+    titleColor: isClassic ? '#0F172A' : (currentTheme.colors.auroraTitle || (isZen ? '#FFFFFF' : isRetro ? '#1B2E6B' : isSahara ? '#7A4E24' : isForce ? '#7F1D1D' : isSapphire ? '#EAF2FF' : '#1E1B4B')),
+    subtitleColor: isClassic ? '#475569' : (currentTheme.colors.auroraSubtitle || (isZen ? '#B0B0B0' : isRetro ? '#B42318' : isSahara ? '#9A6B3A' : isForce ? '#B91C1C' : isSapphire ? '#BFDBFE' : '#4A3A8C')),
     // Theme-aware ribbon colors
     ribbonTop: isClassic
       ? ['rgba(37, 99, 235, 0.08)', 'rgba(14, 165, 233, 0.10)']
@@ -82,6 +89,7 @@ function getClassicGlowTokens(activeThemeId: string) {
         : isSahara ? (currentTheme.gradients.auroraBlue || ['rgba(232, 208, 176, 0.32)', 'rgba(232, 208, 176, 0.10)'])
         : isRetro ? (currentTheme.gradients.auroraBlue || ['rgba(27, 46, 107, 0.16)', 'rgba(27, 46, 107, 0.04)'])
         : isZen ? (currentTheme.gradients.auroraBlue || ['rgba(255, 255, 255, 0.10)', 'rgba(255, 255, 255, 0.03)'])
+        : isSapphire ? (currentTheme.gradients.auroraBlue || ['rgba(59, 130, 246, 0.22)', 'rgba(59, 130, 246, 0.04)'])
         : ['rgba(168, 162, 255, 0.55)', 'rgba(200, 195, 255, 0.12)'],
     ribbonMid: isClassic
       ? ['rgba(219, 234, 254, 0.55)', 'rgba(240, 249, 255, 0.75)']
@@ -90,6 +98,7 @@ function getClassicGlowTokens(activeThemeId: string) {
         : isSahara ? ['rgba(245, 230, 211, 0.42)', 'rgba(245, 230, 211, 0.20)']
         : isRetro ? ['rgba(255, 253, 247, 0.42)', 'rgba(255, 253, 247, 0.20)']
         : isZen ? ['rgba(255, 255, 255, 0.08)', 'rgba(255, 255, 255, 0.02)']
+        : isSapphire ? ['rgba(147, 197, 253, 0.15)', 'rgba(147, 197, 253, 0.04)']
         : ['rgba(220, 180, 255, 0.42)', 'rgba(200, 195, 255, 0.20)'],
     ribbonBlue: isClassic
       ? ['rgba(37, 99, 235, 0.08)', 'rgba(14, 165, 233, 0.10)']
@@ -98,6 +107,7 @@ function getClassicGlowTokens(activeThemeId: string) {
         : isSahara ? (currentTheme.gradients.auroraBlue || ['rgba(232, 208, 176, 0.32)', 'rgba(232, 208, 176, 0.10)'])
         : isRetro ? (currentTheme.gradients.auroraBlue || ['rgba(27, 46, 107, 0.16)', 'rgba(27, 46, 107, 0.04)'])
         : isZen ? (currentTheme.gradients.auroraBlue || ['rgba(255, 255, 255, 0.10)', 'rgba(255, 255, 255, 0.03)'])
+        : isSapphire ? (currentTheme.gradients.auroraBlue || ['rgba(59, 130, 246, 0.22)', 'rgba(59, 130, 246, 0.04)'])
         : ['rgba(168, 162, 255, 0.75)', 'rgba(200, 195, 255, 0.38)'],
     ribbonRose: isClassic
       ? ['rgba(219, 234, 254, 0.55)', 'rgba(240, 249, 255, 0.75)']
@@ -106,6 +116,7 @@ function getClassicGlowTokens(activeThemeId: string) {
         : isSahara ? (currentTheme.gradients.auroraRose || ['rgba(212, 165, 116, 0.35)', 'rgba(212, 165, 116, 0.12)'])
         : isRetro ? (currentTheme.gradients.auroraRose || ['rgba(192, 57, 43, 0.22)', 'rgba(232, 98, 42, 0.06)'])
         : isZen ? (currentTheme.gradients.auroraRose || ['rgba(156, 163, 175, 0.14)', 'rgba(156, 163, 175, 0.05)'])
+        : isSapphire ? (currentTheme.gradients.auroraRose || ['rgba(147, 197, 253, 0.20)', 'rgba(147, 197, 253, 0.06)'])
         : ['rgba(220, 180, 255, 0.65)', 'rgba(230, 200, 255, 0.30)'],
     ribbonRight: isClassic
       ? ['rgba(37, 99, 235, 0.08)', 'rgba(255, 255, 255, 0.05)']
@@ -114,17 +125,23 @@ function getClassicGlowTokens(activeThemeId: string) {
         : isSahara ? ['rgba(245, 230, 211, 0.42)', 'rgba(245, 230, 211, 0.20)']
         : isRetro ? ['rgba(255, 253, 247, 0.42)', 'rgba(255, 253, 247, 0.20)']
         : isZen ? ['rgba(255, 255, 255, 0.08)', 'rgba(255, 255, 255, 0.02)']
+        : isSapphire ? ['rgba(147, 197, 253, 0.15)', 'rgba(147, 197, 253, 0.04)']
         : ['rgba(180, 170, 255, 0.38)', 'rgba(255, 255, 255, 0.05)'],
     ribbonHighlight: isClassic
       ? ['rgba(255, 255, 255, 0.70)', 'rgba(255, 255, 255, 0.30)']
       : ['rgba(255, 255, 255, 0.28)', 'rgba(255, 255, 255, 0.06)'],
     // Theme-aware shortcut card styling
-    shortcutBorderColor: isClassic ? '#DCEBFF' : isForce ? '#FECACA' : isSahara ? '#E8D0B0' : isRetro ? '#E7C0A3' : isZen ? 'rgba(255, 255, 255, 0.12)' : undefined,
-    shortcutShadowColor: isClassic ? '#0EA5E9' : isForce ? '#EF4444' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? 'rgba(0, 0, 0, 0.45)' : undefined,
-    shortcutIconBg: isClassic ? 'rgba(219, 234, 254, 0.8)' : isForce ? 'rgba(254, 202, 202, 0.75)' : isSahara ? 'rgba(245, 230, 211, 0.75)' : isRetro ? 'rgba(255, 253, 247, 0.88)' : isZen ? 'rgba(255, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.6)',
-    shortcutIconBorder: isClassic ? '#DBEAFE' : isForce ? '#FCA5A5' : isSahara ? '#E8D0B0' : isRetro ? '#E7C0A3' : isZen ? 'rgba(255, 255, 255, 0.14)' : undefined,
+    shortcutBorderColor: isClassic ? '#DCEBFF' : isForce ? '#FECACA' : isSahara ? '#E8D0B0' : isRetro ? '#E7C0A3' : isZen ? 'rgba(255, 255, 255, 0.12)' : isSapphire ? 'rgba(147, 197, 253, 0.22)' : undefined,
+    shortcutShadowColor: isClassic ? '#0EA5E9' : isForce ? '#EF4444' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? 'rgba(0, 0, 0, 0.45)' : isSapphire ? 'rgba(59, 130, 246, 0.24)' : undefined,
+    shortcutIconBg: isClassic ? 'rgba(219, 234, 254, 0.8)' : isForce ? 'rgba(254, 202, 202, 0.75)' : isSahara ? 'rgba(245, 230, 211, 0.75)' : isRetro ? 'rgba(255, 253, 247, 0.88)' : isZen ? 'rgba(255, 255, 255, 0.08)' : isSapphire ? 'rgba(59, 130, 246, 0.14)' : 'rgba(255, 255, 255, 0.6)',
+    shortcutIconBorder: isClassic ? '#DBEAFE' : isForce ? '#FCA5A5' : isSahara ? '#E8D0B0' : isRetro ? '#E7C0A3' : isZen ? 'rgba(255, 255, 255, 0.14)' : isSapphire ? 'rgba(147, 197, 253, 0.24)' : undefined,
     // Secondary button color
-    secondaryButtonColor: isClassic ? '#2563EB' : isForce ? '#DC2626' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : '#8B5CF6',
+    secondaryButtonColor: isClassic ? '#2563EB' : isForce ? '#DC2626' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isSapphire ? '#3B82F6' : '#8B5CF6',
+    // Sapphire shape tokens
+    cardRadius,
+    cardBorderWidth,
+    iconBubbleRadius,
+    shortcutRadius,
   };
 }
 
@@ -232,7 +249,7 @@ export default function MessagesScreen() {
             {filteredThreads.map((thread) => (
               <Pressable
                 key={thread.id}
-                style={[styles.threadCard, { borderColor: shortcutBorderColor, shadowColor: shortcutShadowColor }]}
+                style={[styles.threadCard, { borderColor: shortcutBorderColor, shadowColor: shortcutShadowColor, borderRadius: shortcutRadius, borderWidth: cardBorderWidth }]}
                 onPress={() => router.push(`/messages/${thread.id}` as Href)}
               >
                 <View style={styles.threadCardInner}>
@@ -241,7 +258,7 @@ export default function MessagesScreen() {
                     colors={gradient}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 1 }}
-                    style={styles.threadCardBackground}
+                    style={[styles.threadCardBackground, { borderRadius: shortcutRadius }]}
                     pointerEvents="none"
                   >
                     {/* Top-left ribbon */}

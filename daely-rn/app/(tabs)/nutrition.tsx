@@ -64,6 +64,7 @@ function getQuickActionTokens(activeThemeId: string) {
   const isSahara = currentTheme.id === 'saharaDune';
   const isRetro = currentTheme.id === 'retroSport';
   const isZen = currentTheme.id === 'zenInk';
+  const isSapphire = currentTheme.id === 'sapphire';
 
   // DAELY Classic Glow gradient for buttons
   const classicGlowGradient = isClassic
@@ -73,16 +74,30 @@ function getQuickActionTokens(activeThemeId: string) {
       : isSahara ? (currentTheme.gradients.aurora || ['#FFFFFF', '#FDF8EF', '#F3E4CF'])
       : isRetro ? (currentTheme.gradients.aurora || ['#FFFDF7', '#F7F0E6', '#FBE3D0'])
       : isZen ? (currentTheme.gradients.aurora || ['#3D3D3D', '#4A4A4A', '#5A5A5A'])
+      : isSapphire ? (currentTheme.gradients.aurora || ['#07111F', '#0C1220', '#162B4F'])
       : ['#E8E6FF', '#D0CCFF', '#B8B4FF'];
+
+  // Sapphire-specific shape tokens for quick actions
+  const quickActionRadius = isSapphire ? (currentTheme.colors.shortcutRadius || 12) : 16;
+  const quickActionIconRadius = isSapphire ? (currentTheme.colors.iconBubbleRadius || 12) : 14;
+  const quickActionShadowOpacity = isSapphire ? 0.32 : 0.08;
+  const quickActionShadowRadius = isSapphire ? 12 : 8;
+  const quickActionShadowOffset = isSapphire ? { width: 0, height: 4 } : { width: 0, height: 2 };
 
   return {
     gradient: classicGlowGradient,
-    iconColor: isClassic ? '#2563EB' : isForce ? '#DC2626' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? '#F9FAFB' : '#4A3A8C',
-    iconBg: isClassic ? 'rgba(219, 234, 254, 0.7)' : isForce ? 'rgba(254, 202, 202, 0.7)' : isSahara ? 'rgba(245, 230, 211, 0.7)' : isRetro ? 'rgba(255, 253, 247, 0.7)' : isZen ? 'rgba(255, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.7)',
-    iconBorder: isClassic ? 'rgba(255, 255, 255, 0.9)' : isForce ? 'rgba(255, 255, 255, 0.9)' : isSahara ? 'rgba(255, 255, 255, 0.9)' : isRetro ? 'rgba(255, 255, 255, 0.9)' : isZen ? 'rgba(255, 255, 255, 0.16)' : 'rgba(255, 255, 255, 0.9)',
-    titleColor: isClassic ? '#0F172A' : isForce ? '#7F1D1D' : isSahara ? '#7A4E24' : isRetro ? '#1B2E6B' : isZen ? '#F9FAFB' : '#1E1B4B',
-    subtitleColor: isClassic ? '#475569' : isForce ? '#B91C1C' : isSahara ? '#9A6B3A' : isRetro ? '#B42318' : isZen ? '#D1D5DB' : '#4A3A8C',
-    shadowColor: isClassic ? '#0EA5E9' : isForce ? '#EF4444' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? '#000000' : '#6B5B95',
+    iconColor: isClassic ? '#2563EB' : isForce ? '#DC2626' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? '#F9FAFB' : isSapphire ? '#EAF2FF' : '#4A3A8C',
+    iconBg: isClassic ? 'rgba(219, 234, 254, 0.7)' : isForce ? 'rgba(254, 202, 202, 0.7)' : isSahara ? 'rgba(245, 230, 211, 0.7)' : isRetro ? 'rgba(255, 253, 247, 0.7)' : isZen ? 'rgba(255, 255, 255, 0.08)' : isSapphire ? 'rgba(59, 130, 246, 0.14)' : 'rgba(255, 255, 255, 0.7)',
+    iconBorder: isClassic ? 'rgba(255, 255, 255, 0.9)' : isForce ? 'rgba(255, 255, 255, 0.9)' : isSahara ? 'rgba(255, 255, 255, 0.9)' : isRetro ? 'rgba(255, 255, 255, 0.9)' : isZen ? 'rgba(255, 255, 255, 0.16)' : isSapphire ? 'rgba(147, 197, 253, 0.24)' : 'rgba(255, 255, 255, 0.9)',
+    titleColor: isClassic ? '#0F172A' : isForce ? '#7F1D1D' : isSahara ? '#7A4E24' : isRetro ? '#1B2E6B' : isZen ? '#F9FAFB' : isSapphire ? '#EAF2FF' : '#1E1B4B',
+    subtitleColor: isClassic ? '#475569' : isForce ? '#B91C1C' : isSahara ? '#9A6B3A' : isRetro ? '#B42318' : isZen ? '#D1D5DB' : isSapphire ? '#BFDBFE' : '#4A3A8C',
+    shadowColor: isClassic ? '#0EA5E9' : isForce ? '#EF4444' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? '#000000' : isSapphire ? 'rgba(59, 130, 246, 0.24)' : '#6B5B95',
+    // Sapphire shape tokens
+    quickActionRadius,
+    quickActionIconRadius,
+    quickActionShadowOpacity,
+    quickActionShadowRadius,
+    quickActionShadowOffset,
   };
 }
 
@@ -94,6 +109,12 @@ function getFilterTokens(activeThemeId: string) {
   const isSahara = currentTheme.id === 'saharaDune';
   const isRetro = currentTheme.id === 'retroSport';
   const isZen = currentTheme.id === 'zenInk';
+  const isSapphire = currentTheme.id === 'sapphire';
+
+  // Sapphire-specific filter tokens
+  const filterRadius = isSapphire ? (currentTheme.colors.filterRadius || 16) : 18;
+  const filterBorderWidth = isSapphire ? 1.5 : 1;
+  const badgeRadius = isSapphire ? (currentTheme.colors.badgeRadius || 9999) : 9999;
 
   if (isClassic) {
     return {
@@ -105,6 +126,9 @@ function getFilterTokens(activeThemeId: string) {
       unselectedTextColor: '#475569',
       badgeBackgroundColor: '#FFFFFF',
       badgeTextColor: '#2563EB',
+      filterRadius: 18,
+      filterBorderWidth: 1,
+      badgeRadius: 9999,
     };
   } else if (isForce) {
     return {
@@ -116,6 +140,9 @@ function getFilterTokens(activeThemeId: string) {
       unselectedTextColor: '#B91C1C',
       badgeBackgroundColor: '#FFFFFF',
       badgeTextColor: '#DC2626',
+      filterRadius: 18,
+      filterBorderWidth: 1,
+      badgeRadius: 9999,
     };
   } else if (isSahara) {
     return {
@@ -127,6 +154,9 @@ function getFilterTokens(activeThemeId: string) {
       unselectedTextColor: '#9A6B3A',
       badgeBackgroundColor: '#FFFFFF',
       badgeTextColor: '#C89B72',
+      filterRadius: 18,
+      filterBorderWidth: 1,
+      badgeRadius: 9999,
     };
   } else if (isRetro) {
     return {
@@ -138,6 +168,9 @@ function getFilterTokens(activeThemeId: string) {
       unselectedTextColor: '#B42318',
       badgeBackgroundColor: '#FFFFFF',
       badgeTextColor: '#1B2E6B',
+      filterRadius: 18,
+      filterBorderWidth: 1,
+      badgeRadius: 9999,
     };
   } else if (isZen) {
     return {
@@ -149,6 +182,23 @@ function getFilterTokens(activeThemeId: string) {
       unselectedTextColor: '#B0B0B0',
       badgeBackgroundColor: '#FFFFFF',
       badgeTextColor: '#FFFFFF',
+      filterRadius: 18,
+      filterBorderWidth: 1,
+      badgeRadius: 9999,
+    };
+  } else if (isSapphire) {
+    return {
+      selectedBorderColor: '#3B82F6',
+      selectedBackgroundColor: '#0C1220',
+      selectedTextColor: '#EAF2FF',
+      unselectedBorderColor: 'rgba(147, 197, 253, 0.24)',
+      unselectedBackgroundColor: '#07111F',
+      unselectedTextColor: '#BFDBFE',
+      badgeBackgroundColor: '#0C1220',
+      badgeTextColor: '#EAF2FF',
+      filterRadius,
+      filterBorderWidth,
+      badgeRadius,
     };
   } else {
     return {
@@ -160,6 +210,9 @@ function getFilterTokens(activeThemeId: string) {
       unselectedTextColor: '#6B5B95',
       badgeBackgroundColor: '#FFFFFF',
       badgeTextColor: '#8B7CF6',
+      filterRadius: 18,
+      filterBorderWidth: 1,
+      badgeRadius: 9999,
     };
   }
 }
@@ -171,8 +224,8 @@ export default function NutritionScreen() {
   const [activeFilterCategory, setActiveFilterCategory] = useState<FilterKey | null>(null);
   const [activeFilterChips, setActiveFilterChips] = useState<FilterChip[]>([]);
   const [unreadMessageCount, setUnreadMessageCount] = useState(0);
-  const { gradient, iconColor, iconBg, iconBorder, titleColor, subtitleColor, shadowColor } = getQuickActionTokens(activeThemeId);
-  const { selectedBorderColor, selectedBackgroundColor, selectedTextColor, unselectedBorderColor, unselectedBackgroundColor, unselectedTextColor, badgeBackgroundColor, badgeTextColor } = getFilterTokens(activeThemeId);
+  const { gradient, iconColor, iconBg, iconBorder, titleColor, subtitleColor, shadowColor, quickActionRadius, quickActionIconRadius, quickActionShadowOpacity, quickActionShadowRadius, quickActionShadowOffset } = getQuickActionTokens(activeThemeId);
+  const { selectedBorderColor, selectedBackgroundColor, selectedTextColor, unselectedBorderColor, unselectedBackgroundColor, unselectedTextColor, badgeBackgroundColor, badgeTextColor, filterRadius, filterBorderWidth, badgeRadius } = getFilterTokens(activeThemeId);
 
   useEffect(() => {
     getUnreadMessageCount().then(setUnreadMessageCount);
@@ -233,7 +286,7 @@ export default function NutritionScreen() {
               key={action.key}
               style={({ pressed }) => [
                 styles.quickActionButton,
-                { shadowColor },
+                { shadowColor, borderRadius: quickActionRadius, shadowOpacity: quickActionShadowOpacity, shadowRadius: quickActionShadowRadius, shadowOffset: quickActionShadowOffset },
                 pressed && { opacity: 0.85, transform: [{ scale: 0.98 }] },
               ]}
               onPress={() => router.push(action.route)}
@@ -242,9 +295,9 @@ export default function NutritionScreen() {
                 colors={gradient}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
-                style={styles.quickActionButtonGradient}
+                style={[styles.quickActionButtonGradient, { borderRadius: quickActionRadius }]}
               >
-                <View style={[styles.quickActionIconBubble, { backgroundColor: iconBg, borderColor: iconBorder }]}>
+                <View style={[styles.quickActionIconBubble, { backgroundColor: iconBg, borderColor: iconBorder, borderRadius: quickActionIconRadius }]}>
                   <MaterialCommunityIcons name={action.icon} size={20} color={iconColor} />
                 </View>
                 <View style={styles.quickActionTextWrap}>
@@ -268,14 +321,14 @@ export default function NutritionScreen() {
               key={category.key}
               style={({ pressed }) => [
                 styles.filterTab,
-                { borderColor: isActive ? selectedBorderColor : unselectedBorderColor, backgroundColor: isActive ? selectedBackgroundColor : unselectedBackgroundColor },
+                { borderColor: isActive ? selectedBorderColor : unselectedBorderColor, backgroundColor: isActive ? selectedBackgroundColor : unselectedBackgroundColor, borderRadius: filterRadius, borderWidth: filterBorderWidth },
                 pressed && { opacity: 0.8 },
               ]}
               onPress={() => setActiveFilterCategory(prev => (prev === category.key ? null : category.key))}
             >
               <Text style={[styles.filterTabText, { color: isActive ? selectedTextColor : unselectedTextColor }]}>{category.label}</Text>
               {count > 0 && (
-                <View style={[styles.filterTabBadge, { backgroundColor: badgeBackgroundColor }]}>
+                <View style={[styles.filterTabBadge, { backgroundColor: badgeBackgroundColor, borderRadius: badgeRadius }]}>
                   <Text style={[styles.filterTabBadgeText, { color: badgeTextColor }]}>{count}</Text>
                 </View>
               )}
