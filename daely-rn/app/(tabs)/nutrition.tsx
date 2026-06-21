@@ -66,6 +66,7 @@ function getQuickActionTokens(activeThemeId: string) {
   const isZen = currentTheme.id === 'zenInk';
   const isSapphire = currentTheme.id === 'sapphire';
   const isRuby = currentTheme.id === 'ruby';
+  const isCoral = currentTheme.id === 'coralBloom';
 
   // DAELY Classic Glow gradient for buttons
   const classicGlowGradient = isClassic
@@ -77,6 +78,7 @@ function getQuickActionTokens(activeThemeId: string) {
       : isZen ? (currentTheme.gradients.aurora || ['#3D3D3D', '#4A4A4A', '#5A5A5A'])
       : isSapphire ? (currentTheme.gradients.aurora || ['#07111F', '#0C1220', '#162B4F'])
       : isRuby ? (currentTheme.gradients.aurora || ['#140607', '#240A10', '#3A1420'])
+      : isCoral ? (currentTheme.gradients.aurora || ['#FFF7F3', '#FFEDE7', '#FFD6C9'])
       : ['#E8E6FF', '#D0CCFF', '#B8B4FF'];
 
   // Sapphire-specific shape tokens for quick actions
@@ -88,12 +90,12 @@ function getQuickActionTokens(activeThemeId: string) {
 
   return {
     gradient: classicGlowGradient,
-    iconColor: isClassic ? '#2563EB' : isForce ? '#DC2626' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? '#F9FAFB' : isSapphire ? '#EAF2FF' : isRuby ? '#FFE4EC' : '#4A3A8C',
-    iconBg: isClassic ? 'rgba(219, 234, 254, 0.7)' : isForce ? 'rgba(254, 202, 202, 0.7)' : isSahara ? 'rgba(245, 230, 211, 0.7)' : isRetro ? 'rgba(255, 253, 247, 0.7)' : isZen ? 'rgba(255, 255, 255, 0.08)' : isSapphire ? 'rgba(59, 130, 246, 0.14)' : isRuby ? (currentTheme.colors.rubyIconBg || 'rgba(184, 50, 90, 0.14)') : 'rgba(255, 255, 255, 0.7)',
-    iconBorder: isClassic ? 'rgba(255, 255, 255, 0.9)' : isForce ? 'rgba(255, 255, 255, 0.9)' : isSahara ? 'rgba(255, 255, 255, 0.9)' : isRetro ? 'rgba(255, 255, 255, 0.9)' : isZen ? 'rgba(255, 255, 255, 0.16)' : isSapphire ? 'rgba(147, 197, 253, 0.24)' : isRuby ? (currentTheme.colors.rubyIconBorder || 'rgba(244, 167, 185, 0.24)') : 'rgba(255, 255, 255, 0.9)',
-    titleColor: isClassic ? '#0F172A' : isForce ? '#7F1D1D' : isSahara ? '#7A4E24' : isRetro ? '#1B2E6B' : isZen ? '#F9FAFB' : isSapphire ? '#EAF2FF' : isRuby ? '#FFE4EC' : '#1E1B4B',
-    subtitleColor: isClassic ? '#475569' : isForce ? '#B91C1C' : isSahara ? '#9A6B3A' : isRetro ? '#B42318' : isZen ? '#D1D5DB' : isSapphire ? '#BFDBFE' : isRuby ? '#F4A7B9' : '#4A3A8C',
-    shadowColor: isClassic ? '#0EA5E9' : isForce ? '#EF4444' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? '#000000' : isSapphire ? 'rgba(59, 130, 246, 0.24)' : isRuby ? (currentTheme.colors.rubyGlowShadow || 'rgba(184, 50, 90, 0.24)') : '#6B5B95',
+    iconColor: isClassic ? '#2563EB' : isForce ? '#DC2626' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? '#F9FAFB' : isSapphire ? '#EAF2FF' : isRuby ? '#FFE4EC' : isCoral ? '#7A2E2E' : '#4A3A8C',
+    iconBg: isClassic ? 'rgba(219, 234, 254, 0.7)' : isForce ? 'rgba(254, 202, 202, 0.7)' : isSahara ? 'rgba(245, 230, 211, 0.7)' : isRetro ? 'rgba(255, 253, 247, 0.7)' : isZen ? 'rgba(255, 255, 255, 0.08)' : isSapphire ? 'rgba(59, 130, 246, 0.14)' : isRuby ? (currentTheme.colors.rubyIconBg || 'rgba(184, 50, 90, 0.14)') : isCoral ? (currentTheme.colors.coralIconBg || 'rgba(255, 177, 153, 0.24)') : 'rgba(255, 255, 255, 0.7)',
+    iconBorder: isClassic ? 'rgba(255, 255, 255, 0.9)' : isForce ? 'rgba(255, 255, 255, 0.9)' : isSahara ? 'rgba(255, 255, 255, 0.9)' : isRetro ? 'rgba(255, 255, 255, 0.9)' : isZen ? 'rgba(255, 255, 255, 0.16)' : isSapphire ? 'rgba(147, 197, 253, 0.24)' : isRuby ? (currentTheme.colors.rubyIconBorder || 'rgba(244, 167, 185, 0.24)') : isCoral ? (currentTheme.colors.coralIconBorder || 'rgba(249, 115, 107, 0.26)') : 'rgba(255, 255, 255, 0.9)',
+    titleColor: isClassic ? '#0F172A' : isForce ? '#7F1D1D' : isSahara ? '#7A4E24' : isRetro ? '#1B2E6B' : isZen ? '#F9FAFB' : isSapphire ? '#EAF2FF' : isRuby ? '#FFE4EC' : isCoral ? '#7A2E2E' : '#1E1B4B',
+    subtitleColor: isClassic ? '#475569' : isForce ? '#B91C1C' : isSahara ? '#9A6B3A' : isRetro ? '#B42318' : isZen ? '#D1D5DB' : isSapphire ? '#BFDBFE' : isRuby ? '#F4A7B9' : isCoral ? '#A95B5B' : '#4A3A8C',
+    shadowColor: isClassic ? '#0EA5E9' : isForce ? '#EF4444' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? '#000000' : isSapphire ? 'rgba(59, 130, 246, 0.24)' : isRuby ? (currentTheme.colors.rubyGlowShadow || 'rgba(184, 50, 90, 0.24)') : isCoral ? (currentTheme.colors.coralGlowShadow || 'rgba(249, 115, 107, 0.20)') : '#6B5B95',
     // Sapphire shape tokens
     quickActionRadius,
     quickActionIconRadius,
@@ -113,6 +115,7 @@ function getFilterTokens(activeThemeId: string) {
   const isZen = currentTheme.id === 'zenInk';
   const isSapphire = currentTheme.id === 'sapphire';
   const isRuby = currentTheme.id === 'ruby';
+  const isCoral = currentTheme.id === 'coralBloom';
 
   // Sapphire-specific filter tokens
   const filterRadius = isSapphire ? (currentTheme.colors.filterRadius || 16) : 18;
@@ -217,6 +220,20 @@ function getFilterTokens(activeThemeId: string) {
       filterBorderWidth: 1,
       badgeRadius: 9999,
     };
+  } else if (isCoral) {
+    return {
+      selectedBorderColor: '#E85D75',
+      selectedBackgroundColor: '#FFEDE7',
+      selectedTextColor: '#7A2E2E',
+      unselectedBorderColor: 'rgba(249, 115, 107, 0.24)',
+      unselectedBackgroundColor: '#FFF7F3',
+      unselectedTextColor: '#A95B5B',
+      badgeBackgroundColor: '#FFEDE7',
+      badgeTextColor: '#7A2E2E',
+      filterRadius: 18,
+      filterBorderWidth: 1,
+      badgeRadius: 9999,
+    };
   } else {
     return {
       selectedBorderColor: '#8B7CF6',
@@ -310,8 +327,8 @@ export default function NutritionScreen() {
             >
               <LinearGradient
                 colors={gradient}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
+                start={isCoral ? { x: 0.2, y: 0 } : { x: 0, y: 0 }}
+                end={isCoral ? { x: 0.8, y: 1 } : { x: 1, y: 1 }}
                 style={[styles.quickActionButtonGradient, { borderRadius: quickActionRadius }]}
               >
                 <View style={[styles.quickActionIconBubble, { backgroundColor: iconBg, borderColor: iconBorder, borderRadius: quickActionIconRadius }]}>

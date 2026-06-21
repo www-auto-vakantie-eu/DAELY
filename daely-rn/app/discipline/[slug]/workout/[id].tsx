@@ -21,6 +21,7 @@ function getAuroraTokens(activeThemeId: string) {
   const isZen = currentTheme.id === 'zenInk';
   const isSapphire = currentTheme.id === 'sapphire';
   const isRuby = currentTheme.id === 'ruby';
+  const isCoral = currentTheme.id === 'coralBloom';
 
   return {
     auroraGradient: isClassic
@@ -33,11 +34,12 @@ function getAuroraTokens(activeThemeId: string) {
           : isZen ? (currentTheme.gradients.aurora || ['#111111', '#1A1A1A', '#2D2D2D'])
           : isSapphire ? (currentTheme.gradients.aurora || ['#07111F', '#0C1220', '#162B4F'])
           : isRuby ? (currentTheme.gradients.aurora || ['#140607', '#240A10', '#3A1420'])
+          : isCoral ? (currentTheme.gradients.aurora || ['#FFF7F3', '#FFEDE7', '#FFD6C9'])
           : (currentTheme.gradients.aurora || ['#E8E6FF', '#D0CCFF', '#B8B4FF']),
-    auroraTitle: isClassic ? '#0F172A' : (currentTheme.colors.auroraTitle || (isZen ? '#FFFFFF' : isRetro ? '#1B2E6B' : isSahara ? '#7A4E24' : isForce ? '#7F1D1D' : isSapphire ? '#EAF2FF' : isRuby ? '#FFE4EC' : '#1E1B4B')),
-    auroraSubtitle: isClassic ? '#475569' : (currentTheme.colors.auroraSubtitle || (isZen ? '#B0B0B0' : isRetro ? '#B42318' : isSahara ? '#9A6B3A' : isForce ? '#B91C1C' : isSapphire ? '#BFDBFE' : isRuby ? '#F4A7B9' : '#4A3A8C')),
-    auroraHighlight: currentTheme.colors.auroraHighlight || (isZen ? '#E5E7EB' : isRetro ? '#E8622A' : isSahara ? '#E7C99B' : isForce ? '#EF4444' : isSapphire ? '#93C5FD' : isRuby ? '#E45A7A' : '#6B5B95'),
-    auroraAccent: currentTheme.colors.auroraAccent || (isRetro ? '#C0392B' : isSahara ? '#C89B72' : isForce ? '#DC2626' : isSapphire ? '#3B82F6' : isRuby ? '#B8325A' : '#8B7CF6'),
+    auroraTitle: isClassic ? '#0F172A' : (currentTheme.colors.auroraTitle || (isZen ? '#FFFFFF' : isRetro ? '#1B2E6B' : isSahara ? '#7A4E24' : isForce ? '#7F1D1D' : isSapphire ? '#EAF2FF' : isRuby ? '#FFE4EC' : isCoral ? '#7A2E2E' : '#1E1B4B')),
+    auroraSubtitle: isClassic ? '#475569' : (currentTheme.colors.auroraSubtitle || (isZen ? '#B0B0B0' : isRetro ? '#B42318' : isSahara ? '#9A6B3A' : isForce ? '#B91C1C' : isSapphire ? '#BFDBFE' : isRuby ? '#F4A7B9' : isCoral ? '#A95B5B' : '#4A3A8C')),
+    auroraHighlight: currentTheme.colors.auroraHighlight || (isZen ? '#E5E7EB' : isRetro ? '#E8622A' : isSahara ? '#E7C99B' : isForce ? '#EF4444' : isSapphire ? '#93C5FD' : isRuby ? '#E45A7A' : isCoral ? '#F9736B' : '#6B5B95'),
+    auroraAccent: currentTheme.colors.auroraAccent || (isRetro ? '#C0392B' : isSahara ? '#C89B72' : isForce ? '#DC2626' : isSapphire ? '#3B82F6' : isRuby ? '#B8325A' : isCoral ? '#E85D75' : '#8B7CF6'),
     ribbonTop: isClassic
       ? ['rgba(37, 99, 235, 0.08)', 'rgba(14, 165, 233, 0.10)']
       : isForce
@@ -48,6 +50,7 @@ function getAuroraTokens(activeThemeId: string) {
           : isZen ? (currentTheme.gradients.auroraBlue || ['rgba(255, 255, 255, 0.10)', 'rgba(255, 255, 255, 0.03)'])
           : isSapphire ? (currentTheme.colors.glassLine1 || ['rgba(147, 197, 253, 0.04)', 'rgba(147, 197, 253, 0.01)'])
           : isRuby ? (currentTheme.gradients.auroraBlue || ['rgba(95, 15, 42, 0.28)', 'rgba(95, 15, 42, 0.08)'])
+          : isCoral ? (currentTheme.gradients.auroraBlue || ['rgba(255, 177, 153, 0.32)', 'rgba(255, 214, 201, 0.16)'])
           : ['rgba(168, 162, 255, 0.55)', 'rgba(200, 195, 255, 0.12)'],
     ribbonMid: isClassic
       ? ['rgba(219, 234, 254, 0.55)', 'rgba(240, 249, 255, 0.75)']
@@ -59,6 +62,7 @@ function getAuroraTokens(activeThemeId: string) {
           : isZen ? ['rgba(255, 255, 255, 0.08)', 'rgba(255, 255, 255, 0.02)']
           : isSapphire ? (currentTheme.colors.glassLine2 || ['rgba(59, 130, 246, 0.02)', 'rgba(59, 130, 246, 0.005)'])
           : isRuby ? ['rgba(255, 228, 236, 0.20)', 'rgba(255, 228, 236, 0.08)']
+          : isCoral ? ['rgba(255, 214, 201, 0.20)', 'rgba(255, 214, 201, 0.08)']
           : ['rgba(220, 180, 255, 0.42)', 'rgba(200, 195, 255, 0.20)'],
     ribbonBlue: isClassic
       ? ['rgba(37, 99, 235, 0.08)', 'rgba(14, 165, 233, 0.10)']
@@ -81,6 +85,7 @@ function getAuroraTokens(activeThemeId: string) {
           : isZen ? (currentTheme.gradients.auroraRose || ['rgba(156, 163, 175, 0.14)', 'rgba(156, 163, 175, 0.05)'])
           : isSapphire ? (currentTheme.colors.glassLine2 || ['rgba(59, 130, 246, 0.02)', 'rgba(59, 130, 246, 0.005)'])
           : isRuby ? (currentTheme.gradients.auroraRose || ['rgba(184, 50, 90, 0.26)', 'rgba(228, 90, 122, 0.08)'])
+          : isCoral ? (currentTheme.gradients.auroraRose || ['rgba(249, 115, 107, 0.30)', 'rgba(232, 93, 117, 0.12)'])
           : ['rgba(220, 180, 255, 0.65)', 'rgba(230, 200, 255, 0.30)'],
     ribbonRight: isClassic
       ? ['rgba(37, 99, 235, 0.08)', 'rgba(255, 255, 255, 0.05)']
@@ -97,7 +102,10 @@ function getAuroraTokens(activeThemeId: string) {
       ? ['rgba(255, 255, 255, 0.70)', 'rgba(255, 255, 255, 0.30)']
       : isSapphire ? (currentTheme.colors.glassGlow ? [currentTheme.colors.glassGlow, 'rgba(59, 130, 246, 0.005)'] : ['rgba(59, 130, 246, 0.02)', 'rgba(59, 130, 246, 0.005)'])
       : isRuby ? (currentTheme.colors.rubyGlowBorder ? [currentTheme.colors.rubyGlowBorder, 'rgba(184, 50, 90, 0.08)'] : ['rgba(228, 90, 122, 0.24)', 'rgba(255, 228, 236, 0.08)'])
+      : isCoral ? (currentTheme.colors.coralSoftGlow ? [currentTheme.colors.coralSoftGlow, 'rgba(249, 115, 107, 0.05)'] : ['rgba(255, 214, 201, 0.18)', 'rgba(255, 177, 153, 0.06)'])
       : ['rgba(255, 255, 255, 0.28)', 'rgba(255, 255, 255, 0.06)'],
+    // Coral Bloom soft glow flag
+    useSoftCoralGlow: isCoral,
     useThinLines: isSapphire,
     // New calm gemstone tokens for Sapphire
     facetLarge: isSapphire ? (currentTheme.colors.facetLarge || 'rgba(147, 197, 253, 0.08)') : undefined,
