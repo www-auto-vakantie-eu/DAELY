@@ -26,6 +26,7 @@ function GradientCard({ children, style, cardRadius }: { children: React.ReactNo
   const isRetro = currentTheme.id === 'retroSport';
   const isZen = currentTheme.id === 'zenInk';
   const isSapphire = currentTheme.id === 'sapphire';
+  const isRuby = currentTheme.id === 'ruby';
 
   // Sapphire-specific shape tokens
   const dynamicCardRadius = cardRadius || (isSapphire ? (currentTheme.colors.cardRadius || 14) : isRetro ? 16 : isSahara ? 16 : isForce ? 16 : isZen ? 14 : 16);
@@ -40,6 +41,7 @@ function GradientCard({ children, style, cardRadius }: { children: React.ReactNo
       : isRetro ? (currentTheme.gradients.aurora || ['#FFFDF7', '#F7F0E6', '#FBE3D0'])
       : isZen ? (currentTheme.gradients.aurora || ['#111111', '#1A1A1A', '#2D2D2D'])
       : isSapphire ? (currentTheme.gradients.aurora || ['#07111F', '#0C1220', '#162B4F'])
+      : isRuby ? (currentTheme.gradients.aurora || ['#140607', '#240A10', '#3A1420'])
       : currentTheme.gradients.aurora || ['#E8E6FF', '#D0CCFF', '#B8B4FF'];
 
   // Determine ribbon styles based on theme
@@ -56,7 +58,7 @@ function GradientCard({ children, style, cardRadius }: { children: React.ReactNo
   const sapphireGlow = isSapphire ? (currentTheme.colors.sapphireGlow || 'rgba(59, 130, 246, 0.16)') : undefined;
 
   return (
-    <View style={[styles.sectionCard, style, { borderColor: isClassic ? '#DCEBFF' : isForce ? '#FECACA' : isSahara ? '#E8D0B0' : isRetro ? '#E7C0A3' : isZen ? 'rgba(255, 255, 255, 0.12)' : isSapphire ? (currentTheme.colors.glassBorder || 'rgba(147, 197, 253, 0.25)') : undefined, shadowColor: isClassic ? '#0EA5E9' : isForce ? '#EF4444' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? 'rgba(0, 0, 0, 0.45)' : isSapphire ? (currentTheme.colors.glassShadow || 'rgba(59, 130, 246, 0.28)') : undefined, borderRadius: dynamicCardRadius, borderWidth: cardBorderWidth }]}>
+    <View style={[styles.sectionCard, style, { borderColor: isClassic ? '#DCEBFF' : isForce ? '#FECACA' : isSahara ? '#E8D0B0' : isRetro ? '#E7C0A3' : isZen ? 'rgba(255, 255, 255, 0.12)' : isSapphire ? (currentTheme.colors.glassBorder || 'rgba(147, 197, 253, 0.25)') : isRuby ? (currentTheme.colors.rubyGlowBorder || 'rgba(244, 167, 185, 0.22)') : undefined, shadowColor: isClassic ? '#0EA5E9' : isForce ? '#EF4444' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? 'rgba(0, 0, 0, 0.45)' : isSapphire ? (currentTheme.colors.glassShadow || 'rgba(59, 130, 246, 0.28)') : isRuby ? (currentTheme.colors.rubyGlowShadow || 'rgba(184, 50, 90, 0.24)') : undefined, borderRadius: dynamicCardRadius, borderWidth: cardBorderWidth }]}>
       {/* Background gradient layer - absolute full-cover */}
       <LinearGradient
         colors={classicGlowGradient}
@@ -360,9 +362,10 @@ export default function CommunityScreen() {
   const isRetro = currentTheme.id === 'retroSport';
   const isZen = currentTheme.id === 'zenInk';
   const isSapphire = currentTheme.id === 'sapphire';
+  const isRuby = currentTheme.id === 'ruby';
 
-  const shortcutIconBg = isClassic ? 'rgba(219, 234, 254, 0.8)' : isForce ? 'rgba(254, 202, 202, 0.75)' : isSahara ? 'rgba(245, 230, 211, 0.75)' : isRetro ? 'rgba(255, 253, 247, 0.88)' : isZen ? 'rgba(255, 255, 255, 0.08)' : isSapphire ? 'rgba(59, 130, 246, 0.14)' : 'rgba(255, 255, 255, 0.6)';
-  const shortcutIconBorder = isClassic ? '#DBEAFE' : isForce ? '#FCA5A5' : isSahara ? '#E8D0B0' : isRetro ? '#E7C0A3' : isZen ? 'rgba(255, 255, 255, 0.14)' : isSapphire ? 'rgba(147, 197, 253, 0.24)' : undefined;
+  const shortcutIconBg = isClassic ? 'rgba(219, 234, 254, 0.8)' : isForce ? 'rgba(254, 202, 202, 0.75)' : isSahara ? 'rgba(245, 230, 211, 0.75)' : isRetro ? 'rgba(255, 253, 247, 0.88)' : isZen ? 'rgba(255, 255, 255, 0.08)' : isSapphire ? 'rgba(59, 130, 246, 0.14)' : isRuby ? (currentTheme.colors.rubyIconBg || 'rgba(184, 50, 90, 0.14)') : 'rgba(255, 255, 255, 0.6)';
+  const shortcutIconBorder = isClassic ? '#DBEAFE' : isForce ? '#FCA5A5' : isSahara ? '#E8D0B0' : isRetro ? '#E7C0A3' : isZen ? 'rgba(255, 255, 255, 0.14)' : isSapphire ? 'rgba(147, 197, 253, 0.24)' : isRuby ? (currentTheme.colors.rubyIconBorder || 'rgba(244, 167, 185, 0.24)') : undefined;
   const cardRadius = isSapphire ? (currentTheme.colors.cardRadius || 14) : isRetro ? 16 : isSahara ? 16 : isForce ? 16 : isZen ? 14 : 16;
   const [activeTab, setActiveTab] = useState<Tab>('feed');
   const [unreadMessageCount, setUnreadMessageCount] = useState(0);
