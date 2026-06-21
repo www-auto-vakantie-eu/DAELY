@@ -253,6 +253,7 @@ function getFilterTokens(activeThemeId: string) {
 
 export default function NutritionScreen() {
   const theme = useTheme();
+  const isCoral = theme.id === 'coralBloom';
   const router = useRouter();
   const { activeThemeId } = useAppContext();
   const [activeFilterCategory, setActiveFilterCategory] = useState<FilterKey | null>(null);

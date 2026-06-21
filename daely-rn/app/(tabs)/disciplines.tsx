@@ -441,6 +441,7 @@ function getImageSource(image: string | ImageSourcePropType): ImageSourcePropTyp
 export default function DisciplinesScreen() {
   const { user, appSettings, activeThemeId } = useAppContext();
   const theme = useTheme();
+  const isCoral = theme.id === 'coralBloom';
   const router = useRouter();
   const [unreadMessageCount, setUnreadMessageCount] = useState(0);
   const visibleDisciplines = DISCIPLINES;

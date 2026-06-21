@@ -68,6 +68,7 @@ function getQuickActionTokens(activeThemeId: string) {
 
 export default function MindScreen() {
   const theme = useTheme();
+  const isCoral = theme.id === 'coralBloom';
   const router = useRouter();
   const [unreadMessageCount, setUnreadMessageCount] = useState(0);
   const quickActionTokens = getQuickActionTokens(theme.id);
