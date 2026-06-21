@@ -119,7 +119,7 @@ export default function DisciplineWorkoutDetailScreen() {
   const router = useRouter();
   const theme = useTheme();
   const { activeThemeId } = useAppContext();
-  const { auroraGradient, ribbonTop, ribbonMid, ribbonBlue, ribbonRose, ribbonRight, ribbonHighlight, useThinLines, facetLarge, facetMedium, sapphireGlow } = getAuroraTokens(activeThemeId);
+  const { auroraGradient, auroraHighlight, auroraAccent, ribbonTop, ribbonMid, ribbonBlue, ribbonRose, ribbonRight, ribbonHighlight, useThinLines, facetLarge, facetMedium, sapphireGlow } = getAuroraTokens(activeThemeId);
 
   const workout = React.useMemo(() => {
     if (!id || !slug) return null;
