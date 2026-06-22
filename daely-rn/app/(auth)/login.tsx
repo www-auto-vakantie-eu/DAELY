@@ -29,7 +29,7 @@ function resolveRoleFromEmail(email: string): 'standard' | 'admin' {
 
 export default function LoginScreen() {
   const router = useRouter();
-  const { setIsLoggedIn, setAccountType, activeThemeId, updateUser, updateAppSettings } = useAppContext();
+  const { setIsLoggedIn, setAccountType, activeThemeId, updateUser, updateAppSettings, activateTestCreatorAccount } = useAppContext();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -189,28 +189,10 @@ export default function LoginScreen() {
   };
 
   const handleDevTestLoginCreator = async () => {
-    await updateUser({
-      gender: 'man',
-      name: 'Test Creator',
-      username: 'daely_creator',
-      role: 'DAELY Creator',
-      sportFocus: 'Fitness, padel & lifestyle',
-      bio: 'DAELY creator en sportieve ambassador die challenges, trainingen en motivatie deelt.',
-      creatorCode: 'DAELY-CREATOR-TEST',
-      referralCode: 'DAELY-CREATOR-TEST',
-      followers: 12840,
-      activeCreatorSubscribers: 342,
-      estimatedMonthlyEarnings: 338.58,
-      createdChallenges: 6,
-      sharedWorkouts: 18,
-      communityEngagement: 'Hoog',
-      creatorBadge: 'DAELY Creator',
-      creatorType: 'influencer-athlete',
-    });
+    await activateTestCreatorAccount();
     await updateAppSettings({
       photoPreference: 'man',
     });
-    setAccountType('influencer');
     setIsLoggedIn(true);
     router.replace('/(tabs)/today');
   };
@@ -336,6 +318,7 @@ export default function LoginScreen() {
                   </Pressable>
                   <Pressable style={styles.devTestLoginButton} onPress={handleDevTestLoginCreator}>
                     <Text style={styles.devTestLoginButtonText}>Test Creator</Text>
+                    <Text style={styles.devTestLoginButtonSubtitle}>Mila Creator · DAELY Creator</Text>
                   </Pressable>
                 </>
               ) : null}
@@ -700,6 +683,12 @@ const styles = StyleSheet.create({
     color: '#1D4ED8',
     fontSize: 14,
     fontWeight: '700',
+  },
+  devTestLoginButtonSubtitle: {
+    color: '#666666',
+    fontSize: 11,
+    fontWeight: '500',
+    marginTop: 2,
   },
   devTestLoginLabel: {
     color: '#666666',
