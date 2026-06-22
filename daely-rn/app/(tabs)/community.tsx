@@ -28,6 +28,7 @@ function GradientCard({ children, style, cardRadius }: { children: React.ReactNo
   const isSapphire = currentTheme.id === 'sapphire';
   const isRuby = currentTheme.id === 'ruby';
   const isCoral = currentTheme.id === 'coralBloom';
+  const isMarble = currentTheme.id === 'marble';
 
   // Sapphire-specific shape tokens
   const dynamicCardRadius = cardRadius || (isSapphire ? (currentTheme.colors.cardRadius || 14) : isRetro ? 16 : isSahara ? 16 : isForce ? 16 : isZen ? 14 : 16);
@@ -44,6 +45,7 @@ function GradientCard({ children, style, cardRadius }: { children: React.ReactNo
       : isSapphire ? (currentTheme.gradients.aurora || ['#07111F', '#0C1220', '#162B4F'])
       : isRuby ? (currentTheme.gradients.aurora || ['#140607', '#240A10', '#3A1420'])
       : isCoral ? (currentTheme.gradients.aurora || ['#FFF7F3', '#FFEDE7', '#FFD6C9'])
+      : isMarble ? (currentTheme.gradients.aurora || ['#FFFFFF', '#F7F7F5', '#ECEDEA'])
       : currentTheme.gradients.aurora || ['#E8E6FF', '#D0CCFF', '#B8B4FF'];
 
   // Determine ribbon styles based on theme
@@ -60,7 +62,7 @@ function GradientCard({ children, style, cardRadius }: { children: React.ReactNo
   const sapphireGlow = isSapphire ? (currentTheme.colors.sapphireGlow || 'rgba(59, 130, 246, 0.16)') : undefined;
 
   return (
-    <View style={[styles.sectionCard, style, { borderColor: isClassic ? '#DCEBFF' : isForce ? '#FECACA' : isSahara ? '#E8D0B0' : isRetro ? '#E7C0A3' : isZen ? 'rgba(255, 255, 255, 0.12)' : isSapphire ? (currentTheme.colors.glassBorder || 'rgba(147, 197, 253, 0.25)') : isRuby ? (currentTheme.colors.rubyGlowBorder || 'rgba(244, 167, 185, 0.22)') : isCoral ? (currentTheme.colors.coralGlowBorder || 'rgba(249, 115, 107, 0.22)') : undefined, shadowColor: isClassic ? '#0EA5E9' : isForce ? '#EF4444' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? 'rgba(0, 0, 0, 0.45)' : isSapphire ? (currentTheme.colors.glassShadow || 'rgba(59, 130, 246, 0.28)') : isRuby ? (currentTheme.colors.rubyGlowShadow || 'rgba(184, 50, 90, 0.24)') : isCoral ? (currentTheme.colors.coralGlowShadow || 'rgba(249, 115, 107, 0.20)') : undefined, borderRadius: dynamicCardRadius, borderWidth: cardBorderWidth }]}>
+    <View style={[styles.sectionCard, style, { borderColor: isClassic ? '#DCEBFF' : isForce ? '#FECACA' : isSahara ? '#E8D0B0' : isRetro ? '#E7C0A3' : isZen ? 'rgba(255, 255, 255, 0.12)' : isSapphire ? (currentTheme.colors.glassBorder || 'rgba(147, 197, 253, 0.25)') : isRuby ? (currentTheme.colors.rubyGlowBorder || 'rgba(244, 167, 185, 0.22)') : isCoral ? (currentTheme.colors.coralGlowBorder || 'rgba(249, 115, 107, 0.22)') : isMarble ? (currentTheme.colors.marbleGlowBorder || 'rgba(75, 85, 99, 0.20)') : undefined, shadowColor: isClassic ? '#0EA5E9' : isForce ? '#EF4444' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? 'rgba(0, 0, 0, 0.45)' : isSapphire ? (currentTheme.colors.glassShadow || 'rgba(59, 130, 246, 0.28)') : isRuby ? (currentTheme.colors.rubyGlowShadow || 'rgba(184, 50, 90, 0.24)') : isCoral ? (currentTheme.colors.coralGlowShadow || 'rgba(249, 115, 107, 0.20)') : isMarble ? (currentTheme.colors.marbleGlowShadow || 'rgba(75, 85, 99, 0.18)') : undefined, borderRadius: dynamicCardRadius, borderWidth: cardBorderWidth }]}>
       {/* Background gradient layer - absolute full-cover */}
       <LinearGradient
         colors={classicGlowGradient}
@@ -71,7 +73,7 @@ function GradientCard({ children, style, cardRadius }: { children: React.ReactNo
       >
         {/* Top-left ribbon - reduced for Coral Bloom */}
         {!isCoral && <LinearGradient
-          colors={isClassic ? ['rgba(37, 99, 235, 0.08)', 'rgba(14, 165, 233, 0.10)'] : isForce ? (currentTheme.gradients.auroraBlue || ['rgba(254, 202, 202, 0.55)', 'rgba(254, 202, 202, 0.12)']) : isSahara ? (currentTheme.gradients.auroraBlue || ['rgba(232, 208, 176, 0.32)', 'rgba(232, 208, 176, 0.10)']) : isRetro ? (currentTheme.gradients.auroraBlue || ['rgba(27, 46, 107, 0.16)', 'rgba(27, 46, 107, 0.04)']) : isZen ? (currentTheme.gradients.auroraBlue || ['rgba(255, 255, 255, 0.10)', 'rgba(255, 255, 255, 0.03)']) : isSapphire ? (currentTheme.colors.glassLine1 || ['rgba(147, 197, 253, 0.04)', 'rgba(147, 197, 253, 0.01)']) : isRuby ? (currentTheme.gradients.auroraBlue || ['rgba(95, 15, 42, 0.28)', 'rgba(95, 15, 42, 0.08)']) : isCoral ? (currentTheme.gradients.auroraBlue || ['rgba(255, 177, 153, 0.32)', 'rgba(255, 214, 201, 0.16)']) : ['rgba(168, 162, 255, 0.55)', 'rgba(200, 195, 255, 0.12)']}
+          colors={isClassic ? ['rgba(37, 99, 235, 0.08)', 'rgba(14, 165, 233, 0.10)'] : isForce ? (currentTheme.gradients.auroraBlue || ['rgba(254, 202, 202, 0.55)', 'rgba(254, 202, 202, 0.12)']) : isSahara ? (currentTheme.gradients.auroraBlue || ['rgba(232, 208, 176, 0.32)', 'rgba(232, 208, 176, 0.10)']) : isRetro ? (currentTheme.gradients.auroraBlue || ['rgba(27, 46, 107, 0.16)', 'rgba(27, 46, 107, 0.04)']) : isZen ? (currentTheme.gradients.auroraBlue || ['rgba(255, 255, 255, 0.10)', 'rgba(255, 255, 255, 0.03)']) : isSapphire ? (currentTheme.colors.glassLine1 || ['rgba(147, 197, 253, 0.04)', 'rgba(147, 197, 253, 0.01)']) : isRuby ? (currentTheme.gradients.auroraBlue || ['rgba(95, 15, 42, 0.28)', 'rgba(95, 15, 42, 0.08)']) : isCoral ? (currentTheme.gradients.auroraBlue || ['rgba(255, 177, 153, 0.32)', 'rgba(255, 214, 201, 0.16)']) : isMarble ? (currentTheme.gradients.auroraBlue || ['rgba(75, 85, 99, 0.18)', 'rgba(168, 162, 158, 0.10)']) : ['rgba(168, 162, 255, 0.55)', 'rgba(200, 195, 255, 0.12)']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={ribbonStyleTop}
@@ -79,7 +81,7 @@ function GradientCard({ children, style, cardRadius }: { children: React.ReactNo
         />}
         {/* Mid-card ribbon - softer for Coral Bloom */}
         <LinearGradient
-          colors={isClassic ? ['rgba(219, 234, 254, 0.55)', 'rgba(240, 249, 255, 0.75)'] : isForce ? ['rgba(254, 226, 226, 0.42)', 'rgba(254, 226, 226, 0.20)'] : isSahara ? ['rgba(245, 230, 211, 0.42)', 'rgba(245, 230, 211, 0.20)'] : isRetro ? ['rgba(255, 253, 247, 0.42)', 'rgba(255, 253, 247, 0.20)'] : isZen ? ['rgba(255, 255, 255, 0.08)', 'rgba(255, 255, 255, 0.02)'] : isSapphire ? (currentTheme.colors.glassLine2 || ['rgba(59, 130, 246, 0.02)', 'rgba(59, 130, 246, 0.005)']) : isRuby ? ['rgba(255, 228, 236, 0.20)', 'rgba(255, 228, 236, 0.08)'] : isCoral ? [currentTheme.colors.coralSoftGlow || 'rgba(255, 214, 201, 0.12)', 'rgba(255, 177, 153, 0.04)'] : ['rgba(220, 180, 255, 0.42)', 'rgba(200, 195, 255, 0.20)']}
+          colors={isClassic ? ['rgba(219, 234, 254, 0.55)', 'rgba(240, 249, 255, 0.75)'] : isForce ? ['rgba(254, 226, 226, 0.42)', 'rgba(254, 226, 226, 0.20)'] : isSahara ? ['rgba(245, 230, 211, 0.42)', 'rgba(245, 230, 211, 0.20)'] : isRetro ? ['rgba(255, 253, 247, 0.42)', 'rgba(255, 253, 247, 0.20)'] : isZen ? ['rgba(255, 255, 255, 0.08)', 'rgba(255, 255, 255, 0.02)'] : isSapphire ? (currentTheme.colors.glassLine2 || ['rgba(59, 130, 246, 0.02)', 'rgba(59, 130, 246, 0.005)']) : isRuby ? ['rgba(255, 228, 236, 0.20)', 'rgba(255, 228, 236, 0.08)'] : isCoral ? [currentTheme.colors.coralSoftGlow || 'rgba(255, 214, 201, 0.12)', 'rgba(255, 177, 153, 0.04)'] : isMarble ? ['rgba(245, 245, 244, 0.75)', 'rgba(214, 211, 209, 0.20)'] : ['rgba(220, 180, 255, 0.42)', 'rgba(200, 195, 255, 0.20)']}
           start={isCoral ? { x: 0.2, y: 0 } : { x: 0, y: 0 }}
           end={isCoral ? { x: 0.8, y: 1 } : { x: 1, y: 1 }}
           style={isCoral ? { ...ribbonStyleMid, borderRadius: 20 } : ribbonStyleMid}
@@ -87,7 +89,7 @@ function GradientCard({ children, style, cardRadius }: { children: React.ReactNo
         />
         {/* Diagonal top-right ribbon - reduced for Coral Bloom */}
         {!isCoral && <LinearGradient
-          colors={isClassic ? ['rgba(37, 99, 235, 0.08)', 'rgba(14, 165, 233, 0.10)'] : isForce ? (currentTheme.gradients.auroraBlue || ['rgba(254, 202, 202, 0.75)', 'rgba(254, 202, 202, 0.38)']) : isSahara ? (currentTheme.gradients.auroraBlue || ['rgba(232, 208, 176, 0.32)', 'rgba(232, 208, 176, 0.10)']) : isRetro ? (currentTheme.gradients.auroraBlue || ['rgba(27, 46, 107, 0.16)', 'rgba(27, 46, 107, 0.04)']) : isZen ? (currentTheme.gradients.auroraBlue || ['rgba(255, 255, 255, 0.10)', 'rgba(255, 255, 255, 0.03)']) : isSapphire ? (currentTheme.colors.glassLine3 || ['rgba(147, 197, 253, 0.02)', 'rgba(147, 197, 253, 0.005)']) : isRuby ? (currentTheme.gradients.auroraBlue || ['rgba(95, 15, 42, 0.28)', 'rgba(95, 15, 42, 0.08)']) : isCoral ? (currentTheme.gradients.auroraBlue || ['rgba(255, 177, 153, 0.32)', 'rgba(255, 214, 201, 0.16)']) : ['rgba(168, 162, 255, 0.75)', 'rgba(200, 195, 255, 0.38)']}
+          colors={isClassic ? ['rgba(37, 99, 235, 0.08)', 'rgba(14, 165, 233, 0.10)'] : isForce ? (currentTheme.gradients.auroraBlue || ['rgba(254, 202, 202, 0.75)', 'rgba(254, 202, 202, 0.38)']) : isSahara ? (currentTheme.gradients.auroraBlue || ['rgba(232, 208, 176, 0.32)', 'rgba(232, 208, 176, 0.10)']) : isRetro ? (currentTheme.gradients.auroraBlue || ['rgba(27, 46, 107, 0.16)', 'rgba(27, 46, 107, 0.04)']) : isZen ? (currentTheme.gradients.auroraBlue || ['rgba(255, 255, 255, 0.10)', 'rgba(255, 255, 255, 0.03)']) : isSapphire ? (currentTheme.colors.glassLine3 || ['rgba(147, 197, 253, 0.02)', 'rgba(147, 197, 253, 0.005)']) : isRuby ? (currentTheme.gradients.auroraBlue || ['rgba(95, 15, 42, 0.28)', 'rgba(95, 15, 42, 0.08)']) : isCoral ? (currentTheme.gradients.auroraBlue || ['rgba(255, 177, 153, 0.32)', 'rgba(255, 214, 201, 0.16)']) : isMarble ? (currentTheme.gradients.auroraBlue || ['rgba(75, 85, 99, 0.18)', 'rgba(168, 162, 158, 0.10)']) : ['rgba(168, 162, 255, 0.75)', 'rgba(200, 195, 255, 0.38)']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={ribbonStyleBlue}
@@ -95,7 +97,7 @@ function GradientCard({ children, style, cardRadius }: { children: React.ReactNo
         />}
         {/* Diagonal bottom-left ribbon - reduced for Coral Bloom */}
         {!isCoral && <LinearGradient
-          colors={isClassic ? ['rgba(219, 234, 254, 0.55)', 'rgba(240, 249, 255, 0.75)'] : isForce ? (currentTheme.gradients.auroraRose || ['rgba(239, 68, 68, 0.65)', 'rgba(239, 68, 68, 0.30)']) : isSahara ? (currentTheme.gradients.auroraRose || ['rgba(212, 165, 116, 0.35)', 'rgba(212, 165, 116, 0.12)']) : isRetro ? (currentTheme.gradients.auroraRose || ['rgba(192, 57, 43, 0.22)', 'rgba(232, 98, 42, 0.06)']) : isZen ? (currentTheme.gradients.auroraRose || ['rgba(156, 163, 175, 0.14)', 'rgba(156, 163, 175, 0.05)']) : isSapphire ? (currentTheme.colors.glassLine2 || ['rgba(59, 130, 246, 0.02)', 'rgba(59, 130, 246, 0.005)']) : isRuby ? (currentTheme.gradients.auroraRose || ['rgba(184, 50, 90, 0.26)', 'rgba(228, 90, 122, 0.08)']) : isCoral ? (currentTheme.gradients.auroraRose || ['rgba(249, 115, 107, 0.30)', 'rgba(232, 93, 117, 0.12)']) : ['rgba(220, 180, 255, 0.65)', 'rgba(230, 200, 255, 0.30)']}
+          colors={isClassic ? ['rgba(219, 234, 254, 0.55)', 'rgba(240, 249, 255, 0.75)'] : isForce ? (currentTheme.gradients.auroraRose || ['rgba(239, 68, 68, 0.65)', 'rgba(239, 68, 68, 0.30)']) : isSahara ? (currentTheme.gradients.auroraRose || ['rgba(212, 165, 116, 0.35)', 'rgba(212, 165, 116, 0.12)']) : isRetro ? (currentTheme.gradients.auroraRose || ['rgba(192, 57, 43, 0.22)', 'rgba(232, 98, 42, 0.06)']) : isZen ? (currentTheme.gradients.auroraRose || ['rgba(156, 163, 175, 0.14)', 'rgba(156, 163, 175, 0.05)']) : isSapphire ? (currentTheme.colors.glassLine2 || ['rgba(59, 130, 246, 0.02)', 'rgba(59, 130, 246, 0.005)']) : isRuby ? (currentTheme.gradients.auroraRose || ['rgba(184, 50, 90, 0.26)', 'rgba(228, 90, 122, 0.08)']) : isCoral ? (currentTheme.gradients.auroraRose || ['rgba(249, 115, 107, 0.30)', 'rgba(232, 93, 117, 0.12)']) : isMarble ? (currentTheme.gradients.auroraRose || ['rgba(245, 245, 244, 0.75)', 'rgba(214, 211, 209, 0.20)']) : ['rgba(220, 180, 255, 0.65)', 'rgba(230, 200, 255, 0.30)']}
           start={{ x: 0, y: 1 }}
           end={{ x: 1, y: 0 }}
           style={ribbonStyleRose}
@@ -103,12 +105,78 @@ function GradientCard({ children, style, cardRadius }: { children: React.ReactNo
         />}
         {/* Right-side accent ribbon - reduced for Coral Bloom */}
         {!isCoral && <LinearGradient
-          colors={isClassic ? ['rgba(37, 99, 235, 0.08)', 'rgba(255, 255, 255, 0.05)'] : isForce ? ['rgba(254, 202, 202, 0.38)', 'rgba(255, 255, 255, 0.05)'] : isSahara ? ['rgba(245, 230, 211, 0.42)', 'rgba(245, 230, 211, 0.20)'] : isRetro ? ['rgba(255, 253, 247, 0.42)', 'rgba(255, 253, 247, 0.20)'] : isZen ? ['rgba(255, 255, 255, 0.08)', 'rgba(255, 255, 255, 0.02)'] : isSapphire ? (currentTheme.colors.glassLine3 || ['rgba(147, 197, 253, 0.02)', 'rgba(147, 197, 253, 0.005)']) : isRuby ? ['rgba(255, 228, 236, 0.20)', 'rgba(255, 228, 236, 0.08)'] : isCoral ? ['rgba(255, 214, 201, 0.20)', 'rgba(255, 214, 201, 0.08)'] : ['rgba(180, 170, 255, 0.38)', 'rgba(255, 255, 255, 0.05)']}
+          colors={isClassic ? ['rgba(37, 99, 235, 0.08)', 'rgba(255, 255, 255, 0.05)'] : isForce ? ['rgba(254, 202, 202, 0.38)', 'rgba(255, 255, 255, 0.05)'] : isSahara ? ['rgba(245, 230, 211, 0.42)', 'rgba(245, 230, 211, 0.20)'] : isRetro ? ['rgba(255, 253, 247, 0.42)', 'rgba(255, 253, 247, 0.20)'] : isZen ? ['rgba(255, 255, 255, 0.08)', 'rgba(255, 255, 255, 0.02)'] : isSapphire ? (currentTheme.colors.glassLine3 || ['rgba(147, 197, 253, 0.02)', 'rgba(147, 197, 253, 0.005)']) : isRuby ? ['rgba(255, 228, 236, 0.20)', 'rgba(255, 228, 236, 0.08)'] : isCoral ? ['rgba(255, 214, 201, 0.20)', 'rgba(255, 214, 201, 0.08)'] : isMarble ? ['rgba(245, 245, 244, 0.20)', 'rgba(214, 211, 209, 0.08)'] : ['rgba(180, 170, 255, 0.38)', 'rgba(255, 255, 255, 0.05)']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={ribbonStyleRight}
           pointerEvents="none"
         />}
+        {/* Marble premium stone texture - only for Marble theme */}
+        {isMarble && (
+          <>
+            {/* Main diagonal vein */}
+            <LinearGradient
+              colors={['rgba(55, 65, 81, 0.22)', 'rgba(55, 65, 81, 0.08)']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={{
+                position: 'absolute',
+                top: -20,
+                left: -40,
+                width: 200,
+                height: 3,
+                transform: [{ rotate: '-15deg' }],
+                pointerEvents: 'none',
+              }}
+              pointerEvents="none"
+            />
+            {/* Secondary vein */}
+            <LinearGradient
+              colors={['rgba(120, 113, 108, 0.18)', 'rgba(120, 113, 108, 0.06)']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={{
+                position: 'absolute',
+                top: 60,
+                right: -30,
+                width: 140,
+                height: 2,
+                transform: [{ rotate: '12deg' }],
+                pointerEvents: 'none',
+              }}
+              pointerEvents="none"
+            />
+            {/* Third soft vein */}
+            <LinearGradient
+              colors={['rgba(168, 162, 158, 0.16)', 'rgba(168, 162, 158, 0.04)']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={{
+                position: 'absolute',
+                bottom: -15,
+                left: 40,
+                width: 120,
+                height: 2,
+                transform: [{ rotate: '8deg' }],
+                pointerEvents: 'none',
+              }}
+              pointerEvents="none"
+            />
+            {/* Pearl highlight */}
+            <View
+              style={{
+                position: 'absolute',
+                top: -50,
+                right: -50,
+                width: 180,
+                height: 140,
+                borderRadius: 999,
+                backgroundColor: 'rgba(255, 255, 255, 0.88)',
+                pointerEvents: 'none',
+              }}
+            />
+          </>
+        )}
         {/* Calm gemstone effects for Sapphire theme - max 3 layers */}
         {useThinLines && sapphireGlow && (
           <View style={[styles.sapphireGlowOverlay, { backgroundColor: sapphireGlow }]} pointerEvents="none" />
@@ -156,7 +224,7 @@ function GradientCard({ children, style, cardRadius }: { children: React.ReactNo
         )}
         {/* Soft white highlight overlay */}
         <LinearGradient
-          colors={isClassic ? ['rgba(255, 255, 255, 0.70)', 'rgba(255, 255, 255, 0.30)'] : isZen ? ['rgba(0, 0, 0, 0.15)', 'rgba(0, 0, 0, 0.05)'] : isSapphire ? (currentTheme.colors.glassGlow ? [currentTheme.colors.glassGlow, 'rgba(59, 130, 246, 0.005)'] : ['rgba(59, 130, 246, 0.02)', 'rgba(59, 130, 246, 0.005)']) : ['rgba(255, 255, 255, 0.28)', 'rgba(255, 255, 255, 0.06)']}
+          colors={isClassic ? ['rgba(255, 255, 255, 0.70)', 'rgba(255, 255, 255, 0.30)'] : isZen ? ['rgba(0, 0, 0, 0.15)', 'rgba(0, 0, 0, 0.05)'] : isSapphire ? (currentTheme.colors.glassGlow ? [currentTheme.colors.glassGlow, 'rgba(59, 130, 246, 0.005)'] : ['rgba(59, 130, 246, 0.02)', 'rgba(59, 130, 246, 0.005)']) : isMarble ? (currentTheme.colors.marbleSoftHighlight ? [currentTheme.colors.marbleSoftHighlight, 'rgba(168, 162, 158, 0.10)'] : ['rgba(255, 255, 255, 0.88)', 'rgba(168, 162, 158, 0.10)']) : ['rgba(255, 255, 255, 0.28)', 'rgba(255, 255, 255, 0.06)']}
           start={{ x: 0, y: 0 }}
           end={{ x: 0, y: 1 }}
           style={styles.ribbonHighlight}

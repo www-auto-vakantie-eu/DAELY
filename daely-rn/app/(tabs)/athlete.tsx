@@ -39,6 +39,7 @@ export default function InstellingenScreen() {
   const isSapphire = currentTheme.id === 'sapphire';
   const isRuby = currentTheme.id === 'ruby';
   const isCoral = currentTheme.id === 'coralBloom';
+  const isMarble = currentTheme.id === 'marble';
 
   const classicGlowGradient = isClassic
     ? ['#FFFFFF', '#F8FBFF', '#EFF6FF']
@@ -50,15 +51,16 @@ export default function InstellingenScreen() {
       : isSapphire ? (currentTheme.gradients.aurora || ['#07111F', '#0C1220', '#162B4F'])
       : isRuby ? (currentTheme.gradients.aurora || ['#140607', '#240A10', '#3A1420'])
       : isCoral ? (currentTheme.gradients.aurora || ['#FFF7F3', '#FFEDE7', '#FFD6C9'])
+      : isMarble ? (currentTheme.gradients.aurora || ['#FFFFFF', '#F7F7F5', '#ECEDEA'])
       : currentTheme.gradients.aurora || ['#E8E6FF', '#D0CCFF', '#B8B4FF'];
 
-  const sectionBorderColor = isClassic ? '#DCEBFF' : isForce ? '#FECACA' : isSahara ? '#E8D0B0' : isRetro ? '#E7C0A3' : isZen ? 'rgba(255, 255, 255, 0.12)' : isSapphire ? 'rgba(147, 197, 253, 0.22)' : isRuby ? (currentTheme.colors.rubyGlowBorder || 'rgba(244, 167, 185, 0.22)') : isCoral ? (currentTheme.colors.coralGlowBorder || 'rgba(249, 115, 107, 0.22)') : undefined;
-  const sectionShadowColor = isClassic ? '#0EA5E9' : isForce ? '#EF4444' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? 'rgba(0, 0, 0, 0.45)' : isSapphire ? 'rgba(59, 130, 246, 0.24)' : isRuby ? (currentTheme.colors.rubyGlowShadow || 'rgba(184, 50, 90, 0.24)') : isCoral ? (currentTheme.colors.coralGlowShadow || 'rgba(249, 115, 107, 0.20)') : undefined;
-  const iconColor = isClassic ? '#2563EB' : isForce ? '#DC2626' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? '#FFFFFF' : isSapphire ? '#EAF2FF' : isRuby ? '#FFE4EC' : isCoral ? '#7A2E2E' : currentTheme.colors.primary || '#6B7280';
-  const chevronColor = isClassic ? '#475569' : isSapphire ? '#93C5FD' : isRuby ? '#F4A7B9' : isCoral ? '#A95B5B' : '#D1D5DB';
-  const titleColor = isClassic ? '#0F172A' : isForce ? '#7F1D1D' : isSahara ? '#7A4E24' : isRetro ? '#1B2E6B' : isZen ? '#FFFFFF' : isSapphire ? '#EAF2FF' : isRuby ? '#FFE4EC' : isCoral ? '#7A2E2E' : theme.titleColor;
-  const subtitleColor = isClassic ? '#475569' : isForce ? '#B91C1C' : isSahara ? '#9A6B3A' : isRetro ? '#B42318' : isZen ? '#B0B0B0' : isSapphire ? '#BFDBFE' : isRuby ? '#F4A7B9' : isCoral ? '#A95B5B' : theme.subtitleColor;
-  const separatorColor = isClassic ? '#DBEAFE' : isForce ? '#FEE2E2' : isSahara ? '#E8D0B0' : isRetro ? '#E7C0A3' : isZen ? 'rgba(255, 255, 255, 0.12)' : isSapphire ? 'rgba(147, 197, 253, 0.24)' : isRuby ? 'rgba(244, 167, 185, 0.24)' : isCoral ? 'rgba(249, 115, 107, 0.24)' : '#E5E7EB';
+  const sectionBorderColor = isClassic ? '#DCEBFF' : isForce ? '#FECACA' : isSahara ? '#E8D0B0' : isRetro ? '#E7C0A3' : isZen ? 'rgba(255, 255, 255, 0.12)' : isSapphire ? 'rgba(147, 197, 253, 0.22)' : isRuby ? (currentTheme.colors.rubyGlowBorder || 'rgba(244, 167, 185, 0.22)') : isCoral ? (currentTheme.colors.coralGlowBorder || 'rgba(249, 115, 107, 0.22)') : isMarble ? (currentTheme.colors.marbleGlowBorder || 'rgba(107, 114, 128, 0.18)') : undefined;
+  const sectionShadowColor = isClassic ? '#0EA5E9' : isForce ? '#EF4444' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? 'rgba(0, 0, 0, 0.45)' : isSapphire ? 'rgba(59, 130, 246, 0.24)' : isRuby ? (currentTheme.colors.rubyGlowShadow || 'rgba(184, 50, 90, 0.24)') : isCoral ? (currentTheme.colors.coralGlowShadow || 'rgba(249, 115, 107, 0.20)') : isMarble ? (currentTheme.colors.marbleGlowShadow || 'rgba(107, 114, 128, 0.16)') : undefined;
+  const iconColor = isClassic ? '#2563EB' : isForce ? '#DC2626' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? '#FFFFFF' : isSapphire ? '#EAF2FF' : isRuby ? '#FFE4EC' : isCoral ? '#7A2E2E' : isMarble ? '#6B7280' : currentTheme.colors.primary || '#6B7280';
+  const chevronColor = isClassic ? '#475569' : isSapphire ? '#93C5FD' : isRuby ? '#F4A7B9' : isCoral ? '#A95B5B' : isMarble ? '#9CA3AF' : '#D1D5DB';
+  const titleColor = isClassic ? '#0F172A' : isForce ? '#7F1D1D' : isSahara ? '#7A4E24' : isRetro ? '#1B2E6B' : isZen ? '#FFFFFF' : isSapphire ? '#EAF2FF' : isRuby ? '#FFE4EC' : isCoral ? '#7A2E2E' : isMarble ? '#1F2937' : theme.titleColor;
+  const subtitleColor = isClassic ? '#475569' : isForce ? '#B91C1C' : isSahara ? '#9A6B3A' : isRetro ? '#B42318' : isZen ? '#B0B0B0' : isSapphire ? '#BFDBFE' : isRuby ? '#F4A7B9' : isCoral ? '#A95B5B' : isMarble ? '#6B7280' : theme.subtitleColor;
+  const separatorColor = isClassic ? '#DBEAFE' : isForce ? '#FEE2E2' : isSahara ? '#E8D0B0' : isRetro ? '#E7C0A3' : isZen ? 'rgba(255, 255, 255, 0.12)' : isSapphire ? 'rgba(147, 197, 253, 0.24)' : isRuby ? 'rgba(244, 167, 185, 0.24)' : isCoral ? 'rgba(249, 115, 107, 0.24)' : isMarble ? 'rgba(209, 213, 219, 0.24)' : '#E5E7EB';
   const [pendingSyncCount, setPendingSyncCount] = useState(0);
   const [syncInProgress, setSyncInProgress] = useState(false);
   const [syncStatusMessage, setSyncStatusMessage] = useState('Nog niet gesynchroniseerd in deze sessie.');
@@ -127,7 +129,42 @@ export default function InstellingenScreen() {
             end={{ x: 1, y: 1 }}
             style={styles.sectionBackground}
             pointerEvents="none"
-          />
+          >
+            {/* Marble premium stone texture - only for Marble theme */}
+            {isMarble && (
+              <>
+                {/* Subtle diagonal vein */}
+                <LinearGradient
+                  colors={['rgba(55, 65, 81, 0.18)', 'rgba(55, 65, 81, 0.06)']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={{
+                    position: 'absolute',
+                    top: -10,
+                    left: -20,
+                    width: 120,
+                    height: 2,
+                    transform: [{ rotate: '-12deg' }],
+                    pointerEvents: 'none',
+                  }}
+                  pointerEvents="none"
+                />
+                {/* Pearl highlight */}
+                <View
+                  style={{
+                    position: 'absolute',
+                    top: -30,
+                    right: -30,
+                    width: 100,
+                    height: 80,
+                    borderRadius: 999,
+                    backgroundColor: 'rgba(255, 255, 255, 0.88)',
+                    pointerEvents: 'none',
+                  }}
+                />
+              </>
+            )}
+          </LinearGradient>
           <View style={styles.sectionContent}>
             <View style={styles.settingRow}>
               <MaterialCommunityIcons name="bell-outline" size={22} color={iconColor} />
@@ -234,7 +271,42 @@ export default function InstellingenScreen() {
             end={{ x: 1, y: 1 }}
             style={styles.sectionBackground}
             pointerEvents="none"
-          />
+          >
+            {/* Marble premium stone texture - only for Marble theme */}
+            {isMarble && (
+              <>
+                {/* Subtle diagonal vein */}
+                <LinearGradient
+                  colors={['rgba(55, 65, 81, 0.18)', 'rgba(55, 65, 81, 0.06)']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={{
+                    position: 'absolute',
+                    top: -10,
+                    left: -20,
+                    width: 120,
+                    height: 2,
+                    transform: [{ rotate: '-12deg' }],
+                    pointerEvents: 'none',
+                  }}
+                  pointerEvents="none"
+                />
+                {/* Pearl highlight */}
+                <View
+                  style={{
+                    position: 'absolute',
+                    top: -30,
+                    right: -30,
+                    width: 100,
+                    height: 80,
+                    borderRadius: 999,
+                    backgroundColor: 'rgba(255, 255, 255, 0.88)',
+                    pointerEvents: 'none',
+                  }}
+                />
+              </>
+            )}
+          </LinearGradient>
           <View style={styles.sectionContent}>
             <Pressable style={styles.settingRow} onPress={() => router.push('/(tabs)/account-security')}>
               <MaterialCommunityIcons name="shield-account-outline" size={22} color={iconColor} />
@@ -294,7 +366,42 @@ export default function InstellingenScreen() {
             end={{ x: 1, y: 1 }}
             style={styles.sectionBackground}
             pointerEvents="none"
-          />
+          >
+            {/* Marble premium stone texture - only for Marble theme */}
+            {isMarble && (
+              <>
+                {/* Subtle diagonal vein */}
+                <LinearGradient
+                  colors={['rgba(55, 65, 81, 0.18)', 'rgba(55, 65, 81, 0.06)']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={{
+                    position: 'absolute',
+                    top: -10,
+                    left: -20,
+                    width: 120,
+                    height: 2,
+                    transform: [{ rotate: '-12deg' }],
+                    pointerEvents: 'none',
+                  }}
+                  pointerEvents="none"
+                />
+                {/* Pearl highlight */}
+                <View
+                  style={{
+                    position: 'absolute',
+                    top: -30,
+                    right: -30,
+                    width: 100,
+                    height: 80,
+                    borderRadius: 999,
+                    backgroundColor: 'rgba(255, 255, 255, 0.88)',
+                    pointerEvents: 'none',
+                  }}
+                />
+              </>
+            )}
+          </LinearGradient>
           <View style={styles.sectionContent}>
             <Pressable style={styles.settingRow} onPress={() => router.push('/(tabs)/legal-app-info')}>
               <MaterialCommunityIcons name="information-outline" size={22} color={iconColor} />
@@ -343,7 +450,42 @@ export default function InstellingenScreen() {
             end={{ x: 1, y: 1 }}
             style={styles.sectionBackground}
             pointerEvents="none"
-          />
+          >
+            {/* Marble premium stone texture - only for Marble theme */}
+            {isMarble && (
+              <>
+                {/* Subtle diagonal vein */}
+                <LinearGradient
+                  colors={['rgba(55, 65, 81, 0.18)', 'rgba(55, 65, 81, 0.06)']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={{
+                    position: 'absolute',
+                    top: -10,
+                    left: -20,
+                    width: 120,
+                    height: 2,
+                    transform: [{ rotate: '-12deg' }],
+                    pointerEvents: 'none',
+                  }}
+                  pointerEvents="none"
+                />
+                {/* Pearl highlight */}
+                <View
+                  style={{
+                    position: 'absolute',
+                    top: -30,
+                    right: -30,
+                    width: 100,
+                    height: 80,
+                    borderRadius: 999,
+                    backgroundColor: 'rgba(255, 255, 255, 0.88)',
+                    pointerEvents: 'none',
+                  }}
+                />
+              </>
+            )}
+          </LinearGradient>
           <View style={styles.sectionContent}>
             <View style={styles.settingRow}>
               <MaterialCommunityIcons
@@ -386,7 +528,42 @@ export default function InstellingenScreen() {
             end={{ x: 1, y: 1 }}
             style={styles.sectionBackground}
             pointerEvents="none"
-          />
+          >
+            {/* Marble premium stone texture - only for Marble theme */}
+            {isMarble && (
+              <>
+                {/* Subtle diagonal vein */}
+                <LinearGradient
+                  colors={['rgba(55, 65, 81, 0.18)', 'rgba(55, 65, 81, 0.06)']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={{
+                    position: 'absolute',
+                    top: -10,
+                    left: -20,
+                    width: 120,
+                    height: 2,
+                    transform: [{ rotate: '-12deg' }],
+                    pointerEvents: 'none',
+                  }}
+                  pointerEvents="none"
+                />
+                {/* Pearl highlight */}
+                <View
+                  style={{
+                    position: 'absolute',
+                    top: -30,
+                    right: -30,
+                    width: 100,
+                    height: 80,
+                    borderRadius: 999,
+                    backgroundColor: 'rgba(255, 255, 255, 0.88)',
+                    pointerEvents: 'none',
+                  }}
+                />
+              </>
+            )}
+          </LinearGradient>
           <View style={styles.sectionContent}>
             <Pressable style={styles.settingRow} onPress={() => router.push('/(tabs)/qa-smoke')}>
               <MaterialCommunityIcons name="flask-outline" size={22} color={iconColor} />
@@ -418,7 +595,42 @@ export default function InstellingenScreen() {
             end={{ x: 1, y: 1 }}
             style={styles.sectionBackground}
             pointerEvents="none"
-          />
+          >
+            {/* Marble premium stone texture - only for Marble theme */}
+            {isMarble && (
+              <>
+                {/* Subtle diagonal vein */}
+                <LinearGradient
+                  colors={['rgba(55, 65, 81, 0.18)', 'rgba(55, 65, 81, 0.06)']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={{
+                    position: 'absolute',
+                    top: -10,
+                    left: -20,
+                    width: 120,
+                    height: 2,
+                    transform: [{ rotate: '-12deg' }],
+                    pointerEvents: 'none',
+                  }}
+                  pointerEvents="none"
+                />
+                {/* Pearl highlight */}
+                <View
+                  style={{
+                    position: 'absolute',
+                    top: -30,
+                    right: -30,
+                    width: 100,
+                    height: 80,
+                    borderRadius: 999,
+                    backgroundColor: 'rgba(255, 255, 255, 0.88)',
+                    pointerEvents: 'none',
+                  }}
+                />
+              </>
+            )}
+          </LinearGradient>
           <View style={styles.sectionContent}>
             <Pressable style={styles.settingRow} onPress={() => router.push('/(tabs)/goals')}>
               <MaterialCommunityIcons name="target" size={22} color={iconColor} />

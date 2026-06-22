@@ -499,6 +499,7 @@ function getAuroraTokens(activeThemeId: string) {
   const isSapphire = currentTheme.id === 'sapphire';
   const isRuby = currentTheme.id === 'ruby';
   const isCoral = currentTheme.id === 'coralBloom';
+  const isMarble = currentTheme.id === 'marble';
 
   // Theme-aware gradient for card backgrounds
   const themeGradient = isClassic
@@ -512,6 +513,7 @@ function getAuroraTokens(activeThemeId: string) {
         : isSapphire ? (currentTheme.gradients.aurora || ['#07111F', '#0C1220', '#162B4F'])
         : isRuby ? (currentTheme.gradients.aurora || ['#140607', '#240A10', '#3A1420'])
         : isCoral ? (currentTheme.gradients.aurora || ['#FFF7F3', '#FFEDE7', '#FFD6C9'])
+        : isMarble ? (currentTheme.gradients.aurora || ['#FFFFFF', '#F7F7F5', '#ECEDEA'])
         : currentTheme.gradients.aurora || ['#E8E6FF', '#D0CCFF', '#B8B4FF'];
 
   // Sapphire-specific shape tokens
@@ -522,8 +524,8 @@ function getAuroraTokens(activeThemeId: string) {
 
   return {
     auroraGradient: themeGradient,
-    auroraTitle: isClassic ? '#0F172A' : (currentTheme.colors.auroraTitle || (isZen ? '#FFFFFF' : isRetro ? '#1B2E6B' : isSahara ? '#7A4E24' : isForce ? '#7F1D1D' : isSapphire ? '#EAF2FF' : isRuby ? '#FFE4EC' : isCoral ? '#7A2E2E' : '#1E1B4B')),
-    auroraSubtitle: isClassic ? '#475569' : (currentTheme.colors.auroraSubtitle || (isZen ? '#B0B0B0' : isRetro ? '#B42318' : isSahara ? '#9A6B3A' : isForce ? '#B91C1C' : isSapphire ? '#BFDBFE' : isRuby ? '#F4A7B9' : isCoral ? '#A95B5B' : '#4A3A8C')),
+    auroraTitle: isClassic ? '#0F172A' : (currentTheme.colors.auroraTitle || (isZen ? '#FFFFFF' : isRetro ? '#1B2E6B' : isSahara ? '#7A4E24' : isForce ? '#7F1D1D' : isSapphire ? '#EAF2FF' : isRuby ? '#FFE4EC' : isCoral ? '#7A2E2E' : isMarble ? '#111827' : '#1E1B4B')),
+    auroraSubtitle: isClassic ? '#475569' : (currentTheme.colors.auroraSubtitle || (isZen ? '#B0B0B0' : isRetro ? '#B42318' : isSahara ? '#9A6B3A' : isForce ? '#B91C1C' : isSapphire ? '#BFDBFE' : isRuby ? '#F4A7B9' : isCoral ? '#A95B5B' : isMarble ? '#4B5563' : '#4A3A8C')),
     // Theme-aware ribbon colors
     ribbonTop: isClassic
       ? ['rgba(37, 99, 235, 0.08)', 'rgba(14, 165, 233, 0.10)']
@@ -536,6 +538,7 @@ function getAuroraTokens(activeThemeId: string) {
           : isSapphire ? (currentTheme.gradients.auroraBlue || ['rgba(59, 130, 246, 0.22)', 'rgba(59, 130, 246, 0.04)'])
           : isRuby ? (currentTheme.gradients.auroraBlue || ['rgba(95, 15, 42, 0.28)', 'rgba(95, 15, 42, 0.08)'])
           : isCoral ? (currentTheme.gradients.auroraBlue || ['rgba(255, 177, 153, 0.32)', 'rgba(255, 214, 201, 0.16)'])
+          : isMarble ? (currentTheme.gradients.auroraBlue || ['rgba(107, 114, 128, 0.14)', 'rgba(209, 213, 219, 0.08)'])
           : ['rgba(168, 162, 255, 0.55)', 'rgba(200, 195, 255, 0.12)'],
     ribbonMid: isClassic
       ? ['rgba(219, 234, 254, 0.55)', 'rgba(240, 249, 255, 0.75)']
@@ -548,6 +551,7 @@ function getAuroraTokens(activeThemeId: string) {
           : isSapphire ? ['rgba(147, 197, 253, 0.15)', 'rgba(147, 197, 253, 0.04)']
           : isRuby ? ['rgba(255, 228, 236, 0.20)', 'rgba(255, 228, 236, 0.08)']
           : isCoral ? ['rgba(255, 214, 201, 0.20)', 'rgba(255, 214, 201, 0.08)']
+          : isMarble ? ['rgba(245, 245, 244, 0.70)', 'rgba(214, 211, 209, 0.18)']
           : ['rgba(220, 180, 255, 0.42)', 'rgba(200, 195, 255, 0.20)'],
     ribbonBlue: isClassic
       ? ['rgba(37, 99, 235, 0.08)', 'rgba(14, 165, 233, 0.10)']
@@ -559,6 +563,7 @@ function getAuroraTokens(activeThemeId: string) {
           : isZen ? (currentTheme.gradients.auroraBlue || ['rgba(255, 255, 255, 0.10)', 'rgba(255, 255, 255, 0.03)'])
           : isSapphire ? (currentTheme.gradients.auroraBlue || ['rgba(59, 130, 246, 0.22)', 'rgba(59, 130, 246, 0.04)'])
           : isRuby ? (currentTheme.gradients.auroraBlue || ['rgba(95, 15, 42, 0.28)', 'rgba(95, 15, 42, 0.08)'])
+          : isMarble ? (currentTheme.gradients.auroraBlue || ['rgba(107, 114, 128, 0.14)', 'rgba(209, 213, 219, 0.08)'])
           : ['rgba(168, 162, 255, 0.75)', 'rgba(200, 195, 255, 0.38)'],
     ribbonRose: isClassic
       ? ['rgba(219, 234, 254, 0.55)', 'rgba(240, 249, 255, 0.75)']
@@ -571,6 +576,7 @@ function getAuroraTokens(activeThemeId: string) {
           : isSapphire ? (currentTheme.gradients.auroraRose || ['rgba(147, 197, 253, 0.12)', 'rgba(147, 197, 253, 0.03)'])
           : isRuby ? (currentTheme.gradients.auroraRose || ['rgba(184, 50, 90, 0.26)', 'rgba(228, 90, 122, 0.08)'])
           : isCoral ? (currentTheme.gradients.auroraRose || ['rgba(249, 115, 107, 0.30)', 'rgba(232, 93, 117, 0.12)'])
+          : isMarble ? (currentTheme.gradients.auroraRose || ['rgba(245, 245, 244, 0.70)', 'rgba(214, 211, 209, 0.18)'])
           : ['rgba(220, 180, 255, 0.65)', 'rgba(230, 200, 255, 0.30)'],
     ribbonRight: isClassic
       ? ['rgba(37, 99, 235, 0.08)', 'rgba(255, 255, 255, 0.05)']
@@ -582,21 +588,25 @@ function getAuroraTokens(activeThemeId: string) {
           : isZen ? ['rgba(255, 255, 255, 0.08)', 'rgba(255, 255, 255, 0.02)']
           : isSapphire ? ['rgba(147, 197, 253, 0.15)', 'rgba(147, 197, 253, 0.04)']
           : isRuby ? ['rgba(255, 228, 236, 0.20)', 'rgba(255, 228, 236, 0.08)']
+          : isMarble ? ['rgba(245, 245, 244, 0.20)', 'rgba(214, 211, 209, 0.08)']
           : ['rgba(180, 170, 255, 0.38)', 'rgba(255, 255, 255, 0.05)'],
     ribbonHighlight: isClassic
       ? ['rgba(255, 255, 255, 0.70)', 'rgba(255, 255, 255, 0.30)']
       : isSapphire ? (currentTheme.colors.glassGlow ? [currentTheme.colors.glassGlow, 'rgba(59, 130, 246, 0.005)'] : ['rgba(59, 130, 246, 0.02)', 'rgba(59, 130, 246, 0.005)'])
       : isRuby ? (currentTheme.colors.rubyGlowBorder ? [currentTheme.colors.rubyGlowBorder, 'rgba(184, 50, 90, 0.08)'] : ['rgba(228, 90, 122, 0.24)', 'rgba(255, 228, 236, 0.08)'])
       : isCoral ? (currentTheme.colors.coralSoftGlow ? [currentTheme.colors.coralSoftGlow, 'rgba(249, 115, 107, 0.05)'] : ['rgba(255, 214, 201, 0.18)', 'rgba(255, 177, 153, 0.06)'])
+      : isMarble ? (currentTheme.colors.marbleSoftHighlight ? [currentTheme.colors.marbleSoftHighlight, 'rgba(168, 162, 158, 0.04)'] : ['rgba(255, 255, 255, 0.78)', 'rgba(168, 162, 158, 0.04)'])
       : ['rgba(255, 255, 255, 0.28)', 'rgba(255, 255, 255, 0.06)'],
     // Coral Bloom soft glow flag
     useSoftCoralGlow: isCoral,
-    auroraHighlight: currentTheme.colors.auroraHighlight || (isZen ? '#E5E7EB' : isRetro ? '#E8622A' : isSahara ? '#E7C99B' : isForce ? '#EF4444' : isSapphire ? '#93C5FD' : isRuby ? '#E45A7A' : isCoral ? '#F9736B' : '#6B5B95'),
+    // Marble soft vein flag
+    useSoftMarbleVein: isMarble,
+    auroraHighlight: currentTheme.colors.auroraHighlight || (isZen ? '#E5E7EB' : isRetro ? '#E8622A' : isSahara ? '#E7C99B' : isForce ? '#EF4444' : isSapphire ? '#93C5FD' : isRuby ? '#E45A7A' : isCoral ? '#F9736B' : isMarble ? '#9CA3AF' : '#6B5B95'),
     // Theme-aware shortcut card styling
-    shortcutBorderColor: isClassic ? '#DCEBFF' : isForce ? '#FECACA' : isSahara ? '#E8D0B0' : isRetro ? '#E7C0A3' : isZen ? 'rgba(255, 255, 255, 0.12)' : isSapphire ? 'rgba(147, 197, 253, 0.22)' : isRuby ? (currentTheme.colors.rubyGlowBorder || 'rgba(244, 167, 185, 0.22)') : isCoral ? (currentTheme.colors.coralGlowBorder || 'rgba(249, 115, 107, 0.22)') : undefined,
-    shortcutShadowColor: isClassic ? '#0EA5E9' : isForce ? '#EF4444' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? 'rgba(0, 0, 0, 0.45)' : isSapphire ? 'rgba(59, 130, 246, 0.24)' : isRuby ? (currentTheme.colors.rubyGlowShadow || 'rgba(184, 50, 90, 0.24)') : isCoral ? (currentTheme.colors.coralGlowShadow || 'rgba(249, 115, 107, 0.20)') : undefined,
-    shortcutIconBg: isClassic ? 'rgba(219, 234, 254, 0.8)' : isForce ? 'rgba(254, 202, 202, 0.75)' : isSahara ? 'rgba(245, 230, 211, 0.75)' : isRetro ? 'rgba(255, 253, 247, 0.88)' : isZen ? 'rgba(255, 255, 255, 0.08)' : isSapphire ? 'rgba(59, 130, 246, 0.14)' : isRuby ? (currentTheme.colors.rubyIconBg || 'rgba(184, 50, 90, 0.14)') : isCoral ? (currentTheme.colors.coralIconBg || 'rgba(255, 177, 153, 0.24)') : 'rgba(255, 255, 255, 0.6)',
-    shortcutIconBorder: isClassic ? '#DBEAFE' : isForce ? '#FCA5A5' : isSahara ? '#E8D0B0' : isRetro ? '#E7C0A3' : isZen ? 'rgba(255, 255, 255, 0.14)' : isSapphire ? 'rgba(147, 197, 253, 0.24)' : isRuby ? (currentTheme.colors.rubyIconBorder || 'rgba(244, 167, 185, 0.24)') : isCoral ? (currentTheme.colors.coralIconBorder || 'rgba(249, 115, 107, 0.26)') : undefined,
+    shortcutBorderColor: isClassic ? '#DCEBFF' : isForce ? '#FECACA' : isSahara ? '#E8D0B0' : isRetro ? '#E7C0A3' : isZen ? 'rgba(255, 255, 255, 0.12)' : isSapphire ? 'rgba(147, 197, 253, 0.22)' : isRuby ? (currentTheme.colors.rubyGlowBorder || 'rgba(244, 167, 185, 0.22)') : isCoral ? (currentTheme.colors.coralGlowBorder || 'rgba(249, 115, 107, 0.22)') : isMarble ? (currentTheme.colors.marbleGlowBorder || 'rgba(107, 114, 128, 0.18)') : undefined,
+    shortcutShadowColor: isClassic ? '#0EA5E9' : isForce ? '#EF4444' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? 'rgba(0, 0, 0, 0.45)' : isSapphire ? 'rgba(59, 130, 246, 0.24)' : isRuby ? (currentTheme.colors.rubyGlowShadow || 'rgba(184, 50, 90, 0.24)') : isCoral ? (currentTheme.colors.coralGlowShadow || 'rgba(249, 115, 107, 0.20)') : isMarble ? (currentTheme.colors.marbleGlowShadow || 'rgba(107, 114, 128, 0.16)') : undefined,
+    shortcutIconBg: isClassic ? 'rgba(219, 234, 254, 0.8)' : isForce ? 'rgba(254, 202, 202, 0.75)' : isSahara ? 'rgba(245, 230, 211, 0.75)' : isRetro ? 'rgba(255, 253, 247, 0.88)' : isZen ? 'rgba(255, 255, 255, 0.08)' : isSapphire ? 'rgba(59, 130, 246, 0.14)' : isRuby ? (currentTheme.colors.rubyIconBg || 'rgba(184, 50, 90, 0.14)') : isCoral ? (currentTheme.colors.coralIconBg || 'rgba(255, 177, 153, 0.24)') : isMarble ? (currentTheme.colors.marbleIconBg || 'rgba(245, 245, 244, 0.86)') : 'rgba(255, 255, 255, 0.6)',
+    shortcutIconBorder: isClassic ? '#DBEAFE' : isForce ? '#FCA5A5' : isSahara ? '#E8D0B0' : isRetro ? '#E7C0A3' : isZen ? 'rgba(255, 255, 255, 0.14)' : isSapphire ? 'rgba(147, 197, 253, 0.24)' : isRuby ? (currentTheme.colors.rubyIconBorder || 'rgba(244, 167, 185, 0.24)') : isCoral ? (currentTheme.colors.coralIconBorder || 'rgba(249, 115, 107, 0.26)') : isMarble ? (currentTheme.colors.marbleIconBorder || 'rgba(168, 162, 158, 0.24)') : undefined,
     // Sapphire shape tokens
     cardRadius,
     cardBorderWidth,
@@ -610,6 +620,7 @@ export default function DisciplineScreen() {
   const router = useRouter();
   const theme = useTheme();
   const { activeThemeId } = useAppContext();
+  const isMarble = theme.id === 'marble';
   const { auroraGradient, auroraTitle, auroraSubtitle, ribbonTop, ribbonMid, ribbonBlue, ribbonRose, ribbonRight, ribbonHighlight, shortcutBorderColor, shortcutShadowColor, shortcutIconBg, shortcutIconBorder } = getAuroraTokens(activeThemeId);
   const [activeTab, setActiveTab] = useState<'workouts' | 'oefeningen' | 'programmas'>('workouts');
   const [activeFilter, setActiveFilter] = useState('Alles');
@@ -893,6 +904,72 @@ export default function DisciplineScreen() {
                         style={styles.ribbonRight}
                         pointerEvents="none"
                       />
+                      {/* Marble premium stone texture - only for Marble theme */}
+                      {isMarble && (
+                        <>
+                          {/* Main diagonal vein */}
+                          <LinearGradient
+                            colors={['rgba(55, 65, 81, 0.22)', 'rgba(55, 65, 81, 0.08)']}
+                            start={{ x: 0, y: 0 }}
+                            end={{ x: 1, y: 1 }}
+                            style={{
+                              position: 'absolute',
+                              top: -15,
+                              left: -30,
+                              width: 160,
+                              height: 2,
+                              transform: [{ rotate: '-15deg' }],
+                              pointerEvents: 'none',
+                            }}
+                            pointerEvents="none"
+                          />
+                          {/* Secondary vein */}
+                          <LinearGradient
+                            colors={['rgba(120, 113, 108, 0.18)', 'rgba(120, 113, 108, 0.06)']}
+                            start={{ x: 0, y: 0 }}
+                            end={{ x: 1, y: 1 }}
+                            style={{
+                              position: 'absolute',
+                              top: 50,
+                              right: -25,
+                              width: 120,
+                              height: 2,
+                              transform: [{ rotate: '12deg' }],
+                              pointerEvents: 'none',
+                            }}
+                            pointerEvents="none"
+                          />
+                          {/* Third soft vein */}
+                          <LinearGradient
+                            colors={['rgba(168, 162, 158, 0.16)', 'rgba(168, 162, 158, 0.04)']}
+                            start={{ x: 0, y: 0 }}
+                            end={{ x: 1, y: 1 }}
+                            style={{
+                              position: 'absolute',
+                              bottom: -10,
+                              left: 30,
+                              width: 100,
+                              height: 2,
+                              transform: [{ rotate: '8deg' }],
+                              pointerEvents: 'none',
+                            }}
+                            pointerEvents="none"
+                          />
+                          {/* Pearl highlight */}
+                          <View
+                            style={{
+                              position: 'absolute',
+                              top: -40,
+                              right: -40,
+                              width: 140,
+                              height: 110,
+                              borderRadius: 999,
+                              backgroundColor: 'rgba(255, 255, 255, 0.88)',
+                              pointerEvents: 'none',
+                            }}
+                          />
+                        </>
+                      )}
                       {/* Soft white highlight overlay */}
                       <LinearGradient
                         colors={ribbonHighlight}
@@ -1003,6 +1080,56 @@ export default function DisciplineScreen() {
                             style={styles.ribbonRight}
                             pointerEvents="none"
                           />
+                          {/* Marble premium stone texture - only for Marble theme */}
+                          {isMarble && (
+                            <>
+                              {/* Main diagonal vein */}
+                              <LinearGradient
+                                colors={['rgba(55, 65, 81, 0.22)', 'rgba(55, 65, 81, 0.08)']}
+                                start={{ x: 0, y: 0 }}
+                                end={{ x: 1, y: 1 }}
+                                style={{
+                                  position: 'absolute',
+                                  top: -15,
+                                  left: -30,
+                                  width: 160,
+                                  height: 2,
+                                  transform: [{ rotate: '-15deg' }],
+                                  pointerEvents: 'none',
+                                }}
+                                pointerEvents="none"
+                              />
+                              {/* Secondary vein */}
+                              <LinearGradient
+                                colors={['rgba(120, 113, 108, 0.18)', 'rgba(120, 113, 108, 0.06)']}
+                                start={{ x: 0, y: 0 }}
+                                end={{ x: 1, y: 1 }}
+                                style={{
+                                  position: 'absolute',
+                                  top: 50,
+                                  right: -25,
+                                  width: 120,
+                                  height: 2,
+                                  transform: [{ rotate: '12deg' }],
+                                  pointerEvents: 'none',
+                                }}
+                                pointerEvents="none"
+                              />
+                              {/* Pearl highlight */}
+                              <View
+                                style={{
+                                  position: 'absolute',
+                                  top: -40,
+                                  right: -40,
+                                  width: 140,
+                                  height: 110,
+                                  borderRadius: 999,
+                                  backgroundColor: 'rgba(255, 255, 255, 0.88)',
+                                  pointerEvents: 'none',
+                                }}
+                              />
+                            </>
+                          )}
                           {/* Soft white highlight overlay */}
                           <LinearGradient
                             colors={ribbonHighlight}
@@ -1147,6 +1274,56 @@ export default function DisciplineScreen() {
                           style={styles.ribbonRight}
                           pointerEvents="none"
                         />
+                        {/* Marble premium stone texture - only for Marble theme */}
+                        {isMarble && (
+                          <>
+                            {/* Main diagonal vein */}
+                            <LinearGradient
+                              colors={['rgba(55, 65, 81, 0.22)', 'rgba(55, 65, 81, 0.08)']}
+                              start={{ x: 0, y: 0 }}
+                              end={{ x: 1, y: 1 }}
+                              style={{
+                                position: 'absolute',
+                                top: -15,
+                                left: -30,
+                                width: 160,
+                                height: 2,
+                                transform: [{ rotate: '-15deg' }],
+                                pointerEvents: 'none',
+                              }}
+                              pointerEvents="none"
+                            />
+                            {/* Secondary vein */}
+                            <LinearGradient
+                              colors={['rgba(120, 113, 108, 0.18)', 'rgba(120, 113, 108, 0.06)']}
+                              start={{ x: 0, y: 0 }}
+                              end={{ x: 1, y: 1 }}
+                              style={{
+                                position: 'absolute',
+                                top: 50,
+                                right: -25,
+                                width: 120,
+                                height: 2,
+                                transform: [{ rotate: '12deg' }],
+                                pointerEvents: 'none',
+                              }}
+                              pointerEvents="none"
+                            />
+                            {/* Pearl highlight */}
+                            <View
+                              style={{
+                                position: 'absolute',
+                                top: -40,
+                                right: -40,
+                                width: 140,
+                                height: 110,
+                                borderRadius: 999,
+                                backgroundColor: 'rgba(255, 255, 255, 0.88)',
+                                pointerEvents: 'none',
+                              }}
+                            />
+                          </>
+                        )}
                         {/* Soft white highlight overlay */}
                         <LinearGradient
                           colors={ribbonHighlight}
