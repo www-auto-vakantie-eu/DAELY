@@ -121,6 +121,11 @@ function getAuroraTokens(activeThemeId: string) {
   const isRuby = currentTheme.id === 'ruby';
   const isCoral = currentTheme.id === 'coralBloom';
   const isMarble = currentTheme.id === 'marble';
+  const isBordeauxVelvet = currentTheme.id === 'bordeauxVelvet';
+  const isChampagneRose = currentTheme.id === 'champagneRose';
+  const isIvoryGold = currentTheme.id === 'ivoryGold';
+  const isMineralGreen = currentTheme.id === 'mineralGreen';
+  const isObsidianGold = currentTheme.id === 'obsidianGold';
 
   // Theme-aware gradient for card backgrounds
   const themeGradient = isClassic
@@ -134,18 +139,23 @@ function getAuroraTokens(activeThemeId: string) {
       : isRuby ? (currentTheme.gradients.aurora || ['#140607', '#240A10', '#3A1420'])
       : isCoral ? (currentTheme.gradients.aurora || ['#FFF7F3', '#FFEDE7', '#FFD6C9'])
       : isMarble ? (currentTheme.gradients.aurora || ['#FFFFFF', '#F7F7F5', '#ECEDEA'])
+      : isBordeauxVelvet ? (currentTheme.gradients.aurora || ['#2A0D16', '#3A1220', '#4A1A2A'])
+      : isChampagneRose ? (currentTheme.gradients.aurora || ['#FFFFFF', '#FAF0EA', '#F5E7D8'])
+      : isIvoryGold ? (currentTheme.gradients.aurora || ['#FFFFFF', '#FFF8E6', '#F5E7D0'])
+      : isMineralGreen ? (currentTheme.gradients.aurora || ['#FFFFFF', '#EEF6F1', '#E0EDE4'])
+      : isObsidianGold ? (currentTheme.gradients.aurora || ['#111111', '#181818', '#252525'])
       : currentTheme.gradients.aurora || ['#E8E6FF', '#D0CCFF', '#B8B4FF'];
 
   // Sapphire-specific shape tokens
-  const cardRadius = isSapphire ? (currentTheme.colors.cardRadius || 14) : isRetro ? 16 : isSahara ? 16 : isForce ? 16 : isZen ? 14 : 16;
-  const cardBorderWidth = isSapphire ? (currentTheme.colors.cardBorderWidth || 1.5) : isRetro ? 1 : isSahara ? 1 : isForce ? 1 : isZen ? 1 : 1;
-  const iconBubbleRadius = isSapphire ? (currentTheme.colors.iconBubbleRadius || 12) : isRetro ? 14 : isSahara ? 14 : isForce ? 14 : isZen ? 10 : 14;
-  const shortcutRadius = isSapphire ? (currentTheme.colors.shortcutRadius || 12) : 16;
+  const cardRadius = isSapphire ? (currentTheme.colors.cardRadius || 14) : isRetro ? 16 : isSahara ? 16 : isForce ? 16 : isZen ? 14 : isBordeauxVelvet ? (currentTheme.colors.cardRadius || 26) : isChampagneRose ? (currentTheme.colors.cardRadius || 28) : isIvoryGold ? (currentTheme.colors.cardRadius || 22) : isMineralGreen ? (currentTheme.colors.cardRadius || 24) : isObsidianGold ? (currentTheme.colors.cardRadius || 18) : 16;
+  const cardBorderWidth = isSapphire ? (currentTheme.colors.cardBorderWidth || 1.5) : isRetro ? 1 : isSahara ? 1 : isForce ? 1 : isZen ? 1 : isBordeauxVelvet ? (currentTheme.colors.cardBorderWidth || 1.2) : isChampagneRose ? (currentTheme.colors.cardBorderWidth || 1) : isIvoryGold ? (currentTheme.colors.cardBorderWidth || 0.8) : isMineralGreen ? (currentTheme.colors.cardBorderWidth || 1) : isObsidianGold ? (currentTheme.colors.cardBorderWidth || 1) : 1;
+  const iconBubbleRadius = isSapphire ? (currentTheme.colors.iconBubbleRadius || 12) : isRetro ? 14 : isSahara ? 14 : isForce ? 14 : isZen ? 10 : isBordeauxVelvet ? (currentTheme.colors.iconBubbleRadius || 18) : isChampagneRose ? (currentTheme.colors.iconBubbleRadius || 20) : isIvoryGold ? (currentTheme.colors.iconBubbleRadius || 16) : isMineralGreen ? (currentTheme.colors.iconBubbleRadius || 16) : isObsidianGold ? (currentTheme.colors.iconBubbleRadius || 14) : 14;
+  const shortcutRadius = isSapphire ? (currentTheme.colors.shortcutRadius || 12) : isBordeauxVelvet ? (currentTheme.colors.shortcutRadius || 18) : isChampagneRose ? (currentTheme.colors.shortcutRadius || 20) : isIvoryGold ? (currentTheme.colors.shortcutRadius || 16) : isMineralGreen ? (currentTheme.colors.shortcutRadius || 16) : isObsidianGold ? (currentTheme.colors.shortcutRadius || 14) : 16;
 
   return {
     auroraGradient: themeGradient,
-    auroraTitle: currentTheme.colors.auroraTitle || (isZen ? '#FFFFFF' : isRetro ? '#1B2E6B' : isSahara ? '#7A4E24' : isForce ? '#7F1D1D' : isSapphire ? '#EAF2FF' : isRuby ? '#FFE4EC' : isCoral ? '#7A2E2E' : '#1E1B4B'),
-    auroraSubtitle: currentTheme.colors.auroraSubtitle || (isZen ? '#B0B0B0' : isRetro ? '#B42318' : isSahara ? '#9A6B3A' : isForce ? '#B91C1C' : isSapphire ? '#BFDBFE' : isRuby ? '#F4A7B9' : isCoral ? '#A95B5B' : '#4A3A8C'),
+    auroraTitle: currentTheme.colors.auroraTitle || (isZen ? '#FFFFFF' : isRetro ? '#1B2E6B' : isSahara ? '#7A4E24' : isForce ? '#7F1D1D' : isSapphire ? '#EAF2FF' : isRuby ? '#FFE4EC' : isCoral ? '#7A2E2E' : isMarble ? '#111827' : isBordeauxVelvet ? '#FFF1F4' : isChampagneRose ? '#2A1F23' : isIvoryGold ? '#2A261C' : isMineralGreen ? '#163227' : isObsidianGold ? '#FFF7D6' : '#1E1B4B'),
+    auroraSubtitle: currentTheme.colors.auroraSubtitle || (isZen ? '#B0B0B0' : isRetro ? '#B42318' : isSahara ? '#9A6B3A' : isForce ? '#B91C1C' : isSapphire ? '#BFDBFE' : isRuby ? '#F4A7B9' : isCoral ? '#A95B5B' : isMarble ? '#4B5563' : isBordeauxVelvet ? '#E8B8C2' : isChampagneRose ? '#7A5A62' : isIvoryGold ? '#6F6448' : isMineralGreen ? '#4D6B5C' : isObsidianGold ? '#C9B97A' : '#4A3A8C'),
     // Theme-aware ribbon colors
     ribbonTop: isClassic
       ? ['rgba(37, 99, 235, 0.08)', 'rgba(14, 165, 233, 0.10)']
@@ -168,6 +178,12 @@ function getAuroraTokens(activeThemeId: string) {
         : isSapphire ? (currentTheme.colors.glassLine2 || ['rgba(59, 130, 246, 0.02)', 'rgba(59, 130, 246, 0.005)'])
         : isRuby ? ['rgba(255, 228, 236, 0.20)', 'rgba(255, 228, 236, 0.08)']
         : isCoral ? ['rgba(255, 214, 201, 0.20)', 'rgba(255, 214, 201, 0.08)']
+        : isMarble ? ['#FFFFFF', '#F9EEF2']
+        : isBordeauxVelvet ? ['#3A1220', '#4A1A2A']
+        : isChampagneRose ? ['#FAF0EA', '#F5E7D8']
+        : isIvoryGold ? ['#FFF8E6', '#F5E7D0']
+        : isMineralGreen ? ['#EEF6F1', '#E0EDE4']
+        : isObsidianGold ? ['#181818', '#252525']
         : ['rgba(220, 180, 255, 0.42)', 'rgba(200, 195, 255, 0.20)'],
     ribbonBlue: isClassic
       ? ['rgba(37, 99, 235, 0.08)', 'rgba(14, 165, 233, 0.10)']
@@ -208,6 +224,11 @@ function getAuroraTokens(activeThemeId: string) {
       : isRuby ? (currentTheme.colors.rubyGlowBorder ? [currentTheme.colors.rubyGlowBorder, 'rgba(184, 50, 90, 0.08)'] : ['rgba(228, 90, 122, 0.24)', 'rgba(255, 228, 236, 0.08)'])
       : isCoral ? (currentTheme.colors.coralSoftGlow ? [currentTheme.colors.coralSoftGlow, 'rgba(249, 115, 107, 0.05)'] : ['rgba(255, 214, 201, 0.18)', 'rgba(255, 177, 153, 0.06)'])
       : isMarble ? (currentTheme.colors.marbleSoftHighlight ? [currentTheme.colors.marbleSoftHighlight, 'rgba(168, 162, 158, 0.04)'] : ['rgba(255, 255, 255, 0.78)', 'rgba(168, 162, 158, 0.04)'])
+      : isBordeauxVelvet ? ['rgba(212, 175, 55, 0.24)', 'rgba(168, 50, 86, 0.10)']
+      : isChampagneRose ? ['rgba(198, 161, 91, 0.24)', 'rgba(183, 110, 121, 0.10)']
+      : isIvoryGold ? ['rgba(198, 161, 91, 0.24)', 'rgba(231, 211, 161, 0.10)']
+      : isMineralGreen ? ['rgba(79, 124, 104, 0.24)', 'rgba(127, 166, 146, 0.10)']
+      : isObsidianGold ? ['rgba(212, 175, 55, 0.24)', 'rgba(138, 106, 32, 0.10)']
       : ['rgba(255, 255, 255, 0.28)', 'rgba(255, 255, 255, 0.06)'],
     // Coral Bloom soft glow flag
     useSoftCoralGlow: isCoral,

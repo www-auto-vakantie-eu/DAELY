@@ -20,6 +20,7 @@ import {
 import { TODAY_QUOTES } from '@/constants/today-quotes';
 import { getUnreadMessageCount } from '@/services/messages-storage';
 import { THEMES } from '@/constants/themes';
+import { getThemePersonality } from '@/lib/themePersonality';
 
 const SHORTCUTS_STORAGE_KEY = 'daely.today.shortcuts.v1';
 
@@ -48,6 +49,7 @@ const DEFAULT_SHORTCUTS: ShortcutId[] = ['nutrition', 'habits', 'stats'];
 // Helper to get theme-aware Aurora tokens
 function getAuroraTokens(activeThemeId: string) {
   const currentTheme = THEMES[activeThemeId as keyof typeof THEMES] || THEMES.classic;
+  const personality = getThemePersonality(activeThemeId);
   const isClassic = currentTheme.id === 'classic';
   const isForce = currentTheme.id === 'force';
   const isSahara = currentTheme.id === 'saharaDune';
@@ -57,6 +59,11 @@ function getAuroraTokens(activeThemeId: string) {
   const isRuby = currentTheme.id === 'ruby';
   const isCoral = currentTheme.id === 'coralBloom';
   const isMarble = currentTheme.id === 'marble';
+  const isBordeauxVelvet = currentTheme.id === 'bordeauxVelvet';
+  const isChampagneRose = currentTheme.id === 'champagneRose';
+  const isIvoryGold = currentTheme.id === 'ivoryGold';
+  const isMineralGreen = currentTheme.id === 'mineralGreen';
+  const isObsidianGold = currentTheme.id === 'obsidianGold';
 
   // Theme-aware gradient for card backgrounds
   const themeGradient = isClassic
@@ -71,18 +78,33 @@ function getAuroraTokens(activeThemeId: string) {
         : isRuby ? (currentTheme.gradients.aurora || ['#140607', '#240A10', '#3A1420'])
         : isCoral ? (currentTheme.gradients.aurora || ['#FFF7F3', '#FFEDE7', '#FFD6C9'])
         : isMarble ? (currentTheme.gradients.aurora || ['#FFFFFF', '#F6D6DE', '#E7D3A1'])
+        : isBordeauxVelvet ? (currentTheme.gradients.aurora || ['#2A0D16', '#3A1220', '#4A1A2A'])
+        : isChampagneRose ? (currentTheme.gradients.aurora || ['#FFFFFF', '#FAF0EA', '#F5E7D8'])
+        : isIvoryGold ? (currentTheme.gradients.aurora || ['#FFFFFF', '#FFF8E6', '#F5E7D0'])
+        : isMineralGreen ? (currentTheme.gradients.aurora || ['#FFFFFF', '#EEF6F1', '#E0EDE4'])
+        : isObsidianGold ? (currentTheme.gradients.aurora || ['#111111', '#181818', '#252525'])
         : currentTheme.gradients.aurora || ['#E8E6FF', '#D0CCFF', '#B8B4FF'];
 
-  // Sapphire-specific shape tokens
-  const cardRadius = isSapphire ? (currentTheme.colors.cardRadius || 14) : isRetro ? 16 : isSahara ? 16 : isForce ? 16 : isZen ? 14 : 16;
-  const cardBorderWidth = isSapphire ? (currentTheme.colors.cardBorderWidth || 1.5) : isRetro ? 1 : isSahara ? 1 : isForce ? 1 : isZen ? 1 : 1;
-  const iconBubbleRadius = isSapphire ? (currentTheme.colors.iconBubbleRadius || 12) : isRetro ? 14 : isSahara ? 14 : isForce ? 14 : isZen ? 10 : 14;
-  const shortcutRadius = isSapphire ? (currentTheme.colors.shortcutRadius || 12) : 16;
+  // Use personality helper for shape tokens
+  const cardRadius = personality.cardRadius;
+  const cardBorderWidth = personality.borderWidth;
+  const iconBubbleRadius = personality.iconBubbleStyle === 'default' ? 14 : 
+    personality.iconBubbleStyle === 'dark-gold-rim' ? 18 :
+    personality.iconBubbleStyle === 'rose-gold' ? 20 :
+    personality.iconBubbleStyle === 'ivory-gold' ? 16 :
+    personality.iconBubbleStyle === 'sage' ? 16 :
+    personality.iconBubbleStyle === 'black-gold' ? 14 : 14;
+  const shortcutRadius = personality.iconBubbleStyle === 'default' ? 16 :
+    personality.iconBubbleStyle === 'dark-gold-rim' ? 18 :
+    personality.iconBubbleStyle === 'rose-gold' ? 20 :
+    personality.iconBubbleStyle === 'ivory-gold' ? 16 :
+    personality.iconBubbleStyle === 'sage' ? 16 :
+    personality.iconBubbleStyle === 'black-gold' ? 14 : 16;
 
   return {
     auroraGradient: themeGradient,
-    auroraTitle: currentTheme.colors.auroraTitle || (isZen ? '#FFFFFF' : isRetro ? '#1B2E6B' : isSahara ? '#7A4E24' : isForce ? '#7F1D1D' : isSapphire ? '#EAF2FF' : isRuby ? '#FFE4EC' : isCoral ? '#7A2E2E' : isMarble ? '#111827' : '#1E1B4B'),
-    auroraSubtitle: currentTheme.colors.auroraSubtitle || (isZen ? '#B0B0B0' : isRetro ? '#B42318' : isSahara ? '#9A6B3A' : isForce ? '#B91C1C' : isSapphire ? '#BFDBFE' : isRuby ? '#F4A7B9' : isCoral ? '#A95B5B' : isMarble ? '#4B5563' : '#4A3A8C'),
+    auroraTitle: currentTheme.colors.auroraTitle || (isZen ? '#FFFFFF' : isRetro ? '#1B2E6B' : isSahara ? '#7A4E24' : isForce ? '#7F1D1D' : isSapphire ? '#EAF2FF' : isRuby ? '#FFE4EC' : isCoral ? '#7A2E2E' : isMarble ? '#111827' : isBordeauxVelvet ? '#FFF1F4' : isChampagneRose ? '#2A1F23' : isIvoryGold ? '#2A261C' : isMineralGreen ? '#163227' : isObsidianGold ? '#FFF7D6' : '#1E1B4B'),
+    auroraSubtitle: currentTheme.colors.auroraSubtitle || (isZen ? '#B0B0B0' : isRetro ? '#B42318' : isSahara ? '#9A6B3A' : isForce ? '#B91C1C' : isSapphire ? '#BFDBFE' : isRuby ? '#F4A7B9' : isCoral ? '#A95B5B' : isMarble ? '#4B5563' : isBordeauxVelvet ? '#E8B8C2' : isChampagneRose ? '#7A5A62' : isIvoryGold ? '#6F6448' : isMineralGreen ? '#4D6B5C' : isObsidianGold ? '#C9B97A' : '#4A3A8C'),
     // Theme-aware ribbon colors
     ribbonTop: isClassic
       ? ['rgba(37, 99, 235, 0.08)', 'rgba(14, 165, 233, 0.10)']
@@ -109,6 +131,11 @@ function getAuroraTokens(activeThemeId: string) {
           : isRuby ? ['rgba(255, 228, 236, 0.20)', 'rgba(255, 228, 236, 0.08)']
           : isCoral ? ['rgba(255, 214, 201, 0.06)', 'rgba(255, 214, 201, 0.02)']
           : isMarble ? ['#FFFFFF', '#F9EEF2']
+          : isBordeauxVelvet ? ['#3A1220', '#4A1A2A']
+          : isChampagneRose ? ['#FAF0EA', '#F5E7D8']
+          : isIvoryGold ? ['#FFF8E6', '#F5E7D0']
+          : isMineralGreen ? ['#EEF6F1', '#E0EDE4']
+          : isObsidianGold ? ['#181818', '#252525']
           : ['rgba(220, 180, 255, 0.42)', 'rgba(200, 195, 255, 0.20)'],
     ribbonBlue: isClassic
       ? ['rgba(37, 99, 235, 0.08)', 'rgba(14, 165, 233, 0.10)']
@@ -157,19 +184,19 @@ function getAuroraTokens(activeThemeId: string) {
       return ['rgba(255, 255, 255, 0.28)', 'rgba(255, 255, 255, 0.06)'];
     })(),
     // Theme-aware icon colors
-    recoveryIconColor: isClassic ? '#0EA5E9' : isForce ? '#DC2626' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? '#FFFFFF' : isSapphire ? '#EAF2FF' : isRuby ? '#FFE4EC' : isCoral ? '#FCA5A5' : isMarble ? '#374151' : '#8B5CF6',
+    recoveryIconColor: isClassic ? '#0EA5E9' : isForce ? '#DC2626' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? '#FFFFFF' : isSapphire ? '#EAF2FF' : isRuby ? '#FFE4EC' : isCoral ? '#FCA5A5' : isMarble ? '#374151' : isBordeauxVelvet ? '#D4AF37' : isChampagneRose ? '#C6A15B' : isIvoryGold ? '#C6A15B' : isMineralGreen ? '#4F7C68' : isObsidianGold ? '#D4AF37' : '#8B5CF6',
     // Theme-aware recommendation icon backgrounds
-    mobilityIconBg: isClassic ? '#DBEAFE' : isForce ? 'rgba(254, 202, 202, 0.75)' : isSahara ? 'rgba(245, 230, 211, 0.75)' : isZen ? 'rgba(255, 255, 255, 0.08)' : isSapphire ? 'rgba(59, 130, 246, 0.14)' : isRuby ? 'rgba(184, 50, 90, 0.14)' : isCoral ? (currentTheme.colors.coralIconBg || 'rgba(255, 177, 153, 0.24)') : isMarble ? (currentTheme.colors.marbleIconBg || 'rgba(255, 255, 255, 0.92)') : '#DBEAFE',
-    mobilityIconColor: isClassic ? '#2563EB' : isForce ? '#DC2626' : isSahara ? '#8B5A2B' : isZen ? '#FFFFFF' : isSapphire ? '#BFDBFE' : isRuby ? '#FFE4EC' : isCoral ? (currentTheme.colors.coralIconColor || '#F9736B') : isMarble ? (currentTheme.colors.marbleIconColor || '#374151') : '#2563EB',
-    trainingIconBg: isClassic ? '#DBEAFE' : isForce ? 'rgba(254, 202, 202, 0.75)' : isSahara ? 'rgba(245, 230, 211, 0.75)' : isZen ? 'rgba(255, 255, 255, 0.08)' : isSapphire ? 'rgba(59, 130, 246, 0.14)' : isRuby ? 'rgba(184, 50, 90, 0.14)' : isCoral ? (currentTheme.colors.coralIconBg || 'rgba(255, 177, 153, 0.24)') : isMarble ? (currentTheme.colors.marbleIconBg || 'rgba(255, 255, 255, 0.92)') : '#D1FAE5',
-    trainingIconColor: isClassic ? '#2563EB' : isForce ? '#DC2626' : isSahara ? '#8B5A2B' : isZen ? '#FFFFFF' : isSapphire ? '#BFDBFE' : isRuby ? '#FFE4EC' : isCoral ? (currentTheme.colors.coralIconColor || '#F9736B') : isMarble ? (currentTheme.colors.marbleIconColor || '#374151') : '#059669',
-    nutritionIconBg: isClassic ? '#DBEAFE' : isForce ? 'rgba(254, 202, 202, 0.75)' : isSahara ? 'rgba(245, 230, 211, 0.75)' : isZen ? 'rgba(255, 255, 255, 0.08)' : isSapphire ? 'rgba(59, 130, 246, 0.14)' : isRuby ? 'rgba(184, 50, 90, 0.14)' : isCoral ? (currentTheme.colors.coralIconBg || 'rgba(255, 177, 153, 0.24)') : isMarble ? (currentTheme.colors.marbleIconBg || 'rgba(255, 255, 255, 0.92)') : '#FEF3C7',
-    nutritionIconColor: isClassic ? '#2563EB' : isForce ? '#DC2626' : isSahara ? '#8B5A2B' : isZen ? '#FFFFFF' : isSapphire ? '#BFDBFE' : isRuby ? '#FFE4EC' : isCoral ? (currentTheme.colors.coralIconColor || '#F9736B') : isMarble ? (currentTheme.colors.marbleIconColor || '#374151') : '#F59E0B',
+    mobilityIconBg: isClassic ? '#DBEAFE' : isForce ? 'rgba(254, 202, 202, 0.75)' : isSahara ? 'rgba(245, 230, 211, 0.75)' : isZen ? 'rgba(255, 255, 255, 0.08)' : isSapphire ? 'rgba(59, 130, 246, 0.14)' : isRuby ? 'rgba(184, 50, 90, 0.14)' : isCoral ? (currentTheme.colors.coralIconBg || 'rgba(255, 177, 153, 0.24)') : isMarble ? (currentTheme.colors.marbleIconBg || 'rgba(255, 255, 255, 0.92)') : isBordeauxVelvet ? 'rgba(212, 175, 55, 0.24)' : isChampagneRose ? 'rgba(198, 161, 91, 0.24)' : isIvoryGold ? 'rgba(198, 161, 91, 0.24)' : isMineralGreen ? 'rgba(79, 124, 104, 0.24)' : isObsidianGold ? 'rgba(212, 175, 55, 0.24)' : '#DBEAFE',
+    mobilityIconColor: isClassic ? '#2563EB' : isForce ? '#DC2626' : isSahara ? '#8B5A2B' : isZen ? '#FFFFFF' : isSapphire ? '#BFDBFE' : isRuby ? '#FFE4EC' : isCoral ? (currentTheme.colors.coralIconColor || '#F9736B') : isMarble ? (currentTheme.colors.marbleIconColor || '#374151') : isBordeauxVelvet ? '#FFF1F4' : isChampagneRose ? '#2A1F23' : isIvoryGold ? '#2A261C' : isMineralGreen ? '#163227' : isObsidianGold ? '#FFF7D6' : '#2563EB',
+    trainingIconBg: isClassic ? '#DBEAFE' : isForce ? 'rgba(254, 202, 202, 0.75)' : isSahara ? 'rgba(245, 230, 211, 0.75)' : isZen ? 'rgba(255, 255, 255, 0.08)' : isSapphire ? 'rgba(59, 130, 246, 0.14)' : isRuby ? 'rgba(184, 50, 90, 0.14)' : isCoral ? (currentTheme.colors.coralIconBg || 'rgba(255, 177, 153, 0.24)') : isMarble ? (currentTheme.colors.marbleIconBg || 'rgba(255, 255, 255, 0.92)') : isBordeauxVelvet ? 'rgba(212, 175, 55, 0.24)' : isChampagneRose ? 'rgba(198, 161, 91, 0.24)' : isIvoryGold ? 'rgba(198, 161, 91, 0.24)' : isMineralGreen ? 'rgba(79, 124, 104, 0.24)' : isObsidianGold ? 'rgba(212, 175, 55, 0.24)' : '#D1FAE5',
+    trainingIconColor: isClassic ? '#2563EB' : isForce ? '#DC2626' : isSahara ? '#8B5A2B' : isZen ? '#FFFFFF' : isSapphire ? '#BFDBFE' : isRuby ? '#FFE4EC' : isCoral ? (currentTheme.colors.coralIconColor || '#F9736B') : isMarble ? (currentTheme.colors.marbleIconColor || '#374151') : isBordeauxVelvet ? '#FFF1F4' : isChampagneRose ? '#2A1F23' : isIvoryGold ? '#2A261C' : isMineralGreen ? '#163227' : isObsidianGold ? '#FFF7D6' : '#059669',
+    nutritionIconBg: isClassic ? '#DBEAFE' : isForce ? 'rgba(254, 202, 202, 0.75)' : isSahara ? 'rgba(245, 230, 211, 0.75)' : isZen ? 'rgba(255, 255, 255, 0.08)' : isSapphire ? 'rgba(59, 130, 246, 0.14)' : isRuby ? 'rgba(184, 50, 90, 0.14)' : isCoral ? (currentTheme.colors.coralIconBg || 'rgba(255, 177, 153, 0.24)') : isMarble ? (currentTheme.colors.marbleIconBg || 'rgba(255, 255, 255, 0.92)') : isBordeauxVelvet ? 'rgba(212, 175, 55, 0.24)' : isChampagneRose ? 'rgba(198, 161, 91, 0.24)' : isIvoryGold ? 'rgba(198, 161, 91, 0.24)' : isMineralGreen ? 'rgba(79, 124, 104, 0.24)' : isObsidianGold ? 'rgba(212, 175, 55, 0.24)' : '#FEF3C7',
+    nutritionIconColor: isClassic ? '#2563EB' : isForce ? '#DC2626' : isSahara ? '#8B5A2B' : isZen ? '#FFFFFF' : isSapphire ? '#BFDBFE' : isRuby ? '#FFE4EC' : isCoral ? (currentTheme.colors.coralIconColor || '#F9736B') : isMarble ? (currentTheme.colors.marbleIconColor || '#374151') : isBordeauxVelvet ? '#FFF1F4' : isChampagneRose ? '#2A1F23' : isIvoryGold ? '#2A261C' : isMineralGreen ? '#163227' : isObsidianGold ? '#FFF7D6' : '#F59E0B',
     // Theme-aware shortcut card styling
-    shortcutBorderColor: isClassic ? '#DCEBFF' : isForce ? '#FECACA' : isSahara ? '#E8D0B0' : isRetro ? '#E7C0A3' : isZen ? 'rgba(255, 255, 255, 0.12)' : isSapphire ? (currentTheme.colors.glassBorder || 'rgba(147, 197, 253, 0.25)') : isRuby ? (currentTheme.colors.rubyGlowBorder || 'rgba(244, 167, 185, 0.22)') : isCoral ? (currentTheme.colors.coralGlowBorder || 'rgba(249, 115, 107, 0.22)') : isMarble ? (currentTheme.colors.marbleGlowBorder || 'rgba(198, 161, 91, 0.28)') : undefined,
-    shortcutShadowColor: isClassic ? '#0EA5E9' : isForce ? '#EF4444' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? 'rgba(0, 0, 0, 0.45)' : isSapphire ? (currentTheme.colors.glassShadow || 'rgba(59, 130, 246, 0.28)') : isRuby ? (currentTheme.colors.rubyGlowShadow || 'rgba(184, 50, 90, 0.24)') : isCoral ? (currentTheme.colors.coralGlowShadow || 'rgba(249, 115, 107, 0.20)') : isMarble ? (currentTheme.colors.marbleGlowShadow || 'rgba(183, 110, 121, 0.20)') : undefined,
-    shortcutIconBg: isClassic ? 'rgba(219, 234, 254, 0.8)' : isForce ? 'rgba(254, 202, 202, 0.75)' : isSahara ? 'rgba(245, 230, 211, 0.75)' : isRetro ? 'rgba(255, 253, 247, 0.88)' : isZen ? 'rgba(255, 255, 255, 0.08)' : isSapphire ? 'rgba(59, 130, 246, 0.14)' : isRuby ? (currentTheme.colors.rubyIconBg || 'rgba(184, 50, 90, 0.14)') : isCoral ? (currentTheme.colors.coralIconBg || 'rgba(255, 177, 153, 0.24)') : isMarble ? (currentTheme.colors.marbleIconBg || 'rgba(255, 255, 255, 0.92)') : 'rgba(255, 255, 255, 0.6)',
-    shortcutIconBorder: isClassic ? '#DBEAFE' : isForce ? '#FCA5A5' : isSahara ? '#E8D0B0' : isRetro ? '#E7C0A3' : isZen ? 'rgba(255, 255, 255, 0.14)' : isSapphire ? 'rgba(147, 197, 253, 0.24)' : isRuby ? (currentTheme.colors.rubyIconBorder || 'rgba(244, 167, 185, 0.24)') : isCoral ? (currentTheme.colors.coralIconBorder || 'rgba(249, 115, 107, 0.26)') : isMarble ? (currentTheme.colors.marbleIconBorder || 'rgba(198, 161, 91, 0.30)') : undefined,
+    shortcutBorderColor: isClassic ? '#DCEBFF' : isForce ? '#FECACA' : isSahara ? '#E8D0B0' : isRetro ? '#E7C0A3' : isZen ? 'rgba(255, 255, 255, 0.12)' : isSapphire ? (currentTheme.colors.glassBorder || 'rgba(147, 197, 253, 0.25)') : isRuby ? (currentTheme.colors.rubyGlowBorder || 'rgba(244, 167, 185, 0.22)') : isCoral ? (currentTheme.colors.coralGlowBorder || 'rgba(249, 115, 107, 0.22)') : isMarble ? (currentTheme.colors.marbleGlowBorder || 'rgba(198, 161, 91, 0.28)') : isBordeauxVelvet ? 'rgba(212, 175, 55, 0.26)' : isChampagneRose ? 'rgba(198, 161, 91, 0.28)' : isIvoryGold ? 'rgba(198, 161, 91, 0.30)' : isMineralGreen ? 'rgba(79, 124, 104, 0.26)' : isObsidianGold ? 'rgba(212, 175, 55, 0.30)' : undefined,
+    shortcutShadowColor: isClassic ? '#0EA5E9' : isForce ? '#EF4444' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? 'rgba(0, 0, 0, 0.45)' : isSapphire ? (currentTheme.colors.glassShadow || 'rgba(59, 130, 246, 0.28)') : isRuby ? (currentTheme.colors.rubyGlowShadow || 'rgba(184, 50, 90, 0.24)') : isCoral ? (currentTheme.colors.coralGlowShadow || 'rgba(249, 115, 107, 0.20)') : isMarble ? (currentTheme.colors.marbleGlowShadow || 'rgba(183, 110, 121, 0.20)') : isBordeauxVelvet ? 'rgba(168, 50, 86, 0.24)' : isChampagneRose ? 'rgba(183, 110, 121, 0.22)' : isIvoryGold ? 'rgba(198, 161, 91, 0.22)' : isMineralGreen ? 'rgba(79, 124, 104, 0.22)' : isObsidianGold ? 'rgba(138, 106, 32, 0.24)' : undefined,
+    shortcutIconBg: isClassic ? 'rgba(219, 234, 254, 0.8)' : isForce ? 'rgba(254, 202, 202, 0.75)' : isSahara ? 'rgba(245, 230, 211, 0.75)' : isRetro ? 'rgba(255, 253, 247, 0.88)' : isZen ? 'rgba(255, 255, 255, 0.08)' : isSapphire ? 'rgba(59, 130, 246, 0.14)' : isRuby ? (currentTheme.colors.rubyIconBg || 'rgba(184, 50, 90, 0.14)') : isCoral ? (currentTheme.colors.coralIconBg || 'rgba(255, 177, 153, 0.24)') : isMarble ? (currentTheme.colors.marbleIconBg || 'rgba(255, 255, 255, 0.92)') : isBordeauxVelvet ? 'rgba(212, 175, 55, 0.24)' : isChampagneRose ? 'rgba(198, 161, 91, 0.24)' : isIvoryGold ? 'rgba(198, 161, 91, 0.24)' : isMineralGreen ? 'rgba(79, 124, 104, 0.24)' : isObsidianGold ? 'rgba(212, 175, 55, 0.24)' : 'rgba(255, 255, 255, 0.6)',
+    shortcutIconBorder: isClassic ? '#DBEAFE' : isForce ? '#FCA5A5' : isSahara ? '#E8D0B0' : isRetro ? '#E7C0A3' : isZen ? 'rgba(255, 255, 255, 0.14)' : isSapphire ? 'rgba(147, 197, 253, 0.24)' : isRuby ? (currentTheme.colors.rubyIconBorder || 'rgba(244, 167, 185, 0.24)') : isCoral ? (currentTheme.colors.coralIconBorder || 'rgba(249, 115, 107, 0.26)') : isMarble ? (currentTheme.colors.marbleIconBorder || 'rgba(198, 161, 91, 0.30)') : isBordeauxVelvet ? 'rgba(212, 175, 55, 0.30)' : isChampagneRose ? 'rgba(198, 161, 91, 0.30)' : isIvoryGold ? 'rgba(198, 161, 91, 0.30)' : isMineralGreen ? 'rgba(79, 124, 104, 0.30)' : isObsidianGold ? 'rgba(212, 175, 55, 0.30)' : undefined,
     // Sapphire glass line flags
     useThinLines: isSapphire,
     // Coral Bloom soft glow flag
@@ -185,6 +212,12 @@ function getAuroraTokens(activeThemeId: string) {
     facetLarge: isSapphire ? (currentTheme.colors.facetLarge || 'rgba(147, 197, 253, 0.08)') : undefined,
     facetMedium: isSapphire ? (currentTheme.colors.facetMedium || 'rgba(96, 165, 250, 0.06)') : undefined,
     facetSmall: isSapphire ? (currentTheme.colors.facetSmall || 'rgba(191, 219, 254, 0.05)') : undefined,
+    // Theme personality visual effects
+    overlayGradient: personality.overlayGradient,
+    topBorderGradient: personality.topBorderGradient,
+    innerGlowColor: personality.innerGlowColor,
+    cardBackground: personality.cardBackground,
+    buttonBackground: personality.buttonBackground,
     sapphireGlow: isSapphire ? (currentTheme.colors.sapphireGlow || 'rgba(59, 130, 246, 0.16)') : undefined,
   };
 }
@@ -233,7 +266,7 @@ function formatDateTime(value: string) {
 // Helper component for gradient cards with Soft Aurora Ribbon style
 function GradientCard({ children, style, cardRadius }: { children: React.ReactNode, style?: any, cardRadius?: number }) {
   const { activeThemeId } = useAppContext();
-  const { auroraGradient, ribbonTop, ribbonMid, ribbonBlue, ribbonRose, ribbonRight, ribbonHighlight, useThinLines, facetLarge, facetMedium, sapphireGlow } = getAuroraTokens(activeThemeId);
+  const { auroraGradient, ribbonTop, ribbonMid, ribbonBlue, ribbonRose, ribbonRight, ribbonHighlight, useThinLines, facetLarge, facetMedium, sapphireGlow, overlayGradient, topBorderGradient, innerGlowColor, cardBackground } = getAuroraTokens(activeThemeId);
   const isCoral = activeThemeId === 'coralBloom';
   const isMarble = activeThemeId === 'marble';
 
@@ -244,15 +277,39 @@ function GradientCard({ children, style, cardRadius }: { children: React.ReactNo
   const ribbonStyleRight = useThinLines ? styles.thinRibbonRight : styles.ribbonRight;
 
   return (
-    <View style={[styles.sectionCard, style, { borderRadius: cardRadius || 16 }]}>
+    <View style={[styles.sectionCard, style, { borderRadius: cardRadius || 16, backgroundColor: cardBackground || undefined }]}>
       {/* Background gradient layer - absolute full-cover */}
       <LinearGradient
-        colors={auroraGradient}
+        colors={cardBackground ? [cardBackground, cardBackground] : auroraGradient}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={[styles.sectionCardGradient, { borderRadius: cardRadius || 16 }]}
         pointerEvents="none"
       >
+        {/* Personality-based overlay gradient */}
+        {overlayGradient && (
+          <LinearGradient
+            colors={overlayGradient}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 0, y: 1 }}
+            style={styles.sectionCardOverlay}
+            pointerEvents="none"
+          />
+        )}
+        {/* Personality-based top border gradient */}
+        {topBorderGradient && (
+          <LinearGradient
+            colors={topBorderGradient}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={[styles.sectionCardTopBorder, { borderTopLeftRadius: cardRadius || 16, borderTopRightRadius: cardRadius || 16 }]}
+            pointerEvents="none"
+          />
+        )}
+        {/* Personality-based inner glow */}
+        {innerGlowColor && (
+          <View style={[styles.sectionCardInnerGlow, { backgroundColor: innerGlowColor, borderRadius: (cardRadius || 16) - 4 }]} pointerEvents="none" />
+        )}
         {/* Top-left ribbon - reduced for Coral Bloom */}
         {!isCoral && <LinearGradient
           colors={ribbonTop}
@@ -486,7 +543,7 @@ export default function TodayScreen() {
   const theme = useTheme();
   const { user, activeThemeId } = useAppContext();
   const isMarble = theme.id === 'marble';
-  const { auroraGradient, auroraTitle, auroraSubtitle, ribbonTop, ribbonMid, ribbonBlue, ribbonRose, ribbonRight, recoveryIconColor, mobilityIconBg, mobilityIconColor, trainingIconBg, trainingIconColor, nutritionIconBg, nutritionIconColor, shortcutBorderColor, shortcutShadowColor, shortcutIconBg, shortcutIconBorder, cardRadius, cardBorderWidth, iconBubbleRadius, shortcutRadius, useThinLines } = getAuroraTokens(activeThemeId);
+  const { auroraGradient, auroraTitle, auroraSubtitle, ribbonTop, ribbonMid, ribbonBlue, ribbonRose, ribbonRight, recoveryIconColor, mobilityIconBg, mobilityIconColor, trainingIconBg, trainingIconColor, nutritionIconBg, nutritionIconColor, shortcutBorderColor, shortcutShadowColor, shortcutIconBg, shortcutIconBorder, cardRadius, cardBorderWidth, iconBubbleRadius, shortcutRadius, useThinLines, overlayGradient, topBorderGradient, innerGlowColor, cardBackground } = getAuroraTokens(activeThemeId);
   const [activities, setActivities] = useState<Activity[]>([]);
   const [heroBackground, setHeroBackground] = useState<HeroBackgroundOptionId>('pureMinimal');
   const [isWhoopConnected, setIsWhoopConnected] = useState(false);
@@ -684,18 +741,43 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
               key={shortcut.id}
               style={({ pressed }) => [
                 styles.shortcutCard,
-                { borderColor: shortcutBorderColor || theme.border, shadowColor: shortcutShadowColor, borderRadius: shortcutRadius, borderWidth: cardBorderWidth },
+                { borderColor: shortcutBorderColor || theme.border, shadowColor: shortcutShadowColor, borderRadius: shortcutRadius, borderWidth: cardBorderWidth, backgroundColor: cardBackground || undefined },
                 pressed && styles.shortcutCardPressed,
               ]}
               onPress={() => handleShortcutPress(shortcut.id)}
             >
+              {/* Personality-based surface gradient */}
               <LinearGradient
-                colors={auroraGradient}
+                colors={cardBackground ? [cardBackground, cardBackground] : auroraGradient}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={[styles.shortcutCardGradient, { borderRadius: shortcutRadius }]}
                 pointerEvents="none"
               >
+                {/* Personality-based overlay gradient */}
+                {overlayGradient && (
+                  <LinearGradient
+                    colors={overlayGradient}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 0, y: 1 }}
+                    style={styles.shortcutCardOverlay}
+                    pointerEvents="none"
+                  />
+                )}
+                {/* Personality-based top border gradient */}
+                {topBorderGradient && (
+                  <LinearGradient
+                    colors={topBorderGradient}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
+                    style={styles.shortcutCardTopBorder}
+                    pointerEvents="none"
+                  />
+                )}
+                {/* Personality-based inner glow */}
+                {innerGlowColor && (
+                  <View style={[styles.shortcutCardInnerGlow, { backgroundColor: innerGlowColor }]} pointerEvents="none" />
+                )}
                 {/* Top-left ribbon */}
                 <LinearGradient
                   colors={ribbonTop}
@@ -1286,6 +1368,28 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     borderRadius: 16,
   },
+  shortcutCardOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    borderRadius: 16,
+  },
+  shortcutCardTopBorder: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 2,
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
+  },
+  shortcutCardInnerGlow: {
+    position: 'absolute',
+    top: 4,
+    left: 4,
+    right: 4,
+    bottom: 4,
+    borderRadius: 12,
+    opacity: 0.5,
+  },
   shortcutCardContent: {
     flex: 1,
     paddingVertical: 16,
@@ -1408,6 +1512,25 @@ const styles = StyleSheet.create({
   sectionCardGradient: {
     ...StyleSheet.absoluteFillObject,
     borderRadius: 16,
+  },
+  sectionCardOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    borderRadius: 16,
+  },
+  sectionCardTopBorder: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 2,
+  },
+  sectionCardInnerGlow: {
+    position: 'absolute',
+    top: 4,
+    left: 4,
+    right: 4,
+    bottom: 4,
+    opacity: 0.5,
   },
   ribbonTop: {
     position: 'absolute',

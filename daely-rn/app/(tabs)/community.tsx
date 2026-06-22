@@ -29,10 +29,15 @@ function GradientCard({ children, style, cardRadius }: { children: React.ReactNo
   const isRuby = currentTheme.id === 'ruby';
   const isCoral = currentTheme.id === 'coralBloom';
   const isMarble = currentTheme.id === 'marble';
+  const isBordeauxVelvet = currentTheme.id === 'bordeauxVelvet';
+  const isChampagneRose = currentTheme.id === 'champagneRose';
+  const isIvoryGold = currentTheme.id === 'ivoryGold';
+  const isMineralGreen = currentTheme.id === 'mineralGreen';
+  const isObsidianGold = currentTheme.id === 'obsidianGold';
 
   // Sapphire-specific shape tokens
-  const dynamicCardRadius = cardRadius || (isSapphire ? (currentTheme.colors.cardRadius || 14) : isRetro ? 16 : isSahara ? 16 : isForce ? 16 : isZen ? 14 : 16);
-  const cardBorderWidth = isSapphire ? (currentTheme.colors.cardBorderWidth || 1.5) : isRetro ? 1 : isSahara ? 1 : isForce ? 1 : isZen ? 1 : 1;
+  const dynamicCardRadius = cardRadius || (isSapphire ? (currentTheme.colors.cardRadius || 14) : isRetro ? 16 : isSahara ? 16 : isForce ? 16 : isZen ? 14 : isBordeauxVelvet ? (currentTheme.colors.cardRadius || 26) : isChampagneRose ? (currentTheme.colors.cardRadius || 28) : isIvoryGold ? (currentTheme.colors.cardRadius || 22) : isMineralGreen ? (currentTheme.colors.cardRadius || 24) : isObsidianGold ? (currentTheme.colors.cardRadius || 18) : 16);
+  const cardBorderWidth = isSapphire ? (currentTheme.colors.cardBorderWidth || 1.5) : isRetro ? 1 : isSahara ? 1 : isForce ? 1 : isZen ? 1 : isBordeauxVelvet ? (currentTheme.colors.cardBorderWidth || 1.2) : isChampagneRose ? (currentTheme.colors.cardBorderWidth || 1) : isIvoryGold ? (currentTheme.colors.cardBorderWidth || 0.8) : isMineralGreen ? (currentTheme.colors.cardBorderWidth || 1) : isObsidianGold ? (currentTheme.colors.cardBorderWidth || 1) : 1;
 
   // Theme-aware gradient for card backgrounds
   const classicGlowGradient = isClassic
@@ -46,6 +51,11 @@ function GradientCard({ children, style, cardRadius }: { children: React.ReactNo
       : isRuby ? (currentTheme.gradients.aurora || ['#140607', '#240A10', '#3A1420'])
       : isCoral ? (currentTheme.gradients.aurora || ['#FFF7F3', '#FFEDE7', '#FFD6C9'])
       : isMarble ? (currentTheme.gradients.aurora || ['#FFFFFF', '#F7F7F5', '#ECEDEA'])
+      : isBordeauxVelvet ? (currentTheme.gradients.aurora || ['#2A0D16', '#3A1220', '#4A1A2A'])
+      : isChampagneRose ? (currentTheme.gradients.aurora || ['#FFFFFF', '#FAF0EA', '#F5E7D8'])
+      : isIvoryGold ? (currentTheme.gradients.aurora || ['#FFFFFF', '#FFF8E6', '#F5E7D0'])
+      : isMineralGreen ? (currentTheme.gradients.aurora || ['#FFFFFF', '#EEF6F1', '#E0EDE4'])
+      : isObsidianGold ? (currentTheme.gradients.aurora || ['#111111', '#181818', '#252525'])
       : currentTheme.gradients.aurora || ['#E8E6FF', '#D0CCFF', '#B8B4FF'];
 
   // Determine ribbon styles based on theme
@@ -468,7 +478,7 @@ export default function CommunityScreen() {
 
   const shortcutIconBg = isClassic ? 'rgba(219, 234, 254, 0.8)' : isForce ? 'rgba(254, 202, 202, 0.75)' : isSahara ? 'rgba(245, 230, 211, 0.75)' : isRetro ? 'rgba(255, 253, 247, 0.88)' : isZen ? 'rgba(255, 255, 255, 0.08)' : isSapphire ? 'rgba(59, 130, 246, 0.14)' : isRuby ? (currentTheme.colors.rubyIconBg || 'rgba(184, 50, 90, 0.14)') : isCoral ? (currentTheme.colors.coralIconBg || 'rgba(255, 177, 153, 0.24)') : 'rgba(255, 255, 255, 0.6)';
   const shortcutIconBorder = isClassic ? '#DBEAFE' : isForce ? '#FCA5A5' : isSahara ? '#E8D0B0' : isRetro ? '#E7C0A3' : isZen ? 'rgba(255, 255, 255, 0.14)' : isSapphire ? 'rgba(147, 197, 253, 0.24)' : isRuby ? (currentTheme.colors.rubyIconBorder || 'rgba(244, 167, 185, 0.24)') : isCoral ? (currentTheme.colors.coralIconBorder || 'rgba(249, 115, 107, 0.26)') : undefined;
-  const cardRadius = isSapphire ? (currentTheme.colors.cardRadius || 14) : isRetro ? 16 : isSahara ? 16 : isForce ? 16 : isZen ? 14 : 16;
+  const cardRadius = isSapphire ? (currentTheme.colors.cardRadius || 14) : isRetro ? 16 : isSahara ? 16 : isForce ? 16 : isZen ? 14 : isBordeauxVelvet ? (currentTheme.colors.cardRadius || 26) : isChampagneRose ? (currentTheme.colors.cardRadius || 28) : isIvoryGold ? (currentTheme.colors.cardRadius || 22) : isMineralGreen ? (currentTheme.colors.cardRadius || 24) : isObsidianGold ? (currentTheme.colors.cardRadius || 18) : 16;
   const [activeTab, setActiveTab] = useState<Tab>('feed');
   const [unreadMessageCount, setUnreadMessageCount] = useState(0);
   const [carouselWidth, setCarouselWidth] = useState(0);

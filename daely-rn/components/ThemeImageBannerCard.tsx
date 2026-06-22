@@ -25,6 +25,11 @@ const THEME_BANNER_IMAGES: Record<string, any> = {
   'volcanicAsh': require('@/assets/themes/volcanic_ash.png'),
   'venom': require('@/assets/themes/venom.png'),
   'wave': require('@/assets/themes/wave.png'),
+  'bordeauxVelvet': require('@/assets/themes/bordeaux_velvet.png'),
+  'champagneRose': require('@/assets/themes/champagne_rose.png'),
+  'ivoryGold': require('@/assets/themes/ivory_gold.png'),
+  'mineralGreen': require('@/assets/themes/mineral_green.png'),
+  'obsidianGold': require('@/assets/themes/obsidian_gold.png'),
 };
 
 export function ThemeImageBannerCard({ theme, isActive, onPress }: ThemeImageBannerCardProps) {

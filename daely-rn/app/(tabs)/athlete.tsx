@@ -40,6 +40,11 @@ export default function InstellingenScreen() {
   const isRuby = currentTheme.id === 'ruby';
   const isCoral = currentTheme.id === 'coralBloom';
   const isMarble = currentTheme.id === 'marble';
+  const isBordeauxVelvet = currentTheme.id === 'bordeauxVelvet';
+  const isChampagneRose = currentTheme.id === 'champagneRose';
+  const isIvoryGold = currentTheme.id === 'ivoryGold';
+  const isMineralGreen = currentTheme.id === 'mineralGreen';
+  const isObsidianGold = currentTheme.id === 'obsidianGold';
 
   const classicGlowGradient = isClassic
     ? ['#FFFFFF', '#F8FBFF', '#EFF6FF']
@@ -52,15 +57,20 @@ export default function InstellingenScreen() {
       : isRuby ? (currentTheme.gradients.aurora || ['#140607', '#240A10', '#3A1420'])
       : isCoral ? (currentTheme.gradients.aurora || ['#FFF7F3', '#FFEDE7', '#FFD6C9'])
       : isMarble ? (currentTheme.gradients.aurora || ['#FFFFFF', '#F7F7F5', '#ECEDEA'])
+      : isBordeauxVelvet ? (currentTheme.gradients.aurora || ['#2A0D16', '#3A1220', '#4A1A2A'])
+      : isChampagneRose ? (currentTheme.gradients.aurora || ['#FFFFFF', '#FAF0EA', '#F5E7D8'])
+      : isIvoryGold ? (currentTheme.gradients.aurora || ['#FFFFFF', '#FFF8E6', '#F5E7D0'])
+      : isMineralGreen ? (currentTheme.gradients.aurora || ['#FFFFFF', '#EEF6F1', '#E0EDE4'])
+      : isObsidianGold ? (currentTheme.gradients.aurora || ['#111111', '#181818', '#252525'])
       : currentTheme.gradients.aurora || ['#E8E6FF', '#D0CCFF', '#B8B4FF'];
 
-  const sectionBorderColor = isClassic ? '#DCEBFF' : isForce ? '#FECACA' : isSahara ? '#E8D0B0' : isRetro ? '#E7C0A3' : isZen ? 'rgba(255, 255, 255, 0.12)' : isSapphire ? 'rgba(147, 197, 253, 0.22)' : isRuby ? (currentTheme.colors.rubyGlowBorder || 'rgba(244, 167, 185, 0.22)') : isCoral ? (currentTheme.colors.coralGlowBorder || 'rgba(249, 115, 107, 0.22)') : isMarble ? (currentTheme.colors.marbleGlowBorder || 'rgba(107, 114, 128, 0.18)') : undefined;
-  const sectionShadowColor = isClassic ? '#0EA5E9' : isForce ? '#EF4444' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? 'rgba(0, 0, 0, 0.45)' : isSapphire ? 'rgba(59, 130, 246, 0.24)' : isRuby ? (currentTheme.colors.rubyGlowShadow || 'rgba(184, 50, 90, 0.24)') : isCoral ? (currentTheme.colors.coralGlowShadow || 'rgba(249, 115, 107, 0.20)') : isMarble ? (currentTheme.colors.marbleGlowShadow || 'rgba(107, 114, 128, 0.16)') : undefined;
-  const iconColor = isClassic ? '#2563EB' : isForce ? '#DC2626' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? '#FFFFFF' : isSapphire ? '#EAF2FF' : isRuby ? '#FFE4EC' : isCoral ? '#7A2E2E' : isMarble ? '#6B7280' : currentTheme.colors.primary || '#6B7280';
-  const chevronColor = isClassic ? '#475569' : isSapphire ? '#93C5FD' : isRuby ? '#F4A7B9' : isCoral ? '#A95B5B' : isMarble ? '#9CA3AF' : '#D1D5DB';
-  const titleColor = isClassic ? '#0F172A' : isForce ? '#7F1D1D' : isSahara ? '#7A4E24' : isRetro ? '#1B2E6B' : isZen ? '#FFFFFF' : isSapphire ? '#EAF2FF' : isRuby ? '#FFE4EC' : isCoral ? '#7A2E2E' : isMarble ? '#1F2937' : theme.titleColor;
-  const subtitleColor = isClassic ? '#475569' : isForce ? '#B91C1C' : isSahara ? '#9A6B3A' : isRetro ? '#B42318' : isZen ? '#B0B0B0' : isSapphire ? '#BFDBFE' : isRuby ? '#F4A7B9' : isCoral ? '#A95B5B' : isMarble ? '#6B7280' : theme.subtitleColor;
-  const separatorColor = isClassic ? '#DBEAFE' : isForce ? '#FEE2E2' : isSahara ? '#E8D0B0' : isRetro ? '#E7C0A3' : isZen ? 'rgba(255, 255, 255, 0.12)' : isSapphire ? 'rgba(147, 197, 253, 0.24)' : isRuby ? 'rgba(244, 167, 185, 0.24)' : isCoral ? 'rgba(249, 115, 107, 0.24)' : isMarble ? 'rgba(209, 213, 219, 0.24)' : '#E5E7EB';
+  const sectionBorderColor = isClassic ? '#DCEBFF' : isForce ? '#FECACA' : isSahara ? '#E8D0B0' : isRetro ? '#E7C0A3' : isZen ? 'rgba(255, 255, 255, 0.12)' : isSapphire ? 'rgba(147, 197, 253, 0.22)' : isRuby ? (currentTheme.colors.rubyGlowBorder || 'rgba(244, 167, 185, 0.22)') : isCoral ? (currentTheme.colors.coralGlowBorder || 'rgba(249, 115, 107, 0.22)') : isMarble ? (currentTheme.colors.marbleGlowBorder || 'rgba(107, 114, 128, 0.18)') : isBordeauxVelvet ? 'rgba(212, 175, 55, 0.26)' : isChampagneRose ? 'rgba(198, 161, 91, 0.28)' : isIvoryGold ? 'rgba(198, 161, 91, 0.30)' : isMineralGreen ? 'rgba(79, 124, 104, 0.26)' : isObsidianGold ? 'rgba(212, 175, 55, 0.30)' : undefined;
+  const sectionShadowColor = isClassic ? '#0EA5E9' : isForce ? '#EF4444' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? 'rgba(0, 0, 0, 0.45)' : isSapphire ? 'rgba(59, 130, 246, 0.24)' : isRuby ? (currentTheme.colors.rubyGlowShadow || 'rgba(184, 50, 90, 0.24)') : isCoral ? (currentTheme.colors.coralGlowShadow || 'rgba(249, 115, 107, 0.20)') : isMarble ? (currentTheme.colors.marbleGlowShadow || 'rgba(107, 114, 128, 0.16)') : isBordeauxVelvet ? 'rgba(168, 50, 86, 0.24)' : isChampagneRose ? 'rgba(183, 110, 121, 0.22)' : isIvoryGold ? 'rgba(198, 161, 91, 0.22)' : isMineralGreen ? 'rgba(79, 124, 104, 0.22)' : isObsidianGold ? 'rgba(138, 106, 32, 0.24)' : undefined;
+  const iconColor = isClassic ? '#2563EB' : isForce ? '#DC2626' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? '#FFFFFF' : isSapphire ? '#EAF2FF' : isRuby ? '#FFE4EC' : isCoral ? '#7A2E2E' : isMarble ? '#6B7280' : isBordeauxVelvet ? '#D4AF37' : isChampagneRose ? '#C6A15B' : isIvoryGold ? '#C6A15B' : isMineralGreen ? '#4F7C68' : isObsidianGold ? '#D4AF37' : currentTheme.colors.primary || '#6B7280';
+  const chevronColor = isClassic ? '#475569' : isSapphire ? '#93C5FD' : isRuby ? '#F4A7B9' : isCoral ? '#A95B5B' : isMarble ? '#9CA3AF' : isBordeauxVelvet ? '#D4AF37' : isChampagneRose ? '#C6A15B' : isIvoryGold ? '#C6A15B' : isMineralGreen ? '#4F7C68' : isObsidianGold ? '#D4AF37' : '#D1D5DB';
+  const titleColor = isClassic ? '#0F172A' : isForce ? '#7F1D1D' : isSahara ? '#7A4E24' : isRetro ? '#1B2E6B' : isZen ? '#FFFFFF' : isSapphire ? '#EAF2FF' : isRuby ? '#FFE4EC' : isCoral ? '#7A2E2E' : isMarble ? '#1F2937' : isBordeauxVelvet ? '#FFF1F4' : isChampagneRose ? '#2A1F23' : isIvoryGold ? '#2A261C' : isMineralGreen ? '#163227' : isObsidianGold ? '#FFF7D6' : theme.titleColor;
+  const subtitleColor = isClassic ? '#475569' : isForce ? '#B91C1C' : isSahara ? '#9A6B3A' : isRetro ? '#B42318' : isZen ? '#B0B0B0' : isSapphire ? '#BFDBFE' : isRuby ? '#F4A7B9' : isCoral ? '#A95B5B' : isMarble ? '#6B7280' : isBordeauxVelvet ? '#E8B8C2' : isChampagneRose ? '#7A5A62' : isIvoryGold ? '#6F6448' : isMineralGreen ? '#4D6B5C' : isObsidianGold ? '#C9B97A' : theme.subtitleColor;
+  const separatorColor = isClassic ? '#DBEAFE' : isForce ? '#FEE2E2' : isSahara ? '#E8D0B0' : isRetro ? '#E7C0A3' : isZen ? 'rgba(255, 255, 255, 0.12)' : isSapphire ? 'rgba(147, 197, 253, 0.24)' : isRuby ? 'rgba(244, 167, 185, 0.24)' : isCoral ? 'rgba(249, 115, 107, 0.24)' : isMarble ? 'rgba(209, 213, 219, 0.24)' : isBordeauxVelvet ? 'rgba(212, 175, 55, 0.24)' : isChampagneRose ? 'rgba(198, 161, 91, 0.24)' : isIvoryGold ? 'rgba(198, 161, 91, 0.24)' : isMineralGreen ? 'rgba(79, 124, 104, 0.24)' : isObsidianGold ? 'rgba(212, 175, 55, 0.24)' : '#E5E7EB';
   const [pendingSyncCount, setPendingSyncCount] = useState(0);
   const [syncInProgress, setSyncInProgress] = useState(false);
   const [syncStatusMessage, setSyncStatusMessage] = useState('Nog niet gesynchroniseerd in deze sessie.');

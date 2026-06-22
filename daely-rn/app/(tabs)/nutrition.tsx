@@ -68,6 +68,11 @@ function getQuickActionTokens(activeThemeId: string) {
   const isRuby = currentTheme.id === 'ruby';
   const isCoral = currentTheme.id === 'coralBloom';
   const isMarble = currentTheme.id === 'marble';
+  const isBordeauxVelvet = currentTheme.id === 'bordeauxVelvet';
+  const isChampagneRose = currentTheme.id === 'champagneRose';
+  const isIvoryGold = currentTheme.id === 'ivoryGold';
+  const isMineralGreen = currentTheme.id === 'mineralGreen';
+  const isObsidianGold = currentTheme.id === 'obsidianGold';
 
   // DAELY Classic Glow gradient for buttons
   const classicGlowGradient = isClassic
@@ -81,6 +86,11 @@ function getQuickActionTokens(activeThemeId: string) {
       : isRuby ? (currentTheme.gradients.aurora || ['#140607', '#240A10', '#3A1420'])
       : isCoral ? (currentTheme.gradients.aurora || ['#FFF7F3', '#FFEDE7', '#FFD6C9'])
       : isMarble ? (currentTheme.gradients.aurora || ['#FFFFFF', '#F7F7F5', '#ECEDEA'])
+      : isBordeauxVelvet ? (currentTheme.gradients.aurora || ['#2A0D16', '#3A1220', '#4A1A2A'])
+      : isChampagneRose ? (currentTheme.gradients.aurora || ['#FFFFFF', '#FAF0EA', '#F5E7D8'])
+      : isIvoryGold ? (currentTheme.gradients.aurora || ['#FFFFFF', '#FFF8E6', '#F5E7D0'])
+      : isMineralGreen ? (currentTheme.gradients.aurora || ['#FFFFFF', '#EEF6F1', '#E0EDE4'])
+      : isObsidianGold ? (currentTheme.gradients.aurora || ['#111111', '#181818', '#252525'])
       : ['#E8E6FF', '#D0CCFF', '#B8B4FF'];
 
   // Sapphire-specific shape tokens for quick actions
@@ -119,6 +129,11 @@ function getFilterTokens(activeThemeId: string) {
   const isRuby = currentTheme.id === 'ruby';
   const isCoral = currentTheme.id === 'coralBloom';
   const isMarble = currentTheme.id === 'marble';
+  const isBordeauxVelvet = currentTheme.id === 'bordeauxVelvet';
+  const isChampagneRose = currentTheme.id === 'champagneRose';
+  const isIvoryGold = currentTheme.id === 'ivoryGold';
+  const isMineralGreen = currentTheme.id === 'mineralGreen';
+  const isObsidianGold = currentTheme.id === 'obsidianGold';
 
   // Sapphire-specific filter tokens
   const filterRadius = isSapphire ? (currentTheme.colors.filterRadius || 16) : 18;
@@ -247,6 +262,76 @@ function getFilterTokens(activeThemeId: string) {
       unselectedTextColor: '#6B7280',
       badgeBackgroundColor: '#F7F7F5',
       badgeTextColor: '#1F2937',
+      filterRadius: 18,
+      filterBorderWidth: 1,
+      badgeRadius: 9999,
+    };
+  } else if (isBordeauxVelvet) {
+    return {
+      selectedBorderColor: '#D4AF37',
+      selectedBackgroundColor: '#3A1220',
+      selectedTextColor: '#FFF1F4',
+      unselectedBorderColor: 'rgba(212, 175, 55, 0.24)',
+      unselectedBackgroundColor: '#2A0D16',
+      unselectedTextColor: '#E8B8C2',
+      badgeBackgroundColor: '#3A1220',
+      badgeTextColor: '#D4AF37',
+      filterRadius: 18,
+      filterBorderWidth: 1,
+      badgeRadius: 9999,
+    };
+  } else if (isChampagneRose) {
+    return {
+      selectedBorderColor: '#C6A15B',
+      selectedBackgroundColor: '#F5E7D8',
+      selectedTextColor: '#2A1F23',
+      unselectedBorderColor: 'rgba(198, 161, 91, 0.24)',
+      unselectedBackgroundColor: '#FAF0EA',
+      unselectedTextColor: '#7A5A62',
+      badgeBackgroundColor: '#F5E7D8',
+      badgeTextColor: '#C6A15B',
+      filterRadius: 18,
+      filterBorderWidth: 1,
+      badgeRadius: 9999,
+    };
+  } else if (isIvoryGold) {
+    return {
+      selectedBorderColor: '#C6A15B',
+      selectedBackgroundColor: '#F5E7D0',
+      selectedTextColor: '#2A261C',
+      unselectedBorderColor: 'rgba(198, 161, 91, 0.24)',
+      unselectedBackgroundColor: '#FFF8E6',
+      unselectedTextColor: '#6F6448',
+      badgeBackgroundColor: '#F5E7D0',
+      badgeTextColor: '#C6A15B',
+      filterRadius: 18,
+      filterBorderWidth: 1,
+      badgeRadius: 9999,
+    };
+  } else if (isMineralGreen) {
+    return {
+      selectedBorderColor: '#4F7C68',
+      selectedBackgroundColor: '#E0EDE4',
+      selectedTextColor: '#163227',
+      unselectedBorderColor: 'rgba(79, 124, 104, 0.24)',
+      unselectedBackgroundColor: '#EEF6F1',
+      unselectedTextColor: '#4D6B5C',
+      badgeBackgroundColor: '#E0EDE4',
+      badgeTextColor: '#4F7C68',
+      filterRadius: 18,
+      filterBorderWidth: 1,
+      badgeRadius: 9999,
+    };
+  } else if (isObsidianGold) {
+    return {
+      selectedBorderColor: '#D4AF37',
+      selectedBackgroundColor: '#252525',
+      selectedTextColor: '#FFF7D6',
+      unselectedBorderColor: 'rgba(212, 175, 55, 0.24)',
+      unselectedBackgroundColor: '#181818',
+      unselectedTextColor: '#C9B97A',
+      badgeBackgroundColor: '#252525',
+      badgeTextColor: '#D4AF37',
       filterRadius: 18,
       filterBorderWidth: 1,
       badgeRadius: 9999,
