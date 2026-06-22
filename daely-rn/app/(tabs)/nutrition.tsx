@@ -355,9 +355,11 @@ function getFilterTokens(activeThemeId: string) {
 
 export default function NutritionScreen() {
   const theme = useTheme();
-  const isCoral = theme.id === 'coralBloom';
-  const router = useRouter();
   const { activeThemeId } = useAppContext();
+  const currentTheme = THEMES[activeThemeId as keyof typeof THEMES] || THEMES.classic;
+  const isCoral = theme.id === 'coralBloom';
+  const isMarble = currentTheme.id === 'marble';
+  const router = useRouter();
   const [activeFilterCategory, setActiveFilterCategory] = useState<FilterKey | null>(null);
   const [activeFilterChips, setActiveFilterChips] = useState<FilterChip[]>([]);
   const [unreadMessageCount, setUnreadMessageCount] = useState(0);
