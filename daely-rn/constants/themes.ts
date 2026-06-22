@@ -1,4 +1,4 @@
-export type ThemeId = 'default' | 'classic' | 'force' | 'pastelCalm' | 'retroSport' | 'saharaDune' | 'zenInk' | 'aurora' | 'ruby' | 'coralBloom' | 'marble' | 'sapphire' | 'purpleStorm' | 'volcanicAsh' | 'venom' | 'wave';
+export type ThemeId = 'default' | 'classic' | 'force' | 'pastelCalm' | 'retroSport' | 'saharaDune' | 'zenInk' | 'aurora' | 'ruby' | 'coralBloom' | 'marble' | 'sapphire' | 'purpleStorm' | 'volcanicAsh' | 'venom' | 'wave' | 'bordeauxVelvet' | 'champagneRose' | 'ivoryGold' | 'mineralGreen' | 'obsidianGold';
 
 export interface AppTheme {
   id: ThemeId;
