@@ -15,7 +15,7 @@ export default function CreatorDashboardScreen() {
   const { user } = useAppContext();
 
   const creatorData = {
-    name: user?.name || 'Test Creator',
+    name: user?.displayName || user?.name || 'Test Creator',
     username: user?.username || 'daely_creator',
     role: user?.role || 'DAELY Creator',
     sportFocus: user?.sportFocus || 'Fitness, padel & lifestyle',
@@ -24,9 +24,15 @@ export default function CreatorDashboardScreen() {
     creatorType: user?.creatorType || 'influencer-athlete',
     creatorCode: user?.creatorCode || 'DAELY-CREATOR-TEST',
     referralCode: user?.referralCode || 'DAELY-CREATOR-TEST',
+    referralLink: user?.referralLink || 'https://daely.app/invite/DAELY-CREATOR-TEST',
     followers: user?.followers || 12840,
-    activeCreatorSubscribers: user?.activeCreatorSubscribers || 342,
-    estimatedMonthlyEarnings: user?.estimatedMonthlyEarnings || 338.58,
+    activeSubscribers: user?.activeSubscribers || 128,
+    newSubscribersThisMonth: user?.newSubscribersThisMonth || 34,
+    freeMonthUsers: user?.freeMonthUsers || 7,
+    failedPayments: user?.failedPayments || 3,
+    rewardRate: user?.rewardRate || 0.99,
+    estimatedMonthlyReward: user?.estimatedMonthlyReward || (user?.activeSubscribers || 128) * 0.99,
+    totalEstimatedReward: user?.totalEstimatedReward || 842.49,
     createdChallenges: user?.createdChallenges || 6,
     sharedWorkouts: user?.sharedWorkouts || 18,
   };
@@ -65,13 +71,13 @@ export default function CreatorDashboardScreen() {
           </View>
 
           <View style={styles.statRow}>
-            <Text style={[styles.statLabel, { color: theme.subtitleColor }]}>Actieve abonnees</Text>
-            <Text style={[styles.statValue, { color: theme.titleColor }]}>{creatorData.activeCreatorSubscribers}</Text>
+            <Text style={[styles.statLabel, { color: theme.subtitleColor }]}>Actieve betalende abonnees</Text>
+            <Text style={[styles.statValue, { color: theme.titleColor }]}>{creatorData.activeSubscribers}</Text>
           </View>
 
           <View style={styles.statRow}>
-            <Text style={[styles.statLabel, { color: theme.subtitleColor }]}>Geschatte maandelijkse opbrengst</Text>
-            <Text style={[styles.statValue, { color: '#059669' }]}>€{creatorData.estimatedMonthlyEarnings.toFixed(2)}</Text>
+            <Text style={[styles.statLabel, { color: theme.subtitleColor }]}>Verwachte maandvergoeding</Text>
+            <Text style={[styles.statValue, { color: '#059669' }]}>€{creatorData.estimatedMonthlyReward.toFixed(2)}</Text>
           </View>
 
           <View style={styles.statRow}>
@@ -79,14 +85,40 @@ export default function CreatorDashboardScreen() {
             <Text style={[styles.statValue, { color: theme.titleColor }]}>{creatorData.creatorCode}</Text>
           </View>
 
+          <View style={styles.statRow}>
+            <Text style={[styles.statLabel, { color: theme.subtitleColor }]}>Referral Link</Text>
+            <Text style={[styles.statValueSmall, { color: '#2563EB' }]} numberOfLines={1}>{creatorData.referralLink}</Text>
+          </View>
+
+          <View style={styles.statRow}>
+            <Text style={[styles.statLabel, { color: theme.subtitleColor }]}>Nieuwe abonnees deze maand</Text>
+            <Text style={[styles.statValue, { color: theme.titleColor }]}>{creatorData.newSubscribersThisMonth}</Text>
+          </View>
+
+          <View style={styles.statRow}>
+            <Text style={[styles.statLabel, { color: theme.subtitleColor }]}>Gratis maanden (niet-vergoed)</Text>
+            <Text style={[styles.statValue, { color: theme.subtitleColor }]}>{creatorData.freeMonthUsers}</Text>
+          </View>
+
+          <View style={styles.statRow}>
+            <Text style={[styles.statLabel, { color: theme.subtitleColor }]}>Mislukte betalingen (niet-vergoed)</Text>
+            <Text style={[styles.statValue, { color: theme.subtitleColor }]}>{creatorData.failedPayments}</Text>
+          </View>
+
           <View style={styles.disclaimerBox}>
             <MaterialCommunityIcons name="information-outline" size={16} color="#F59E0B" />
-            <Text style={styles.disclaimerText}>Mockdata voor testomgeving. Echte berekening gebeurt later via DAELY Business Software.</Text>
+            <Text style={styles.disclaimerText}>Mockdata voor testomgeving. Geen echte uitbetaling.</Text>
           </View>
 
           <View style={styles.ruleBox}>
-            <Text style={[styles.ruleText, { color: theme.subtitleColor }]}>DAELY-regel: €0,99 per actieve betalende abonnee per maand</Text>
+            <Text style={[styles.ruleText, { color: theme.subtitleColor }]}>DAELY-regel: €{creatorData.rewardRate.toFixed(2)} per actieve betalende abonnee per maand</Text>
             <Text style={[styles.ruleText, { color: theme.subtitleColor }]}>Geen vergoeding over gratis maanden</Text>
+            <Text style={[styles.ruleText, { color: theme.subtitleColor }]}>Geen vergoeding over mislukte betalingen</Text>
+          </View>
+
+          <View style={styles.privacyBox}>
+            <MaterialCommunityIcons name="shield-check-outline" size={16} color="#059669" />
+            <Text style={styles.privacyText}>Privacy: creators zien alleen totalen en globale statistieken. Ze zien geen persoonlijke gezondheidsdata, geen individuele gebruikerslijsten, geen ledenbeheer en geen facturatiegegevens.</Text>
           </View>
         </View>
 
@@ -296,6 +328,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
   },
+  statValueSmall: {
+    fontSize: 13,
+    fontWeight: '600',
+  },
   disclaimerBox: {
     flexDirection: 'row',
     alignItems: 'flex-start',
@@ -322,6 +358,22 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '500',
     marginBottom: 4,
+  },
+  privacyBox: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 8,
+    backgroundColor: '#ECFDF5',
+    borderRadius: 12,
+    padding: 12,
+    marginTop: 12,
+  },
+  privacyText: {
+    flex: 1,
+    fontSize: 12,
+    fontWeight: '500',
+    color: '#047857',
+    lineHeight: 16,
   },
   actionCard: {
     flexDirection: 'row',

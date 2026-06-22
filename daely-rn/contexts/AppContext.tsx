@@ -35,6 +35,27 @@ export type UserProfile = {
   contentStyle?: string;
   eventGoals?: string;
   privacy?: string;
+  // Creator-specific fields (for influencer accountType)
+  displayName?: string;
+  creatorBadge?: string;
+  creatorType?: string;
+  creatorCode?: string;
+  referralCode?: string;
+  referralLink?: string;
+  primaryDiscipline?: string;
+  sportFocus?: string;
+  activeSubscribers?: number;
+  newSubscribersThisMonth?: number;
+  freeMonthUsers?: number;
+  failedPayments?: number;
+  estimatedMonthlyReward?: number;
+  rewardRate?: number;
+  totalEstimatedReward?: number;
+  socialLinks?: {
+    instagram?: string;
+    tiktok?: string;
+    youtube?: string;
+  };
   [key: string]: unknown;
 };
 
@@ -169,6 +190,7 @@ interface AppContextType {
   setIsLoggedIn: (value: boolean) => void;
   accountType: AccountType;
   setAccountType: (value: AccountType) => void;
+  activateTestCreatorAccount: () => Promise<void>;
   isAppHydrated: boolean;
   
   // Tab navigation
@@ -425,6 +447,39 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     });
   }, []);
 
+  // Test creator account activation (for influencer accountType)
+  const activateTestCreatorAccount = useCallback(async () => {
+    await setAccountType('influencer');
+    await updateUser({
+      name: 'Mila Creator',
+      displayName: 'Mila Creator',
+      username: '@mila.daely',
+      email: 'mila@daely.app',
+      country: 'Netherlands',
+      role: 'DAELY Creator',
+      creatorBadge: 'DAELY Creator',
+      creatorType: 'Athlete Creator',
+      creatorCode: 'DAELY-MILA',
+      referralCode: 'DAELY-MILA',
+      referralLink: 'https://daely.app/invite/DAELY-MILA',
+      primaryDiscipline: 'Fitness',
+      sportFocus: 'Fitness, Running & Mindset',
+      bio: 'DAELY Creator die sporters helpt starten met gezonde routines, workouts en mindset.',
+      activeSubscribers: 128,
+      newSubscribersThisMonth: 34,
+      freeMonthUsers: 7,
+      failedPayments: 3,
+      estimatedMonthlyReward: 126.72,
+      rewardRate: 0.99,
+      totalEstimatedReward: 842.49,
+      socialLinks: {
+        instagram: 'https://instagram.com/mila.daely',
+        tiktok: 'https://tiktok.com/@mila.daely',
+        youtube: 'https://youtube.com/@mila.daely',
+      },
+    });
+  }, [setAccountType, updateUser]);
+
   const attemptSyncPendingRequests = useCallback(async () => {
     try {
       await syncPendingSettingsRequests();
@@ -456,6 +511,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     setIsLoggedIn,
     accountType: accountTypeState,
     setAccountType,
+    activateTestCreatorAccount,
     isAppHydrated,
     activeTab,
     setActiveTab,

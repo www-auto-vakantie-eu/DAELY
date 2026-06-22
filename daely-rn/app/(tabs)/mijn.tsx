@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ImageBackground, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, ImageBackground, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter, type Href } from 'expo-router';
 
@@ -117,7 +117,7 @@ const MY_DOMAIN_CARDS: MyDomainCard[] = [
 export default function MijnScreen() {
   const theme = useTheme();
   const router = useRouter();
-  const { accountType } = useAppContext();
+  const { accountType, activateTestCreatorAccount } = useAppContext();
   const [performanceSummary, setPerformanceSummary] = useState<PerformanceSummary | null>(null);
 
   // Filter cards based on account type
@@ -135,6 +135,11 @@ export default function MijnScreen() {
 
   const handleCardPress = (route: Href) => {
     router.push(route);
+  };
+
+  const handleActivateTestCreator = async () => {
+    await activateTestCreatorAccount();
+    Alert.alert('Test Creator Account Geactiveerd', 'AccountType is nu ingesteld op influencer. De Creator Studio card is nu zichtbaar.');
   };
 
   return (
@@ -220,6 +225,20 @@ export default function MijnScreen() {
             </Pressable>
           ))}
         </View>
+
+        {/* Test Creator Account Section */}
+        {accountType !== 'influencer' && (
+          <View style={styles.testSection}>
+            <Text style={[styles.testSectionTitle, { color: theme.titleColor }]}>Testomgeving</Text>
+            <Pressable
+              style={[styles.testButton, { backgroundColor: theme.card, borderColor: theme.border }]}
+              onPress={handleActivateTestCreator}
+            >
+              <Text style={[styles.testButtonText, { color: theme.titleColor }]}>Gebruik test creator account</Text>
+              <Text style={[styles.testButtonSubtitle, { color: theme.subtitleColor }]}>Demo: Mila Creator (influencer)</Text>
+            </Pressable>
+          </View>
+        )}
       </ScrollView>
     </AppScreen>
   );
@@ -342,5 +361,27 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: '#2563EB',
     marginTop: 8,
+  },
+  testSection: {
+    margin: 16,
+    marginTop: 24,
+  },
+  testSectionTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    marginBottom: 12,
+  },
+  testButton: {
+    padding: 16,
+    borderRadius: 16,
+    borderWidth: 1,
+  },
+  testButtonText: {
+    fontSize: 15,
+    fontWeight: '600',
+    marginBottom: 4,
+  },
+  testButtonSubtitle: {
+    fontSize: 13,
   },
 });
