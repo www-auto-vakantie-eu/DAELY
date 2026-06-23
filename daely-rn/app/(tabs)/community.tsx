@@ -322,6 +322,15 @@ const FEED_ITEMS = [
 // Creators with categories - slug-based IDs
 const CREATORS = [
   {
+    id: 'mila-creator',
+    name: 'Mila Creator',
+    type: 'DAELY Creator',
+    specialty: 'Fitness, Running & Mindset',
+    description: 'DAELY Creator die sporters helpt starten met gezonde routines',
+    icon: 'trophy',
+    color: '#2563EB',
+  },
+  {
     id: 'fitness-creator',
     name: 'Fitness creator',
     type: 'Fitness',
@@ -538,7 +547,7 @@ export default function CommunityScreen() {
   // Creators filters
   const [creatorSearch, setCreatorSearch] = useState('');
   const [creatorFilter, setCreatorFilter] = useState('Alles');
-  const CREATOR_FILTERS = ['Alles', 'Fitness', 'Running', 'Mobility', 'Team', 'Coach'];
+  const CREATOR_FILTERS = ['Alles', 'DAELY Creator', 'Fitness', 'Running', 'Mobility', 'Team', 'Coach'];
 
   const filteredCreators = useMemo(() => {
     return CREATORS.filter(creator => {
@@ -942,8 +951,8 @@ export default function CommunityScreen() {
                     <Text style={[styles.creatorNameCompact, { color: theme.titleColor }]}>{creator.name}</Text>
                     <Text style={[styles.creatorTypeCompact, { color: creator.color }]}>{creator.specialty}</Text>
                     <View style={styles.creatorMetaCompact}>
-                      <View style={[styles.creatorBadgeCompact, { backgroundColor: '#F59E0B' }]}>
-                        <Text style={styles.creatorBadgeTextCompact}>Preview</Text>
+                      <View style={[styles.creatorBadgeCompact, { backgroundColor: creator.id === 'mila-creator' ? '#2563EB' : '#F59E0B' }]}>
+                        <Text style={styles.creatorBadgeTextCompact}>{creator.id === 'mila-creator' ? 'DAELY Creator' : 'Preview'}</Text>
                       </View>
                     </View>
                   </View>

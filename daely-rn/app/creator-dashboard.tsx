@@ -190,6 +190,14 @@ export default function CreatorDashboardScreen() {
         {/* 7. Later / Binnenkort */}
         <View style={[styles.sectionCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
           <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Binnenkort</Text>
+          <Pressable
+            style={styles.laterItem}
+            onPress={() => router.push('/community/creator/mila-creator')}
+          >
+            <MaterialCommunityIcons name="eye" size={18} color="#10B981" />
+            <Text style={[styles.laterText, { color: theme.subtitleColor }]}>Bekijk publieke profielpagina</Text>
+            <MaterialCommunityIcons name="chevron-right" size={18} color="#94A3B8" />
+          </Pressable>
           <View style={styles.laterItem}>
             <MaterialCommunityIcons name="chart-line" size={18} color="#94A3B8" />
             <Text style={[styles.laterText, { color: theme.subtitleColor }]}>Echte referral tracking en analytics</Text>

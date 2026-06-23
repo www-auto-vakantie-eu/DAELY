@@ -14,7 +14,25 @@ const CREATOR_DATA: Record<string, {
   description: string;
   icon: string;
   color: string;
+  creatorBadge?: string;
+  creatorType?: string;
+  creatorCode?: string;
+  referralLink?: string;
+  sportFocus?: string;
 }> = {
+  'mila-creator': {
+    name: 'Mila Creator',
+    type: 'DAELY Creator',
+    specialty: 'Fitness, Running & Mindset',
+    description: 'DAELY Creator die sporters helpt starten met gezonde routines, workouts en mindset.',
+    icon: 'trophy',
+    color: '#2563EB',
+    creatorBadge: 'DAELY Creator',
+    creatorType: 'Athlete Creator',
+    creatorCode: 'DAELY-MILA',
+    referralLink: 'https://daely.app/invite/DAELY-MILA',
+    sportFocus: 'Fitness, Running & Mindset',
+  },
   'fitness-creator': {
     name: 'Fitness creator',
     type: 'Creator',
@@ -108,15 +126,54 @@ export default function CreatorDetailScreen() {
               </View>
             </LinearGradient>
             <View style={styles.heroContent}>
-              <View style={[styles.badge, { backgroundColor: '#F59E0B' }]}>
-                <Text style={styles.badgeText}>Samenwerking voorbereid</Text>
-              </View>
+              {creator.creatorBadge && (
+                <View style={[styles.badge, { backgroundColor: '#2563EB' }]}>
+                  <Text style={styles.badgeText}>{creator.creatorBadge}</Text>
+                </View>
+              )}
+              {!creator.creatorBadge && (
+                <View style={[styles.badge, { backgroundColor: '#F59E0B' }]}>
+                  <Text style={styles.badgeText}>Samenwerking voorbereid</Text>
+                </View>
+              )}
               <Text style={[styles.name, { color: theme.titleColor }]}>{creator.name}</Text>
               <Text style={[styles.type, { color: creator.color }]}>{creator.type}</Text>
+              {creator.creatorType && (
+                <Text style={[styles.creatorType, { color: theme.subtitleColor }]}>{creator.creatorType}</Text>
+              )}
               <Text style={[styles.specialty, { color: theme.subtitleColor }]}>{creator.specialty}</Text>
               <Text style={[styles.description, { color: theme.subtitleColor }]}>{creator.description}</Text>
+              {creator.creatorCode && (
+                <View style={[styles.codeBox, { backgroundColor: '#F0F9FF', borderColor: '#BFDBFE' }]}>
+                  <Text style={[styles.codeLabel, { color: '#64748B' }]}>Creator code:</Text>
+                  <Text style={[styles.codeValue, { color: '#2563EB' }]}>{creator.creatorCode}</Text>
+                </View>
+              )}
             </View>
           </View>
+
+          {/* CTA for DAELY Creator */}
+          {creator.creatorCode && creator.referralLink && (
+            <View style={[styles.ctaBlock, { backgroundColor: '#ECFDF5', borderColor: '#10B981' }]}>
+              <View style={styles.ctaHeader}>
+                <MaterialCommunityIcons name="rocket-launch" size={24} color="#10B981" />
+                <Text style={[styles.ctaTitle, { color: '#047857' }]}>Start met DAELY via {creator.name}</Text>
+              </View>
+              <Text style={[styles.ctaDescription, { color: '#065F46' }]}>
+                Gebruik creator code <Text style={styles.ctaCode}>{creator.creatorCode}</Text> om te starten
+              </Text>
+              <Pressable
+                style={[styles.ctaButton, { backgroundColor: '#10B981' }]}
+                onPress={() => {}}
+              >
+                <MaterialCommunityIcons name="link" size={18} color="#FFFFFF" />
+                <Text style={styles.ctaButtonText}>Kopieer invite link</Text>
+              </Pressable>
+              <Text style={[styles.ctaNote, { color: '#6B7280' }]}>
+                Mock/foundation - geen echte referral tracking
+              </Text>
+            </View>
+          )}
 
         {/* What you'll find */}
         <View style={styles.sectionHeader}>
@@ -239,6 +296,11 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginBottom: 8,
   },
+  creatorType: {
+    fontSize: 14,
+    fontWeight: '500',
+    marginBottom: 4,
+  },
   specialty: {
     fontSize: 14,
     marginBottom: 12,
@@ -247,6 +309,23 @@ const styles = StyleSheet.create({
     fontSize: 15,
     lineHeight: 22,
     textAlign: 'center',
+  },
+  codeBox: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderRadius: 12,
+    padding: 12,
+    marginTop: 12,
+    borderWidth: 1,
+  },
+  codeLabel: {
+    fontSize: 12,
+    fontWeight: '500',
+  },
+  codeValue: {
+    fontSize: 14,
+    fontWeight: '700',
   },
   sectionHeader: {
     marginBottom: 16,
@@ -302,5 +381,49 @@ const styles = StyleSheet.create({
   fallbackText: {
     fontSize: 18,
     fontWeight: '600',
+  },
+  ctaBlock: {
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 24,
+    borderWidth: 1,
+  },
+  ctaHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginBottom: 12,
+  },
+  ctaTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+  },
+  ctaDescription: {
+    fontSize: 14,
+    lineHeight: 20,
+    marginBottom: 16,
+  },
+  ctaCode: {
+    fontWeight: '700',
+    color: '#2563EB',
+  },
+  ctaButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    paddingVertical: 14,
+    borderRadius: 12,
+    marginBottom: 8,
+  },
+  ctaButtonText: {
+    color: '#FFFFFF',
+    fontSize: 15,
+    fontWeight: '600',
+  },
+  ctaNote: {
+    fontSize: 12,
+    textAlign: 'center',
+    fontStyle: 'italic',
   },
 });
