@@ -553,7 +553,8 @@ export default function CommunityScreen() {
     return CREATORS.filter(creator => {
       const matchesSearch = creator.name.toLowerCase().includes(creatorSearch.toLowerCase()) ||
                            creator.specialty.toLowerCase().includes(creatorSearch.toLowerCase());
-      const matchesFilter = creatorFilter === 'Alles' || creator.type === creatorFilter;
+      // Exclude Mila Creator from general list when filter is 'Alles'
+      const matchesFilter = creatorFilter === 'Alles' ? creator.id !== 'mila-creator' : creator.type === creatorFilter;
       return matchesSearch && matchesFilter;
     });
   }, [creatorSearch, creatorFilter]);
@@ -935,6 +936,39 @@ export default function CommunityScreen() {
                 );
               })}
             </ScrollView>
+
+            {/* DAELY Creators Section */}
+            <View style={styles.daelyCreatorsSection}>
+              <Text style={[styles.daelyCreatorsTitle, { color: theme.titleColor }]}>DAELY Creators</Text>
+              <Text style={[styles.daelyCreatorsSubtitle, { color: theme.subtitleColor }]}>
+                Ontdek sporters, athletes en influencers die DAELY delen met hun community.
+              </Text>
+              <GradientCard>
+                <Pressable
+                  style={styles.daelyCreatorCard}
+                  onPress={() => router.push('/community/creator/mila-creator' as any)}
+                >
+                  <View style={[styles.daelyCreatorIcon, { backgroundColor: '#2563EB15', borderColor: '#2563EB30' }]}>
+                    <MaterialCommunityIcons name="trophy" size={36} color="#2563EB" />
+                  </View>
+                  <View style={styles.daelyCreatorInfo}>
+                    <Text style={[styles.daelyCreatorName, { color: theme.titleColor }]}>Mila Creator</Text>
+                    <View style={[styles.daelyCreatorBadge, { backgroundColor: '#2563EB' }]}>
+                      <Text style={styles.daelyCreatorBadgeText}>DAELY Creator</Text>
+                    </View>
+                    <Text style={[styles.daelyCreatorType, { color: theme.subtitleColor }]}>Athlete Creator</Text>
+                    <Text style={[styles.daelyCreatorSpecialty, { color: '#2563EB' }]}>Fitness, Running & Mindset</Text>
+                    <View style={styles.daelyCreatorCodeBox}>
+                      <Text style={[styles.daelyCreatorCodeLabel, { color: '#64748B' }]}>Creator code:</Text>
+                      <Text style={[styles.daelyCreatorCodeValue, { color: '#2563EB' }]}>DAELY-MILA</Text>
+                    </View>
+                  </View>
+                  <View style={styles.daelyCreatorCTA}>
+                    <MaterialCommunityIcons name="chevron-right" size={24} color="#94A3B8" />
+                  </View>
+                </Pressable>
+              </GradientCard>
+            </View>
 
             {/* Compact creators - Events card formaat */}
             <View style={styles.creatorsSection}>
@@ -1569,6 +1603,86 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 11,
     fontWeight: '600',
+  },
+  // DAELY Creators Section
+  daelyCreatorsSection: {
+    marginBottom: 24,
+  },
+  daelyCreatorsTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    marginBottom: 8,
+  },
+  daelyCreatorsSubtitle: {
+    fontSize: 14,
+    lineHeight: 20,
+    marginBottom: 16,
+  },
+  daelyCreatorCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+    padding: 20,
+    borderRadius: 14,
+  },
+  daelyCreatorIcon: {
+    width: 64,
+    height: 64,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 0,
+  },
+  daelyCreatorInfo: {
+    flex: 1,
+  },
+  daelyCreatorName: {
+    fontSize: 18,
+    fontWeight: '700',
+    marginBottom: 6,
+  },
+  daelyCreatorBadge: {
+    alignSelf: 'flex-start',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 999,
+    marginBottom: 8,
+  },
+  daelyCreatorBadgeText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  daelyCreatorType: {
+    fontSize: 13,
+    fontWeight: '500',
+    marginBottom: 4,
+  },
+  daelyCreatorSpecialty: {
+    fontSize: 14,
+    fontWeight: '600',
+    marginBottom: 12,
+  },
+  daelyCreatorCodeBox: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#F0F9FF',
+    borderRadius: 8,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#BFDBFE',
+  },
+  daelyCreatorCodeLabel: {
+    fontSize: 11,
+    fontWeight: '500',
+  },
+  daelyCreatorCodeValue: {
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  daelyCreatorCTA: {
+    marginLeft: 8,
   },
   // Partners - Events card formaat
   partnersSection: {
