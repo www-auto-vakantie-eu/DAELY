@@ -21,6 +21,10 @@ import { DISCIPLINE_CONTENT } from '@/constants/discipline-content';
 import SharedBottomNav from '../../components/SharedBottomNav';
 import { AppScreen } from '@/components/AppScreen';
 import { THEMES } from '@/constants/themes';
+import {
+  getExerciseThumbnailForGender,
+  type ExerciseThumbnailGender,
+} from '@/constants/exercise-thumbnail-manifest';
 
 // Local mapping for Fitness exercise thumbnails (batch 1 + batch 2 + batch 3 back)
 const FITNESS_THUMBNAIL_MAP: Record<string, ImageSourcePropType> = {
@@ -204,6 +208,16 @@ const FITNESS_THUMBNAIL_MAP: Record<string, ImageSourcePropType> = {
   '7-29': require('@/assets/images/exercises/fitness/fitness-plank-shoulder-tap.png'),
   '7-30': require('@/assets/images/exercises/fitness/fitness-hollow-rock.png'), // gebruikt extra core_oefening bestand
 };
+
+// Manifest fallback wrapper for exercise thumbnails
+// This allows future manifest integration while maintaining current functionality
+function resolveExerciseThumbnail(
+  exerciseId: string,
+  gender: ExerciseThumbnailGender,
+  fallbackThumbnail?: ImageSourcePropType
+): ImageSourcePropType | undefined {
+  return getExerciseThumbnailForGender(exerciseId, gender) ?? fallbackThumbnail;
+}
 
 type DisciplineDetail = {
   title: string;
@@ -1042,6 +1056,10 @@ export default function DisciplineScreen() {
                 filteredExercises.map((exercise) => {
                   const hasThumbnail = exercise.mediaItems && exercise.mediaItems.length > 0 && exercise.mediaItems[0]?.thumbnail;
                   const localThumbnail = slug === 'fitness' ? FITNESS_THUMBNAIL_MAP[exercise.id] : null;
+                  // Use manifest wrapper with fallback to existing thumbnail logic
+                  // Manifest is currently empty, so this maintains current functionality
+                  const thumbnailGender: ExerciseThumbnailGender = 'male';
+                  const thumbnail = resolveExerciseThumbnail(exercise.id, thumbnailGender, localThumbnail);
                   return (
                     <Pressable
                       key={exercise.id}
@@ -1161,9 +1179,9 @@ export default function DisciplineScreen() {
                         </LinearGradient>
                         {/* Content layer - above background */}
                         <View style={styles.premiumCardContent}>
-                          {localThumbnail ? (
+                          {thumbnail ? (
                             <Image
-                              source={localThumbnail}
+                              source={thumbnail}
                               style={styles.thumbnailImage}
                               resizeMode="cover"
                             />
