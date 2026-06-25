@@ -5,6 +5,8 @@
 - Creator MVP foundation staat
 - Test Creator login werkt
 - Creator Dashboard is geherstructureerd
+- Publieke creator profielpagina foundation staat
+- DAELY Creators sectie in Community staat
 - Geen productie-referral/payment/payout systeem
 - Niets gepusht
 
@@ -14,15 +16,19 @@
 - `2b165c3` — `feat(creator): add test creator account foundation` (AppContext + Mijn + Dashboard)
 - `b4c7abb` — `fix(auth): connect test creator login to creator account` (Login koppeling)
 - `25dbfa7` — `feat(creator): improve creator dashboard structure` (Dashboard herstructurering)
+- `9186222` — `feat(creator): add public creator profile foundation` (Publieke profielpagina)
+- `d69bf15` — `feat(creator): improve creator visibility in community` (DAELY Creators sectie)
 
 ## 3. Testflow
 
-**Login → Test Creator → Mila Creator → Mijn → Creator Dashboard**
+**Login → Test Creator → Mila Creator → Mijn → Creator Dashboard → Community → Publiek Profiel**
 
 - Test Creator op login activeert Mila Creator account
 - Technisch `accountType` wordt gezet op `influencer`
 - User-facing label is "DAELY Creator"
 - Creator Dashboard is bereikbaar via Mijn tab (Creator Studio card)
+- Community bevat DAELY Creators sectie met Mila Creator card
+- Publiek profiel bereikbaar via `/community/creator/mila-creator`
 
 ## 4. Technische keuze accountType
 
@@ -86,14 +92,13 @@ Het dashboard bestaat uit 7 MVP-blokken:
 - Geen coach/trainer dashboard
 - Geen Club App koppeling
 - Geen Business Software koppeling
-- Geen publieke creatorprofielpagina
 - Geen campagne analytics
 - Geen officiële creator voorwaarden
 
 ## 10. Later / aanbevolen vervolgstappen
 
-1. Publieke Creator profielpagina foundation
-2. Creator zichtbaarheid in Community
+1. ~Publieke Creator profielpagina foundation~ ✅ (geïmplementeerd in commit `9186222`)
+2. ~Creator zichtbaarheid in Community~ ✅ (geïmplementeerd in commit `d69bf15`)
 3. Referral tracking foundation
 4. Creator campagneprestaties
 5. Payout status foundation
@@ -115,3 +120,5 @@ Het dashboard bestaat uit 7 MVP-blokken:
 - `app/(auth)/login.tsx` — Test Creator button koppeling
 - `app/(tabs)/mijn.tsx` — Creator Studio card en test activatie
 - `app/creator-dashboard.tsx` — Dashboard met 7 blokken
+- `app/community/creator/[id].tsx` — Publieke creator profielpagina
+- `app/(tabs)/community.tsx` — DAELY Creators sectie en filters
