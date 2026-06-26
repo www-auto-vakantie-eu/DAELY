@@ -25,6 +25,7 @@ import {
   getExerciseThumbnailForGender,
   type ExerciseThumbnailGender,
 } from '@/constants/exercise-thumbnail-manifest';
+import { resolveContentAudience } from '@/lib/content-audience';
 
 // Local mapping for Fitness exercise thumbnails (batch 1 + batch 2 + batch 3 back)
 const FITNESS_THUMBNAIL_MAP: Record<string, ImageSourcePropType> = {
@@ -653,7 +654,7 @@ export default function DisciplineScreen() {
   const { slug } = useLocalSearchParams<{ slug: string }>();
   const router = useRouter();
   const theme = useTheme();
-  const { activeThemeId } = useAppContext();
+  const { activeThemeId, user, appSettings } = useAppContext();
   const isMarble = theme.id === 'marble';
   const { auroraGradient, auroraTitle, auroraSubtitle, ribbonTop, ribbonMid, ribbonBlue, ribbonRose, ribbonRight, ribbonHighlight, shortcutBorderColor, shortcutShadowColor, shortcutIconBg, shortcutIconBorder } = getAuroraTokens(activeThemeId);
   const [activeTab, setActiveTab] = useState<'workouts' | 'oefeningen' | 'programmas'>('workouts');
@@ -1056,9 +1057,12 @@ export default function DisciplineScreen() {
                 filteredExercises.map((exercise) => {
                   const hasThumbnail = exercise.mediaItems && exercise.mediaItems.length > 0 && exercise.mediaItems[0]?.thumbnail;
                   const localThumbnail = slug === 'fitness' ? FITNESS_THUMBNAIL_MAP[exercise.id] : null;
+
+                  // Determine thumbnail gender based on content audience with safe fallback
+                  const contentAudience = resolveContentAudience(user, appSettings);
+                  const thumbnailGender: ExerciseThumbnailGender = contentAudience === 'female' ? 'female' : 'male';
+
                   // Use manifest wrapper with fallback to existing thumbnail logic
-                  // Manifest is currently empty, so this maintains current functionality
-                  const thumbnailGender: ExerciseThumbnailGender = 'male';
                   const thumbnail = resolveExerciseThumbnail(exercise.id, thumbnailGender, localThumbnail);
                   return (
                     <Pressable
