@@ -76,9 +76,28 @@ export type ExerciseThumbnailEntry = {
   notes?: string;
 };
 
-// Manifest object - currently empty foundation
+// Manifest object - pilot entries for chest muscle group (01)
 // Will be populated incrementally per muscle group during migration
-export const exerciseThumbnailManifest: Record<string, ExerciseThumbnailEntry> = {};
+export const exerciseThumbnailManifest: Record<string, ExerciseThumbnailEntry> = {
+  '1-1': {
+    id: '1-1',
+    exerciseId: '1-1',
+    muscleGroupCode: '01',
+    muscleGroup: 'borst',
+    male: require('@/assets/images/exercises/fitness/Mannen/m-01-001.png'),
+    female: require('@/assets/images/exercises/fitness/Vrouwen/f-01-001.png'),
+    notes: 'Pilot borst thumbnail mapping: barbell bench press',
+  },
+  '1-17': {
+    id: '1-17',
+    exerciseId: '1-17',
+    muscleGroupCode: '01',
+    muscleGroup: 'borst',
+    male: require('@/assets/images/exercises/fitness/Mannen/m-01-002.png'),
+    female: require('@/assets/images/exercises/fitness/Vrouwen/f-01-002.png'),
+    notes: 'Pilot borst thumbnail mapping: machine chest press',
+  },
+};
 
 // Helper functions
 
