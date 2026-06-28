@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { syncPendingSettingsRequests } from '@/services/settings-requests';
 import { getStoredWorkoutActivities, saveWorkoutActivities } from '@/services/workout-activities';
 import type { WorkoutActivity } from '@/constants/workout-activities';
+import { DEFAULT_TODAY_LAYOUT_ID, isTodayLayoutId } from '@/constants/today-layouts';
 
 const STORAGE_KEYS = {
   activeThemeId: 'daely.activeThemeId',
@@ -100,6 +101,7 @@ export type AppSettings = {
   referralYearSubscriptions: number;
   tabVisibility: TabVisibilitySettings;
   disciplineVisibility: Record<string, boolean>;
+  todayLayoutId?: string;
 };
 
 const DEFAULT_TAB_VISIBILITY: TabVisibilitySettings = {
@@ -143,11 +145,15 @@ function sanitizeAppSettings(raw: unknown): AppSettings {
     Object.entries(disciplineVisibilitySource).filter(([, value]) => typeof value === 'boolean')
   ) as Record<string, boolean>;
 
+  const todayLayoutIdSource = source.todayLayoutId;
+  const todayLayoutId = isTodayLayoutId(todayLayoutIdSource) ? todayLayoutIdSource : undefined;
+
   return {
     ...DEFAULT_APP_SETTINGS,
     ...source,
     tabVisibility: sanitizeTabVisibility(source.tabVisibility),
     disciplineVisibility,
+    todayLayoutId,
   };
 }
 
@@ -181,7 +187,8 @@ const DEFAULT_APP_SETTINGS: AppSettings = {
   feedbackSubmittedCount: 0,
   referralYearSubscriptions: 0,
   tabVisibility: DEFAULT_TAB_VISIBILITY,
-  disciplineVisibility: {}, // discipline slug: true/false
+  disciplineVisibility: {},
+  todayLayoutId: undefined,
 };
 
 interface AppContextType {

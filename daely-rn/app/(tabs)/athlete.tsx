@@ -269,6 +269,15 @@ export default function InstellingenScreen() {
               </View>
               <MaterialCommunityIcons name="chevron-right" size={22} color={chevronColor} />
             </Pressable>
+            <View style={[styles.separator, { borderColor: separatorColor }]} />
+            <Pressable style={styles.settingRow} onPress={() => router.push('/(tabs)/today-layout-settings')}>
+              <MaterialCommunityIcons name="view-dashboard-outline" size={22} color={iconColor} />
+              <View style={styles.settingLabelContainer}>
+                <Text style={[styles.settingLabel, { color: titleColor }]}>Vandaag layout</Text>
+                <Text style={[styles.settingSublabel, { color: subtitleColor }]}>Kies hoe je Vandaag-pagina is opgebouwd</Text>
+              </View>
+              <MaterialCommunityIcons name="chevron-right" size={22} color={chevronColor} />
+            </Pressable>
           </View>
         </View>
 

@@ -1,19 +1,15 @@
 import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import { ScrollView, StyleSheet, Text, View, Pressable, ImageBackground } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useRouter, useLocalSearchParams, useFocusEffect } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/use-theme';
 import { AppScreen } from '@/components/AppScreen';
 import AppHeader from '../components/AppHeader';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Activity, getActivities } from 'services/activity-storage';
 import { useAppContext } from '@/contexts/AppContext';
 import { getNextProgramWorkout, NextProgramWorkout } from '@/services/user-programs-storage';
 import { getActiveWorkoutDraft, type WorkoutDraft } from '@/services/workout-draft-storage';
-import { CONNECTED_DEVICES, WHOOP_TOKEN_STORAGE_KEY } from '../constants/connected-devices';
 import {
-  HERO_BACKGROUND_STORAGE_KEY,
   HERO_BACKGROUND_OPTIONS,
   HeroBackgroundOptionId,
 } from '@/constants/hero-background';
@@ -21,30 +17,6 @@ import { TODAY_QUOTES } from '@/constants/today-quotes';
 import { getUnreadMessageCount } from '@/services/messages-storage';
 import { THEMES } from '@/constants/themes';
 import { getThemePersonality } from '@/lib/themePersonality';
-
-const SHORTCUTS_STORAGE_KEY = 'daely.today.shortcuts.v1';
-
-type ShortcutId = 'nutrition' | 'habits' | 'stats' | 'tracker' | 'activities' | 'shop' | 'feedback' | 'find-coach';
-
-type ShortcutOption = {
-  id: ShortcutId;
-  label: string;
-  icon: React.ComponentProps<typeof MaterialCommunityIcons>['name'];
-  route: string;
-};
-
-const SHORTCUT_OPTIONS: ShortcutOption[] = [
-  { id: 'nutrition', label: 'Voeding', icon: 'food-apple-outline', route: '/nutrition/add' },
-  { id: 'habits', label: 'Habit tracker', icon: 'calendar-check-outline', route: '/habits' },
-  { id: 'stats', label: 'Data', icon: 'chart-bar', route: '/my-stats' },
-  { id: 'tracker', label: 'Start activiteit', icon: 'run-fast', route: '/tracker' },
-  { id: 'activities', label: 'Activiteiten', icon: 'history', route: '/activities' },
-  { id: 'shop', label: 'Shop', icon: 'shopping-outline', route: '/shop' },
-  { id: 'feedback', label: 'Feedback', icon: 'chat-outline', route: '/feedback' },
-  { id: 'find-coach', label: 'Vind Coach', icon: 'account-tie', route: '/find-coach' },
-];
-
-const DEFAULT_SHORTCUTS: ShortcutId[] = ['nutrition', 'habits', 'stats'];
 
 // Helper to get theme-aware Aurora tokens
 function getAuroraTokens(activeThemeId: string) {
@@ -231,12 +203,6 @@ function formatTodayLabel() {
   });
 }
 
-function formatDuration(seconds: number) {
-  const min = Math.floor(seconds / 60);
-  const sec = seconds % 60;
-  return `${min}m ${sec}s`;
-}
-
 function getTodayQuote() {
   const now = new Date();
   const start = new Date(now.getFullYear(), 0, 0);
@@ -257,10 +223,6 @@ function getTodayQuote() {
   
   const quoteIndex = dayOfYear % safeQuotes.length;
   return safeQuotes[quoteIndex];
-}
-
-function formatDateTime(value: string) {
-  return new Date(value).toLocaleString('nl-NL');
 }
 
 // Helper component for gradient cards with Soft Aurora Ribbon style
@@ -506,50 +468,12 @@ function GradientCard({ children, style, cardRadius }: { children: React.ReactNo
   );
 }
 
-function getMetricsSummary(activity: Activity) {
-  if (activity.metrics?.workout) {
-    return `${activity.metrics.workout.exercises?.length ?? 0} oefeningen${activity.metrics.workout.totalVolumeKg !== undefined ? ` · ${Math.round(activity.metrics.workout.totalVolumeKg)} kg volume` : ''}`;
-  }
-  if (activity.metrics?.session) {
-    return `${activity.metrics.session.intensity ? `Intensiteit ${activity.metrics.session.intensity}` : 'Session'}${activity.metrics.session.focusAreas && activity.metrics.session.focusAreas.length > 0 ? ` · ${activity.metrics.session.focusAreas.join(', ')}` : ''}`;
-  }
-  if (activity.metrics?.match) {
-    return `${activity.metrics.match.matchType ?? 'match'}${activity.metrics.match.scoreFor !== undefined && activity.metrics.match.scoreAgainst !== undefined ? ` · ${activity.metrics.match.scoreFor}-${activity.metrics.match.scoreAgainst}` : ''}`;
-  }
-  if (activity.metrics?.score) {
-    if (activity.metrics.score.scoreType === 'racket') {
-      return `${activity.metrics.score.result ?? 'score'}${activity.metrics.score.setsFor !== undefined && activity.metrics.score.setsAgainst !== undefined ? ` · ${activity.metrics.score.setsFor}-${activity.metrics.score.setsAgainst}` : ''}`;
-    }
-    if (activity.metrics.score.scoreType === 'golf') {
-      return `Golf${activity.metrics.score.holesPlayed !== undefined ? ` · ${activity.metrics.score.holesPlayed} holes` : ''}${activity.metrics.score.strokes !== undefined ? ` · ${activity.metrics.score.strokes} slagen` : ''}`;
-    }
-    return 'Score activiteit';
-  }
-  if (activity.metrics?.skill) {
-    return `${activity.metrics.skill.techniques && activity.metrics.skill.techniques.length > 0 ? activity.metrics.skill.techniques.join(', ') : 'Skill'}${activity.metrics.skill.grade ? ` · ${activity.metrics.skill.grade}` : ''}`;
-  }
-  if (activity.metrics?.laps) {
-    return `${activity.metrics.laps.distanceMeters !== undefined ? `${Math.round(activity.metrics.laps.distanceMeters)} m` : 'Laps'}${activity.metrics.laps.laps !== undefined ? ` · ${Math.round(activity.metrics.laps.laps)} banen` : ''}`;
-  }
-  if (activity.metrics?.gps) {
-    return `${activity.metrics.gps.distanceMeters !== undefined ? `${Math.round(activity.metrics.gps.distanceMeters)} m` : 'GPS activiteit'}${activity.metrics.gps.averageSpeedKmh !== undefined && activity.metrics.gps.averageSpeedKmh !== null ? ` · ${activity.metrics.gps.averageSpeedKmh.toFixed(1)} km/u` : ''}`;
-  }
-  return 'Geen metrics beschikbaar';
-}
-
 export default function TodayScreen() {
   const router = useRouter();
-  const params = useLocalSearchParams<{ open?: string }>();
   const theme = useTheme();
   const { user, activeThemeId } = useAppContext();
-  const isMarble = theme.id === 'marble';
-  const { auroraGradient, auroraTitle, auroraSubtitle, ribbonTop, ribbonMid, ribbonBlue, ribbonRose, ribbonRight, recoveryIconColor, mobilityIconBg, mobilityIconColor, trainingIconBg, trainingIconColor, nutritionIconBg, nutritionIconColor, shortcutBorderColor, shortcutShadowColor, shortcutIconBg, shortcutIconBorder, cardRadius, cardBorderWidth, iconBubbleRadius, shortcutRadius, useThinLines, overlayGradient, topBorderGradient, innerGlowColor, cardBackground } = getAuroraTokens(activeThemeId);
-  const [activities, setActivities] = useState<Activity[]>([]);
-  const [heroBackground, setHeroBackground] = useState<HeroBackgroundOptionId>('pureMinimal');
-  const [isWhoopConnected, setIsWhoopConnected] = useState(false);
-  const [isFitbitConnected, setIsFitbitConnected] = useState(false);
-  const [shortcuts, setShortcuts] = useState<ShortcutId[]>(DEFAULT_SHORTCUTS);
-  const [showShortcutPicker, setShowShortcutPicker] = useState(false);
+  const { mobilityIconBg, mobilityIconColor, trainingIconBg, trainingIconColor, nutritionIconBg, nutritionIconColor } = getAuroraTokens(activeThemeId);
+  const heroBackground: HeroBackgroundOptionId = 'pureMinimal';
   const [unreadMessageCount, setUnreadMessageCount] = useState(0);
   const [nextWorkout, setNextWorkout] = useState<NextProgramWorkout | null>(null);
   const [activeDraft, setActiveDraft] = useState<WorkoutDraft | null>(null);
@@ -581,61 +505,6 @@ export default function TodayScreen() {
     }, [loadNextWorkout, loadActiveDraft])
   );
 
-  useEffect(() => {
-    if (params.open === 'shortcuts') {
-      setShowShortcutPicker(true);
-      router.setParams({ open: undefined });
-    }
-  }, [params.open, router]);
-
-  useEffect(() => {
-    getActivities().then((items) => {
-      const sorted = [...items].sort((a, b) => new Date(b.endedAt).getTime() - new Date(a.endedAt).getTime());
-      setActivities(sorted);
-    });
-  }, []);
-
-  useEffect(() => {
-    AsyncStorage.getItem(HERO_BACKGROUND_STORAGE_KEY).then((stored) => {
-      if (!stored) return;
-      const exists = HERO_BACKGROUND_OPTIONS.some((option) => option.id === stored);
-      if (exists) {
-        setHeroBackground(stored as HeroBackgroundOptionId);
-      }
-    });
-  }, []);
-
-useEffect(() => {
-    AsyncStorage.getItem(SHORTCUTS_STORAGE_KEY).then((stored) => {
-      if (!stored) return;
-      try {
-        const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed) && parsed.length === 3 && parsed.every((id: string) => SHORTCUT_OPTIONS.some((opt) => opt.id === id))) {
-          setShortcuts(parsed as ShortcutId[]);
-        }
-      } catch {
-        // Fallback to defaults
-      }
-    });
-  }, []);
-
-  useEffect(() => {
-    const restoreConnectedStatus = async () => {
-      try {
-        const values = await AsyncStorage.multiGet([WHOOP_TOKEN_STORAGE_KEY, 'fitbit_oauth_token', 'fitbit_connected']);
-        const valueMap = new Map(values);
-        setIsWhoopConnected(!!valueMap.get(WHOOP_TOKEN_STORAGE_KEY));
-        const fitbitConnected = !!valueMap.get('fitbit_oauth_token') || valueMap.get('fitbit_connected') === 'true';
-        setIsFitbitConnected(fitbitConnected);
-      } catch {
-        setIsWhoopConnected(false);
-        setIsFitbitConnected(false);
-      }
-    };
-
-    void restoreConnectedStatus();
-  }, []);
-
   const selectedHeroBackground = HERO_BACKGROUND_OPTIONS.find((option) => option.id === heroBackground) ?? HERO_BACKGROUND_OPTIONS[1];
   const userName = typeof user.name === 'string' && user.name.trim().length > 0
     ? user.name.trim()
@@ -645,55 +514,11 @@ useEffect(() => {
   const heroGreeting = userName ? `Welkom terug, ${userName}` : 'Welkom terug';
 
   const todayLabel = useMemo(() => formatTodayLabel(), []);
-  const todayKey = useMemo(() => {
-    const now = new Date();
-    const y = now.getFullYear();
-    const m = `${now.getMonth() + 1}`.padStart(2, '0');
-    const d = `${now.getDate()}`.padStart(2, '0');
-    return `${y}-${m}-${d}`;
-  }, []);
-
-  const todayActivities = useMemo(
-    () => activities.filter((activity) => activity.endedAt.startsWith(todayKey)),
-    [activities, todayKey]
-  );
-  const mostRecentTodayActivity = todayActivities[0];
-  const whoopDevice = CONNECTED_DEVICES.find((device) => device.id === 'whoop');
-  const fitbitDevice = CONNECTED_DEVICES.find((device) => device.id === 'fitbit');
-  const hasConnectedDevice = isWhoopConnected || isFitbitConnected;
-
-const handleShortcutPress = (shortcutId: ShortcutId) => {
-  const option = SHORTCUT_OPTIONS.find((opt) => opt.id === shortcutId);
-  if (option) {
-    router.push(option.route as any);
-  }
-};
-
-const handleSaveShortcuts = async (newShortcuts: ShortcutId[]) => {
-  setShortcuts(newShortcuts);
-  setShowShortcutPicker(false);
-  try {
-    await AsyncStorage.setItem(SHORTCUTS_STORAGE_KEY, JSON.stringify(newShortcuts));
-  } catch {
-    // Silent fail, shortcuts remain in state
-  }
-};
-
-const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => opt.id === id)).filter(Boolean) as ShortcutOption[];
-
-  // Determine ribbon styles based on theme
-  const ribbonStyleTop = useThinLines ? styles.thinRibbonTop : styles.ribbonTop;
-  const ribbonStyleMid = useThinLines ? styles.thinRibbonMid : styles.ribbonMid;
-  const ribbonStyleBlue = useThinLines ? styles.thinRibbonBlue : styles.ribbonBlue;
-  const ribbonStyleRose = useThinLines ? styles.thinRibbonRose : styles.ribbonRose;
-  const ribbonStyleRight = useThinLines ? styles.thinRibbonRight : styles.ribbonRight;
 
   return (
     <AppScreen style={{ backgroundColor: theme.background }}>
       <ScrollView contentContainerStyle={styles.content}>
       <AppHeader
-        title="Vandaag."
-        subtitle="Jouw dag begint hier."
         onSettingsPress={() => router.push('/(tabs)/athlete')}
         showMessages
         unreadMessagesCount={unreadMessageCount}
@@ -735,129 +560,135 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
         )}
       </View>
 
-      <View style={styles.shortcutsRow}>
-        {selectedShortcuts.map((shortcut) => (
-            <Pressable
-              key={shortcut.id}
-              style={({ pressed }) => [
-                styles.shortcutCard,
-                { borderColor: shortcutBorderColor || theme.border, shadowColor: shortcutShadowColor, borderRadius: shortcutRadius, borderWidth: cardBorderWidth, backgroundColor: cardBackground || undefined },
-                pressed && styles.shortcutCardPressed,
-              ]}
-              onPress={() => handleShortcutPress(shortcut.id)}
-            >
-              {/* Personality-based surface gradient */}
-              <LinearGradient
-                colors={cardBackground ? [cardBackground, cardBackground] : auroraGradient}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={[styles.shortcutCardGradient, { borderRadius: shortcutRadius }]}
-                pointerEvents="none"
-              >
-                {/* Personality-based overlay gradient */}
-                {overlayGradient && (
-                  <LinearGradient
-                    colors={overlayGradient}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 0, y: 1 }}
-                    style={styles.shortcutCardOverlay}
-                    pointerEvents="none"
-                  />
-                )}
-                {/* Personality-based top border gradient */}
-                {topBorderGradient && (
-                  <LinearGradient
-                    colors={topBorderGradient}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 0 }}
-                    style={styles.shortcutCardTopBorder}
-                    pointerEvents="none"
-                  />
-                )}
-                {/* Personality-based inner glow */}
-                {innerGlowColor && (
-                  <View style={[styles.shortcutCardInnerGlow, { backgroundColor: innerGlowColor }]} pointerEvents="none" />
-                )}
-                {/* Top-left ribbon */}
-                <LinearGradient
-                  colors={ribbonTop}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
-                  style={ribbonStyleTop}
-                  pointerEvents="none"
-                />
-                {/* Mid-card ribbon */}
-                <LinearGradient
-                  colors={ribbonMid}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
-                  style={ribbonStyleMid}
-                  pointerEvents="none"
-                />
-                {/* Diagonal top-right ribbon */}
-                <LinearGradient
-                  colors={ribbonBlue}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
-                  style={ribbonStyleBlue}
-                  pointerEvents="none"
-                />
-                {/* Diagonal bottom-left ribbon */}
-                <LinearGradient
-                  colors={ribbonRose}
-                  start={{ x: 0, y: 1 }}
-                  end={{ x: 1, y: 0 }}
-                  style={ribbonStyleRose}
-                  pointerEvents="none"
-                />
-                {/* Right-side accent ribbon */}
-                <LinearGradient
-                  colors={ribbonRight}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 1 }}
-                  style={ribbonStyleRight}
-                  pointerEvents="none"
-                />
-                {/* Marble subtle vein - only for small cards */}
-                {isMarble && (
-                  <LinearGradient
-                    colors={['rgba(111, 78, 87, 0.22)', 'rgba(111, 78, 87, 0.10)']}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                    style={{
-                      position: 'absolute',
-                      top: -10,
-                      left: -20,
-                      width: 120,
-                      height: 3,
-                      transform: [{ rotate: '-12deg' }],
-                      pointerEvents: 'none',
-                    }}
-                    pointerEvents="none"
-                  />
-                )}
-                {/* Soft white highlight overlay */}
-                <LinearGradient
-                  colors={['rgba(255, 255, 255, 0.28)', 'rgba(255, 255, 255, 0.06)']}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 0, y: 1 }}
-                  style={styles.ribbonHighlight}
-                  pointerEvents="none"
-                />
-                <View style={styles.shortcutCardContent}>
-                  <View style={[styles.shortcutIconContainer, { backgroundColor: shortcutIconBg, borderColor: shortcutIconBorder, borderRadius: iconBubbleRadius }]}>
-                    <MaterialCommunityIcons name={shortcut.icon} size={24} color={auroraSubtitle} />
-                  </View>
-                  <Text style={[styles.shortcutLabel, { color: auroraTitle }]}>{shortcut.label}</Text>
-                </View>
-              </LinearGradient>
-            </Pressable>
-          ))}
+      {/* Jouw focus vandaag - premium hoofdmeldule */}
+      <View style={styles.dailyFocusMainCard}>
+        <View style={styles.dailyFocusHeader}>
+          <MaterialCommunityIcons name="target" size={28} color={theme.colors.primary} />
+          <Text style={[styles.dailyFocusHeaderTitle, { color: theme.titleColor }]}>Jouw focus vandaag</Text>
         </View>
+
+        {(nextWorkout || activeDraft) ? (
+          <>
+            <View style={styles.dailyFocusContent}>
+              <View style={[styles.dailyFocusIconContainer, { backgroundColor: '#2563EB' }]}>
+                <MaterialCommunityIcons name="dumbbell" size={32} color="#FFFFFF" />
+              </View>
+              <View style={styles.dailyFocusText}>
+                <Text style={[styles.dailyFocusTitle, { color: theme.titleColor }]}>
+                  {nextWorkout?.workout?.name || activeDraft?.workoutName || 'Training'}
+                </Text>
+                <Text style={[styles.dailyFocusSubtitle, { color: theme.subtitleColor }]}>
+                  Vandaag ligt de focus op kracht en conditie. Een uitgebalanceerde training om je week sterk te starten.
+                </Text>
+                <View style={styles.dailyFocusMeta}>
+                  <View style={styles.dailyFocusMetaItem}>
+                    <MaterialCommunityIcons name="clock-outline" size={16} color={theme.subtitleColor} />
+                    <Text style={[styles.dailyFocusMetaText, { color: theme.subtitleColor }]}>45 min</Text>
+                  </View>
+                  <View style={styles.dailyFocusMetaItem}>
+                    <MaterialCommunityIcons name="fire" size={16} color={theme.subtitleColor} />
+                    <Text style={[styles.dailyFocusMetaText, { color: theme.subtitleColor }]}>Medium</Text>
+                  </View>
+                </View>
+              </View>
+            </View>
+            <Pressable
+              style={({ pressed }) => [
+                styles.dailyFocusCTA,
+                { backgroundColor: theme.colors.primary },
+                pressed && styles.dailyFocusCTAPressed,
+              ]}
+              onPress={() => {
+                if (nextWorkout) {
+                  router.push({
+                    pathname: '/tracker/[disciplineId]/start',
+                    params: {
+                      disciplineId: nextWorkout.disciplineSlug,
+                      workoutId: nextWorkout.workout?.id,
+                      programId: nextWorkout.program.id,
+                      week: String(nextWorkout.week),
+                      day: String(nextWorkout.day),
+                    },
+                  });
+                } else if (activeDraft) {
+                  router.push({
+                    pathname: '/tracker/[disciplineId]/start',
+                    params: {
+                      disciplineId: activeDraft.disciplineId,
+                      workoutId: activeDraft.workoutId,
+                      programId: activeDraft.programId,
+                      week: activeDraft.programWeek ? String(activeDraft.programWeek) : undefined,
+                      day: activeDraft.programDay ? String(activeDraft.programDay) : undefined,
+                    },
+                  });
+                }
+              }}
+            >
+              <Text style={styles.dailyFocusCTAText}>Start focus</Text>
+              <MaterialCommunityIcons name="arrow-right" size={20} color="#FFFFFF" />
+            </Pressable>
+          </>
+        ) : (
+          <>
+            <View style={styles.dailyFocusContent}>
+              <View style={[styles.dailyFocusIconContainer, { backgroundColor: '#10B981' }]}>
+                <MaterialCommunityIcons name="spa" size={32} color="#FFFFFF" />
+              </View>
+              <View style={styles.dailyFocusText}>
+                <Text style={[styles.dailyFocusTitle, { color: theme.titleColor }]}>Herstel & Balans</Text>
+                <Text style={[styles.dailyFocusSubtitle, { color: theme.subtitleColor }]}>
+                  Vandaag ligt de focus op herstel en balans. Een rustige dag om je lichaam te laten herstellen en sterker terug te komen.
+                </Text>
+              </View>
+            </View>
+            <Pressable
+              style={({ pressed }) => [
+                styles.dailyFocusCTA,
+                { backgroundColor: theme.colors.primary },
+                pressed && styles.dailyFocusCTAPressed,
+              ]}
+              onPress={() => router.push('/mind')}
+            >
+              <Text style={styles.dailyFocusCTAText}>Start herstel</Text>
+              <MaterialCommunityIcons name="arrow-right" size={20} color="#FFFFFF" />
+            </Pressable>
+          </>
+        )}
+      </View>
+
+      {/* Vandaag in balans */}
+      <View style={styles.dailyBalanceCard}>
+        <View style={styles.dailyBalanceHeader}>
+          <Text style={[styles.dailyBalanceTitle, { color: theme.titleColor }]}>Vandaag in balans</Text>
+        </View>
+        <View style={styles.dailyBalanceRow}>
+          <View style={styles.dailyBalanceItem}>
+            <View style={[styles.dailyBalanceDot, { backgroundColor: '#2563EB' }]} />
+            <View style={styles.dailyBalanceContent}>
+              <Text style={[styles.dailyBalanceLabel, { color: theme.titleColor }]}>Beweging</Text>
+              <Text style={[styles.dailyBalanceStatus, { color: theme.subtitleColor }]}>Klaar om te starten</Text>
+            </View>
+          </View>
+          <View style={styles.dailyBalanceItem}>
+            <View style={[styles.dailyBalanceDot, { backgroundColor: '#10B981' }]} />
+            <View style={styles.dailyBalanceContent}>
+              <Text style={[styles.dailyBalanceLabel, { color: theme.titleColor }]}>Herstel</Text>
+              <Text style={[styles.dailyBalanceStatus, { color: theme.subtitleColor }]}>Rustig opbouwen</Text>
+            </View>
+          </View>
+          <View style={styles.dailyBalanceItem}>
+            <View style={[styles.dailyBalanceDot, { backgroundColor: '#059669' }]} />
+            <View style={styles.dailyBalanceContent}>
+              <Text style={[styles.dailyBalanceLabel, { color: theme.titleColor }]}>Voeding</Text>
+              <Text style={[styles.dailyBalanceStatus, { color: theme.subtitleColor }]}>Hydratatie check</Text>
+            </View>
+          </View>
+        </View>
+      </View>
 
       {/* Workout openstaand */}
       {activeDraft && activeDraft.status === 'active' && (
-        <GradientCard style={styles.nextWorkoutCard} cardRadius={cardRadius}>
+        <GradientCard style={styles.nextWorkoutCard} >
           <View style={styles.nextWorkoutHeader}>
             <Text style={[styles.nextWorkoutLabel, { color: theme.subtitleColor }]}>WORKOUT OPENSTAAND</Text>
             <Text style={[styles.nextWorkoutProgram, { color: theme.titleColor }]}>{activeDraft.workoutName || 'Workout'}</Text>
@@ -891,7 +722,7 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
 
       {/* Volgende training */}
       {nextWorkout ? (
-        <GradientCard style={styles.nextWorkoutCard} cardRadius={cardRadius}>
+        <GradientCard style={styles.nextWorkoutCard} >
           <View style={styles.nextWorkoutHeader}>
             <Text style={[styles.nextWorkoutLabel, { color: theme.subtitleColor }]}>VOLGENDE TRAINING</Text>
             <Text style={[styles.nextWorkoutProgram, { color: theme.titleColor }]}>{nextWorkout.program.name}</Text>
@@ -926,7 +757,7 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
           </Pressable>
       </GradientCard>
       ) : (
-        <GradientCard style={styles.nextWorkoutCard} cardRadius={cardRadius}>
+        <GradientCard style={styles.nextWorkoutCard} >
           <View style={styles.dailyStatusRow}>
             <View style={[styles.dailyStatusItem, { backgroundColor: theme.background }]}>
               <MaterialCommunityIcons name="dumbbell" size={20} color="#2563EB" />
@@ -951,28 +782,42 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
         </GradientCard>
       )}
 
-      {/* Jouw dag vandaag - andere items */}
-      <GradientCard cardRadius={cardRadius}>
-        <View style={styles.dailyStatusRow}>
-          <View style={[styles.dailyStatusItem, { backgroundColor: theme.background }]}>
-            <MaterialCommunityIcons name="silverware-fork-knife" size={20} color="#059669" />
-            <View style={styles.dailyStatusContent}>
-              <Text style={[styles.dailyStatusLabel, { color: theme.titleColor }]}>Voeding</Text>
-              <Text style={[styles.dailyStatusValue, { color: theme.subtitleColor }]}>Log je eerste maaltijd</Text>
-            </View>
+      {/* Slimme aanbevelingen */}
+      <View style={styles.smartRecommendations}>
+        <View style={styles.smartRecommendationCard}>
+          <View style={[styles.smartRecommendationIconContainer, { backgroundColor: mobilityIconBg }]}>
+            <MaterialCommunityIcons name="human-handsdown" size={24} color={mobilityIconColor} />
           </View>
-          <View style={[styles.dailyStatusItem, { backgroundColor: theme.background }]}>
-            <MaterialCommunityIcons name="meditation" size={20} color={recoveryIconColor} />
-            <View style={styles.dailyStatusContent}>
-              <Text style={[styles.dailyStatusLabel, { color: theme.titleColor }]}>Herstel</Text>
-              <Text style={[styles.dailyStatusValue, { color: theme.subtitleColor }]}>Check hoe je je voelt</Text>
-            </View>
+          <View style={styles.smartRecommendationContent}>
+            <Text style={[styles.smartRecommendationTitle, { color: theme.titleColor }]}>Mobility reset</Text>
+            <Text style={[styles.smartRecommendationSubtitle, { color: theme.subtitleColor }]}>8 min · Helpt met herstel en ritme</Text>
           </View>
+          <Pressable
+            style={({ pressed }) => [styles.smartRecommendationCTA, pressed && styles.smartRecommendationCTAPressed]}
+            onPress={() => router.push('/mind')}
+          >
+            <Text style={[styles.smartRecommendationCTAText, { color: theme.colors.primary }]}>Plan lichte sessie</Text>
+          </Pressable>
         </View>
-      </GradientCard>
+        <View style={styles.smartRecommendationCard}>
+          <View style={[styles.smartRecommendationIconContainer, { backgroundColor: nutritionIconBg }]}>
+            <MaterialCommunityIcons name="food-apple-outline" size={24} color={nutritionIconColor} />
+          </View>
+          <View style={styles.smartRecommendationContent}>
+            <Text style={[styles.smartRecommendationTitle, { color: theme.titleColor }]}>Voeding na training</Text>
+            <Text style={[styles.smartRecommendationSubtitle, { color: theme.subtitleColor }]}>Eiwitrijk herstel binnen 2 uur</Text>
+          </View>
+          <Pressable
+            style={({ pressed }) => [styles.smartRecommendationCTA, pressed && styles.smartRecommendationCTAPressed]}
+            onPress={() => router.push('/nutrition')}
+          >
+            <Text style={[styles.smartRecommendationCTAText, { color: theme.colors.primary }]}>Bekijk tip</Text>
+          </Pressable>
+        </View>
+      </View>
 
       {/* Nieuw blok: Vandaag afronden */}
-      <GradientCard cardRadius={cardRadius}>
+      <GradientCard >
         <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Vandaag afronden</Text>
         <View style={styles.dailyProgressRow}>
           <View style={styles.dailyProgressContent}>
@@ -990,7 +835,7 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
       </GradientCard>
 
       {/* Nieuw blok: Aanbevolen voor vandaag */}
-      <GradientCard cardRadius={cardRadius}>
+      <GradientCard >
         <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Aanbevolen voor vandaag</Text>
         <View style={styles.recommendationGrid}>
           <Pressable
@@ -1045,107 +890,6 @@ const selectedShortcuts = shortcuts.map((id) => SHORTCUT_OPTIONS.find((opt) => o
             <MaterialCommunityIcons name="chevron-right" size={20} color={theme.subtitleColor} />
           </Pressable>
         </View>
-      </GradientCard>
-
-        {showShortcutPicker ? (
-          <View style={[styles.shortcutsPickerCard, { backgroundColor: theme.card, borderColor: theme.border }]}>
-            <Text style={[styles.shortcutsPickerTitle, { color: theme.titleColor }]}>Kies 3 sneltoetsen</Text>
-            <Text style={[styles.shortcutsPickerHint, { color: theme.subtitleColor }]}>Tap op een optie om te selecteren. Selecteer precies 3 opties.</Text>
-            <View style={styles.shortcutsPickerOptions}>
-              {SHORTCUT_OPTIONS.map((option) => (
-                <Pressable
-                  key={option.id}
-                  style={[
-                    styles.shortcutsPickerOption,
-                    shortcuts.includes(option.id) ? styles.shortcutsPickerOptionSelected : null,
-                    { backgroundColor: theme.background, borderColor: theme.border },
-                  ]}
-                  onPress={() => {
-                    if (shortcuts.includes(option.id)) {
-                      if (shortcuts.length > 1) {
-                        handleSaveShortcuts(shortcuts.filter((id) => id !== option.id));
-                      }
-                    } else if (shortcuts.length < 3) {
-                      handleSaveShortcuts([...shortcuts, option.id]);
-                    }
-                  }}
-                >
-                  <MaterialCommunityIcons name={option.icon} size={18} color={shortcuts.includes(option.id) ? '#2563EB' : '#94A3B8'} />
-                  <Text style={[styles.shortcutsPickerOptionText, { color: shortcuts.includes(option.id) ? '#2563EB' : theme.titleColor }]}>{option.label}</Text>
-                  {shortcuts.includes(option.id) && (
-                    <MaterialCommunityIcons name="check-circle" size={16} color="#2563EB" />
-                  )}
-                </Pressable>
-              ))}
-            </View>
-            <View style={styles.shortcutsPickerActions}>
-              <Pressable
-                style={[styles.shortcutsPickerButton, { backgroundColor: theme.background, borderColor: theme.border }]}
-                onPress={() => setShowShortcutPicker(false)}
-              >
-                <Text style={[styles.shortcutsPickerButtonText, { color: theme.titleColor }]}>Annuleren</Text>
-              </Pressable>
-            </View>
-          </View>
-        ) : null}
-
-      <GradientCard cardRadius={cardRadius}>
-        <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Vandaag actief</Text>
-        {todayActivities.length > 0 ? (
-          <>
-            <Text style={[styles.activityStatus, { color: theme.subtitleColor }]}>{todayActivities.length} activiteit{todayActivities.length > 1 ? 'en' : ''} vandaag</Text>
-            {mostRecentTodayActivity ? (
-              <Pressable
-                style={styles.recentActivityCard}
-                onPress={() => router.push({ pathname: '/activities/[id]', params: { id: mostRecentTodayActivity.id } })}
-              >
-                <Text style={styles.recentDiscipline}>{mostRecentTodayActivity.disciplineName}</Text>
-                <Text style={styles.recentMeta}>{formatDuration(mostRecentTodayActivity.durationSeconds)} · {formatDateTime(mostRecentTodayActivity.endedAt)}</Text>
-                <Text style={styles.recentSummary}>{getMetricsSummary(mostRecentTodayActivity)}</Text>
-              </Pressable>
-            ) : null}
-          </>
-        ) : (
-          <View>
-            <Text style={[styles.activityStatus, { color: theme.subtitleColor }]}>Nog geen activiteit</Text>
-            <Pressable onPress={() => router.push('/tracker')}>
-              <Text style={styles.inlineLink}>Start activiteit</Text>
-            </Pressable>
-          </View>
-        )}
-      </GradientCard>
-
-      <GradientCard cardRadius={cardRadius}>
-        <Text style={[styles.sectionTitle, { color: theme.titleColor }]}>Gekoppelde data</Text>
-        <Text style={[styles.sectionHint, { color: theme.subtitleColor }]}>Overzicht van je huidige device-koppelingen.</Text>
-        {!hasConnectedDevice ? (
-          <>
-            <Text style={[styles.dataFallback, { color: theme.subtitleColor }]}>Nog geen apparaat gekoppeld.</Text>
-            <Text style={[styles.connectedSubtext, { color: theme.subtitleColor }]}>Koppel WHOOP of Fitbit om je dagdata automatisch te verrijken.</Text>
-          </>
-        ) : (
-          <View style={styles.connectedList}>
-            <View style={[styles.connectedItem, isWhoopConnected ? styles.connectedItemActive : null]}>
-              <Text style={styles.connectedItemTitle}>WHOOP · {isWhoopConnected ? 'Verbonden' : 'Koppelbaar'}</Text>
-              <Text style={styles.connectedItemText}>Data: {whoopDevice ? whoopDevice.dataPoints.join(', ') : 'Recovery, Sleep, Strain, Heart rate'}</Text>
-            </View>
-            <View style={[styles.connectedItem, isFitbitConnected ? styles.connectedItemActive : null]}>
-              <Text style={styles.connectedItemTitle}>Fitbit · {isFitbitConnected ? 'Verbonden' : 'Koppelbaar'}</Text>
-              <Text style={styles.connectedItemText}>Data: {fitbitDevice ? fitbitDevice.dataPoints.join(', ') : 'Steps, Sleep, Heart rate, HRV'}</Text>
-            </View>
-          </View>
-        )}
-        <Pressable
-          style={({ pressed }) => [
-            styles.linkButton,
-            pressed && styles.linkButtonPressed,
-          ]}
-          onPress={() => router.push('/data-link')}
-        >
-          <MaterialCommunityIcons name="link-variant" size={16} color="#1E3A8A" />
-          <Text style={styles.linkButtonText}>Data koppelen</Text>
-          <MaterialCommunityIcons name="chevron-right" size={16} color="#1E3A8A" />
-        </Pressable>
       </GradientCard>
 
       <View style={styles.bottomSpacer} />
@@ -1957,5 +1701,155 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontWeight: '700',
     fontSize: 15,
+  },
+  dailyFocusMainCard: {
+    padding: 20,
+    borderRadius: 16,
+    backgroundColor: 'rgba(0, 0, 0, 0.02)',
+    marginBottom: 16,
+  },
+  dailyFocusHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    marginBottom: 16,
+  },
+  dailyFocusHeaderTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+  },
+  dailyFocusContent: {
+    flexDirection: 'row',
+    gap: 14,
+    marginBottom: 16,
+  },
+  dailyFocusIconContainer: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  dailyFocusText: {
+    flex: 1,
+  },
+  dailyFocusTitle: {
+    fontSize: 17,
+    fontWeight: '600',
+    marginBottom: 4,
+  },
+  dailyFocusSubtitle: {
+    fontSize: 14,
+    lineHeight: 20,
+    marginBottom: 8,
+  },
+  dailyFocusMeta: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  dailyFocusMetaItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  dailyFocusMetaText: {
+    fontSize: 12,
+  },
+  dailyFocusCTA: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 14,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+  },
+  dailyFocusCTAPressed: {
+    opacity: 0.8,
+  },
+  dailyFocusCTAText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
+    marginRight: 8,
+  },
+  dailyBalanceCard: {
+    padding: 16,
+    borderRadius: 16,
+    backgroundColor: 'rgba(0, 0, 0, 0.02)',
+    marginBottom: 16,
+  },
+  dailyBalanceHeader: {
+    marginBottom: 12,
+  },
+  dailyBalanceTitle: {
+    fontSize: 15,
+    fontWeight: '600',
+  },
+  dailyBalanceRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  dailyBalanceItem: {
+    alignItems: 'center',
+    gap: 6,
+  },
+  dailyBalanceDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginBottom: 4,
+  },
+  dailyBalanceContent: {
+    alignItems: 'center',
+  },
+  dailyBalanceLabel: {
+    fontSize: 12,
+    fontWeight: '600',
+    marginBottom: 2,
+  },
+  dailyBalanceStatus: {
+    fontSize: 11,
+  },
+  smartRecommendations: {
+    gap: 10,
+    marginBottom: 16,
+  },
+  smartRecommendationCard: {
+    padding: 16,
+    borderRadius: 12,
+    backgroundColor: 'rgba(0, 0, 0, 0.02)',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  smartRecommendationIconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  smartRecommendationContent: {
+    flex: 1,
+  },
+  smartRecommendationTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    marginBottom: 2,
+  },
+  smartRecommendationSubtitle: {
+    fontSize: 12,
+  },
+  smartRecommendationCTA: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 6,
+  },
+  smartRecommendationCTAPressed: {
+    opacity: 0.7,
+  },
+  smartRecommendationCTAText: {
+    fontSize: 12,
+    fontWeight: '600',
   },
 });

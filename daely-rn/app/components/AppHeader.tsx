@@ -4,7 +4,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/use-theme';
 
 type AppHeaderProps = {
-  title: string;
+  title?: string;
   subtitle?: string;
   showSettings?: boolean;
   showSearch?: boolean;
