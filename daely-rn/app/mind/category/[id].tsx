@@ -512,32 +512,117 @@ export default function MindCategoryScreen() {
                 key={index}
                 onPress={() => handleCardPress(meditation.programId)}
               >
-                <MindAuroraCard cardRadius={cardRadius}>
-                  <View style={[styles.thumbnailFallback, { backgroundColor: shortcutIconBg, borderColor: shortcutIconBorder }]}>
-                    <MaterialCommunityIcons name="play-circle" size={24} color={heroIconColor} />
+                <View style={styles.quickActionCard}>
+                  {/* Base background gradient */}
+                  <LinearGradient
+                    colors={['#FFFFFF', '#F8FCFF', '#EEF7FF', '#DCEEFF', '#C4DEFF']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={styles.quickActionGradient}
+                  />
+                  {/* Diagonal light plane 1 - white/translucent top-left to center */}
+                  <LinearGradient
+                    colors={['rgba(255, 255, 255, 0.7)', 'rgba(255, 255, 255, 0.3)']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={styles.diagonalPlane1}
+                  />
+                  {/* Diagonal light plane 2 - light blue middle */}
+                  <LinearGradient
+                    colors={['rgba(234, 244, 255, 0.5)', 'rgba(191, 223, 255, 0.2)']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={styles.diagonalPlane2}
+                  />
+                  {/* Diagonal light plane 3 - white/blue top-right */}
+                  <LinearGradient
+                    colors={['rgba(255, 255, 255, 0.6)', 'rgba(184, 220, 255, 0.25)']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={styles.diagonalPlane3}
+                  />
+                  {/* Flow line 1 - diagonal top-left */}
+                  <View style={styles.flowLine1} />
+                  {/* Flow line 2 - diagonal bottom-left */}
+                  <View style={styles.flowLine2} />
+                  {/* Dot pattern right side - organic cluster */}
+                  <View style={styles.dotPatternContainer}>
+                    {[
+                      { right: 0, top: 0, opacity: 0.55, size: 3 },
+                      { right: 5, top: 0, opacity: 0.50, size: 3 },
+                      { right: 10, top: 0, opacity: 0.42, size: 2.5 },
+                      { right: 15, top: 0, opacity: 0.32, size: 2.5 },
+                      { right: 0, top: 4, opacity: 0.48, size: 3 },
+                      { right: 5, top: 4, opacity: 0.42, size: 2.5 },
+                      { right: 10, top: 4, opacity: 0.35, size: 2.5 },
+                      { right: 15, top: 4, opacity: 0.25, size: 2 },
+                      { right: 0, top: 8, opacity: 0.40, size: 2.5 },
+                      { right: 5, top: 8, opacity: 0.35, size: 2.5 },
+                      { right: 10, top: 8, opacity: 0.28, size: 2 },
+                      { right: 0, top: 12, opacity: 0.32, size: 2.5 },
+                      { right: 5, top: 12, opacity: 0.25, size: 2 },
+                      { right: 0, top: 16, opacity: 0.24, size: 2 },
+                      { right: 5, top: 16, opacity: 0.18, size: 2 },
+                      { right: 0, top: 20, opacity: 0.15, size: 2 },
+                    ].map((dot, i) => (
+                      <View key={i} style={[
+                        styles.dot,
+                        {
+                          right: dot.right,
+                          top: dot.top,
+                          opacity: dot.opacity,
+                          width: dot.size,
+                          height: dot.size,
+                          borderRadius: dot.size / 2,
+                        }
+                      ]} />
+                    ))}
                   </View>
-                  <View style={styles.cardInfo}>
-                    <Text style={[styles.cardTitle, { color: auroraTitle }]}>{meditation.title}</Text>
-                    <Text style={[styles.cardSubtitle, { color: auroraSubtitle }]}>{meditation.subtitle}</Text>
-                    <View style={styles.cardMeta}>
+                  {/* White shine overlay */}
+                  <LinearGradient
+                    colors={['rgba(255, 255, 255, 0.7)', 'rgba(255, 255, 255, 0.2)', 'rgba(255, 255, 255, 0)']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 0, y: 1 }}
+                    style={styles.shineOverlay}
+                  />
+                  {/* Card-wide glass overlay */}
+                  <LinearGradient
+                    colors={['rgba(255, 255, 255, 0.45)', 'rgba(255, 255, 255, 0.15)', 'rgba(255, 255, 255, 0.25)', 'rgba(255, 255, 255, 0.1)']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={styles.cardGlassOverlay}
+                  />
+                  {/* Glass inner border */}
+                  <View style={styles.glassInnerBorder} />
+                  {/* Left play block with inner shine */}
+                  <View style={styles.quickActionPlayBlock}>
+                    <View style={styles.playTriangle} />
+                  </View>
+                  <View style={styles.primeResetCardContent}>
+                    <Text style={styles.quickActionTitle}>{meditation.title}</Text>
+                    <Text style={styles.quickActionSubtitle}>{meditation.subtitle}</Text>
+                    <View style={styles.quickActionChips}>
                       {meditation.duration && (
-                        <View style={[styles.metaTag, { backgroundColor: shortcutIconBg, borderColor: shortcutIconBorder }]}>
-                          <MaterialCommunityIcons name="clock-outline" size={12} color={auroraSubtitle} />
-                          <Text style={[styles.metaTagText, { color: auroraSubtitle }]}>{meditation.duration}</Text>
+                        <View style={styles.quickActionChip}>
+                          <MaterialCommunityIcons name="clock-outline" size={10} color="#0F7BFF" />
+                          <Text style={styles.quickActionChipText}>{meditation.duration}</Text>
                         </View>
                       )}
-                    <View style={[styles.metaTag, { backgroundColor: shortcutIconBg, borderColor: shortcutIconBorder }]}>
-                      <Text style={[styles.metaTagText, { color: heroIconColor }]}>{meditation.type}</Text>
+                    <View style={styles.quickActionChip}>
+                      <Text style={styles.quickActionChipText}>{meditation.type}</Text>
                     </View>
                     {!hasProgramId && (
-                      <View style={[styles.metaTag, { backgroundColor: shortcutIconBg, borderColor: shortcutIconBorder }]}>
-                        <Text style={[styles.metaTagText, { color: auroraSubtitle }]}>Binnenkort</Text>
+                      <View style={styles.quickActionChip}>
+                        <Text style={[styles.quickActionChipText, { color: '#52627A' }]}>Binnenkort</Text>
                       </View>
                     )}
                   </View>
                   </View>
-                  <MaterialCommunityIcons name="chevron-right" size={20} color={auroraSubtitle} />
-                </MindAuroraCard>
+                  {/* Right chevron */}
+                  <View style={styles.chevronWrapper}>
+                    <MaterialCommunityIcons name="chevron-right" size={20} color="#0F7BFF" />
+                  </View>
+                </View>
               </TouchableOpacity>
             );
           })}
@@ -863,6 +948,273 @@ const styles = StyleSheet.create({
   meditationTypeText: {
     fontSize: 12,
     fontWeight: '600',
+  },
+  // Premium Classic card styles for DAELY Prime Reset
+  quickActionCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 22,
+    borderWidth: 1,
+    borderColor: '#8EC5FF',
+    marginBottom: 12,
+    padding: 16,
+    gap: 14,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.12,
+    shadowRadius: 10,
+    shadowColor: 'rgba(96, 165, 250, 0.22)',
+    elevation: 2,
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  quickActionGradient: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    borderRadius: 22,
+  },
+  // Decorative diagonal planes (3 layers with gradients)
+  diagonalPlane1: {
+    position: 'absolute',
+    top: '-15%',
+    left: '-10%',
+    width: '140%',
+    height: '50%',
+    transform: [{ rotate: '20deg' }],
+  },
+  diagonalPlane2: {
+    position: 'absolute',
+    top: '10%',
+    left: '-5%',
+    width: '120%',
+    height: '40%',
+    transform: [{ rotate: '-12deg' }],
+  },
+  diagonalPlane3: {
+    position: 'absolute',
+    top: '-10%',
+    right: '-10%',
+    width: '90%',
+    height: '50%',
+    transform: [{ rotate: '15deg' }],
+  },
+  // Flow lines for visual depth
+  flowLine1: {
+    position: 'absolute',
+    top: '20%',
+    left: '-5%',
+    width: '100%',
+    height: 2,
+    backgroundColor: 'rgba(191, 223, 255, 0.35)',
+    transform: [{ rotate: '25deg' }],
+    borderRadius: 1,
+  },
+  flowLine2: {
+    position: 'absolute',
+    bottom: '25%',
+    left: '-5%',
+    width: '80%',
+    height: 1.5,
+    backgroundColor: 'rgba(234, 244, 255, 0.3)',
+    transform: [{ rotate: '-18deg' }],
+    borderRadius: 0.75,
+  },
+  // Dot pattern container (right-aligned, organic cluster)
+  dotPatternContainer: {
+    position: 'absolute',
+    right: 16,
+    top: 12,
+    bottom: 12,
+    width: 20,
+    height: 24,
+    zIndex: 0,
+  },
+  dot: {
+    position: 'absolute',
+    backgroundColor: 'rgba(96, 165, 250, 0.5)',
+  },
+  // Shine overlay
+  shineOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    borderRadius: 22,
+    zIndex: 1,
+  },
+  // Card-wide glass overlay
+  cardGlassOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    borderRadius: 22,
+    zIndex: 2,
+  },
+  // Glass inner border
+  glassInnerBorder: {
+    position: 'absolute',
+    top: 1,
+    left: 1,
+    right: 1,
+    bottom: 1,
+    borderRadius: 21,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.5)',
+    zIndex: 3,
+  },
+  // Quick Action play block (premium style, original size with glass effects)
+  quickActionPlayBlock: {
+    width: 64,
+    height: 64,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    borderWidth: 1,
+    borderColor: '#B7D8FF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.18,
+    shadowRadius: 8,
+    shadowColor: 'rgba(96, 165, 250, 0.25)',
+    elevation: 2,
+    zIndex: 4,
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  playTriangle: {
+    width: 0,
+    height: 0,
+    borderTopWidth: 10,
+    borderBottomWidth: 10,
+    borderLeftWidth: 16,
+    borderTopColor: 'transparent',
+    borderBottomColor: 'transparent',
+    borderLeftColor: '#0F7BFF',
+  },
+  quickActionTitle: {
+    fontSize: 17,
+    fontWeight: '700',
+    color: '#061A40',
+    letterSpacing: -0.3,
+    marginBottom: 3,
+  },
+  quickActionSubtitle: {
+    fontSize: 14,
+    color: '#52627A',
+    lineHeight: 20,
+    marginBottom: 6,
+  },
+  quickActionChips: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  quickActionChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#8EC5FF',
+  },
+  quickActionChipText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#0F7BFF',
+  },
+  premiumClassicCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: '#BFDBFE',
+    marginBottom: 12,
+    padding: 18,
+    gap: 16,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 3,
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  premiumClassicGradient: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    borderRadius: 24,
+  },
+  premiumPlayBlock: {
+    width: 56,
+    height: 56,
+    borderRadius: 16,
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    borderWidth: 1,
+    borderColor: '#BFDBFE',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+    zIndex: 1,
+  },
+  premiumPlayCircle: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#DBEAFE',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  primeResetCardContent: {
+    flex: 1,
+    gap: 6,
+    zIndex: 4,
+  },
+  chevronWrapper: {
+    zIndex: 4,
+  },
+  premiumTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#0F172A',
+    letterSpacing: -0.3,
+  },
+  premiumSubtitle: {
+    fontSize: 14,
+    color: '#475569',
+    lineHeight: 20,
+  },
+  premiumChips: {
+    flexDirection: 'row',
+    gap: 8,
+    marginTop: 4,
+  },
+  premiumChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: 'rgba(255, 255, 255, 0.7)',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#E0F2FE',
+  },
+  premiumChipText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#475569',
   },
   bottomSpacer: {
     height: 120,
