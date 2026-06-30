@@ -471,8 +471,9 @@ function GradientCard({ children, style, cardRadius }: { children: React.ReactNo
 export default function TodayScreen() {
   const router = useRouter();
   const theme = useTheme();
-  const { user, activeThemeId } = useAppContext();
+  const { user, activeThemeId, appSettings } = useAppContext();
   const { mobilityIconBg, mobilityIconColor, trainingIconBg, trainingIconColor, nutritionIconBg, nutritionIconColor } = getAuroraTokens(activeThemeId);
+  const todayLayoutId = appSettings.todayLayoutId || 'daily-focus';
   const heroBackground: HeroBackgroundOptionId = 'pureMinimal';
   const [unreadMessageCount, setUnreadMessageCount] = useState(0);
   const [nextWorkout, setNextWorkout] = useState<NextProgramWorkout | null>(null);
@@ -560,101 +561,318 @@ export default function TodayScreen() {
         )}
       </View>
 
-      {/* Jouw focus vandaag - premium hoofdmeldule */}
-      <View style={styles.dailyFocusMainCard}>
-        <View style={styles.dailyFocusHeader}>
-          <MaterialCommunityIcons name="target" size={28} color={theme.colors.primary} />
-          <Text style={[styles.dailyFocusHeaderTitle, { color: theme.titleColor }]}>Jouw focus vandaag</Text>
-        </View>
+      {/* Layout-specifieke hoofdmeldule */}
+      {todayLayoutId === 'daily-focus' && (
+        <View style={styles.dailyFocusMainCard}>
+          <View style={styles.dailyFocusHeader}>
+            <MaterialCommunityIcons name="target" size={28} color={theme.colors.primary} />
+            <Text style={[styles.dailyFocusHeaderTitle, { color: theme.titleColor }]}>Jouw focus vandaag</Text>
+          </View>
 
-        {(nextWorkout || activeDraft) ? (
-          <>
-            <View style={styles.dailyFocusContent}>
-              <View style={[styles.dailyFocusIconContainer, { backgroundColor: '#2563EB' }]}>
-                <MaterialCommunityIcons name="dumbbell" size={32} color="#FFFFFF" />
-              </View>
-              <View style={styles.dailyFocusText}>
-                <Text style={[styles.dailyFocusTitle, { color: theme.titleColor }]}>
-                  {nextWorkout?.workout?.name || activeDraft?.workoutName || 'Training'}
-                </Text>
-                <Text style={[styles.dailyFocusSubtitle, { color: theme.subtitleColor }]}>
-                  Vandaag ligt de focus op kracht en conditie. Een uitgebalanceerde training om je week sterk te starten.
-                </Text>
-                <View style={styles.dailyFocusMeta}>
-                  <View style={styles.dailyFocusMetaItem}>
-                    <MaterialCommunityIcons name="clock-outline" size={16} color={theme.subtitleColor} />
-                    <Text style={[styles.dailyFocusMetaText, { color: theme.subtitleColor }]}>45 min</Text>
-                  </View>
-                  <View style={styles.dailyFocusMetaItem}>
-                    <MaterialCommunityIcons name="fire" size={16} color={theme.subtitleColor} />
-                    <Text style={[styles.dailyFocusMetaText, { color: theme.subtitleColor }]}>Medium</Text>
+          {(nextWorkout || activeDraft) ? (
+            <>
+              <View style={styles.dailyFocusContent}>
+                <View style={[styles.dailyFocusIconContainer, { backgroundColor: '#2563EB' }]}>
+                  <MaterialCommunityIcons name="dumbbell" size={32} color="#FFFFFF" />
+                </View>
+                <View style={styles.dailyFocusText}>
+                  <Text style={[styles.dailyFocusTitle, { color: theme.titleColor }]}>
+                    {nextWorkout?.workout?.name || activeDraft?.workoutName || 'Training'}
+                  </Text>
+                  <Text style={[styles.dailyFocusSubtitle, { color: theme.subtitleColor }]}>
+                    Vandaag ligt de focus op kracht en conditie. Een uitgebalanceerde training om je week sterk te starten.
+                  </Text>
+                  <View style={styles.dailyFocusMeta}>
+                    <View style={styles.dailyFocusMetaItem}>
+                      <MaterialCommunityIcons name="clock-outline" size={16} color={theme.subtitleColor} />
+                      <Text style={[styles.dailyFocusMetaText, { color: theme.subtitleColor }]}>45 min</Text>
+                    </View>
+                    <View style={styles.dailyFocusMetaItem}>
+                      <MaterialCommunityIcons name="fire" size={16} color={theme.subtitleColor} />
+                      <Text style={[styles.dailyFocusMetaText, { color: theme.subtitleColor }]}>Medium</Text>
+                    </View>
                   </View>
                 </View>
               </View>
-            </View>
-            <Pressable
-              style={({ pressed }) => [
-                styles.dailyFocusCTA,
-                { backgroundColor: theme.colors.primary },
-                pressed && styles.dailyFocusCTAPressed,
-              ]}
-              onPress={() => {
-                if (nextWorkout) {
-                  router.push({
-                    pathname: '/tracker/[disciplineId]/start',
-                    params: {
-                      disciplineId: nextWorkout.disciplineSlug,
-                      workoutId: nextWorkout.workout?.id,
-                      programId: nextWorkout.program.id,
-                      week: String(nextWorkout.week),
-                      day: String(nextWorkout.day),
-                    },
-                  });
-                } else if (activeDraft) {
-                  router.push({
-                    pathname: '/tracker/[disciplineId]/start',
-                    params: {
-                      disciplineId: activeDraft.disciplineId,
-                      workoutId: activeDraft.workoutId,
-                      programId: activeDraft.programId,
-                      week: activeDraft.programWeek ? String(activeDraft.programWeek) : undefined,
-                      day: activeDraft.programDay ? String(activeDraft.programDay) : undefined,
-                    },
-                  });
-                }
-              }}
-            >
-              <Text style={styles.dailyFocusCTAText}>Start focus</Text>
-              <MaterialCommunityIcons name="arrow-right" size={20} color="#FFFFFF" />
-            </Pressable>
-          </>
-        ) : (
-          <>
-            <View style={styles.dailyFocusContent}>
-              <View style={[styles.dailyFocusIconContainer, { backgroundColor: '#10B981' }]}>
-                <MaterialCommunityIcons name="spa" size={32} color="#FFFFFF" />
+              <Pressable
+                style={({ pressed }) => [
+                  styles.dailyFocusCTA,
+                  { backgroundColor: theme.colors.primary },
+                  pressed && styles.dailyFocusCTAPressed,
+                ]}
+                onPress={() => {
+                  if (nextWorkout) {
+                    router.push({
+                      pathname: '/tracker/[disciplineId]/start',
+                      params: {
+                        disciplineId: nextWorkout.disciplineSlug,
+                        workoutId: nextWorkout.workout?.id,
+                        programId: nextWorkout.program.id,
+                        week: String(nextWorkout.week),
+                        day: String(nextWorkout.day),
+                      },
+                    });
+                  } else if (activeDraft) {
+                    router.push({
+                      pathname: '/tracker/[disciplineId]/start',
+                      params: {
+                        disciplineId: activeDraft.disciplineId,
+                        workoutId: activeDraft.workoutId,
+                        programId: activeDraft.programId,
+                        week: activeDraft.programWeek ? String(activeDraft.programWeek) : undefined,
+                        day: activeDraft.programDay ? String(activeDraft.programDay) : undefined,
+                      },
+                    });
+                  }
+                }}
+              >
+                <Text style={styles.dailyFocusCTAText}>Start focus</Text>
+                <MaterialCommunityIcons name="arrow-right" size={20} color="#FFFFFF" />
+              </Pressable>
+            </>
+          ) : (
+            <>
+              <View style={styles.dailyFocusContent}>
+                <View style={[styles.dailyFocusIconContainer, { backgroundColor: '#10B981' }]}>
+                  <MaterialCommunityIcons name="spa" size={32} color="#FFFFFF" />
+                </View>
+                <View style={styles.dailyFocusText}>
+                  <Text style={[styles.dailyFocusTitle, { color: theme.titleColor }]}>Herstel & Balans</Text>
+                  <Text style={[styles.dailyFocusSubtitle, { color: theme.subtitleColor }]}>
+                    Vandaag ligt de focus op herstel en balans. Een rustige dag om je lichaam te laten herstellen en sterker terug te komen.
+                  </Text>
+                </View>
               </View>
-              <View style={styles.dailyFocusText}>
-                <Text style={[styles.dailyFocusTitle, { color: theme.titleColor }]}>Herstel & Balans</Text>
-                <Text style={[styles.dailyFocusSubtitle, { color: theme.subtitleColor }]}>
-                  Vandaag ligt de focus op herstel en balans. Een rustige dag om je lichaam te laten herstellen en sterker terug te komen.
-                </Text>
+              <Pressable
+                style={({ pressed }) => [
+                  styles.dailyFocusCTA,
+                  { backgroundColor: theme.colors.primary },
+                  pressed && styles.dailyFocusCTAPressed,
+                ]}
+                onPress={() => router.push('/mind')}
+              >
+                <Text style={styles.dailyFocusCTAText}>Start herstel</Text>
+                <MaterialCommunityIcons name="arrow-right" size={20} color="#FFFFFF" />
+              </Pressable>
+            </>
+          )}
+        </View>
+      )}
+
+      {todayLayoutId === 'training-first' && (
+        <View style={styles.dailyFocusMainCard}>
+          <View style={styles.dailyFocusHeader}>
+            <MaterialCommunityIcons name="dumbbell" size={28} color={theme.colors.primary} />
+            <Text style={[styles.dailyFocusHeaderTitle, { color: theme.titleColor }]}>Training First</Text>
+          </View>
+
+          {(nextWorkout || activeDraft) ? (
+            <>
+              <View style={styles.dailyFocusContent}>
+                <View style={[styles.dailyFocusIconContainer, { backgroundColor: '#EF4444' }]}>
+                  <MaterialCommunityIcons name="fire" size={32} color="#FFFFFF" />
+                </View>
+                <View style={styles.dailyFocusText}>
+                  <Text style={[styles.dailyFocusTitle, { color: theme.titleColor }]}>
+                    {nextWorkout?.workout?.name || activeDraft?.workoutName || 'Training'}
+                  </Text>
+                  <Text style={[styles.dailyFocusSubtitle, { color: theme.subtitleColor }]}>
+                    Eerstvolgende training: {nextWorkout?.workout?.name || activeDraft?.workoutName || 'Geen training gepland'}
+                  </Text>
+                  <View style={styles.dailyFocusMeta}>
+                    <View style={styles.dailyFocusMetaItem}>
+                      <MaterialCommunityIcons name="calendar" size={16} color={theme.subtitleColor} />
+                      <Text style={[styles.dailyFocusMetaText, { color: theme.subtitleColor }]}>
+                        {nextWorkout?.week || activeDraft?.programWeek || '-'} / {nextWorkout?.day || activeDraft?.programDay || '-'}
+                      </Text>
+                    </View>
+                    <View style={styles.dailyFocusMetaItem}>
+                      <MaterialCommunityIcons name="trending-up" size={16} color={theme.subtitleColor} />
+                      <Text style={[styles.dailyFocusMetaText, { color: theme.subtitleColor }]}>Workout readiness</Text>
+                    </View>
+                  </View>
+                </View>
+              </View>
+              <Pressable
+                style={({ pressed }) => [
+                  styles.dailyFocusCTA,
+                  { backgroundColor: theme.colors.primary },
+                  pressed && styles.dailyFocusCTAPressed,
+                ]}
+                onPress={() => {
+                  if (nextWorkout) {
+                    router.push({
+                      pathname: '/tracker/[disciplineId]/start',
+                      params: {
+                        disciplineId: nextWorkout.disciplineSlug,
+                        workoutId: nextWorkout.workout?.id,
+                        programId: nextWorkout.program.id,
+                        week: String(nextWorkout.week),
+                        day: String(nextWorkout.day),
+                      },
+                    });
+                  } else if (activeDraft) {
+                    router.push({
+                      pathname: '/tracker/[disciplineId]/start',
+                      params: {
+                        disciplineId: activeDraft.disciplineId,
+                        workoutId: activeDraft.workoutId,
+                        programId: activeDraft.programId,
+                        week: activeDraft.programWeek ? String(activeDraft.programWeek) : undefined,
+                        day: activeDraft.programDay ? String(activeDraft.programDay) : undefined,
+                      },
+                    });
+                  }
+                }}
+              >
+                <Text style={styles.dailyFocusCTAText}>Start training</Text>
+                <MaterialCommunityIcons name="arrow-right" size={20} color="#FFFFFF" />
+              </Pressable>
+            </>
+          ) : (
+            <>
+              <View style={styles.dailyFocusContent}>
+                <View style={[styles.dailyFocusIconContainer, { backgroundColor: '#F59E0B' }]}>
+                  <MaterialCommunityIcons name="calendar-plus" size={32} color="#FFFFFF" />
+                </View>
+                <View style={styles.dailyFocusText}>
+                  <Text style={[styles.dailyFocusTitle, { color: theme.titleColor }]}>Geen training gepland</Text>
+                  <Text style={[styles.dailyFocusSubtitle, { color: theme.subtitleColor }]}>
+                    Plan je volgende training in workouts om je progressie bij te houden.
+                  </Text>
+                </View>
+              </View>
+              <Pressable
+                style={({ pressed }) => [
+                  styles.dailyFocusCTA,
+                  { backgroundColor: theme.colors.primary },
+                  pressed && styles.dailyFocusCTAPressed,
+                ]}
+                onPress={() => router.push('/workouts')}
+              >
+                <Text style={styles.dailyFocusCTAText}>Plan training</Text>
+                <MaterialCommunityIcons name="arrow-right" size={20} color="#FFFFFF" />
+              </Pressable>
+            </>
+          )}
+        </View>
+      )}
+
+      {todayLayoutId === 'performance' && (
+        <View style={styles.dailyFocusMainCard}>
+          <View style={styles.dailyFocusHeader}>
+            <MaterialCommunityIcons name="chart-line" size={28} color={theme.colors.primary} />
+            <Text style={[styles.dailyFocusHeaderTitle, { color: theme.titleColor }]}>Performance</Text>
+          </View>
+
+          <View style={styles.dailyFocusContent}>
+            <View style={[styles.dailyFocusIconContainer, { backgroundColor: '#8B5CF6' }]}>
+              <MaterialCommunityIcons name="trophy" size={32} color="#FFFFFF" />
+            </View>
+            <View style={styles.dailyFocusText}>
+              <Text style={[styles.dailyFocusTitle, { color: theme.titleColor }]}>Stats & Progressie</Text>
+              <Text style={[styles.dailyFocusSubtitle, { color: theme.subtitleColor }]}>
+                Bekijk je statistieken en prestaties om je doelen te bereiken.
+              </Text>
+              <View style={styles.dailyFocusMeta}>
+                <View style={styles.dailyFocusMetaItem}>
+                  <MaterialCommunityIcons name="chart-line" size={16} color={theme.subtitleColor} />
+                  <Text style={[styles.dailyFocusMetaText, { color: theme.subtitleColor }]}>Weekly stats</Text>
+                </View>
+                <View style={styles.dailyFocusMetaItem}>
+                  <MaterialCommunityIcons name="target" size={16} color={theme.subtitleColor} />
+                  <Text style={[styles.dailyFocusMetaText, { color: theme.subtitleColor }]}>Goals</Text>
+                </View>
               </View>
             </View>
-            <Pressable
-              style={({ pressed }) => [
-                styles.dailyFocusCTA,
-                { backgroundColor: theme.colors.primary },
-                pressed && styles.dailyFocusCTAPressed,
-              ]}
-              onPress={() => router.push('/mind')}
-            >
-              <Text style={styles.dailyFocusCTAText}>Start herstel</Text>
-              <MaterialCommunityIcons name="arrow-right" size={20} color="#FFFFFF" />
-            </Pressable>
-          </>
-        )}
-      </View>
+          </View>
+          <Pressable
+            style={({ pressed }) => [
+              styles.dailyFocusCTA,
+              { backgroundColor: theme.colors.primary },
+              pressed && styles.dailyFocusCTAPressed,
+            ]}
+            onPress={() => router.push('/(tabs)/my-stats')}
+          >
+            <Text style={styles.dailyFocusCTAText}>Bekijk stats</Text>
+            <MaterialCommunityIcons name="arrow-right" size={20} color="#FFFFFF" />
+          </Pressable>
+        </View>
+      )}
+
+      {todayLayoutId === 'wellness-recovery' && (
+        <View style={styles.dailyFocusMainCard}>
+          <View style={styles.dailyFocusHeader}>
+            <MaterialCommunityIcons name="spa" size={28} color={theme.colors.primary} />
+            <Text style={[styles.dailyFocusHeaderTitle, { color: theme.titleColor }]}>Wellness Recovery</Text>
+          </View>
+
+          <View style={styles.dailyFocusContent}>
+            <View style={[styles.dailyFocusIconContainer, { backgroundColor: '#10B981' }]}>
+              <MaterialCommunityIcons name="yoga" size={32} color="#FFFFFF" />
+            </View>
+            <View style={styles.dailyFocusText}>
+              <Text style={[styles.dailyFocusTitle, { color: theme.titleColor }]}>Herstel & Balans</Text>
+              <Text style={[styles.dailyFocusSubtitle, { color: theme.subtitleColor }]}>
+                Focus op herstel, mind, slaap en rustige balans voor betere prestaties.
+              </Text>
+              <View style={styles.dailyFocusMeta}>
+                <View style={styles.dailyFocusMetaItem}>
+                  <MaterialCommunityIcons name="bed" size={16} color={theme.subtitleColor} />
+                  <Text style={[styles.dailyFocusMetaText, { color: theme.subtitleColor }]}>Slaap</Text>
+                </View>
+                <View style={styles.dailyFocusMetaItem}>
+                  <MaterialCommunityIcons name="brain" size={16} color={theme.subtitleColor} />
+                  <Text style={[styles.dailyFocusMetaText, { color: theme.subtitleColor }]}>Mind</Text>
+                </View>
+              </View>
+            </View>
+          </View>
+          <Pressable
+            style={({ pressed }) => [
+              styles.dailyFocusCTA,
+              { backgroundColor: theme.colors.primary },
+              pressed && styles.dailyFocusCTAPressed,
+            ]}
+            onPress={() => router.push('/mind')}
+          >
+            <Text style={styles.dailyFocusCTAText}>Start herstel</Text>
+            <MaterialCommunityIcons name="arrow-right" size={20} color="#FFFFFF" />
+          </Pressable>
+        </View>
+      )}
+
+      {todayLayoutId === 'minimal-premium' && (
+        <View style={styles.dailyFocusMainCard}>
+          <View style={styles.dailyFocusHeader}>
+            <MaterialCommunityIcons name="diamond" size={28} color={theme.colors.primary} />
+            <Text style={[styles.dailyFocusHeaderTitle, { color: theme.titleColor }]}>Premium</Text>
+          </View>
+
+          <View style={styles.dailyFocusContent}>
+            <View style={[styles.dailyFocusIconContainer, { backgroundColor: '#D4AF37' }]}>
+              <MaterialCommunityIcons name="star" size={32} color="#FFFFFF" />
+            </View>
+            <View style={styles.dailyFocusText}>
+              <Text style={[styles.dailyFocusTitle, { color: theme.titleColor }]}>Dagfocus</Text>
+              <Text style={[styles.dailyFocusSubtitle, { color: theme.subtitleColor }]}>
+                Rustige premium startpagina met focus op wat belangrijk is.
+              </Text>
+            </View>
+          </View>
+          <Pressable
+            style={({ pressed }) => [
+              styles.dailyFocusCTA,
+              { backgroundColor: theme.colors.primary },
+              pressed && styles.dailyFocusCTAPressed,
+            ]}
+            onPress={() => router.push('/(tabs)/my-stats')}
+          >
+            <Text style={styles.dailyFocusCTAText}>Bekijk stats</Text>
+            <MaterialCommunityIcons name="arrow-right" size={20} color="#FFFFFF" />
+          </Pressable>
+        </View>
+      )}
 
       {/* Vandaag in balans */}
       <View style={styles.dailyBalanceCard}>
