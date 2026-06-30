@@ -657,7 +657,7 @@ export default function DisciplineScreen() {
   const { activeThemeId, user, appSettings } = useAppContext();
   const isMarble = theme.id === 'marble';
   const { auroraGradient, auroraTitle, auroraSubtitle, ribbonTop, ribbonMid, ribbonBlue, ribbonRose, ribbonRight, ribbonHighlight, shortcutBorderColor, shortcutShadowColor, shortcutIconBg, shortcutIconBorder } = getAuroraTokens(activeThemeId);
-  const [activeTab, setActiveTab] = useState<'workouts' | 'oefeningen' | 'programmas'>('workouts');
+  const [activeTab, setActiveTab] = useState<'workouts' | 'oefeningen' | 'programmas'>('oefeningen');
   const [activeFilter, setActiveFilter] = useState('Alles');
   const [carouselWidth, setCarouselWidth] = useState(0);
   const discipline = DISCIPLINE_DATA[slug ?? ''];
@@ -666,7 +666,7 @@ export default function DisciplineScreen() {
 
   const scrollToHeaderCarousel = (tab: 'workouts' | 'oefeningen' | 'programmas') => {
     if (carouselWidth === 0) return;
-    const tabIndex = tab === 'workouts' ? 0 : tab === 'oefeningen' ? 1 : 2;
+    const tabIndex = tab === 'oefeningen' ? 0 : tab === 'workouts' ? 1 : 2;
     headerCarouselRef.current?.scrollTo({ x: tabIndex * carouselWidth, animated: true });
   };
 
@@ -675,8 +675,8 @@ export default function DisciplineScreen() {
     const offsetX = event.nativeEvent.contentOffset.x;
     const pageIndex = Math.round(offsetX / carouselWidth);
     const clampedIndex = Math.max(0, Math.min(2, pageIndex));
-    const tabs: ('workouts' | 'oefeningen' | 'programmas')[] = ['workouts', 'oefeningen', 'programmas'];
-    const tab = tabs[clampedIndex] || 'workouts';
+    const tabs: ('workouts' | 'oefeningen' | 'programmas')[] = ['oefeningen', 'workouts', 'programmas'];
+    const tab = tabs[clampedIndex] || 'oefeningen';
     setActiveTab(tab);
   };
 
@@ -737,41 +737,6 @@ export default function DisciplineScreen() {
               scrollEventThrottle={16}
               contentContainerStyle={styles.headerCarouselContent}
             >
-              {/* Workouts Header Card */}
-              <Pressable
-                onPress={() => { setActiveTab('workouts'); scrollToHeaderCarousel('workouts'); }}
-                style={{ width: carouselWidth || Dimensions.get('window').width, minWidth: carouselWidth || Dimensions.get('window').width }}
-              >
-                <View style={styles.headerPage}>
-                  <ImageBackground
-                    source={{ uri: discipline.heroImage }}
-                    style={[
-                      styles.headerCard,
-                      { width: (carouselWidth || Dimensions.get('window').width) - 32 }
-                    ]}
-                    imageStyle={styles.headerCardImage}
-                  >
-                  <LinearGradient
-                    colors={['rgba(15, 23, 42, 0.3)', 'rgba(15, 23, 42, 0.85)']}
-                    start={{ x: 0.5, y: 0 }}
-                    end={{ x: 0.5, y: 1 }}
-                    style={styles.headerCardGradient}
-                  >
-                    <View style={styles.headerCardTextBlock}>
-                      <Text style={styles.headerCardDiscipline}>{discipline.title}</Text>
-                      <View style={styles.headerCardTitleRow}>
-                        <MaterialCommunityIcons name="dumbbell" size={20} color="#FFFFFF" />
-                        <Text style={styles.headerCardTitle}>Workouts</Text>
-                        <View style={styles.headerCardCountBadge}>
-                          <Text style={styles.headerCardCount}>{workoutsForDiscipline.length}</Text>
-                        </View>
-                      </View>
-                    </View>
-                  </LinearGradient>
-                  </ImageBackground>
-                </View>
-              </Pressable>
-
               {/* Oefeningen Header Card */}
               <Pressable
                 onPress={() => { setActiveTab('oefeningen'); scrollToHeaderCarousel('oefeningen'); }}
@@ -799,6 +764,41 @@ export default function DisciplineScreen() {
                         <Text style={styles.headerCardTitle}>Oefeningen</Text>
                         <View style={styles.headerCardCountBadge}>
                           <Text style={styles.headerCardCount}>{exercisesForDiscipline.length}</Text>
+                        </View>
+                      </View>
+                    </View>
+                  </LinearGradient>
+                  </ImageBackground>
+                </View>
+              </Pressable>
+
+              {/* Workouts Header Card */}
+              <Pressable
+                onPress={() => { setActiveTab('workouts'); scrollToHeaderCarousel('workouts'); }}
+                style={{ width: carouselWidth || Dimensions.get('window').width, minWidth: carouselWidth || Dimensions.get('window').width }}
+              >
+                <View style={styles.headerPage}>
+                  <ImageBackground
+                    source={{ uri: discipline.heroImage }}
+                    style={[
+                      styles.headerCard,
+                      { width: (carouselWidth || Dimensions.get('window').width) - 32 }
+                    ]}
+                    imageStyle={styles.headerCardImage}
+                  >
+                  <LinearGradient
+                    colors={['rgba(15, 23, 42, 0.3)', 'rgba(15, 23, 42, 0.85)']}
+                    start={{ x: 0.5, y: 0 }}
+                    end={{ x: 0.5, y: 1 }}
+                    style={styles.headerCardGradient}
+                  >
+                    <View style={styles.headerCardTextBlock}>
+                      <Text style={styles.headerCardDiscipline}>{discipline.title}</Text>
+                      <View style={styles.headerCardTitleRow}>
+                        <MaterialCommunityIcons name="dumbbell" size={20} color="#FFFFFF" />
+                        <Text style={styles.headerCardTitle}>Workouts</Text>
+                        <View style={styles.headerCardCountBadge}>
+                          <Text style={styles.headerCardCount}>{workoutsForDiscipline.length}</Text>
                         </View>
                       </View>
                     </View>
@@ -845,8 +845,8 @@ export default function DisciplineScreen() {
 
             {/* Page Indicator */}
             <View style={styles.pageIndicator}>
-              <View style={[styles.pageDot, activeTab === 'workouts' && styles.pageDotActive]} />
               <View style={[styles.pageDot, activeTab === 'oefeningen' && styles.pageDotActive]} />
+              <View style={[styles.pageDot, activeTab === 'workouts' && styles.pageDotActive]} />
               <View style={[styles.pageDot, activeTab === 'programmas' && styles.pageDotActive]} />
             </View>
           </View>
@@ -879,178 +879,6 @@ export default function DisciplineScreen() {
 
         {/* ── CONTENT ── */}
         <View style={styles.contentArea}>
-          {activeTab === 'workouts' && (
-            <View style={{ paddingHorizontal: 16 }}>
-              {workoutsForDiscipline.map((workout) => (
-                <Pressable
-                  key={workout.id}
-                  style={({ pressed }) => [[styles.premiumCardWrapper, { borderColor: shortcutBorderColor, shadowColor: shortcutShadowColor }], pressed && styles.cardPressed]}
-                  onPress={() => router.push({
-                    pathname: '/discipline/[slug]/workout/[id]',
-                    params: { slug, id: workout.id },
-                  })}
-                >
-                  <View style={styles.premiumCardInner}>
-                    {/* Background gradient - absolute full-cover */}
-                    <LinearGradient
-                      colors={auroraGradient}
-                      start={{ x: 0, y: 0 }}
-                      end={{ x: 1, y: 1 }}
-                      style={styles.premiumCardBackground}
-                      pointerEvents="none"
-                    >
-                      {/* Top-left ribbon */}
-                      <LinearGradient
-                        colors={ribbonTop}
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 1, y: 1 }}
-                        style={styles.ribbonTop}
-                        pointerEvents="none"
-                      />
-                      {/* Mid-card ribbon */}
-                      <LinearGradient
-                        colors={ribbonMid}
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 1, y: 1 }}
-                        style={styles.ribbonMid}
-                        pointerEvents="none"
-                      />
-                      {/* Diagonal top-right ribbon */}
-                      <LinearGradient
-                        colors={ribbonBlue}
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 1, y: 1 }}
-                        style={styles.ribbonBlue}
-                        pointerEvents="none"
-                      />
-                      {/* Diagonal bottom-left ribbon */}
-                      <LinearGradient
-                        colors={ribbonRose}
-                        start={{ x: 0, y: 1 }}
-                        end={{ x: 1, y: 0 }}
-                        style={styles.ribbonRose}
-                        pointerEvents="none"
-                      />
-                      {/* Right-side accent ribbon */}
-                      <LinearGradient
-                        colors={ribbonRight}
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 1, y: 1 }}
-                        style={styles.ribbonRight}
-                        pointerEvents="none"
-                      />
-                      {/* Marble premium stone texture - only for Marble theme */}
-                      {isMarble && (
-                        <>
-                          {/* Main diagonal vein */}
-                          <LinearGradient
-                            colors={['rgba(55, 65, 81, 0.22)', 'rgba(55, 65, 81, 0.08)']}
-                            start={{ x: 0, y: 0 }}
-                            end={{ x: 1, y: 1 }}
-                            style={{
-                              position: 'absolute',
-                              top: -15,
-                              left: -30,
-                              width: 160,
-                              height: 2,
-                              transform: [{ rotate: '-15deg' }],
-                              pointerEvents: 'none',
-                            }}
-                            pointerEvents="none"
-                          />
-                          {/* Secondary vein */}
-                          <LinearGradient
-                            colors={['rgba(120, 113, 108, 0.18)', 'rgba(120, 113, 108, 0.06)']}
-                            start={{ x: 0, y: 0 }}
-                            end={{ x: 1, y: 1 }}
-                            style={{
-                              position: 'absolute',
-                              top: 50,
-                              right: -25,
-                              width: 120,
-                              height: 2,
-                              transform: [{ rotate: '12deg' }],
-                              pointerEvents: 'none',
-                            }}
-                            pointerEvents="none"
-                          />
-                          {/* Third soft vein */}
-                          <LinearGradient
-                            colors={['rgba(168, 162, 158, 0.16)', 'rgba(168, 162, 158, 0.04)']}
-                            start={{ x: 0, y: 0 }}
-                            end={{ x: 1, y: 1 }}
-                            style={{
-                              position: 'absolute',
-                              bottom: -10,
-                              left: 30,
-                              width: 100,
-                              height: 2,
-                              transform: [{ rotate: '8deg' }],
-                              pointerEvents: 'none',
-                            }}
-                            pointerEvents="none"
-                          />
-                          {/* Pearl highlight */}
-                          <View
-                            style={{
-                              position: 'absolute',
-                              top: -40,
-                              right: -40,
-                              width: 140,
-                              height: 110,
-                              borderRadius: 999,
-                              backgroundColor: 'rgba(255, 255, 255, 0.88)',
-                              pointerEvents: 'none',
-                            }}
-                          />
-                        </>
-                      )}
-                      {/* Soft white highlight overlay */}
-                      <LinearGradient
-                        colors={ribbonHighlight}
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 0, y: 1 }}
-                        style={styles.ribbonHighlight}
-                        pointerEvents="none"
-                      />
-                    </LinearGradient>
-                    {/* Content layer - above background */}
-                    <View style={styles.premiumCardContent}>
-                      <View style={[styles.iconBadge, { backgroundColor: shortcutIconBg, borderColor: shortcutIconBorder }]}>
-                        <MaterialCommunityIcons name={workout.icon as any} size={20} color={auroraSubtitle} />
-                      </View>
-                      <View style={styles.cardInfo}>
-                        <Text style={[styles.cardTitle, { color: auroraTitle }]}>{workout.name}</Text>
-                        <View style={styles.cardMeta}>
-                          <View style={[styles.metaTag, { backgroundColor: shortcutIconBg, borderColor: shortcutIconBorder }]}>
-                            <MaterialCommunityIcons name="arm-flex" size={9} color={auroraSubtitle} />
-                            <Text style={[styles.metaTagText, { color: auroraSubtitle }]}>{workout.muscle}</Text>
-                          </View>
-                          <View style={[styles.metaTag, { backgroundColor: shortcutIconBg, borderColor: shortcutIconBorder }]}>
-                            <MaterialCommunityIcons name="clock-outline" size={9} color={auroraSubtitle} />
-                            <Text style={[styles.metaTagText, { color: auroraSubtitle }]}>{workout.duration}</Text>
-                          </View>
-                        </View>
-                      </View>
-                      <View style={[styles.chevronButton, { backgroundColor: shortcutIconBg, borderColor: shortcutIconBorder, shadowColor: shortcutShadowColor }]}>
-                        <MaterialCommunityIcons name="chevron-right" size={16} color={auroraSubtitle} />
-                      </View>
-                    </View>
-                  </View>
-                </Pressable>
-              ))}
-              {workoutsForDiscipline.length === 0 && (
-                <View style={[styles.emptyState, { borderColor: '#E2E8F0' }]}>
-                  <MaterialCommunityIcons name="dumbbell" size={48} color="#94A3B8" />
-                  <Text style={[styles.emptyTitle, { color: '#0F172A' }]}>Workouts voor {discipline.title}</Text>
-                  <Text style={[styles.emptySubtitle, { color: '#64748B' }]}>
-                    Workouts voor {discipline.title} komen binnenkort beschikbaar.
-                  </Text>
-                </View>
-              )}
-            </View>
-          )}
-
           {activeTab === 'oefeningen' && (
             <View style={{ paddingHorizontal: 16 }}>
               {filteredExercises.length > 0 ? (
@@ -1250,6 +1078,178 @@ export default function DisciplineScreen() {
                       <Text style={[styles.emptyCtaTextSecondary, { color: '#0F172A' }]}>Alle oefeningen</Text>
                     </Pressable>
                   </View>
+                </View>
+              )}
+            </View>
+          )}
+
+          {activeTab === 'workouts' && (
+            <View style={{ paddingHorizontal: 16 }}>
+              {workoutsForDiscipline.map((workout) => (
+                <Pressable
+                  key={workout.id}
+                  style={({ pressed }) => [[styles.premiumCardWrapper, { borderColor: shortcutBorderColor, shadowColor: shortcutShadowColor }], pressed && styles.cardPressed]}
+                  onPress={() => router.push({
+                    pathname: '/discipline/[slug]/workout/[id]',
+                    params: { slug, id: workout.id },
+                  })}
+                >
+                  <View style={styles.premiumCardInner}>
+                    {/* Background gradient - absolute full-cover */}
+                    <LinearGradient
+                      colors={auroraGradient}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 1 }}
+                      style={styles.premiumCardBackground}
+                      pointerEvents="none"
+                    >
+                      {/* Top-left ribbon */}
+                      <LinearGradient
+                        colors={ribbonTop}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 1 }}
+                        style={styles.ribbonTop}
+                        pointerEvents="none"
+                      />
+                      {/* Mid-card ribbon */}
+                      <LinearGradient
+                        colors={ribbonMid}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 1 }}
+                        style={styles.ribbonMid}
+                        pointerEvents="none"
+                      />
+                      {/* Diagonal top-right ribbon */}
+                      <LinearGradient
+                        colors={ribbonBlue}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 1 }}
+                        style={styles.ribbonBlue}
+                        pointerEvents="none"
+                      />
+                      {/* Diagonal bottom-left ribbon */}
+                      <LinearGradient
+                        colors={ribbonRose}
+                        start={{ x: 0, y: 1 }}
+                        end={{ x: 1, y: 0 }}
+                        style={styles.ribbonRose}
+                        pointerEvents="none"
+                      />
+                      {/* Right-side accent ribbon */}
+                      <LinearGradient
+                        colors={ribbonRight}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 1 }}
+                        style={styles.ribbonRight}
+                        pointerEvents="none"
+                      />
+                      {/* Marble premium stone texture - only for Marble theme */}
+                      {isMarble && (
+                        <>
+                          {/* Main diagonal vein */}
+                          <LinearGradient
+                            colors={['rgba(55, 65, 81, 0.22)', 'rgba(55, 65, 81, 0.08)']}
+                            start={{ x: 0, y: 0 }}
+                            end={{ x: 1, y: 1 }}
+                            style={{
+                              position: 'absolute',
+                              top: -15,
+                              left: -30,
+                              width: 160,
+                              height: 2,
+                              transform: [{ rotate: '-15deg' }],
+                              pointerEvents: 'none',
+                            }}
+                            pointerEvents="none"
+                          />
+                          {/* Secondary vein */}
+                          <LinearGradient
+                            colors={['rgba(120, 113, 108, 0.18)', 'rgba(120, 113, 108, 0.06)']}
+                            start={{ x: 0, y: 0 }}
+                            end={{ x: 1, y: 1 }}
+                            style={{
+                              position: 'absolute',
+                              top: 50,
+                              right: -25,
+                              width: 120,
+                              height: 2,
+                              transform: [{ rotate: '12deg' }],
+                              pointerEvents: 'none',
+                            }}
+                            pointerEvents="none"
+                          />
+                          {/* Third soft vein */}
+                          <LinearGradient
+                            colors={['rgba(168, 162, 158, 0.16)', 'rgba(168, 162, 158, 0.04)']}
+                            start={{ x: 0, y: 0 }}
+                            end={{ x: 1, y: 1 }}
+                            style={{
+                              position: 'absolute',
+                              bottom: -10,
+                              left: 30,
+                              width: 100,
+                              height: 2,
+                              transform: [{ rotate: '8deg' }],
+                              pointerEvents: 'none',
+                            }}
+                            pointerEvents="none"
+                          />
+                          {/* Pearl highlight */}
+                          <View
+                            style={{
+                              position: 'absolute',
+                              top: -40,
+                              right: -40,
+                              width: 140,
+                              height: 110,
+                              borderRadius: 999,
+                              backgroundColor: 'rgba(255, 255, 255, 0.88)',
+                              pointerEvents: 'none',
+                            }}
+                          />
+                        </>
+                      )}
+                      {/* Soft white highlight overlay */}
+                      <LinearGradient
+                        colors={ribbonHighlight}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 0, y: 1 }}
+                        style={styles.ribbonHighlight}
+                        pointerEvents="none"
+                      />
+                    </LinearGradient>
+                    {/* Content layer - above background */}
+                    <View style={styles.premiumCardContent}>
+                      <View style={[styles.iconBadge, { backgroundColor: shortcutIconBg, borderColor: shortcutIconBorder }]}>
+                        <MaterialCommunityIcons name={workout.icon as any} size={20} color={auroraSubtitle} />
+                      </View>
+                      <View style={styles.cardInfo}>
+                        <Text style={[styles.cardTitle, { color: auroraTitle }]}>{workout.name}</Text>
+                        <View style={styles.cardMeta}>
+                          <View style={[styles.metaTag, { backgroundColor: shortcutIconBg, borderColor: shortcutIconBorder }]}>
+                            <MaterialCommunityIcons name="arm-flex" size={9} color={auroraSubtitle} />
+                            <Text style={[styles.metaTagText, { color: auroraSubtitle }]}>{workout.muscle}</Text>
+                          </View>
+                          <View style={[styles.metaTag, { backgroundColor: shortcutIconBg, borderColor: shortcutIconBorder }]}>
+                            <MaterialCommunityIcons name="clock-outline" size={9} color={auroraSubtitle} />
+                            <Text style={[styles.metaTagText, { color: auroraSubtitle }]}>{workout.duration}</Text>
+                          </View>
+                        </View>
+                      </View>
+                      <View style={[styles.chevronButton, { backgroundColor: shortcutIconBg, borderColor: shortcutIconBorder, shadowColor: shortcutShadowColor }]}>
+                        <MaterialCommunityIcons name="chevron-right" size={16} color={auroraSubtitle} />
+                      </View>
+                    </View>
+                  </View>
+                </Pressable>
+              ))}
+              {workoutsForDiscipline.length === 0 && (
+                <View style={[styles.emptyState, { borderColor: '#E2E8F0' }]}>
+                  <MaterialCommunityIcons name="dumbbell" size={48} color="#94A3B8" />
+                  <Text style={[styles.emptyTitle, { color: '#0F172A' }]}>Workouts voor {discipline.title}</Text>
+                  <Text style={[styles.emptySubtitle, { color: '#64748B' }]}>
+                    Workouts voor {discipline.title} komen binnenkort beschikbaar.
+                  </Text>
                 </View>
               )}
             </View>
