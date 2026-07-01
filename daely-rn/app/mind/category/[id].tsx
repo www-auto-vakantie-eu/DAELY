@@ -604,7 +604,7 @@ export default function MindCategoryScreen() {
                     <View style={styles.quickActionChips}>
                       {meditation.duration && (
                         <View style={styles.quickActionChip}>
-                          <MaterialCommunityIcons name="clock-outline" size={10} color="#0F7BFF" />
+                          <MaterialCommunityIcons name="clock-outline" size={10} color="#2098FF" />
                           <Text style={styles.quickActionChipText}>{meditation.duration}</Text>
                         </View>
                       )}
@@ -620,7 +620,7 @@ export default function MindCategoryScreen() {
                   </View>
                   {/* Right chevron */}
                   <View style={styles.chevronWrapper}>
-                    <MaterialCommunityIcons name="chevron-right" size={20} color="#0F7BFF" />
+                    <MaterialCommunityIcons name="chevron-right" size={20} color="#2098FF" />
                   </View>
                 </View>
               </TouchableOpacity>
@@ -955,7 +955,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 22,
     borderWidth: 1,
-    borderColor: '#8EC5FF',
+    borderColor: '#93C5FD',
     marginBottom: 12,
     padding: 16,
     gap: 14,
@@ -1122,12 +1122,12 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#8EC5FF',
+    borderColor: '#93C5FD',
   },
   quickActionChipText: {
     fontSize: 11,
     fontWeight: '600',
-    color: '#0F7BFF',
+    color: '#2098FF',
   },
   premiumClassicCard: {
     flexDirection: 'row',

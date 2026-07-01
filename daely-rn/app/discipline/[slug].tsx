@@ -523,7 +523,7 @@ function getAuroraTokens(activeThemeId: string) {
 
   // Theme-aware gradient for card backgrounds
   const themeGradient = isClassic
-    ? ['#FFFFFF', '#F8FBFF', '#EFF6FF']
+    ? ['#F3F9FF', '#E6F2FF', '#D6EAFF', '#C7E1FF', '#BFDFFF']
     : isForce
       ? currentTheme.gradients.aurora || ['#FFFFFF', '#FFF1F2', '#FFE4E6']
       : isSahara
@@ -549,11 +549,11 @@ function getAuroraTokens(activeThemeId: string) {
 
   return {
     auroraGradient: themeGradient,
-    auroraTitle: isClassic ? '#0F172A' : (currentTheme.colors.auroraTitle || (isZen ? '#FFFFFF' : isRetro ? '#1B2E6B' : isSahara ? '#7A4E24' : isForce ? '#7F1D1D' : isSapphire ? '#EAF2FF' : isRuby ? '#FFE4EC' : isCoral ? '#7A2E2E' : isMarble ? '#111827' : isBordeauxVelvet ? '#FFF1F4' : isChampagneRose ? '#2A1F23' : isIvoryGold ? '#2A261C' : isMineralGreen ? '#163227' : isObsidianGold ? '#FFF7D6' : '#1E1B4B')),
+    auroraTitle: isClassic ? '#061A40' : (currentTheme.colors.auroraTitle || (isZen ? '#FFFFFF' : isRetro ? '#1B2E6B' : isSahara ? '#7A4E24' : isForce ? '#7F1D1D' : isSapphire ? '#EAF2FF' : isRuby ? '#FFE4EC' : isCoral ? '#7A2E2E' : isMarble ? '#111827' : isBordeauxVelvet ? '#FFF1F4' : isChampagneRose ? '#2A1F23' : isIvoryGold ? '#2A261C' : isMineralGreen ? '#163227' : isObsidianGold ? '#FFF7D6' : '#1E1B4B')),
     auroraSubtitle: isClassic ? '#475569' : (currentTheme.colors.auroraSubtitle || (isZen ? '#B0B0B0' : isRetro ? '#B42318' : isSahara ? '#9A6B3A' : isForce ? '#B91C1C' : isSapphire ? '#BFDBFE' : isRuby ? '#F4A7B9' : isCoral ? '#A95B5B' : isMarble ? '#4B5563' : isBordeauxVelvet ? '#E8B8C2' : isChampagneRose ? '#7A5A62' : isIvoryGold ? '#6F6448' : isMineralGreen ? '#4D6B5C' : isObsidianGold ? '#C9B97A' : '#4A3A8C')),
     // Theme-aware ribbon colors
     ribbonTop: isClassic
-      ? ['rgba(37, 99, 235, 0.08)', 'rgba(14, 165, 233, 0.10)']
+      ? ['rgba(37, 99, 235, 0.12)', 'rgba(14, 165, 233, 0.15)']
       : isForce
         ? (currentTheme.gradients.auroraBlue || ['rgba(254, 202, 202, 0.55)', 'rgba(254, 202, 202, 0.12)'])
         : isSahara
@@ -566,7 +566,7 @@ function getAuroraTokens(activeThemeId: string) {
           : isMarble ? (currentTheme.gradients.auroraBlue || ['rgba(107, 114, 128, 0.14)', 'rgba(209, 213, 219, 0.08)'])
           : ['rgba(168, 162, 255, 0.55)', 'rgba(200, 195, 255, 0.12)'],
     ribbonMid: isClassic
-      ? ['rgba(219, 234, 254, 0.55)', 'rgba(240, 249, 255, 0.75)']
+      ? ['rgba(219, 234, 254, 0.65)', 'rgba(240, 249, 255, 0.85)']
       : isForce
         ? ['rgba(254, 226, 226, 0.42)', 'rgba(254, 226, 226, 0.20)']
         : isSahara
@@ -584,7 +584,7 @@ function getAuroraTokens(activeThemeId: string) {
           : isObsidianGold ? ['#181818', '#252525']
           : ['rgba(220, 180, 255, 0.42)', 'rgba(200, 195, 255, 0.20)'],
     ribbonBlue: isClassic
-      ? ['rgba(37, 99, 235, 0.08)', 'rgba(14, 165, 233, 0.10)']
+      ? ['rgba(37, 99, 235, 0.12)', 'rgba(14, 165, 233, 0.15)']
       : isForce
         ? (currentTheme.gradients.auroraBlue || ['rgba(254, 202, 202, 0.75)', 'rgba(254, 202, 202, 0.38)'])
         : isSahara
@@ -596,7 +596,7 @@ function getAuroraTokens(activeThemeId: string) {
           : isMarble ? (currentTheme.gradients.auroraBlue || ['rgba(107, 114, 128, 0.14)', 'rgba(209, 213, 219, 0.08)'])
           : ['rgba(168, 162, 255, 0.75)', 'rgba(200, 195, 255, 0.38)'],
     ribbonRose: isClassic
-      ? ['rgba(219, 234, 254, 0.55)', 'rgba(240, 249, 255, 0.75)']
+      ? ['rgba(219, 234, 254, 0.65)', 'rgba(240, 249, 255, 0.85)']
       : isForce
         ? (currentTheme.gradients.auroraRose || ['rgba(239, 68, 68, 0.65)', 'rgba(239, 68, 68, 0.30)'])
         : isSahara
@@ -609,7 +609,7 @@ function getAuroraTokens(activeThemeId: string) {
           : isMarble ? (currentTheme.gradients.auroraRose || ['rgba(245, 245, 244, 0.70)', 'rgba(214, 211, 209, 0.18)'])
           : ['rgba(220, 180, 255, 0.65)', 'rgba(230, 200, 255, 0.30)'],
     ribbonRight: isClassic
-      ? ['rgba(37, 99, 235, 0.08)', 'rgba(255, 255, 255, 0.05)']
+      ? ['rgba(37, 99, 235, 0.12)', 'rgba(255, 255, 255, 0.08)']
       : isForce
         ? ['rgba(254, 202, 202, 0.38)', 'rgba(255, 255, 255, 0.05)']
         : isSahara
@@ -621,7 +621,7 @@ function getAuroraTokens(activeThemeId: string) {
           : isMarble ? ['rgba(245, 245, 244, 0.20)', 'rgba(214, 211, 209, 0.08)']
           : ['rgba(180, 170, 255, 0.38)', 'rgba(255, 255, 255, 0.05)'],
     ribbonHighlight: isClassic
-      ? ['rgba(255, 255, 255, 0.70)', 'rgba(255, 255, 255, 0.30)']
+      ? ['rgba(255, 255, 255, 0.80)', 'rgba(255, 255, 255, 0.40)']
       : isSapphire ? (currentTheme.colors.glassGlow ? [currentTheme.colors.glassGlow, 'rgba(59, 130, 246, 0.005)'] : ['rgba(59, 130, 246, 0.02)', 'rgba(59, 130, 246, 0.005)'])
       : isRuby ? (currentTheme.colors.rubyGlowBorder ? [currentTheme.colors.rubyGlowBorder, 'rgba(184, 50, 90, 0.08)'] : ['rgba(228, 90, 122, 0.24)', 'rgba(255, 228, 236, 0.08)'])
       : isCoral ? (currentTheme.colors.coralSoftGlow ? [currentTheme.colors.coralSoftGlow, 'rgba(249, 115, 107, 0.05)'] : ['rgba(255, 214, 201, 0.18)', 'rgba(255, 177, 153, 0.06)'])
@@ -638,10 +638,10 @@ function getAuroraTokens(activeThemeId: string) {
     useSoftMarbleVein: isMarble,
     auroraHighlight: currentTheme.colors.auroraHighlight || (isZen ? '#E5E7EB' : isRetro ? '#E8622A' : isSahara ? '#E7C99B' : isForce ? '#EF4444' : isSapphire ? '#93C5FD' : isRuby ? '#E45A7A' : isCoral ? '#F9736B' : isMarble ? '#9CA3AF' : '#6B5B95'),
     // Theme-aware shortcut card styling
-    shortcutBorderColor: isClassic ? '#DCEBFF' : isForce ? '#FECACA' : isSahara ? '#E8D0B0' : isRetro ? '#E7C0A3' : isZen ? 'rgba(255, 255, 255, 0.12)' : isSapphire ? 'rgba(147, 197, 253, 0.22)' : isRuby ? (currentTheme.colors.rubyGlowBorder || 'rgba(244, 167, 185, 0.22)') : isCoral ? (currentTheme.colors.coralGlowBorder || 'rgba(249, 115, 107, 0.22)') : isMarble ? (currentTheme.colors.marbleGlowBorder || 'rgba(107, 114, 128, 0.18)') : undefined,
-    shortcutShadowColor: isClassic ? '#0EA5E9' : isForce ? '#EF4444' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? 'rgba(0, 0, 0, 0.45)' : isSapphire ? 'rgba(59, 130, 246, 0.24)' : isRuby ? (currentTheme.colors.rubyGlowShadow || 'rgba(184, 50, 90, 0.24)') : isCoral ? (currentTheme.colors.coralGlowShadow || 'rgba(249, 115, 107, 0.20)') : isMarble ? (currentTheme.colors.marbleGlowShadow || 'rgba(107, 114, 128, 0.16)') : undefined,
-    shortcutIconBg: isClassic ? 'rgba(219, 234, 254, 0.8)' : isForce ? 'rgba(254, 202, 202, 0.75)' : isSahara ? 'rgba(245, 230, 211, 0.75)' : isRetro ? 'rgba(255, 253, 247, 0.88)' : isZen ? 'rgba(255, 255, 255, 0.08)' : isSapphire ? 'rgba(59, 130, 246, 0.14)' : isRuby ? (currentTheme.colors.rubyIconBg || 'rgba(184, 50, 90, 0.14)') : isCoral ? (currentTheme.colors.coralIconBg || 'rgba(255, 177, 153, 0.24)') : isMarble ? (currentTheme.colors.marbleIconBg || 'rgba(245, 245, 244, 0.86)') : 'rgba(255, 255, 255, 0.6)',
-    shortcutIconBorder: isClassic ? '#DBEAFE' : isForce ? '#FCA5A5' : isSahara ? '#E8D0B0' : isRetro ? '#E7C0A3' : isZen ? 'rgba(255, 255, 255, 0.14)' : isSapphire ? 'rgba(147, 197, 253, 0.24)' : isRuby ? (currentTheme.colors.rubyIconBorder || 'rgba(244, 167, 185, 0.24)') : isCoral ? (currentTheme.colors.coralIconBorder || 'rgba(249, 115, 107, 0.26)') : isMarble ? (currentTheme.colors.marbleIconBorder || 'rgba(168, 162, 158, 0.24)') : undefined,
+    shortcutBorderColor: isClassic ? '#93C5FD' : isForce ? '#FECACA' : isSahara ? '#E8D0B0' : isRetro ? '#E7C0A3' : isZen ? 'rgba(255, 255, 255, 0.12)' : isSapphire ? 'rgba(147, 197, 253, 0.22)' : isRuby ? (currentTheme.colors.rubyGlowBorder || 'rgba(244, 167, 185, 0.22)') : isCoral ? (currentTheme.colors.coralGlowBorder || 'rgba(249, 115, 107, 0.22)') : isMarble ? (currentTheme.colors.marbleGlowBorder || 'rgba(107, 114, 128, 0.18)') : undefined,
+    shortcutShadowColor: isClassic ? 'rgba(59, 130, 246, 0.28)' : isForce ? '#EF4444' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? 'rgba(0, 0, 0, 0.45)' : isSapphire ? 'rgba(59, 130, 246, 0.24)' : isRuby ? (currentTheme.colors.rubyGlowShadow || 'rgba(184, 50, 90, 0.24)') : isCoral ? (currentTheme.colors.coralGlowShadow || 'rgba(249, 115, 107, 0.20)') : isMarble ? (currentTheme.colors.marbleGlowShadow || 'rgba(107, 114, 128, 0.16)') : undefined,
+    shortcutIconBg: isClassic ? 'rgba(255, 255, 255, 0.95)' : isForce ? 'rgba(254, 202, 202, 0.75)' : isSahara ? 'rgba(245, 230, 211, 0.75)' : isRetro ? 'rgba(255, 253, 247, 0.88)' : isZen ? 'rgba(255, 255, 255, 0.08)' : isSapphire ? 'rgba(59, 130, 246, 0.14)' : isRuby ? (currentTheme.colors.rubyIconBg || 'rgba(184, 50, 90, 0.14)') : isCoral ? (currentTheme.colors.coralIconBg || 'rgba(255, 177, 153, 0.24)') : isMarble ? (currentTheme.colors.marbleIconBg || 'rgba(245, 245, 244, 0.86)') : 'rgba(255, 255, 255, 0.6)',
+    shortcutIconBorder: isClassic ? 'rgba(96, 165, 250, 0.65)' : isForce ? '#FCA5A5' : isSahara ? '#E8D0B0' : isRetro ? '#E7C0A3' : isZen ? 'rgba(255, 255, 255, 0.14)' : isSapphire ? 'rgba(147, 197, 253, 0.24)' : isRuby ? (currentTheme.colors.rubyIconBorder || 'rgba(244, 167, 185, 0.24)') : isCoral ? (currentTheme.colors.coralIconBorder || 'rgba(249, 115, 107, 0.26)') : isMarble ? (currentTheme.colors.marbleIconBorder || 'rgba(168, 162, 158, 0.24)') : undefined,
     // Sapphire shape tokens
     cardRadius,
     cardBorderWidth,
@@ -862,12 +862,12 @@ export default function DisciplineScreen() {
                     key={filter}
                     style={({ pressed }) => [
                       styles.filterChip,
-                      { borderColor: isActive ? '#2563EB' : '#E2E8F0', backgroundColor: isActive ? '#2563EB' : '#FFFFFF' },
+                      { borderColor: isActive ? '#2563EB' : '#93C5FD', backgroundColor: isActive ? '#2563EB' : 'rgba(219, 234, 254, 0.5)' },
                       pressed && { opacity: 0.8 },
                     ]}
                     onPress={() => setActiveFilter(filter)}
                   >
-                    <Text style={[styles.filterChipText, { color: isActive ? '#FFFFFF' : '#64748B' }]}>
+                    <Text style={[styles.filterChipText, { color: isActive ? '#FFFFFF' : '#0F172A' }]}>
                       {filter}
                     </Text>
                   </Pressable>
@@ -1008,6 +1008,89 @@ export default function DisciplineScreen() {
                             style={styles.ribbonHighlight}
                             pointerEvents="none"
                           />
+                          {/* DAELY Classic effect layers */}
+                          {/* Diagonal light plane 1 - white/translucent top-left to center */}
+                          <LinearGradient
+                            colors={['rgba(234, 244, 255, 0.5)', 'rgba(191, 223, 255, 0.3)']}
+                            start={{ x: 0, y: 0 }}
+                            end={{ x: 1, y: 1 }}
+                            style={styles.classicDiagonalPlane1}
+                            pointerEvents="none"
+                          />
+                          {/* Diagonal light plane 2 - light blue middle */}
+                          <LinearGradient
+                            colors={['rgba(191, 223, 255, 0.45)', 'rgba(147, 197, 253, 0.25)']}
+                            start={{ x: 0, y: 0 }}
+                            end={{ x: 1, y: 1 }}
+                            style={styles.classicDiagonalPlane2}
+                            pointerEvents="none"
+                          />
+                          {/* Diagonal light plane 3 - white/blue top-right */}
+                          <LinearGradient
+                            colors={['rgba(234, 244, 255, 0.4)', 'rgba(147, 197, 253, 0.25)']}
+                            start={{ x: 0, y: 0 }}
+                            end={{ x: 1, y: 1 }}
+                            style={styles.classicDiagonalPlane3}
+                            pointerEvents="none"
+                          />
+                          {/* Flow line 1 - diagonal top-left */}
+                          <View style={styles.classicFlowLine1} pointerEvents="none" />
+                          {/* Flow line 2 - diagonal bottom-left */}
+                          <View style={styles.classicFlowLine2} pointerEvents="none" />
+                          {/* Dot pattern right side - organic cluster */}
+                          <View style={styles.classicDotPatternContainer} pointerEvents="none">
+                            {[
+                              { right: 0, top: 0, opacity: 0.55, size: 3 },
+                              { right: 5, top: 0, opacity: 0.50, size: 3 },
+                              { right: 10, top: 0, opacity: 0.42, size: 2.5 },
+                              { right: 15, top: 0, opacity: 0.32, size: 2.5 },
+                              { right: 0, top: 4, opacity: 0.48, size: 3 },
+                              { right: 5, top: 4, opacity: 0.42, size: 2.5 },
+                              { right: 10, top: 4, opacity: 0.35, size: 2.5 },
+                              { right: 15, top: 4, opacity: 0.25, size: 2 },
+                              { right: 0, top: 8, opacity: 0.40, size: 2.5 },
+                              { right: 5, top: 8, opacity: 0.35, size: 2.5 },
+                              { right: 10, top: 8, opacity: 0.28, size: 2 },
+                              { right: 0, top: 12, opacity: 0.32, size: 2.5 },
+                              { right: 5, top: 12, opacity: 0.25, size: 2 },
+                              { right: 0, top: 16, opacity: 0.24, size: 2.5 },
+                              { right: 5, top: 16, opacity: 0.18, size: 2 },
+                              { right: 0, top: 20, opacity: 0.15, size: 2 },
+                            ].map((dot, i) => (
+                              <View
+                                key={i}
+                                style={[
+                                  styles.classicDot,
+                                  {
+                                    right: dot.right,
+                                    top: dot.top,
+                                    width: dot.size,
+                                    height: dot.size,
+                                    borderRadius: dot.size / 2,
+                                    opacity: dot.opacity,
+                                  },
+                                ]}
+                              />
+                            ))}
+                          </View>
+                          {/* White shine overlay */}
+                          <LinearGradient
+                            colors={['rgba(255, 255, 255, 0.5)', 'rgba(255, 255, 255, 0.15)', 'rgba(255, 255, 255, 0)']}
+                            start={{ x: 0, y: 0 }}
+                            end={{ x: 0, y: 1 }}
+                            style={styles.classicShineOverlay}
+                            pointerEvents="none"
+                          />
+                          {/* Card-wide glass overlay */}
+                          <LinearGradient
+                            colors={['rgba(255, 255, 255, 0.3)', 'rgba(255, 255, 255, 0.1)', 'rgba(255, 255, 255, 0.15)', 'rgba(255, 255, 255, 0.05)']}
+                            start={{ x: 0, y: 0 }}
+                            end={{ x: 1, y: 1 }}
+                            style={styles.classicCardGlassOverlay}
+                            pointerEvents="none"
+                          />
+                          {/* Glass inner border */}
+                          <View style={styles.classicGlassInnerBorder} pointerEvents="none" />
                         </LinearGradient>
                         {/* Content layer - above background */}
                         <View style={styles.premiumCardContent}>
@@ -1032,21 +1115,21 @@ export default function DisciplineScreen() {
                             <Text style={[styles.cardTitle, { color: auroraTitle }]}>{exercise.name}</Text>
                             <View style={styles.cardMeta}>
                               <View style={[styles.metaTag, { backgroundColor: shortcutIconBg, borderColor: shortcutIconBorder }]}>
-                                <MaterialCommunityIcons name="human" size={10} color={auroraSubtitle} />
-                                <Text style={[styles.metaTagText, { color: auroraSubtitle }]}>{exercise.spiergroep}</Text>
+                                <MaterialCommunityIcons name="human" size={10} color="#2563EB" />
+                                <Text style={[styles.metaTagText, { color: '#52627A' }]}>{exercise.spiergroep}</Text>
                               </View>
                               <View style={[styles.metaTag, { backgroundColor: shortcutIconBg, borderColor: shortcutIconBorder }]}>
-                                <MaterialCommunityIcons name="tag" size={10} color={auroraSubtitle} />
-                                <Text style={[styles.metaTagText, { color: auroraSubtitle }]}>{exercise.categorie}</Text>
+                                <MaterialCommunityIcons name="tag" size={10} color="#2563EB" />
+                                <Text style={[styles.metaTagText, { color: '#52627A' }]}>{exercise.categorie}</Text>
                               </View>
                               <View style={[styles.metaTag, { backgroundColor: shortcutIconBg, borderColor: shortcutIconBorder }]}>
-                                <MaterialCommunityIcons name="lightning-bolt" size={10} color={auroraSubtitle} />
-                                <Text style={[styles.metaTagText, { color: auroraSubtitle }]}>{exercise.moeilijkheid}</Text>
+                                <MaterialCommunityIcons name="lightning-bolt" size={10} color="#2563EB" />
+                                <Text style={[styles.metaTagText, { color: '#52627A' }]}>{exercise.moeilijkheid}</Text>
                               </View>
                             </View>
                           </View>
-                          <View style={[styles.chevronButton, { backgroundColor: shortcutIconBg, borderColor: shortcutIconBorder, shadowColor: shortcutShadowColor }]}>
-                            <MaterialCommunityIcons name="chevron-right" size={16} color={auroraSubtitle} />
+                          <View style={[styles.chevronButton, { backgroundColor: 'transparent', borderColor: 'transparent', shadowColor: 'transparent' }]}>
+                            <MaterialCommunityIcons name="chevron-right" size={16} color='#2563EB' />
                           </View>
                         </View>
                       </View>
@@ -1217,6 +1300,89 @@ export default function DisciplineScreen() {
                         style={styles.ribbonHighlight}
                         pointerEvents="none"
                       />
+                      {/* DAELY Classic effect layers */}
+                      {/* Diagonal light plane 1 - white/translucent top-left to center */}
+                      <LinearGradient
+                        colors={['rgba(234, 244, 255, 0.5)', 'rgba(191, 223, 255, 0.3)']}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 1 }}
+                        style={styles.classicDiagonalPlane1}
+                        pointerEvents="none"
+                      />
+                      {/* Diagonal light plane 2 - light blue middle */}
+                      <LinearGradient
+                        colors={['rgba(191, 223, 255, 0.45)', 'rgba(147, 197, 253, 0.25)']}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 1 }}
+                        style={styles.classicDiagonalPlane2}
+                        pointerEvents="none"
+                      />
+                      {/* Diagonal light plane 3 - white/blue top-right */}
+                      <LinearGradient
+                        colors={['rgba(234, 244, 255, 0.4)', 'rgba(147, 197, 253, 0.25)']}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 1 }}
+                        style={styles.classicDiagonalPlane3}
+                        pointerEvents="none"
+                      />
+                      {/* Flow line 1 - diagonal top-left */}
+                      <View style={styles.classicFlowLine1} pointerEvents="none" />
+                      {/* Flow line 2 - diagonal bottom-left */}
+                      <View style={styles.classicFlowLine2} pointerEvents="none" />
+                      {/* Dot pattern right side - organic cluster */}
+                      <View style={styles.classicDotPatternContainer} pointerEvents="none">
+                        {[
+                          { right: 0, top: 0, opacity: 0.55, size: 3 },
+                          { right: 5, top: 0, opacity: 0.50, size: 3 },
+                          { right: 10, top: 0, opacity: 0.42, size: 2.5 },
+                          { right: 15, top: 0, opacity: 0.32, size: 2.5 },
+                          { right: 0, top: 4, opacity: 0.48, size: 3 },
+                          { right: 5, top: 4, opacity: 0.42, size: 2.5 },
+                          { right: 10, top: 4, opacity: 0.35, size: 2.5 },
+                          { right: 15, top: 4, opacity: 0.25, size: 2 },
+                          { right: 0, top: 8, opacity: 0.40, size: 2.5 },
+                          { right: 5, top: 8, opacity: 0.35, size: 2.5 },
+                          { right: 10, top: 8, opacity: 0.28, size: 2 },
+                          { right: 0, top: 12, opacity: 0.32, size: 2.5 },
+                          { right: 5, top: 12, opacity: 0.25, size: 2 },
+                          { right: 0, top: 16, opacity: 0.24, size: 2.5 },
+                          { right: 5, top: 16, opacity: 0.18, size: 2 },
+                          { right: 0, top: 20, opacity: 0.15, size: 2 },
+                        ].map((dot, i) => (
+                          <View
+                            key={i}
+                            style={[
+                              styles.classicDot,
+                              {
+                                right: dot.right,
+                                top: dot.top,
+                                width: dot.size,
+                                height: dot.size,
+                                borderRadius: dot.size / 2,
+                                opacity: dot.opacity,
+                              },
+                            ]}
+                          />
+                        ))}
+                      </View>
+                      {/* White shine overlay */}
+                      <LinearGradient
+                        colors={['rgba(255, 255, 255, 0.5)', 'rgba(255, 255, 255, 0.15)', 'rgba(255, 255, 255, 0)']}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 0, y: 1 }}
+                        style={styles.classicShineOverlay}
+                        pointerEvents="none"
+                      />
+                      {/* Card-wide glass overlay */}
+                      <LinearGradient
+                        colors={['rgba(255, 255, 255, 0.3)', 'rgba(255, 255, 255, 0.1)', 'rgba(255, 255, 255, 0.15)', 'rgba(255, 255, 255, 0.05)']}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 1 }}
+                        style={styles.classicCardGlassOverlay}
+                        pointerEvents="none"
+                      />
+                      {/* Glass inner border */}
+                      <View style={styles.classicGlassInnerBorder} pointerEvents="none" />
                     </LinearGradient>
                     {/* Content layer - above background */}
                     <View style={styles.premiumCardContent}>
@@ -1227,17 +1393,17 @@ export default function DisciplineScreen() {
                         <Text style={[styles.cardTitle, { color: auroraTitle }]}>{workout.name}</Text>
                         <View style={styles.cardMeta}>
                           <View style={[styles.metaTag, { backgroundColor: shortcutIconBg, borderColor: shortcutIconBorder }]}>
-                            <MaterialCommunityIcons name="arm-flex" size={9} color={auroraSubtitle} />
-                            <Text style={[styles.metaTagText, { color: auroraSubtitle }]}>{workout.muscle}</Text>
+                            <MaterialCommunityIcons name="arm-flex" size={9} color="#2563EB" />
+                            <Text style={[styles.metaTagText, { color: '#52627A' }]}>{workout.muscle}</Text>
                           </View>
                           <View style={[styles.metaTag, { backgroundColor: shortcutIconBg, borderColor: shortcutIconBorder }]}>
-                            <MaterialCommunityIcons name="clock-outline" size={9} color={auroraSubtitle} />
-                            <Text style={[styles.metaTagText, { color: auroraSubtitle }]}>{workout.duration}</Text>
+                            <MaterialCommunityIcons name="clock-outline" size={9} color="#2563EB" />
+                            <Text style={[styles.metaTagText, { color: '#52627A' }]}>{workout.duration}</Text>
                           </View>
                         </View>
                       </View>
-                      <View style={[styles.chevronButton, { backgroundColor: shortcutIconBg, borderColor: shortcutIconBorder, shadowColor: shortcutShadowColor }]}>
-                        <MaterialCommunityIcons name="chevron-right" size={16} color={auroraSubtitle} />
+                      <View style={[styles.chevronButton, { backgroundColor: 'transparent', borderColor: 'transparent', shadowColor: 'transparent' }]}>
+                        <MaterialCommunityIcons name="chevron-right" size={16} color='#2563EB' />
                       </View>
                     </View>
                   </View>
@@ -1397,8 +1563,8 @@ export default function DisciplineScreen() {
                             </View>
                           </View>
                         </View>
-                        <View style={[styles.chevronButton, { backgroundColor: shortcutIconBg, borderColor: shortcutIconBorder, shadowColor: shortcutShadowColor }]}>
-                          <MaterialCommunityIcons name="chevron-right" size={16} color={auroraSubtitle} />
+                        <View style={[styles.chevronButton, { backgroundColor: 'transparent', borderColor: 'transparent', shadowColor: 'transparent' }]}>
+                          <MaterialCommunityIcons name="chevron-right" size={16} color='#2563EB' />
                         </View>
                       </View>
                     </View>
@@ -1496,7 +1662,7 @@ const styles = StyleSheet.create({
   pageDotActive: { backgroundColor: '#2563EB' },
   filterSection: { paddingHorizontal: 16, paddingTop: 8, paddingBottom: 4 },
   filterRow: { gap: 8, paddingBottom: 12 },
-  filterChip: { paddingHorizontal: 14, paddingVertical: 10, borderRadius: 999, borderWidth: 1.5, minHeight: 40 },
+  filterChip: { paddingHorizontal: 14, paddingVertical: 10, borderRadius: 999, borderWidth: 1.5, minHeight: 40, shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.08, shadowRadius: 4, shadowColor: 'rgba(96, 165, 250, 0.15)', elevation: 1 },
   filterChipText: { fontSize: 13, fontWeight: '600' },
   contentArea: { paddingTop: 4 },
   premiumCard: { flexDirection: 'row', alignItems: 'center', borderRadius: 24, borderWidth: 0, padding: 14, marginBottom: 12, gap: 12, shadowColor: '#6B5B95', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.08, shadowRadius: 8, elevation: 2 },
@@ -1507,8 +1673,8 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     overflow: 'hidden',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
+    shadowOpacity: 0.12,
+    shadowRadius: 10,
     elevation: 2,
     position: 'relative',
     width: '100%',
@@ -1587,9 +1753,9 @@ const styles = StyleSheet.create({
   thumbnailImageInner: { borderRadius: 14 },
   iconBadge: { width: 48, height: 48, borderRadius: 16, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   cardInfo: { flex: 1 },
-  cardTitle: { fontSize: 17, fontWeight: '800', marginBottom: 6, lineHeight: 22 },
+  cardTitle: { fontSize: 17, fontWeight: '700', marginBottom: 6, lineHeight: 22 },
   cardMeta: { flexDirection: 'row', gap: 8, flexWrap: 'wrap', alignItems: 'center' },
-  metaTag: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 10, paddingVertical: 5, borderRadius: 999, backgroundColor: '#F8FAFC' },
+  metaTag: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 8, paddingVertical: 4, borderRadius: 999, borderWidth: 1, borderColor: 'rgba(96, 165, 250, 0.75)', backgroundColor: 'rgba(255, 255, 255, 0.9)' },
   metaTagText: { fontSize: 11, fontWeight: '600' },
   chevronButton: { width: 32, height: 32, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
   emptyState: { marginTop: 24, alignItems: 'center', paddingVertical: 56, paddingHorizontal: 24, borderRadius: 24, borderWidth: 1.5, borderStyle: 'dashed', gap: 12 },
@@ -1620,4 +1786,91 @@ const styles = StyleSheet.create({
   exerciseMeta: { flexDirection: 'row', gap: 10, flexWrap: 'wrap' },
   errorText: { textAlign: 'center', marginTop: 40, fontSize: 16 },
   bottomSpacer: { height: 120 },
+  // DAELY Classic effect layers for exercise cards
+  classicDiagonalPlane1: {
+    position: 'absolute',
+    top: '-15%',
+    left: '-10%',
+    width: '140%',
+    height: '50%',
+    transform: [{ rotate: '20deg' }],
+  },
+  classicDiagonalPlane2: {
+    position: 'absolute',
+    top: '10%',
+    left: '-5%',
+    width: '120%',
+    height: '40%',
+    transform: [{ rotate: '-12deg' }],
+  },
+  classicDiagonalPlane3: {
+    position: 'absolute',
+    top: '-10%',
+    right: '-10%',
+    width: '90%',
+    height: '50%',
+    transform: [{ rotate: '15deg' }],
+  },
+  classicFlowLine1: {
+    position: 'absolute',
+    top: '20%',
+    left: '-5%',
+    width: '100%',
+    height: 2,
+    backgroundColor: 'rgba(191, 223, 255, 0.35)',
+    transform: [{ rotate: '25deg' }],
+    borderRadius: 1,
+  },
+  classicFlowLine2: {
+    position: 'absolute',
+    bottom: '25%',
+    left: '-5%',
+    width: '80%',
+    height: 1.5,
+    backgroundColor: 'rgba(234, 244, 255, 0.3)',
+    transform: [{ rotate: '-18deg' }],
+    borderRadius: 0.75,
+  },
+  classicDotPatternContainer: {
+    position: 'absolute',
+    right: 16,
+    top: 12,
+    bottom: 12,
+    width: 20,
+    height: 24,
+    zIndex: 0,
+  },
+  classicDot: {
+    position: 'absolute',
+    backgroundColor: 'rgba(59, 130, 246, 0.7)',
+  },
+  classicShineOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    borderRadius: 24,
+    zIndex: 1,
+  },
+  classicCardGlassOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    borderRadius: 24,
+    zIndex: 2,
+  },
+  classicGlassInnerBorder: {
+    position: 'absolute',
+    top: 1,
+    left: 1,
+    right: 1,
+    bottom: 1,
+    borderRadius: 23,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.5)',
+    zIndex: 3,
+  },
 });

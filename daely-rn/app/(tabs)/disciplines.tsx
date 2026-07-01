@@ -63,7 +63,7 @@ function getQuickActionTokens(activeThemeId: string) {
 
   // DAELY Classic Glow gradient for buttons
   const classicGlowGradient = isClassic
-    ? ['#FFFFFF', '#F8FBFF', '#EFF6FF']
+    ? ['#FFFFFF', '#F8FCFF', '#EEF7FF', '#DCEEFF', '#C4DEFF']
     : isForce
       ? currentTheme.gradients.aurora || ['#FFFFFF', '#FFF1F2', '#FFE4E6']
       : isSahara ? (currentTheme.gradients.aurora || ['#FFFFFF', '#FDF8EF', '#F3E4CF'])
@@ -83,18 +83,18 @@ function getQuickActionTokens(activeThemeId: string) {
   // Sapphire-specific shape tokens for quick actions
   const quickActionRadius = isSapphire ? (currentTheme.colors.shortcutRadius || 12) : 16;
   const quickActionIconRadius = isSapphire ? (currentTheme.colors.iconBubbleRadius || 12) : 14;
-  const quickActionShadowOpacity = isSapphire ? 0.32 : 0.08;
-  const quickActionShadowRadius = isSapphire ? 12 : 8;
+  const quickActionShadowOpacity = isSapphire ? 0.32 : 0.12;
+  const quickActionShadowRadius = isSapphire ? 12 : 10;
   const quickActionShadowOffset = isSapphire ? { width: 0, height: 4 } : { width: 0, height: 2 };
 
   return {
     gradient: classicGlowGradient,
-    iconColor: isClassic ? '#2563EB' : isForce ? '#DC2626' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? '#F9FAFB' : isSapphire ? '#EAF2FF' : isRuby ? '#FFE4EC' : isCoral ? '#7A2E2E' : isMarble ? '#4B5563' : '#4A3A8C',
+    iconColor: isClassic ? '#0F7BFF' : isForce ? '#DC2626' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? '#F9FAFB' : isSapphire ? '#EAF2FF' : isRuby ? '#FFE4EC' : isCoral ? '#7A2E2E' : isMarble ? '#4B5563' : '#4A3A8C',
     iconBg: isClassic ? 'rgba(219, 234, 254, 0.7)' : isForce ? 'rgba(254, 202, 202, 0.7)' : isSahara ? 'rgba(245, 230, 211, 0.7)' : isRetro ? 'rgba(255, 253, 247, 0.7)' : isZen ? 'rgba(255, 255, 255, 0.08)' : isSapphire ? 'rgba(59, 130, 246, 0.14)' : isRuby ? (currentTheme.colors.rubyIconBg || 'rgba(184, 50, 90, 0.14)') : isCoral ? (currentTheme.colors.coralIconBg || 'rgba(255, 177, 153, 0.24)') : isMarble ? (currentTheme.colors.marbleIconBg || 'rgba(255, 255, 255, 0.92)') : 'rgba(255, 255, 255, 0.7)',
     iconBorder: isClassic ? 'rgba(255, 255, 255, 0.9)' : isForce ? 'rgba(255, 255, 255, 0.9)' : isSahara ? 'rgba(255, 255, 255, 0.9)' : isRetro ? 'rgba(255, 255, 255, 0.9)' : isZen ? 'rgba(255, 255, 255, 0.16)' : isSapphire ? 'rgba(147, 197, 253, 0.24)' : isRuby ? (currentTheme.colors.rubyIconBorder || 'rgba(244, 167, 185, 0.24)') : isCoral ? (currentTheme.colors.coralIconBorder || 'rgba(249, 115, 107, 0.26)') : isMarble ? (currentTheme.colors.marbleIconBorder || 'rgba(107, 114, 128, 0.26)') : 'rgba(255, 255, 255, 0.9)',
     titleColor: isClassic ? '#0F172A' : isForce ? '#7F1D1D' : isSahara ? '#7A4E24' : isRetro ? '#1B2E6B' : isZen ? '#F9FAFB' : isSapphire ? '#EAF2FF' : isRuby ? '#FFE4EC' : isCoral ? '#7A2E2E' : isMarble ? '#111827' : '#1E1B4B',
     subtitleColor: isClassic ? '#475569' : isForce ? '#B91C1C' : isSahara ? '#9A6B3A' : isRetro ? '#B42318' : isZen ? '#D1D5DB' : isSapphire ? '#BFDBFE' : isRuby ? '#F4A7B9' : isCoral ? '#A95B5B' : isMarble ? '#4B5563' : '#4A3A8C',
-    shadowColor: isClassic ? '#0EA5E9' : isForce ? '#EF4444' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? '#000000' : isSapphire ? 'rgba(59, 130, 246, 0.24)' : isRuby ? (currentTheme.colors.rubyGlowShadow || 'rgba(184, 50, 90, 0.24)') : isCoral ? (currentTheme.colors.coralGlowShadow || 'rgba(249, 115, 107, 0.20)') : isMarble ? (currentTheme.colors.marbleGlowShadow || 'rgba(75, 85, 99, 0.18)') : '#6B5B95',
+    shadowColor: isClassic ? 'rgba(96, 165, 250, 0.22)' : isForce ? '#EF4444' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? '#000000' : isSapphire ? 'rgba(59, 130, 246, 0.24)' : isRuby ? (currentTheme.colors.rubyGlowShadow || 'rgba(184, 50, 90, 0.24)') : isCoral ? (currentTheme.colors.coralGlowShadow || 'rgba(249, 115, 107, 0.20)') : isMarble ? (currentTheme.colors.marbleGlowShadow || 'rgba(75, 85, 99, 0.18)') : '#6B5B95',
     // Sapphire shape tokens
     quickActionRadius,
     quickActionIconRadius,
@@ -568,9 +568,12 @@ const styles = StyleSheet.create({
     minHeight: 64,
     overflow: 'hidden',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
+    shadowOpacity: 0.12,
+    shadowRadius: 10,
+    shadowColor: 'rgba(96, 165, 250, 0.22)',
     elevation: 2,
+    borderWidth: 1,
+    borderColor: '#8EC5FF',
   },
   quickActionButtonGradient: {
     flexDirection: 'row',
@@ -651,6 +654,13 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     overflow: 'hidden',
     marginBottom: 14,
+    borderWidth: 1,
+    borderColor: '#8EC5FF',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.12,
+    shadowRadius: 10,
+    shadowColor: 'rgba(96, 165, 250, 0.22)',
+    elevation: 2,
   },
   cardPressed: {
     transform: [{ scale: 0.98 }],
@@ -667,7 +677,7 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     left: 0,
-    backgroundColor: 'rgba(2,6,23,0.55)',
+    backgroundColor: 'rgba(15, 23, 42, 0.35)',
     padding: 16,
     paddingTop: 20,
     justifyContent: 'flex-end',
