@@ -259,6 +259,7 @@ function GradientCard({ children, style, cardRadius }: { children: React.ReactNo
   const { auroraGradient, ribbonTop, ribbonMid, ribbonBlue, ribbonRose, ribbonRight, ribbonHighlight, useThinLines, facetLarge, facetMedium, sapphireGlow } = getAuroraTokens(theme.id);
   const isCoral = theme.id === 'coralBloom';
   const isMarble = theme.id === 'marble';
+  const isClassic = theme.id === 'classic';
 
   const ribbonStyleTop = useThinLines ? styles.thinRibbonTop : styles.ribbonTop;
   const ribbonStyleMid = useThinLines ? styles.thinRibbonMid : styles.ribbonMid;
@@ -266,11 +267,14 @@ function GradientCard({ children, style, cardRadius }: { children: React.ReactNo
   const ribbonStyleRose = useThinLines ? styles.thinRibbonRose : styles.ribbonRose;
   const ribbonStyleRight = useThinLines ? styles.thinRibbonRight : styles.ribbonRight;
 
+  // Use enhanced Classic styling for all nutrition details when auroraGradient exists
+  const useEnhancedClassic = isClassic && auroraGradient;
+
   return (
-    <View style={[styles.sectionCard, style, { borderRadius: cardRadius || 16 }]}>
+    <View style={[styles.sectionCard, style, { borderRadius: cardRadius || 16, borderColor: useEnhancedClassic ? '#7DBBFF' : undefined, shadowColor: useEnhancedClassic ? 'rgba(59, 130, 246, 0.35)' : undefined, shadowOpacity: useEnhancedClassic ? 0.15 : undefined, shadowRadius: useEnhancedClassic ? 12 : undefined }]}>
       {/* Background gradient layer - absolute full-cover */}
       <LinearGradient
-        colors={auroraGradient}
+        colors={useEnhancedClassic ? ['#F3F9FF', '#E6F2FF', '#D6EAFF', '#C7E1FF', '#BFDFFF'] : auroraGradient}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={[styles.sectionCardGradient, { borderRadius: cardRadius || 16 }]}
@@ -278,7 +282,7 @@ function GradientCard({ children, style, cardRadius }: { children: React.ReactNo
       >
         {/* Top-left ribbon - reduced for Coral Bloom */}
         {!isCoral && <LinearGradient
-          colors={ribbonTop}
+          colors={useEnhancedClassic ? ['rgba(37, 99, 235, 0.12)', 'rgba(14, 165, 233, 0.15)'] : ribbonTop}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={ribbonStyleTop}
@@ -286,7 +290,7 @@ function GradientCard({ children, style, cardRadius }: { children: React.ReactNo
         />}
         {/* Mid-card ribbon - reduced for Coral Bloom */}
         {!isCoral && <LinearGradient
-          colors={ribbonMid}
+          colors={useEnhancedClassic ? ['rgba(219, 234, 254, 0.65)', 'rgba(240, 249, 255, 0.85)'] : ribbonMid}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={ribbonStyleMid}
@@ -294,7 +298,7 @@ function GradientCard({ children, style, cardRadius }: { children: React.ReactNo
         />}
         {/* Diagonal top-right ribbon - reduced for Coral Bloom */}
         {!isCoral && <LinearGradient
-          colors={ribbonBlue}
+          colors={useEnhancedClassic ? ['rgba(37, 99, 235, 0.12)', 'rgba(14, 165, 233, 0.15)'] : ribbonBlue}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={ribbonStyleBlue}
@@ -302,7 +306,7 @@ function GradientCard({ children, style, cardRadius }: { children: React.ReactNo
         />}
         {/* Diagonal bottom-left ribbon - reduced for Coral Bloom */}
         {!isCoral && <LinearGradient
-          colors={ribbonRose}
+          colors={useEnhancedClassic ? ['rgba(219, 234, 254, 0.65)', 'rgba(240, 249, 255, 0.85)'] : ribbonRose}
           start={{ x: 0, y: 1 }}
           end={{ x: 1, y: 0 }}
           style={ribbonStyleRose}
@@ -310,7 +314,7 @@ function GradientCard({ children, style, cardRadius }: { children: React.ReactNo
         />}
         {/* Right-side accent ribbon - reduced for Coral Bloom */}
         {!isCoral && <LinearGradient
-          colors={ribbonRight}
+          colors={useEnhancedClassic ? ['rgba(37, 99, 235, 0.12)', 'rgba(255, 255, 255, 0.08)'] : ribbonRight}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={ribbonStyleRight}
@@ -429,12 +433,90 @@ function GradientCard({ children, style, cardRadius }: { children: React.ReactNo
         )}
         {/* Soft white highlight overlay */}
         <LinearGradient
-          colors={ribbonHighlight}
+          colors={useEnhancedClassic ? ['rgba(255, 255, 255, 0.50)', 'rgba(255, 255, 255, 0.15)', 'rgba(255, 255, 255, 0)'] : ribbonHighlight}
           start={{ x: 0, y: 0 }}
           end={{ x: 0, y: 1 }}
           style={styles.ribbonHighlight}
           pointerEvents="none"
         />
+        {/* Enhanced Classic effect layers for salmon-avocado-bowl */}
+        {useEnhancedClassic && (
+          <>
+            {/* Diagonal light plane 1 */}
+            <LinearGradient
+              colors={['rgba(234, 244, 255, 0.5)', 'rgba(191, 223, 255, 0.3)']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.classicDiagonalPlane1}
+              pointerEvents="none"
+            />
+            {/* Diagonal light plane 2 */}
+            <LinearGradient
+              colors={['rgba(191, 223, 255, 0.45)', 'rgba(147, 197, 253, 0.25)']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.classicDiagonalPlane2}
+              pointerEvents="none"
+            />
+            {/* Diagonal light plane 3 */}
+            <LinearGradient
+              colors={['rgba(234, 244, 255, 0.4)', 'rgba(147, 197, 253, 0.25)']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.classicDiagonalPlane3}
+              pointerEvents="none"
+            />
+            {/* Flow lines */}
+            <View style={styles.classicFlowLine1} pointerEvents="none" />
+            <View style={styles.classicFlowLine2} pointerEvents="none" />
+            {/* Dot pattern */}
+            <View style={styles.classicDotPatternContainer} pointerEvents="none">
+              {[
+                { right: 0, top: 0, opacity: 0.55, size: 3 },
+                { right: 5, top: 0, opacity: 0.50, size: 3 },
+                { right: 10, top: 0, opacity: 0.42, size: 2.5 },
+                { right: 15, top: 0, opacity: 0.32, size: 2.5 },
+                { right: 0, top: 4, opacity: 0.48, size: 3 },
+                { right: 5, top: 4, opacity: 0.42, size: 2.5 },
+                { right: 10, top: 4, opacity: 0.35, size: 2.5 },
+                { right: 15, top: 4, opacity: 0.25, size: 2 },
+                { right: 0, top: 8, opacity: 0.40, size: 2.5 },
+                { right: 5, top: 8, opacity: 0.35, size: 2.5 },
+                { right: 10, top: 8, opacity: 0.28, size: 2 },
+                { right: 0, top: 12, opacity: 0.32, size: 2.5 },
+                { right: 5, top: 12, opacity: 0.25, size: 2 },
+                { right: 0, top: 16, opacity: 0.24, size: 2.5 },
+                { right: 5, top: 16, opacity: 0.18, size: 2 },
+                { right: 0, top: 20, opacity: 0.15, size: 2 },
+              ].map((dot, i) => (
+                <View
+                  key={i}
+                  style={[
+                    styles.classicDot,
+                    {
+                      right: dot.right,
+                      top: dot.top,
+                      opacity: dot.opacity,
+                      width: dot.size,
+                      height: dot.size,
+                      borderRadius: dot.size / 2,
+                    },
+                  ]}
+                />
+              ))}
+            </View>
+            {/* Glass overlay */}
+            <LinearGradient
+              colors={['rgba(255, 255, 255, 0.3)', 'rgba(255, 255, 255, 0.1)', 'rgba(255, 255, 255, 0.15)', 'rgba(255, 255, 255, 0.05)']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.classicCardGlassOverlay}
+              pointerEvents="none"
+            />
+            {/* Glass inner border */}
+            <View style={styles.classicGlassInnerBorder} pointerEvents="none" />
+          </>
+        )}
       </LinearGradient>
       {/* Content layer - above background */}
       <View style={styles.cardContent}>
@@ -448,7 +530,7 @@ export default function NutritionMealScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const theme = useTheme();
-  const { auroraGradient, auroraTitle, auroraSubtitle, shortcutBorderColor, shortcutShadowColor, shortcutIconBg, shortcutIconBorder, cardRadius } = getAuroraTokens(theme.id);
+  const { auroraGradient, auroraTitle, auroraSubtitle, cardRadius } = getAuroraTokens(theme.id);
   const [creatorMeals, setCreatorMeals] = useState<typeof NUTRITION_MEALS>([]);
 
   useEffect(() => {
@@ -497,34 +579,34 @@ export default function NutritionMealScreen() {
             <View style={styles.statsRow}>
               {auroraGradient ? (
                 <>
-                  <View style={[styles.statCard, { borderColor: shortcutBorderColor, shadowColor: shortcutShadowColor }]}>
-                    <LinearGradient colors={auroraGradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.statCardGradient} pointerEvents="none">
+                  <View style={[styles.statCard, { borderColor: '#7DBBFF', shadowColor: 'rgba(59, 130, 246, 0.35)', shadowOpacity: 0.15, shadowRadius: 12 }]}>
+                    <LinearGradient colors={['#F3F9FF', '#E6F2FF', '#D6EAFF', '#C7E1FF', '#BFDFFF']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.statCardGradient} pointerEvents="none">
                       {/* Ribbons for DAELY Classic Glow effect */}
-                      <LinearGradient colors={['rgba(37, 99, 235, 0.08)', 'rgba(14, 165, 233, 0.10)']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.statCardRibbonTop} pointerEvents="none" />
-                      <LinearGradient colors={['rgba(219, 234, 254, 0.55)', 'rgba(240, 249, 255, 0.75)']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.statCardRibbonMid} pointerEvents="none" />
-                      <LinearGradient colors={['rgba(255, 255, 255, 0.70)', 'rgba(255, 255, 255, 0.30)']} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={styles.statCardRibbonHighlight} pointerEvents="none" />
+                      <LinearGradient colors={['rgba(37, 99, 235, 0.12)', 'rgba(14, 165, 233, 0.15)']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.statCardRibbonTop} pointerEvents="none" />
+                      <LinearGradient colors={['rgba(219, 234, 254, 0.65)', 'rgba(240, 249, 255, 0.85)']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.statCardRibbonMid} pointerEvents="none" />
+                      <LinearGradient colors={['rgba(255, 255, 255, 0.50)', 'rgba(255, 255, 255, 0.15)', 'rgba(255, 255, 255, 0)']} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={styles.statCardRibbonHighlight} pointerEvents="none" />
                     </LinearGradient>
                     <View style={styles.statCardContent}>
                       <Text style={[styles.statValue, { color: auroraTitle }]}>{meal.kcal}</Text>
                       <Text style={[styles.statLabel, { color: auroraSubtitle }]}>KCAL</Text>
                     </View>
                   </View>
-                  <View style={[styles.statCard, { borderColor: shortcutBorderColor, shadowColor: shortcutShadowColor }]}>
-                    <LinearGradient colors={auroraGradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.statCardGradient} pointerEvents="none">
-                      <LinearGradient colors={['rgba(37, 99, 235, 0.08)', 'rgba(14, 165, 233, 0.10)']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.statCardRibbonTop} pointerEvents="none" />
-                      <LinearGradient colors={['rgba(219, 234, 254, 0.55)', 'rgba(240, 249, 255, 0.75)']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.statCardRibbonMid} pointerEvents="none" />
-                      <LinearGradient colors={['rgba(255, 255, 255, 0.70)', 'rgba(255, 255, 255, 0.30)']} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={styles.statCardRibbonHighlight} pointerEvents="none" />
+                  <View style={[styles.statCard, { borderColor: '#7DBBFF', shadowColor: 'rgba(59, 130, 246, 0.35)', shadowOpacity: 0.15, shadowRadius: 12 }]}>
+                    <LinearGradient colors={['#F3F9FF', '#E6F2FF', '#D6EAFF', '#C7E1FF', '#BFDFFF']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.statCardGradient} pointerEvents="none">
+                      <LinearGradient colors={['rgba(37, 99, 235, 0.12)', 'rgba(14, 165, 233, 0.15)']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.statCardRibbonTop} pointerEvents="none" />
+                      <LinearGradient colors={['rgba(219, 234, 254, 0.65)', 'rgba(240, 249, 255, 0.85)']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.statCardRibbonMid} pointerEvents="none" />
+                      <LinearGradient colors={['rgba(255, 255, 255, 0.50)', 'rgba(255, 255, 255, 0.15)', 'rgba(255, 255, 255, 0)']} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={styles.statCardRibbonHighlight} pointerEvents="none" />
                     </LinearGradient>
                     <View style={styles.statCardContent}>
                       <Text style={[styles.statValue, { color: auroraTitle }]}>{meal.protein}g</Text>
                       <Text style={[styles.statLabel, { color: auroraSubtitle }]}>Eiwit</Text>
                     </View>
                   </View>
-                  <View style={[styles.statCard, { borderColor: shortcutBorderColor, shadowColor: shortcutShadowColor }]}>
-                    <LinearGradient colors={auroraGradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.statCardGradient} pointerEvents="none">
-                      <LinearGradient colors={['rgba(37, 99, 235, 0.08)', 'rgba(14, 165, 233, 0.10)']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.statCardRibbonTop} pointerEvents="none" />
-                      <LinearGradient colors={['rgba(219, 234, 254, 0.55)', 'rgba(240, 249, 255, 0.75)']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.statCardRibbonMid} pointerEvents="none" />
-                      <LinearGradient colors={['rgba(255, 255, 255, 0.70)', 'rgba(255, 255, 255, 0.30)']} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={styles.statCardRibbonHighlight} pointerEvents="none" />
+                  <View style={[styles.statCard, { borderColor: '#7DBBFF', shadowColor: 'rgba(59, 130, 246, 0.35)', shadowOpacity: 0.15, shadowRadius: 12 }]}>
+                    <LinearGradient colors={['#F3F9FF', '#E6F2FF', '#D6EAFF', '#C7E1FF', '#BFDFFF']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.statCardGradient} pointerEvents="none">
+                      <LinearGradient colors={['rgba(37, 99, 235, 0.12)', 'rgba(14, 165, 233, 0.15)']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.statCardRibbonTop} pointerEvents="none" />
+                      <LinearGradient colors={['rgba(219, 234, 254, 0.65)', 'rgba(240, 249, 255, 0.85)']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.statCardRibbonMid} pointerEvents="none" />
+                      <LinearGradient colors={['rgba(255, 255, 255, 0.50)', 'rgba(255, 255, 255, 0.15)', 'rgba(255, 255, 255, 0)']} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={styles.statCardRibbonHighlight} pointerEvents="none" />
                     </LinearGradient>
                     <View style={styles.statCardContent}>
                       <Text style={[styles.statValueSmall, { color: auroraTitle }]}>{prepTime}</Text>
@@ -552,7 +634,7 @@ export default function NutritionMealScreen() {
 
             {auroraGradient ? (
               <TouchableOpacity
-                style={[styles.shareButton, { borderColor: shortcutBorderColor, shadowColor: shortcutShadowColor }]}
+                style={[styles.shareButton, { borderColor: '#7DBBFF', shadowColor: 'rgba(59, 130, 246, 0.35)', shadowOpacity: 0.15, shadowRadius: 12 }]}
                 onPress={() => router.push({
                   pathname: '/messages/share',
                   params: {
@@ -562,17 +644,17 @@ export default function NutritionMealScreen() {
                   },
                 })}
               >
-                <LinearGradient colors={auroraGradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.shareButtonGradient} pointerEvents="none">
+                <LinearGradient colors={['#F3F9FF', '#E6F2FF', '#D6EAFF', '#C7E1FF', '#BFDFFF']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.shareButtonGradient} pointerEvents="none">
                   {/* Ribbons for DAELY Classic Glow effect */}
-                  <LinearGradient colors={['rgba(37, 99, 235, 0.08)', 'rgba(14, 165, 233, 0.10)']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.shareButtonRibbonTop} pointerEvents="none" />
-                  <LinearGradient colors={['rgba(219, 234, 254, 0.55)', 'rgba(240, 249, 255, 0.75)']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.shareButtonRibbonMid} pointerEvents="none" />
-                  <LinearGradient colors={['rgba(255, 255, 255, 0.70)', 'rgba(255, 255, 255, 0.30)']} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={styles.shareButtonRibbonHighlight} pointerEvents="none" />
+                  <LinearGradient colors={['rgba(37, 99, 235, 0.12)', 'rgba(14, 165, 233, 0.15)']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.shareButtonRibbonTop} pointerEvents="none" />
+                  <LinearGradient colors={['rgba(219, 234, 254, 0.65)', 'rgba(240, 249, 255, 0.85)']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.shareButtonRibbonMid} pointerEvents="none" />
+                  <LinearGradient colors={['rgba(255, 255, 255, 0.50)', 'rgba(255, 255, 255, 0.15)', 'rgba(255, 255, 255, 0)']} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={styles.shareButtonRibbonHighlight} pointerEvents="none" />
                 </LinearGradient>
                 <View style={styles.shareButtonContent}>
-                  <View style={[styles.shareIconContainer, { backgroundColor: shortcutIconBg, borderColor: shortcutIconBorder }]}>
-                    <MaterialCommunityIcons name="share-outline" size={20} color={auroraSubtitle} />
+                  <View style={[styles.shareIconContainer, { backgroundColor: 'rgba(255, 255, 255, 0.95)', borderColor: 'rgba(96, 165, 250, 0.65)' }]}>
+                    <MaterialCommunityIcons name="share-outline" size={20} color="#2098FF" />
                   </View>
-                  <Text style={[styles.shareButtonText, { color: auroraTitle }]}>Deel via berichten</Text>
+                  <Text style={[styles.shareButtonText, { color: '#2098FF' }]}>Deel via berichten</Text>
                 </View>
               </TouchableOpacity>
             ) : (
@@ -973,5 +1055,83 @@ const styles = StyleSheet.create({
     padding: 16,
     position: 'relative',
     zIndex: 1,
+  },
+  // Enhanced Classic effect layers for salmon-avocado-bowl
+  classicDiagonalPlane1: {
+    position: 'absolute',
+    top: -60,
+    left: -60,
+    width: 280,
+    height: 280,
+    transform: [{ rotate: '-25deg' }],
+  },
+  classicDiagonalPlane2: {
+    position: 'absolute',
+    top: -40,
+    right: -80,
+    width: 240,
+    height: 240,
+    transform: [{ rotate: '35deg' }],
+  },
+  classicDiagonalPlane3: {
+    position: 'absolute',
+    bottom: -50,
+    left: -40,
+    width: 200,
+    height: 200,
+    transform: [{ rotate: '-15deg' }],
+  },
+  classicFlowLine1: {
+    position: 'absolute',
+    top: 40,
+    left: -20,
+    width: 180,
+    height: 1,
+    backgroundColor: 'rgba(147, 197, 253, 0.3)',
+    transform: [{ rotate: '-25deg' }],
+  },
+  classicFlowLine2: {
+    position: 'absolute',
+    bottom: 60,
+    left: -20,
+    width: 160,
+    height: 1,
+    backgroundColor: 'rgba(147, 197, 253, 0.25)',
+    transform: [{ rotate: '-15deg' }],
+  },
+  classicDotPatternContainer: {
+    position: 'absolute',
+    right: 12,
+    top: 12,
+    width: 24,
+    height: 28,
+  },
+  classicDot: {
+    position: 'absolute',
+    backgroundColor: 'rgba(59, 130, 246, 0.7)',
+  },
+  classicShineOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: '45%',
+  },
+  classicCardGlassOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+  classicGlassInnerBorder: {
+    position: 'absolute',
+    top: 1,
+    left: 1,
+    right: 1,
+    bottom: 1,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.4)',
   },
 });
