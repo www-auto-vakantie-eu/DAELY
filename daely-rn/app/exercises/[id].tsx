@@ -18,9 +18,6 @@ export default function ExerciseDetailScreen() {
   const screenWidth = Dimensions.get('window').width;
   const slideWidth = Platform.OS === 'web' ? Math.min(screenWidth, 430) : screenWidth;
 
-  // Target exercise 1-1 for DAELY Classic styling
-  const isExerciseClassicPilot = id === '1-1';
-
   const exercise = React.useMemo(() => {
     if (!id) return null;
 
@@ -125,15 +122,6 @@ export default function ExerciseDetailScreen() {
     return ['Geen specifieke benodigdheden'];
   };
 
-  const getDifficultyColor = (level: string) => {
-    switch(level) {
-      case 'Beginner': return '#10B981';
-      case 'Gemiddeld': return '#F59E0B';
-      case 'Gevorderd': return '#EF4444';
-      default: return '#6B7280';
-    }
-  };
-
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
@@ -164,91 +152,89 @@ export default function ExerciseDetailScreen() {
 
   const renderSection = (title: string, icon: string, children: React.ReactNode) => (
     <View style={[styles.section, {
-      backgroundColor: isExerciseClassicPilot ? '#F3F9FF' : theme.card,
-      borderColor: isExerciseClassicPilot ? '#7DBBFF' : theme.border,
-      shadowColor: isExerciseClassicPilot ? 'rgba(59, 130, 246, 0.35)' : undefined,
-      shadowOpacity: isExerciseClassicPilot ? 0.15 : undefined,
-      shadowRadius: isExerciseClassicPilot ? 12 : undefined,
-      shadowOffset: isExerciseClassicPilot ? { width: 0, height: 2 } : undefined,
-      elevation: isExerciseClassicPilot ? 4 : undefined,
+      backgroundColor: '#F3F9FF',
+      borderColor: '#7DBBFF',
+      shadowColor: 'rgba(59, 130, 246, 0.35)',
+      shadowOpacity: 0.15,
+      shadowRadius: 12,
+      shadowOffset: { width: 0, height: 2 },
+      elevation: 4,
     }]}>
-      {isExerciseClassicPilot && (
-        <>
-          {/* Diagonal light plane 1 */}
-          <LinearGradient
-            colors={['rgba(234, 244, 255, 0.5)', 'rgba(191, 223, 255, 0.3)']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.classicDiagonalPlane1}
-            pointerEvents="none"
-          />
-          {/* Diagonal light plane 2 */}
-          <LinearGradient
-            colors={['rgba(191, 223, 255, 0.45)', 'rgba(147, 197, 253, 0.25)']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.classicDiagonalPlane2}
-            pointerEvents="none"
-          />
-          {/* Flow lines */}
-          <View style={styles.classicFlowLine1} pointerEvents="none" />
-          <View style={styles.classicFlowLine2} pointerEvents="none" />
-          {/* Dot pattern */}
-          <View style={styles.classicDotPatternContainer} pointerEvents="none">
-            {[
-              { right: 0, top: 0, opacity: 0.55, size: 3 },
-              { right: 5, top: 0, opacity: 0.50, size: 3 },
-              { right: 10, top: 0, opacity: 0.42, size: 2.5 },
-              { right: 15, top: 0, opacity: 0.32, size: 2.5 },
-              { right: 0, top: 4, opacity: 0.48, size: 3 },
-              { right: 5, top: 4, opacity: 0.42, size: 2.5 },
-              { right: 10, top: 4, opacity: 0.35, size: 2.5 },
-              { right: 15, top: 4, opacity: 0.25, size: 2 },
-              { right: 0, top: 8, opacity: 0.40, size: 2.5 },
-              { right: 5, top: 8, opacity: 0.35, size: 2.5 },
-              { right: 10, top: 8, opacity: 0.28, size: 2 },
-              { right: 0, top: 12, opacity: 0.32, size: 2.5 },
-              { right: 5, top: 12, opacity: 0.25, size: 2 },
-            ].map((dot, i) => (
-              <View
-                key={i}
-                style={[
-                  styles.classicDot,
-                  {
-                    right: dot.right,
-                    top: dot.top,
-                    opacity: dot.opacity,
-                    width: dot.size,
-                    height: dot.size,
-                    borderRadius: dot.size / 2,
-                  },
-                ]}
-              />
-            ))}
-          </View>
-          {/* Shine overlay */}
-          <LinearGradient
-            colors={['rgba(255, 255, 255, 0.5)', 'rgba(255, 255, 255, 0.15)', 'rgba(255, 255, 255, 0)']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 0, y: 1 }}
-            style={styles.sectionShineOverlay}
-            pointerEvents="none"
-          />
-          {/* Glass overlay */}
-          <LinearGradient
-            colors={['rgba(255, 255, 255, 0.3)', 'rgba(255, 255, 255, 0.1)', 'rgba(255, 255, 255, 0.15)', 'rgba(255, 255, 255, 0.05)']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.classicCardGlassOverlay}
-            pointerEvents="none"
-          />
-          {/* Glass inner border */}
-          <View style={styles.classicGlassInnerBorder} pointerEvents="none" />
-        </>
-      )}
+      <>
+        {/* Diagonal light plane 1 */}
+        <LinearGradient
+          colors={['rgba(234, 244, 255, 0.5)', 'rgba(191, 223, 255, 0.3)']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.classicDiagonalPlane1}
+          pointerEvents="none"
+        />
+        {/* Diagonal light plane 2 */}
+        <LinearGradient
+          colors={['rgba(191, 223, 255, 0.45)', 'rgba(147, 197, 253, 0.25)']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.classicDiagonalPlane2}
+          pointerEvents="none"
+        />
+        {/* Flow lines */}
+        <View style={styles.classicFlowLine1} pointerEvents="none" />
+        <View style={styles.classicFlowLine2} pointerEvents="none" />
+        {/* Dot pattern */}
+        <View style={styles.classicDotPatternContainer} pointerEvents="none">
+          {[
+            { right: 0, top: 0, opacity: 0.55, size: 3 },
+            { right: 5, top: 0, opacity: 0.50, size: 3 },
+            { right: 10, top: 0, opacity: 0.42, size: 2.5 },
+            { right: 15, top: 0, opacity: 0.32, size: 2.5 },
+            { right: 0, top: 4, opacity: 0.48, size: 3 },
+            { right: 5, top: 4, opacity: 0.42, size: 2.5 },
+            { right: 10, top: 4, opacity: 0.35, size: 2.5 },
+            { right: 15, top: 4, opacity: 0.25, size: 2 },
+            { right: 0, top: 8, opacity: 0.40, size: 2.5 },
+            { right: 5, top: 8, opacity: 0.35, size: 2.5 },
+            { right: 10, top: 8, opacity: 0.28, size: 2 },
+            { right: 0, top: 12, opacity: 0.32, size: 2.5 },
+            { right: 5, top: 12, opacity: 0.25, size: 2 },
+          ].map((dot, i) => (
+            <View
+              key={i}
+              style={[
+                styles.classicDot,
+                {
+                  right: dot.right,
+                  top: dot.top,
+                  opacity: dot.opacity,
+                  width: dot.size,
+                  height: dot.size,
+                  borderRadius: dot.size / 2,
+                },
+              ]}
+            />
+          ))}
+        </View>
+        {/* Shine overlay */}
+        <LinearGradient
+          colors={['rgba(255, 255, 255, 0.5)', 'rgba(255, 255, 255, 0.15)', 'rgba(255, 255, 255, 0)']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0, y: 1 }}
+          style={styles.sectionShineOverlay}
+          pointerEvents="none"
+        />
+        {/* Glass overlay */}
+        <LinearGradient
+          colors={['rgba(255, 255, 255, 0.3)', 'rgba(255, 255, 255, 0.1)', 'rgba(255, 255, 255, 0.15)', 'rgba(255, 255, 255, 0.05)']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.classicCardGlassOverlay}
+          pointerEvents="none"
+        />
+        {/* Glass inner border */}
+        <View style={styles.classicGlassInnerBorder} pointerEvents="none" />
+      </>
       <View style={styles.sectionHeader}>
-        <MaterialCommunityIcons name={icon as any} size={20} color={isExerciseClassicPilot ? '#1565E6' : theme.titleColor} />
-        <Text style={[styles.sectionTitle, { color: isExerciseClassicPilot ? '#061A40' : theme.titleColor }]}>{title}</Text>
+        <MaterialCommunityIcons name={icon as any} size={20} color="#1565E6" />
+        <Text style={[styles.sectionTitle, { color: '#061A40' }]}>{title}</Text>
       </View>
       {children}
     </View>
@@ -352,112 +338,110 @@ export default function ExerciseDetailScreen() {
           <View style={styles.content}>
             {/* Premium Title Card */}
             <View style={[styles.titleCard, {
-              backgroundColor: isExerciseClassicPilot ? '#F3F9FF' : theme.card,
-              borderColor: isExerciseClassicPilot ? '#7DBBFF' : theme.border,
-              shadowColor: isExerciseClassicPilot ? 'rgba(59, 130, 246, 0.35)' : undefined,
-              shadowOpacity: isExerciseClassicPilot ? 0.15 : undefined,
-              shadowRadius: isExerciseClassicPilot ? 12 : undefined,
-              shadowOffset: isExerciseClassicPilot ? { width: 0, height: 2 } : undefined,
-              elevation: isExerciseClassicPilot ? 4 : undefined,
+              backgroundColor: '#F3F9FF',
+              borderColor: '#7DBBFF',
+              shadowColor: 'rgba(59, 130, 246, 0.35)',
+              shadowOpacity: 0.15,
+              shadowRadius: 12,
+              shadowOffset: { width: 0, height: 2 },
+              elevation: 4,
             }]}>
-              {isExerciseClassicPilot && (
-                <>
-                  {/* Diagonal light plane 1 */}
-                  <LinearGradient
-                    colors={['rgba(234, 244, 255, 0.5)', 'rgba(191, 223, 255, 0.3)']}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                    style={styles.classicDiagonalPlane1}
-                    pointerEvents="none"
-                  />
-                  {/* Diagonal light plane 2 */}
-                  <LinearGradient
-                    colors={['rgba(191, 223, 255, 0.45)', 'rgba(147, 197, 253, 0.25)']}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                    style={styles.classicDiagonalPlane2}
-                    pointerEvents="none"
-                  />
-                  {/* Diagonal light plane 3 */}
-                  <LinearGradient
-                    colors={['rgba(234, 244, 255, 0.4)', 'rgba(147, 197, 253, 0.25)']}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                    style={styles.classicDiagonalPlane3}
-                    pointerEvents="none"
-                  />
-                  {/* Flow lines */}
-                  <View style={styles.classicFlowLine1} pointerEvents="none" />
-                  <View style={styles.classicFlowLine2} pointerEvents="none" />
-                  {/* Dot pattern */}
-                  <View style={styles.classicDotPatternContainer} pointerEvents="none">
-                    {[
-                      { right: 0, top: 0, opacity: 0.55, size: 3 },
-                      { right: 5, top: 0, opacity: 0.50, size: 3 },
-                      { right: 10, top: 0, opacity: 0.42, size: 2.5 },
-                      { right: 15, top: 0, opacity: 0.32, size: 2.5 },
-                      { right: 0, top: 4, opacity: 0.48, size: 3 },
-                      { right: 5, top: 4, opacity: 0.42, size: 2.5 },
-                      { right: 10, top: 4, opacity: 0.35, size: 2.5 },
-                      { right: 15, top: 4, opacity: 0.25, size: 2 },
-                      { right: 0, top: 8, opacity: 0.40, size: 2.5 },
-                      { right: 5, top: 8, opacity: 0.35, size: 2.5 },
-                      { right: 10, top: 8, opacity: 0.28, size: 2 },
-                      { right: 0, top: 12, opacity: 0.32, size: 2.5 },
-                      { right: 5, top: 12, opacity: 0.25, size: 2 },
-                      { right: 0, top: 16, opacity: 0.24, size: 2.5 },
-                      { right: 5, top: 16, opacity: 0.18, size: 2 },
-                    ].map((dot, i) => (
-                      <View
-                        key={i}
-                        style={[
-                          styles.classicDot,
-                          {
-                            right: dot.right,
-                            top: dot.top,
-                            opacity: dot.opacity,
-                            width: dot.size,
-                            height: dot.size,
-                            borderRadius: dot.size / 2,
-                          },
-                        ]}
-                      />
-                    ))}
-                  </View>
-                  {/* Shine overlay */}
-                  <LinearGradient
-                    colors={['rgba(255, 255, 255, 0.5)', 'rgba(255, 255, 255, 0.15)', 'rgba(255, 255, 255, 0)']}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 0, y: 1 }}
-                    style={styles.titleCardShineOverlay}
-                    pointerEvents="none"
-                  />
-                  {/* Glass overlay */}
-                  <LinearGradient
-                    colors={['rgba(255, 255, 255, 0.3)', 'rgba(255, 255, 255, 0.1)', 'rgba(255, 255, 255, 0.15)', 'rgba(255, 255, 255, 0.05)']}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                    style={styles.classicCardGlassOverlay}
-                    pointerEvents="none"
-                  />
-                  {/* Glass inner border */}
-                  <View style={styles.classicGlassInnerBorderTitle} pointerEvents="none" />
-                </>
-              )}
-              <Text style={[styles.exerciseName, { color: isExerciseClassicPilot ? '#061A40' : theme.titleColor }]}>
+              <>
+                {/* Diagonal light plane 1 */}
+                <LinearGradient
+                  colors={['rgba(234, 244, 255, 0.5)', 'rgba(191, 223, 255, 0.3)']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={styles.classicDiagonalPlane1}
+                  pointerEvents="none"
+                />
+                {/* Diagonal light plane 2 */}
+                <LinearGradient
+                  colors={['rgba(191, 223, 255, 0.45)', 'rgba(147, 197, 253, 0.25)']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={styles.classicDiagonalPlane2}
+                  pointerEvents="none"
+                />
+                {/* Diagonal light plane 3 */}
+                <LinearGradient
+                  colors={['rgba(234, 244, 255, 0.4)', 'rgba(147, 197, 253, 0.25)']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={styles.classicDiagonalPlane3}
+                  pointerEvents="none"
+                />
+                {/* Flow lines */}
+                <View style={styles.classicFlowLine1} pointerEvents="none" />
+                <View style={styles.classicFlowLine2} pointerEvents="none" />
+                {/* Dot pattern */}
+                <View style={styles.classicDotPatternContainer} pointerEvents="none">
+                  {[
+                    { right: 0, top: 0, opacity: 0.55, size: 3 },
+                    { right: 5, top: 0, opacity: 0.50, size: 3 },
+                    { right: 10, top: 0, opacity: 0.42, size: 2.5 },
+                    { right: 15, top: 0, opacity: 0.32, size: 2.5 },
+                    { right: 0, top: 4, opacity: 0.48, size: 3 },
+                    { right: 5, top: 4, opacity: 0.42, size: 2.5 },
+                    { right: 10, top: 4, opacity: 0.35, size: 2.5 },
+                    { right: 15, top: 4, opacity: 0.25, size: 2 },
+                    { right: 0, top: 8, opacity: 0.40, size: 2.5 },
+                    { right: 5, top: 8, opacity: 0.35, size: 2.5 },
+                    { right: 10, top: 8, opacity: 0.28, size: 2 },
+                    { right: 0, top: 12, opacity: 0.32, size: 2.5 },
+                    { right: 5, top: 12, opacity: 0.25, size: 2 },
+                    { right: 0, top: 16, opacity: 0.24, size: 2.5 },
+                    { right: 5, top: 16, opacity: 0.18, size: 2 },
+                  ].map((dot, i) => (
+                    <View
+                      key={i}
+                      style={[
+                        styles.classicDot,
+                        {
+                          right: dot.right,
+                          top: dot.top,
+                          opacity: dot.opacity,
+                          width: dot.size,
+                          height: dot.size,
+                          borderRadius: dot.size / 2,
+                        },
+                      ]}
+                    />
+                  ))}
+                </View>
+                {/* Shine overlay */}
+                <LinearGradient
+                  colors={['rgba(255, 255, 255, 0.5)', 'rgba(255, 255, 255, 0.15)', 'rgba(255, 255, 255, 0)']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 0, y: 1 }}
+                  style={styles.titleCardShineOverlay}
+                  pointerEvents="none"
+                />
+                {/* Glass overlay */}
+                <LinearGradient
+                  colors={['rgba(255, 255, 255, 0.3)', 'rgba(255, 255, 255, 0.1)', 'rgba(255, 255, 255, 0.15)', 'rgba(255, 255, 255, 0.05)']}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={styles.classicCardGlassOverlay}
+                  pointerEvents="none"
+                />
+                {/* Glass inner border */}
+                <View style={styles.classicGlassInnerBorderTitle} pointerEvents="none" />
+              </>
+              <Text style={[styles.exerciseName, { color: '#061A40' }]}>
                 {exercise.name}
               </Text>
-              <Text style={[styles.focusText, { color: isExerciseClassicPilot ? '#52627A' : theme.subtitleColor }]}>
+              <Text style={[styles.focusText, { color: '#52627A' }]}>
                 Focus op {exercise.spiergroep} • {exercise.categorie}
               </Text>
               <View style={styles.badgesRow}>
-                <View style={[styles.badge, { backgroundColor: isExerciseClassicPilot ? 'rgba(255, 255, 255, 0.8)' : getDifficultyColor(exercise.moeilijkheid) + '22', borderColor: isExerciseClassicPilot ? '#93C5FD' : undefined, borderWidth: isExerciseClassicPilot ? 1 : undefined }]}>
-                  <Text style={[styles.badgeText, { color: isExerciseClassicPilot ? '#1565E6' : getDifficultyColor(exercise.moeilijkheid) }]}>
+                <View style={[styles.badge, { backgroundColor: 'rgba(255, 255, 255, 0.8)', borderColor: '#93C5FD', borderWidth: 1 }]}>
+                  <Text style={[styles.badgeText, { color: '#1565E6' }]}>
                     {exercise.moeilijkheid}
                   </Text>
                 </View>
-                <View style={[styles.badge, { backgroundColor: isExerciseClassicPilot ? 'rgba(255, 255, 255, 0.8)' : theme.border, borderColor: isExerciseClassicPilot ? '#93C5FD' : undefined, borderWidth: isExerciseClassicPilot ? 1 : undefined }]}>
-                  <Text style={[styles.badgeText, { color: isExerciseClassicPilot ? '#1565E6' : theme.subtitleColor }]}>
+                <View style={[styles.badge, { backgroundColor: 'rgba(255, 255, 255, 0.8)', borderColor: '#93C5FD', borderWidth: 1 }]}>
+                  <Text style={[styles.badgeText, { color: '#1565E6' }]}>
                     {exercise.categorie}
                   </Text>
                 </View>
@@ -516,17 +500,17 @@ export default function ExerciseDetailScreen() {
               <Pressable
                 key={alt.id}
                 style={[styles.altItem, {
-                  backgroundColor: isExerciseClassicPilot ? 'rgba(255, 255, 255, 0.7)' : theme.background,
-                  borderColor: isExerciseClassicPilot ? '#93C5FD' : theme.border,
-                  borderWidth: isExerciseClassicPilot ? 1 : undefined,
+                  backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                  borderColor: '#93C5FD',
+                  borderWidth: 1,
                 }]}
                 onPress={() => router.push({
                   pathname: '/exercises/[id]',
                   params: { id: alt.id, disciplineSlug }
                 })}
               >
-                <Text style={[styles.altName, { color: isExerciseClassicPilot ? '#061A40' : theme.titleColor }]}>{alt.name}</Text>
-                <MaterialCommunityIcons name="chevron-right" size={20} color={isExerciseClassicPilot ? '#1565E6' : theme.subtitleColor} />
+                <Text style={[styles.altName, { color: '#061A40' }]}>{alt.name}</Text>
+                <MaterialCommunityIcons name="chevron-right" size={20} color="#1565E6" />
               </Pressable>
             ))
           )
@@ -540,11 +524,11 @@ export default function ExerciseDetailScreen() {
           <View style={styles.chipContainer}>
             {(exercise.equipment || getFallbackEquipment()).map((item, index) => (
               <View key={index} style={[styles.equipmentChip, {
-                backgroundColor: isExerciseClassicPilot ? 'rgba(255, 255, 255, 0.7)' : theme.background,
-                borderColor: isExerciseClassicPilot ? '#93C5FD' : theme.border,
-                borderWidth: isExerciseClassicPilot ? 1 : undefined,
+                backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                borderColor: '#93C5FD',
+                borderWidth: 1,
               }]}>
-                <Text style={[styles.equipmentText, { color: isExerciseClassicPilot ? '#1565E6' : theme.subtitleColor }]}>{item}</Text>
+                <Text style={[styles.equipmentText, { color: '#1565E6' }]}>{item}</Text>
               </View>
             ))}
           </View>
