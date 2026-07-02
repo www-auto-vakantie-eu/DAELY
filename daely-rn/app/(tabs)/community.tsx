@@ -41,7 +41,7 @@ function GradientCard({ children, style, cardRadius }: { children: React.ReactNo
 
   // Theme-aware gradient for card backgrounds
   const classicGlowGradient = isClassic
-    ? ['#FFFFFF', '#F8FBFF', '#EFF6FF']
+    ? ['#F3F9FF', '#E6F2FF', '#D6EAFF', '#C7E1FF', '#BFDFFF']
     : isForce
       ? currentTheme.gradients.aurora || ['#FFFFFF', '#FFF1F2', '#FFE4E6']
       : isSahara ? (currentTheme.gradients.aurora || ['#FFFFFF', '#FDF8EF', '#F3E4CF'])
@@ -72,7 +72,7 @@ function GradientCard({ children, style, cardRadius }: { children: React.ReactNo
   const sapphireGlow = isSapphire ? (currentTheme.colors.sapphireGlow || 'rgba(59, 130, 246, 0.16)') : undefined;
 
   return (
-    <View style={[styles.sectionCard, style, { borderColor: isClassic ? '#DCEBFF' : isForce ? '#FECACA' : isSahara ? '#E8D0B0' : isRetro ? '#E7C0A3' : isZen ? 'rgba(255, 255, 255, 0.12)' : isSapphire ? (currentTheme.colors.glassBorder || 'rgba(147, 197, 253, 0.25)') : isRuby ? (currentTheme.colors.rubyGlowBorder || 'rgba(244, 167, 185, 0.22)') : isCoral ? (currentTheme.colors.coralGlowBorder || 'rgba(249, 115, 107, 0.22)') : isMarble ? (currentTheme.colors.marbleGlowBorder || 'rgba(75, 85, 99, 0.20)') : undefined, shadowColor: isClassic ? '#0EA5E9' : isForce ? '#EF4444' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? 'rgba(0, 0, 0, 0.45)' : isSapphire ? (currentTheme.colors.glassShadow || 'rgba(59, 130, 246, 0.28)') : isRuby ? (currentTheme.colors.rubyGlowShadow || 'rgba(184, 50, 90, 0.24)') : isCoral ? (currentTheme.colors.coralGlowShadow || 'rgba(249, 115, 107, 0.20)') : isMarble ? (currentTheme.colors.marbleGlowShadow || 'rgba(75, 85, 99, 0.18)') : undefined, borderRadius: dynamicCardRadius, borderWidth: cardBorderWidth }]}>
+    <View style={[styles.sectionCard, style, { borderColor: isClassic ? '#7DBBFF' : isForce ? '#FECACA' : isSahara ? '#E8D0B0' : isRetro ? '#E7C0A3' : isZen ? 'rgba(255, 255, 255, 0.12)' : isSapphire ? (currentTheme.colors.glassBorder || 'rgba(147, 197, 253, 0.25)') : isRuby ? (currentTheme.colors.rubyGlowBorder || 'rgba(244, 167, 185, 0.22)') : isCoral ? (currentTheme.colors.coralGlowBorder || 'rgba(249, 115, 107, 0.22)') : isMarble ? (currentTheme.colors.marbleGlowBorder || 'rgba(75, 85, 99, 0.20)') : undefined, shadowColor: isClassic ? 'rgba(59, 130, 246, 0.35)' : isForce ? '#EF4444' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? 'rgba(0, 0, 0, 0.45)' : isSapphire ? (currentTheme.colors.glassShadow || 'rgba(59, 130, 246, 0.28)') : isRuby ? (currentTheme.colors.rubyGlowShadow || 'rgba(184, 50, 90, 0.24)') : isCoral ? (currentTheme.colors.coralGlowShadow || 'rgba(249, 115, 107, 0.20)') : isMarble ? (currentTheme.colors.marbleGlowShadow || 'rgba(75, 85, 99, 0.18)') : undefined, shadowOpacity: isClassic ? 0.15 : undefined, shadowRadius: isClassic ? 12 : undefined, borderRadius: dynamicCardRadius, borderWidth: cardBorderWidth }]}>
       {/* Background gradient layer - absolute full-cover */}
       <LinearGradient
         colors={classicGlowGradient}
@@ -83,7 +83,7 @@ function GradientCard({ children, style, cardRadius }: { children: React.ReactNo
       >
         {/* Top-left ribbon - reduced for Coral Bloom */}
         {!isCoral && <LinearGradient
-          colors={isClassic ? ['rgba(37, 99, 235, 0.08)', 'rgba(14, 165, 233, 0.10)'] : isForce ? (currentTheme.gradients.auroraBlue || ['rgba(254, 202, 202, 0.55)', 'rgba(254, 202, 202, 0.12)']) : isSahara ? (currentTheme.gradients.auroraBlue || ['rgba(232, 208, 176, 0.32)', 'rgba(232, 208, 176, 0.10)']) : isRetro ? (currentTheme.gradients.auroraBlue || ['rgba(27, 46, 107, 0.16)', 'rgba(27, 46, 107, 0.04)']) : isZen ? (currentTheme.gradients.auroraBlue || ['rgba(255, 255, 255, 0.10)', 'rgba(255, 255, 255, 0.03)']) : isSapphire ? (currentTheme.colors.glassLine1 || ['rgba(147, 197, 253, 0.04)', 'rgba(147, 197, 253, 0.01)']) : isRuby ? (currentTheme.gradients.auroraBlue || ['rgba(95, 15, 42, 0.28)', 'rgba(95, 15, 42, 0.08)']) : isCoral ? (currentTheme.gradients.auroraBlue || ['rgba(255, 177, 153, 0.32)', 'rgba(255, 214, 201, 0.16)']) : isMarble ? (currentTheme.gradients.auroraBlue || ['rgba(75, 85, 99, 0.18)', 'rgba(168, 162, 158, 0.10)']) : ['rgba(168, 162, 255, 0.55)', 'rgba(200, 195, 255, 0.12)']}
+          colors={isClassic ? ['rgba(37, 99, 235, 0.12)', 'rgba(14, 165, 233, 0.15)'] : isForce ? (currentTheme.gradients.auroraBlue || ['rgba(254, 202, 202, 0.55)', 'rgba(254, 202, 202, 0.12)']) : isSahara ? (currentTheme.gradients.auroraBlue || ['rgba(232, 208, 176, 0.32)', 'rgba(232, 208, 176, 0.10)']) : isRetro ? (currentTheme.gradients.auroraBlue || ['rgba(27, 46, 107, 0.16)', 'rgba(27, 46, 107, 0.04)']) : isZen ? (currentTheme.gradients.auroraBlue || ['rgba(255, 255, 255, 0.10)', 'rgba(255, 255, 255, 0.03)']) : isSapphire ? (currentTheme.colors.glassLine1 || ['rgba(147, 197, 253, 0.04)', 'rgba(147, 197, 253, 0.01)']) : isRuby ? (currentTheme.gradients.auroraBlue || ['rgba(95, 15, 42, 0.28)', 'rgba(95, 15, 42, 0.08)']) : isCoral ? (currentTheme.gradients.auroraBlue || ['rgba(255, 177, 153, 0.32)', 'rgba(255, 214, 201, 0.16)']) : isMarble ? (currentTheme.gradients.auroraBlue || ['rgba(75, 85, 99, 0.18)', 'rgba(168, 162, 158, 0.10)']) : ['rgba(168, 162, 255, 0.55)', 'rgba(200, 195, 255, 0.12)']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={ribbonStyleTop}
@@ -91,7 +91,7 @@ function GradientCard({ children, style, cardRadius }: { children: React.ReactNo
         />}
         {/* Mid-card ribbon - softer for Coral Bloom */}
         <LinearGradient
-          colors={isClassic ? ['rgba(219, 234, 254, 0.55)', 'rgba(240, 249, 255, 0.75)'] : isForce ? ['rgba(254, 226, 226, 0.42)', 'rgba(254, 226, 226, 0.20)'] : isSahara ? ['rgba(245, 230, 211, 0.42)', 'rgba(245, 230, 211, 0.20)'] : isRetro ? ['rgba(255, 253, 247, 0.42)', 'rgba(255, 253, 247, 0.20)'] : isZen ? ['rgba(255, 255, 255, 0.08)', 'rgba(255, 255, 255, 0.02)'] : isSapphire ? (currentTheme.colors.glassLine2 || ['rgba(59, 130, 246, 0.02)', 'rgba(59, 130, 246, 0.005)']) : isRuby ? ['rgba(255, 228, 236, 0.20)', 'rgba(255, 228, 236, 0.08)'] : isCoral ? [currentTheme.colors.coralSoftGlow || 'rgba(255, 214, 201, 0.12)', 'rgba(255, 177, 153, 0.04)'] : isMarble ? ['rgba(245, 245, 244, 0.75)', 'rgba(214, 211, 209, 0.20)'] : ['rgba(220, 180, 255, 0.42)', 'rgba(200, 195, 255, 0.20)']}
+          colors={isClassic ? ['rgba(219, 234, 254, 0.65)', 'rgba(240, 249, 255, 0.85)'] : isForce ? ['rgba(254, 226, 226, 0.42)', 'rgba(254, 226, 226, 0.20)'] : isSahara ? ['rgba(245, 230, 211, 0.42)', 'rgba(245, 230, 211, 0.20)'] : isRetro ? ['rgba(255, 253, 247, 0.42)', 'rgba(255, 253, 247, 0.20)'] : isZen ? ['rgba(255, 255, 255, 0.08)', 'rgba(255, 255, 255, 0.02)'] : isSapphire ? (currentTheme.colors.glassLine2 || ['rgba(59, 130, 246, 0.02)', 'rgba(59, 130, 246, 0.005)']) : isRuby ? ['rgba(255, 228, 236, 0.20)', 'rgba(255, 228, 236, 0.08)'] : isCoral ? [currentTheme.colors.coralSoftGlow || 'rgba(255, 214, 201, 0.12)', 'rgba(255, 177, 153, 0.04)'] : isMarble ? ['rgba(245, 245, 244, 0.75)', 'rgba(214, 211, 209, 0.20)'] : ['rgba(220, 180, 255, 0.42)', 'rgba(200, 195, 255, 0.20)']}
           start={isCoral ? { x: 0.2, y: 0 } : { x: 0, y: 0 }}
           end={isCoral ? { x: 0.8, y: 1 } : { x: 1, y: 1 }}
           style={isCoral ? { ...ribbonStyleMid, borderRadius: 20 } : ribbonStyleMid}
@@ -99,7 +99,7 @@ function GradientCard({ children, style, cardRadius }: { children: React.ReactNo
         />
         {/* Diagonal top-right ribbon - reduced for Coral Bloom */}
         {!isCoral && <LinearGradient
-          colors={isClassic ? ['rgba(37, 99, 235, 0.08)', 'rgba(14, 165, 233, 0.10)'] : isForce ? (currentTheme.gradients.auroraBlue || ['rgba(254, 202, 202, 0.75)', 'rgba(254, 202, 202, 0.38)']) : isSahara ? (currentTheme.gradients.auroraBlue || ['rgba(232, 208, 176, 0.32)', 'rgba(232, 208, 176, 0.10)']) : isRetro ? (currentTheme.gradients.auroraBlue || ['rgba(27, 46, 107, 0.16)', 'rgba(27, 46, 107, 0.04)']) : isZen ? (currentTheme.gradients.auroraBlue || ['rgba(255, 255, 255, 0.10)', 'rgba(255, 255, 255, 0.03)']) : isSapphire ? (currentTheme.colors.glassLine3 || ['rgba(147, 197, 253, 0.02)', 'rgba(147, 197, 253, 0.005)']) : isRuby ? (currentTheme.gradients.auroraBlue || ['rgba(95, 15, 42, 0.28)', 'rgba(95, 15, 42, 0.08)']) : isCoral ? (currentTheme.gradients.auroraBlue || ['rgba(255, 177, 153, 0.32)', 'rgba(255, 214, 201, 0.16)']) : isMarble ? (currentTheme.gradients.auroraBlue || ['rgba(75, 85, 99, 0.18)', 'rgba(168, 162, 158, 0.10)']) : ['rgba(168, 162, 255, 0.75)', 'rgba(200, 195, 255, 0.38)']}
+          colors={isClassic ? ['rgba(37, 99, 235, 0.12)', 'rgba(14, 165, 233, 0.15)'] : isForce ? (currentTheme.gradients.auroraBlue || ['rgba(254, 202, 202, 0.75)', 'rgba(254, 202, 202, 0.38)']) : isSahara ? (currentTheme.gradients.auroraBlue || ['rgba(232, 208, 176, 0.32)', 'rgba(232, 208, 176, 0.10)']) : isRetro ? (currentTheme.gradients.auroraBlue || ['rgba(27, 46, 107, 0.16)', 'rgba(27, 46, 107, 0.04)']) : isZen ? (currentTheme.gradients.auroraBlue || ['rgba(255, 255, 255, 0.10)', 'rgba(255, 255, 255, 0.03)']) : isSapphire ? (currentTheme.colors.glassLine3 || ['rgba(147, 197, 253, 0.02)', 'rgba(147, 197, 253, 0.005)']) : isRuby ? (currentTheme.gradients.auroraBlue || ['rgba(95, 15, 42, 0.28)', 'rgba(95, 15, 42, 0.08)']) : isCoral ? (currentTheme.gradients.auroraBlue || ['rgba(255, 177, 153, 0.32)', 'rgba(255, 214, 201, 0.16)']) : isMarble ? (currentTheme.gradients.auroraBlue || ['rgba(75, 85, 99, 0.18)', 'rgba(168, 162, 158, 0.10)']) : ['rgba(168, 162, 255, 0.75)', 'rgba(200, 195, 255, 0.38)']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={ribbonStyleBlue}
@@ -107,7 +107,7 @@ function GradientCard({ children, style, cardRadius }: { children: React.ReactNo
         />}
         {/* Diagonal bottom-left ribbon - reduced for Coral Bloom */}
         {!isCoral && <LinearGradient
-          colors={isClassic ? ['rgba(219, 234, 254, 0.55)', 'rgba(240, 249, 255, 0.75)'] : isForce ? (currentTheme.gradients.auroraRose || ['rgba(239, 68, 68, 0.65)', 'rgba(239, 68, 68, 0.30)']) : isSahara ? (currentTheme.gradients.auroraRose || ['rgba(212, 165, 116, 0.35)', 'rgba(212, 165, 116, 0.12)']) : isRetro ? (currentTheme.gradients.auroraRose || ['rgba(192, 57, 43, 0.22)', 'rgba(232, 98, 42, 0.06)']) : isZen ? (currentTheme.gradients.auroraRose || ['rgba(156, 163, 175, 0.14)', 'rgba(156, 163, 175, 0.05)']) : isSapphire ? (currentTheme.colors.glassLine2 || ['rgba(59, 130, 246, 0.02)', 'rgba(59, 130, 246, 0.005)']) : isRuby ? (currentTheme.gradients.auroraRose || ['rgba(184, 50, 90, 0.26)', 'rgba(228, 90, 122, 0.08)']) : isCoral ? (currentTheme.gradients.auroraRose || ['rgba(249, 115, 107, 0.30)', 'rgba(232, 93, 117, 0.12)']) : isMarble ? (currentTheme.gradients.auroraRose || ['rgba(245, 245, 244, 0.75)', 'rgba(214, 211, 209, 0.20)']) : ['rgba(220, 180, 255, 0.65)', 'rgba(230, 200, 255, 0.30)']}
+          colors={isClassic ? ['rgba(219, 234, 254, 0.65)', 'rgba(240, 249, 255, 0.85)'] : isForce ? (currentTheme.gradients.auroraRose || ['rgba(239, 68, 68, 0.65)', 'rgba(239, 68, 68, 0.30)']) : isSahara ? (currentTheme.gradients.auroraRose || ['rgba(212, 165, 116, 0.35)', 'rgba(212, 165, 116, 0.12)']) : isRetro ? (currentTheme.gradients.auroraRose || ['rgba(192, 57, 43, 0.22)', 'rgba(232, 98, 42, 0.06)']) : isZen ? (currentTheme.gradients.auroraRose || ['rgba(156, 163, 175, 0.14)', 'rgba(156, 163, 175, 0.05)']) : isSapphire ? (currentTheme.colors.glassLine2 || ['rgba(59, 130, 246, 0.02)', 'rgba(59, 130, 246, 0.005)']) : isRuby ? (currentTheme.gradients.auroraRose || ['rgba(184, 50, 90, 0.26)', 'rgba(228, 90, 122, 0.08)']) : isCoral ? (currentTheme.gradients.auroraRose || ['rgba(249, 115, 107, 0.30)', 'rgba(232, 93, 117, 0.12)']) : isMarble ? (currentTheme.gradients.auroraRose || ['rgba(245, 245, 244, 0.75)', 'rgba(214, 211, 209, 0.20)']) : ['rgba(220, 180, 255, 0.65)', 'rgba(230, 200, 255, 0.30)']}
           start={{ x: 0, y: 1 }}
           end={{ x: 1, y: 0 }}
           style={ribbonStyleRose}
@@ -115,7 +115,7 @@ function GradientCard({ children, style, cardRadius }: { children: React.ReactNo
         />}
         {/* Right-side accent ribbon - reduced for Coral Bloom */}
         {!isCoral && <LinearGradient
-          colors={isClassic ? ['rgba(37, 99, 235, 0.08)', 'rgba(255, 255, 255, 0.05)'] : isForce ? ['rgba(254, 202, 202, 0.38)', 'rgba(255, 255, 255, 0.05)'] : isSahara ? ['rgba(245, 230, 211, 0.42)', 'rgba(245, 230, 211, 0.20)'] : isRetro ? ['rgba(255, 253, 247, 0.42)', 'rgba(255, 253, 247, 0.20)'] : isZen ? ['rgba(255, 255, 255, 0.08)', 'rgba(255, 255, 255, 0.02)'] : isSapphire ? (currentTheme.colors.glassLine3 || ['rgba(147, 197, 253, 0.02)', 'rgba(147, 197, 253, 0.005)']) : isRuby ? ['rgba(255, 228, 236, 0.20)', 'rgba(255, 228, 236, 0.08)'] : isCoral ? ['rgba(255, 214, 201, 0.20)', 'rgba(255, 214, 201, 0.08)'] : isMarble ? ['rgba(245, 245, 244, 0.20)', 'rgba(214, 211, 209, 0.08)'] : ['rgba(180, 170, 255, 0.38)', 'rgba(255, 255, 255, 0.05)']}
+          colors={isClassic ? ['rgba(37, 99, 235, 0.12)', 'rgba(255, 255, 255, 0.08)'] : isForce ? ['rgba(254, 202, 202, 0.38)', 'rgba(255, 255, 255, 0.05)'] : isSahara ? ['rgba(245, 230, 211, 0.42)', 'rgba(245, 230, 211, 0.20)'] : isRetro ? ['rgba(255, 253, 247, 0.42)', 'rgba(255, 253, 247, 0.20)'] : isZen ? ['rgba(255, 255, 255, 0.08)', 'rgba(255, 255, 255, 0.02)'] : isSapphire ? (currentTheme.colors.glassLine3 || ['rgba(147, 197, 253, 0.02)', 'rgba(147, 197, 253, 0.005)']) : isRuby ? ['rgba(255, 228, 236, 0.20)', 'rgba(255, 228, 236, 0.08)'] : isCoral ? ['rgba(255, 214, 201, 0.20)', 'rgba(255, 214, 201, 0.08)'] : isMarble ? ['rgba(245, 245, 244, 0.20)', 'rgba(214, 211, 209, 0.08)'] : ['rgba(180, 170, 255, 0.38)', 'rgba(255, 255, 255, 0.05)']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={ribbonStyleRight}
@@ -240,6 +240,89 @@ function GradientCard({ children, style, cardRadius }: { children: React.ReactNo
           style={styles.ribbonHighlight}
           pointerEvents="none"
         />
+        {/* DAELY Classic effect layers */}
+        {/* Diagonal light plane 1 - white/translucent top-left to center */}
+        <LinearGradient
+          colors={['rgba(234, 244, 255, 0.5)', 'rgba(191, 223, 255, 0.3)']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.classicDiagonalPlane1}
+          pointerEvents="none"
+        />
+        {/* Diagonal light plane 2 - light blue middle */}
+        <LinearGradient
+          colors={['rgba(191, 223, 255, 0.45)', 'rgba(147, 197, 253, 0.25)']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.classicDiagonalPlane2}
+          pointerEvents="none"
+        />
+        {/* Diagonal light plane 3 - white/blue top-right */}
+        <LinearGradient
+          colors={['rgba(234, 244, 255, 0.4)', 'rgba(147, 197, 253, 0.25)']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.classicDiagonalPlane3}
+          pointerEvents="none"
+        />
+        {/* Flow line 1 - diagonal top-left */}
+        <View style={styles.classicFlowLine1} pointerEvents="none" />
+        {/* Flow line 2 - diagonal bottom-left */}
+        <View style={styles.classicFlowLine2} pointerEvents="none" />
+        {/* Dot pattern right side - organic cluster */}
+        <View style={styles.classicDotPatternContainer} pointerEvents="none">
+          {[
+            { right: 0, top: 0, opacity: 0.55, size: 3 },
+            { right: 5, top: 0, opacity: 0.50, size: 3 },
+            { right: 10, top: 0, opacity: 0.42, size: 2.5 },
+            { right: 15, top: 0, opacity: 0.32, size: 2.5 },
+            { right: 0, top: 4, opacity: 0.48, size: 3 },
+            { right: 5, top: 4, opacity: 0.42, size: 2.5 },
+            { right: 10, top: 4, opacity: 0.35, size: 2.5 },
+            { right: 15, top: 4, opacity: 0.25, size: 2 },
+            { right: 0, top: 8, opacity: 0.40, size: 2.5 },
+            { right: 5, top: 8, opacity: 0.35, size: 2.5 },
+            { right: 10, top: 8, opacity: 0.28, size: 2 },
+            { right: 0, top: 12, opacity: 0.32, size: 2.5 },
+            { right: 5, top: 12, opacity: 0.25, size: 2 },
+            { right: 0, top: 16, opacity: 0.24, size: 2.5 },
+            { right: 5, top: 16, opacity: 0.18, size: 2 },
+            { right: 0, top: 20, opacity: 0.15, size: 2 },
+          ].map((dot, i) => (
+            <View
+              key={i}
+              style={[
+                styles.classicDot,
+                {
+                  right: dot.right,
+                  top: dot.top,
+                  opacity: dot.opacity,
+                  width: dot.size,
+                  height: dot.size,
+                  borderRadius: dot.size / 2,
+                },
+              ]}
+            />
+          ))}
+        </View>
+        {/* White shine overlay */}
+        <LinearGradient
+          colors={['rgba(255, 255, 255, 0.5)', 'rgba(255, 255, 255, 0.15)', 'rgba(255, 255, 255, 0)']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0, y: 1 }}
+          style={styles.classicShineOverlay}
+          pointerEvents="none"
+        />
+        {/* Card-wide glass overlay */}
+        <LinearGradient
+          colors={['rgba(255, 255, 255, 0.3)', 'rgba(255, 255, 255, 0.1)', 'rgba(255, 255, 255, 0.15)', 'rgba(255, 255, 255, 0.05)']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.classicCardGlassOverlay}
+          pointerEvents="none"
+        />
+        {/* Glass inner border */}
+        <View style={styles.classicGlassInnerBorder} pointerEvents="none" />
       </LinearGradient>
       {/* Content layer - above background */}
       <View style={styles.cardContent}>
@@ -490,8 +573,8 @@ export default function CommunityScreen() {
   const isMineralGreen = currentTheme.id === 'mineralGreen';
   const isObsidianGold = currentTheme.id === 'obsidianGold';
 
-  const shortcutIconBg = isClassic ? 'rgba(219, 234, 254, 0.8)' : isForce ? 'rgba(254, 202, 202, 0.75)' : isSahara ? 'rgba(245, 230, 211, 0.75)' : isRetro ? 'rgba(255, 253, 247, 0.88)' : isZen ? 'rgba(255, 255, 255, 0.08)' : isSapphire ? 'rgba(59, 130, 246, 0.14)' : isRuby ? (currentTheme.colors.rubyIconBg || 'rgba(184, 50, 90, 0.14)') : isCoral ? (currentTheme.colors.coralIconBg || 'rgba(255, 177, 153, 0.24)') : 'rgba(255, 255, 255, 0.6)';
-  const shortcutIconBorder = isClassic ? '#DBEAFE' : isForce ? '#FCA5A5' : isSahara ? '#E8D0B0' : isRetro ? '#E7C0A3' : isZen ? 'rgba(255, 255, 255, 0.14)' : isSapphire ? 'rgba(147, 197, 253, 0.24)' : isRuby ? (currentTheme.colors.rubyIconBorder || 'rgba(244, 167, 185, 0.24)') : isCoral ? (currentTheme.colors.coralIconBorder || 'rgba(249, 115, 107, 0.26)') : undefined;
+  const shortcutIconBg = isClassic ? 'rgba(255, 255, 255, 0.95)' : isForce ? 'rgba(254, 202, 202, 0.75)' : isSahara ? 'rgba(245, 230, 211, 0.75)' : isRetro ? 'rgba(255, 253, 247, 0.88)' : isZen ? 'rgba(255, 255, 255, 0.08)' : isSapphire ? 'rgba(59, 130, 246, 0.14)' : isRuby ? (currentTheme.colors.rubyIconBg || 'rgba(184, 50, 90, 0.14)') : isCoral ? (currentTheme.colors.coralIconBg || 'rgba(255, 177, 153, 0.24)') : 'rgba(255, 255, 255, 0.6)';
+  const shortcutIconBorder = isClassic ? 'rgba(96, 165, 250, 0.65)' : isForce ? '#FCA5A5' : isSahara ? '#E8D0B0' : isRetro ? '#E7C0A3' : isZen ? 'rgba(255, 255, 255, 0.14)' : isSapphire ? 'rgba(147, 197, 253, 0.24)' : isRuby ? (currentTheme.colors.rubyIconBorder || 'rgba(244, 167, 185, 0.24)') : isCoral ? (currentTheme.colors.coralIconBorder || 'rgba(249, 115, 107, 0.26)') : undefined;
   const cardRadius = isSapphire ? (currentTheme.colors.cardRadius || 14) : isRetro ? 16 : isSahara ? 16 : isForce ? 16 : isZen ? 14 : isBordeauxVelvet ? (currentTheme.colors.cardRadius || 26) : isChampagneRose ? (currentTheme.colors.cardRadius || 28) : isIvoryGold ? (currentTheme.colors.cardRadius || 22) : isMineralGreen ? (currentTheme.colors.cardRadius || 24) : isObsidianGold ? (currentTheme.colors.cardRadius || 18) : 16;
   const [activeTab, setActiveTab] = useState<Tab>('feed');
   const [unreadMessageCount, setUnreadMessageCount] = useState(0);
@@ -859,7 +942,7 @@ export default function CommunityScreen() {
                 <View style={styles.feedPost}>
                   <View style={styles.feedHeader}>
                     <View style={[styles.feedAvatar, { backgroundColor: shortcutIconBg, borderColor: shortcutIconBorder }]}>
-                      <MaterialCommunityIcons name={item.icon as any} size={24} color={item.color} />
+                      <MaterialCommunityIcons name={item.icon as any} size={24} color={isClassic ? '#1565E6' : item.color} />
                     </View>
                     <View style={styles.feedHeaderInfo}>
                       <Text style={[styles.feedName, { color: theme.titleColor }]}>{item.name}</Text>
@@ -877,16 +960,16 @@ export default function CommunityScreen() {
                   <Text style={[styles.feedText, { color: theme.titleColor }]}>{item.text}</Text>
                   <View style={styles.feedActions}>
                     <Pressable style={[styles.feedAction, { backgroundColor: shortcutIconBg, borderColor: shortcutIconBorder }]}>
-                      <MaterialCommunityIcons name="comment-outline" size={18} color={theme.subtitleColor} />
-                      <Text style={[styles.feedActionText, { color: theme.subtitleColor }]}>Reageren</Text>
+                      <MaterialCommunityIcons name="comment-outline" size={18} color={isClassic ? '#2098FF' : theme.subtitleColor} />
+                      <Text style={[styles.feedActionText, { color: isClassic ? '#2098FF' : theme.subtitleColor }]}>Reageren</Text>
                     </Pressable>
                     <Pressable style={[styles.feedAction, { backgroundColor: shortcutIconBg, borderColor: shortcutIconBorder }]}>
-                      <MaterialCommunityIcons name="heart-outline" size={18} color={theme.subtitleColor} />
-                      <Text style={[styles.feedActionText, { color: theme.subtitleColor }]}>Support</Text>
+                      <MaterialCommunityIcons name="heart-outline" size={18} color={isClassic ? '#2098FF' : theme.subtitleColor} />
+                      <Text style={[styles.feedActionText, { color: isClassic ? '#2098FF' : theme.subtitleColor }]}>Support</Text>
                     </Pressable>
                     <Pressable style={[styles.feedAction, { backgroundColor: shortcutIconBg, borderColor: shortcutIconBorder }]}>
-                      <MaterialCommunityIcons name="share-variant" size={18} color={theme.subtitleColor} />
-                      <Text style={[styles.feedActionText, { color: theme.subtitleColor }]}>Delen</Text>
+                      <MaterialCommunityIcons name="share-variant" size={18} color={isClassic ? '#2098FF' : theme.subtitleColor} />
+                      <Text style={[styles.feedActionText, { color: isClassic ? '#2098FF' : theme.subtitleColor }]}>Delen</Text>
                     </Pressable>
                   </View>
                 </View>
@@ -1471,6 +1554,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12,
+    borderWidth: 1,
   },
   feedHeaderInfo: {
     flex: 1,
@@ -1520,6 +1604,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderRadius: 20,
     backgroundColor: '#FFFFFF',
+    borderWidth: 1,
   },
   feedActionText: {
     fontSize: 12,
@@ -1818,5 +1903,83 @@ const styles = StyleSheet.create({
   },
   bottomSpacer: {
     height: 22,
+  },
+  // DAELY Classic effect layers
+  classicDiagonalPlane1: {
+    position: 'absolute',
+    top: -60,
+    left: -60,
+    width: 280,
+    height: 280,
+    transform: [{ rotate: '-25deg' }],
+  },
+  classicDiagonalPlane2: {
+    position: 'absolute',
+    top: -40,
+    right: -80,
+    width: 240,
+    height: 240,
+    transform: [{ rotate: '35deg' }],
+  },
+  classicDiagonalPlane3: {
+    position: 'absolute',
+    bottom: -50,
+    left: -40,
+    width: 200,
+    height: 200,
+    transform: [{ rotate: '-15deg' }],
+  },
+  classicFlowLine1: {
+    position: 'absolute',
+    top: 40,
+    left: -20,
+    width: 180,
+    height: 1,
+    backgroundColor: 'rgba(147, 197, 253, 0.3)',
+    transform: [{ rotate: '-25deg' }],
+  },
+  classicFlowLine2: {
+    position: 'absolute',
+    bottom: 60,
+    left: -20,
+    width: 160,
+    height: 1,
+    backgroundColor: 'rgba(147, 197, 253, 0.25)',
+    transform: [{ rotate: '-15deg' }],
+  },
+  classicDotPatternContainer: {
+    position: 'absolute',
+    right: 12,
+    top: 12,
+    width: 24,
+    height: 28,
+  },
+  classicDot: {
+    position: 'absolute',
+    backgroundColor: 'rgba(59, 130, 246, 0.7)',
+  },
+  classicShineOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: '45%',
+  },
+  classicCardGlassOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+  classicGlassInnerBorder: {
+    position: 'absolute',
+    top: 1,
+    left: 1,
+    right: 1,
+    bottom: 1,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.4)',
   },
 });
