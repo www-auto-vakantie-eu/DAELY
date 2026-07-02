@@ -1022,10 +1022,6 @@ export default function CommunityScreen() {
 
             {/* DAELY Creators Section */}
             <View style={styles.daelyCreatorsSection}>
-              <Text style={[styles.daelyCreatorsTitle, { color: theme.titleColor }]}>DAELY Creators</Text>
-              <Text style={[styles.daelyCreatorsSubtitle, { color: theme.subtitleColor }]}>
-                Ontdek sporters, athletes en influencers die DAELY delen met hun community.
-              </Text>
               <GradientCard>
                 <Pressable
                   style={styles.daelyCreatorCard}
