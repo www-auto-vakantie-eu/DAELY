@@ -63,7 +63,7 @@ function getQuickActionTokens(activeThemeId: string) {
 
   // DAELY Classic Glow gradient for buttons
   const classicGlowGradient = isClassic
-    ? ['#FFFFFF', '#F8FCFF', '#EEF7FF', '#DCEEFF', '#C4DEFF']
+    ? ['#FFFFFF', '#F9FCFF', '#F2F8FF', '#E8F3FF', '#DCEEFF', '#CFE7FF', '#BFDFFF']
     : isForce
       ? currentTheme.gradients.aurora || ['#FFFFFF', '#FFF1F2', '#FFE4E6']
       : isSahara ? (currentTheme.gradients.aurora || ['#FFFFFF', '#FDF8EF', '#F3E4CF'])
@@ -83,18 +83,25 @@ function getQuickActionTokens(activeThemeId: string) {
   // Sapphire-specific shape tokens for quick actions
   const quickActionRadius = isSapphire ? (currentTheme.colors.shortcutRadius || 12) : 16;
   const quickActionIconRadius = isSapphire ? (currentTheme.colors.iconBubbleRadius || 12) : 14;
-  const quickActionShadowOpacity = isSapphire ? 0.32 : 0.12;
-  const quickActionShadowRadius = isSapphire ? 12 : 10;
+  const quickActionShadowOpacity = isSapphire ? 0.32 : isClassic ? 0.18 : 0.12;
+  const quickActionShadowRadius = isSapphire ? 12 : isClassic ? 14 : 10;
   const quickActionShadowOffset = isSapphire ? { width: 0, height: 4 } : { width: 0, height: 2 };
+
+  // DAELY Classic enhanced styling
+  const classicBorderColor = isClassic ? 'rgba(125, 187, 255, 0.85)' : undefined;
+  const classicShadowColor = isClassic ? 'rgba(59, 130, 246, 0.28)' : undefined;
+  const classicIconBg = isClassic ? 'rgba(248, 252, 255, 0.96)' : undefined;
+  const classicIconBorder = isClassic ? 'rgba(125, 187, 255, 0.85)' : undefined;
 
   return {
     gradient: classicGlowGradient,
-    iconColor: isClassic ? '#0F7BFF' : isForce ? '#DC2626' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? '#F9FAFB' : isSapphire ? '#EAF2FF' : isRuby ? '#FFE4EC' : isCoral ? '#7A2E2E' : isMarble ? '#4B5563' : '#4A3A8C',
-    iconBg: isClassic ? 'rgba(219, 234, 254, 0.7)' : isForce ? 'rgba(254, 202, 202, 0.7)' : isSahara ? 'rgba(245, 230, 211, 0.7)' : isRetro ? 'rgba(255, 253, 247, 0.7)' : isZen ? 'rgba(255, 255, 255, 0.08)' : isSapphire ? 'rgba(59, 130, 246, 0.14)' : isRuby ? (currentTheme.colors.rubyIconBg || 'rgba(184, 50, 90, 0.14)') : isCoral ? (currentTheme.colors.coralIconBg || 'rgba(255, 177, 153, 0.24)') : isMarble ? (currentTheme.colors.marbleIconBg || 'rgba(255, 255, 255, 0.92)') : 'rgba(255, 255, 255, 0.7)',
-    iconBorder: isClassic ? 'rgba(255, 255, 255, 0.9)' : isForce ? 'rgba(255, 255, 255, 0.9)' : isSahara ? 'rgba(255, 255, 255, 0.9)' : isRetro ? 'rgba(255, 255, 255, 0.9)' : isZen ? 'rgba(255, 255, 255, 0.16)' : isSapphire ? 'rgba(147, 197, 253, 0.24)' : isRuby ? (currentTheme.colors.rubyIconBorder || 'rgba(244, 167, 185, 0.24)') : isCoral ? (currentTheme.colors.coralIconBorder || 'rgba(249, 115, 107, 0.26)') : isMarble ? (currentTheme.colors.marbleIconBorder || 'rgba(107, 114, 128, 0.26)') : 'rgba(255, 255, 255, 0.9)',
-    titleColor: isClassic ? '#0F172A' : isForce ? '#7F1D1D' : isSahara ? '#7A4E24' : isRetro ? '#1B2E6B' : isZen ? '#F9FAFB' : isSapphire ? '#EAF2FF' : isRuby ? '#FFE4EC' : isCoral ? '#7A2E2E' : isMarble ? '#111827' : '#1E1B4B',
-    subtitleColor: isClassic ? '#475569' : isForce ? '#B91C1C' : isSahara ? '#9A6B3A' : isRetro ? '#B42318' : isZen ? '#D1D5DB' : isSapphire ? '#BFDBFE' : isRuby ? '#F4A7B9' : isCoral ? '#A95B5B' : isMarble ? '#4B5563' : '#4A3A8C',
-    shadowColor: isClassic ? 'rgba(96, 165, 250, 0.22)' : isForce ? '#EF4444' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? '#000000' : isSapphire ? 'rgba(59, 130, 246, 0.24)' : isRuby ? (currentTheme.colors.rubyGlowShadow || 'rgba(184, 50, 90, 0.24)') : isCoral ? (currentTheme.colors.coralGlowShadow || 'rgba(249, 115, 107, 0.20)') : isMarble ? (currentTheme.colors.marbleGlowShadow || 'rgba(75, 85, 99, 0.18)') : '#6B5B95',
+    iconColor: isClassic ? '#1565E6' : isForce ? '#DC2626' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? '#F9FAFB' : isSapphire ? '#EAF2FF' : isRuby ? '#FFE4EC' : isCoral ? '#7A2E2E' : isMarble ? '#4B5563' : '#4A3A8C',
+    iconBg: classicIconBg || (isForce ? 'rgba(254, 202, 202, 0.7)' : isSahara ? 'rgba(245, 230, 211, 0.7)' : isRetro ? 'rgba(255, 253, 247, 0.7)' : isZen ? 'rgba(255, 255, 255, 0.08)' : isSapphire ? 'rgba(59, 130, 246, 0.14)' : isRuby ? (currentTheme.colors.rubyIconBg || 'rgba(184, 50, 90, 0.14)') : isCoral ? (currentTheme.colors.coralIconBg || 'rgba(255, 177, 153, 0.24)') : isMarble ? (currentTheme.colors.marbleIconBg || 'rgba(255, 255, 255, 0.92)') : 'rgba(255, 255, 255, 0.7)'),
+    iconBorder: classicIconBorder || (isForce ? 'rgba(255, 255, 255, 0.9)' : isSahara ? 'rgba(255, 255, 255, 0.9)' : isRetro ? 'rgba(255, 255, 255, 0.9)' : isZen ? 'rgba(255, 255, 255, 0.16)' : isSapphire ? 'rgba(147, 197, 253, 0.24)' : isRuby ? (currentTheme.colors.rubyIconBorder || 'rgba(244, 167, 185, 0.24)') : isCoral ? (currentTheme.colors.coralIconBorder || 'rgba(249, 115, 107, 0.26)') : isMarble ? (currentTheme.colors.marbleIconBorder || 'rgba(107, 114, 128, 0.26)') : 'rgba(255, 255, 255, 0.9)'),
+    titleColor: isClassic ? '#061A40' : isForce ? '#7F1D1D' : isSahara ? '#7A4E24' : isRetro ? '#1B2E6B' : isZen ? '#F9FAFB' : isSapphire ? '#EAF2FF' : isRuby ? '#FFE4EC' : isCoral ? '#7A2E2E' : isMarble ? '#111827' : '#1E1B4B',
+    subtitleColor: isClassic ? '#52627A' : isForce ? '#B91C1C' : isSahara ? '#9A6B3A' : isRetro ? '#B42318' : isZen ? '#D1D5DB' : isSapphire ? '#BFDBFE' : isRuby ? '#F4A7B9' : isCoral ? '#A95B5B' : isMarble ? '#4B5563' : '#4A3A8C',
+    shadowColor: classicShadowColor || (isForce ? '#EF4444' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? '#000000' : isSapphire ? 'rgba(59, 130, 246, 0.24)' : isRuby ? (currentTheme.colors.rubyGlowShadow || 'rgba(184, 50, 90, 0.24)') : isCoral ? (currentTheme.colors.coralGlowShadow || 'rgba(249, 115, 107, 0.20)') : isMarble ? (currentTheme.colors.marbleGlowShadow || 'rgba(75, 85, 99, 0.18)') : '#6B5B95'),
+    borderColor: classicBorderColor,
     // Sapphire shape tokens
     quickActionRadius,
     quickActionIconRadius,
@@ -453,11 +460,12 @@ function getImageSource(image: string | ImageSourcePropType): ImageSourcePropTyp
 export default function DisciplinesScreen() {
   const { user, appSettings, activeThemeId } = useAppContext();
   const theme = useTheme();
+  const isClassic = theme.id === 'classic';
   const isCoral = theme.id === 'coralBloom';
   const router = useRouter();
   const [unreadMessageCount, setUnreadMessageCount] = useState(0);
   const visibleDisciplines = DISCIPLINES;
-  const { gradient, iconColor, iconBg, iconBorder, titleColor, subtitleColor, shadowColor, quickActionRadius, quickActionIconRadius, quickActionShadowOpacity, quickActionShadowRadius, quickActionShadowOffset } = getQuickActionTokens(activeThemeId);
+  const { gradient, iconColor, iconBg, iconBorder, titleColor, subtitleColor, shadowColor, borderColor, quickActionRadius, quickActionIconRadius, quickActionShadowOpacity, quickActionShadowRadius, quickActionShadowOffset } = getQuickActionTokens(activeThemeId);
   const handleOpen = (slug: string) => {
     router.push({ pathname: '/discipline/[slug]', params: { slug } });
   };
@@ -494,7 +502,7 @@ export default function DisciplinesScreen() {
                   key={action.key}
                   style={({ pressed }) => [
                     styles.quickActionButton,
-                    { shadowColor, borderRadius: quickActionRadius, shadowOpacity: quickActionShadowOpacity, shadowRadius: quickActionShadowRadius, shadowOffset: quickActionShadowOffset },
+                    { shadowColor, borderRadius: quickActionRadius, shadowOpacity: quickActionShadowOpacity, shadowRadius: quickActionShadowRadius, shadowOffset: quickActionShadowOffset, borderWidth: borderColor ? 1 : undefined, borderColor: borderColor || undefined },
                     pressed && { opacity: 0.85, transform: [{ scale: 0.98 }] },
                   ]}
                   onPress={() => router.push(action.route as any)}
@@ -505,12 +513,198 @@ export default function DisciplinesScreen() {
                     end={isCoral ? { x: 0.8, y: 1 } : { x: 1, y: 1 }}
                     style={[styles.quickActionButtonGradient, { borderRadius: quickActionRadius }]}
                   >
-                    <View style={[styles.quickActionIconBubble, { backgroundColor: iconBg, borderColor: iconBorder, borderRadius: quickActionIconRadius }]}>
-                      <MaterialCommunityIcons name={action.icon} size={20} color={iconColor} />
+                    {/* DAELY Classic effectlayers */}
+                    {isClassic && (
+                      <>
+                        {/* Subtle top-left light wash */}
+                        <LinearGradient
+                          colors={['rgba(255, 255, 255, 0.55)', 'rgba(255, 255, 255, 0.28)', 'rgba(255, 255, 255, 0.08)']}
+                          start={{ x: 0, y: 0 }}
+                          end={{ x: 0.5, y: 0.5 }}
+                          style={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            borderRadius: quickActionRadius,
+                            pointerEvents: 'none',
+                          }}
+                          pointerEvents="none"
+                        />
+                        {/* Premium diagonal plane 1 - subtle light refraction */}
+                        <LinearGradient
+                          colors={['rgba(255, 255, 255, 0.58)', 'rgba(234, 244, 255, 0.38)', 'rgba(191, 223, 255, 0.20)']}
+                          start={{ x: 0, y: 0 }}
+                          end={{ x: 0.8, y: 1 }}
+                          style={{
+                            position: 'absolute',
+                            top: -25,
+                            left: -15,
+                            width: 110,
+                            height: 90,
+                            transform: [{ rotate: '15deg' }],
+                            pointerEvents: 'none',
+                          }}
+                          pointerEvents="none"
+                        />
+                        {/* Premium diagonal plane 2 - soft blue depth */}
+                        <LinearGradient
+                          colors={['rgba(191, 223, 255, 0.30)', 'rgba(147, 197, 255, 0.18)', 'rgba(96, 165, 250, 0.08)']}
+                          start={{ x: 0.5, y: 0 }}
+                          end={{ x: 1, y: 0.7 }}
+                          style={{
+                            position: 'absolute',
+                            top: -10,
+                            right: -15,
+                            width: 95,
+                            height: 75,
+                            transform: [{ rotate: '-20deg' }],
+                            pointerEvents: 'none',
+                          }}
+                          pointerEvents="none"
+                        />
+                        {/* Subtle bottom-right blue glow */}
+                        <LinearGradient
+                          colors={['rgba(59, 130, 246, 0.10)', 'rgba(59, 130, 246, 0.05)', 'rgba(59, 130, 246, 0.01)']}
+                          start={{ x: 0.7, y: 0.7 }}
+                          end={{ x: 1, y: 1 }}
+                          style={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            borderRadius: quickActionRadius,
+                            pointerEvents: 'none',
+                          }}
+                          pointerEvents="none"
+                        />
+                        {/* Premium organic dots - subtle light particles */}
+                        <View style={{
+                          position: 'absolute',
+                          top: 10,
+                          right: 12,
+                          pointerEvents: 'none',
+                        }}>
+                          <View style={{
+                            width: 2,
+                            height: 2,
+                            borderRadius: 1,
+                            backgroundColor: 'rgba(59, 130, 246, 0.28)',
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                          }} />
+                          <View style={{
+                            width: 1.5,
+                            height: 1.5,
+                            borderRadius: 0.75,
+                            backgroundColor: 'rgba(96, 165, 250, 0.20)',
+                            position: 'absolute',
+                            top: 5,
+                            left: 6,
+                          }} />
+                          <View style={{
+                            width: 2,
+                            height: 2,
+                            borderRadius: 1,
+                            backgroundColor: 'rgba(147, 197, 253, 0.15)',
+                            position: 'absolute',
+                            top: 10,
+                            left: 2,
+                          }} />
+                          <View style={{
+                            width: 1.2,
+                            height: 1.2,
+                            borderRadius: 0.6,
+                            backgroundColor: 'rgba(59, 130, 246, 0.22)',
+                            position: 'absolute',
+                            top: 3,
+                            left: 14,
+                          }} />
+                        </View>
+                        {/* Premium glass overlay - refined to show blue */}
+                        <LinearGradient
+                          colors={['rgba(255, 255, 255, 0.12)', 'rgba(255, 255, 255, 0.04)', 'rgba(255, 255, 255, 0.06)', 'rgba(255, 255, 255, 0.02)']}
+                          start={{ x: 0, y: 0 }}
+                          end={{ x: 1, y: 1 }}
+                          style={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            borderRadius: quickActionRadius,
+                            pointerEvents: 'none',
+                          }}
+                          pointerEvents="none"
+                        />
+                        {/* Subtle top shine */}
+                        <LinearGradient
+                          colors={['rgba(255, 255, 255, 0.42)', 'rgba(255, 255, 255, 0.18)', 'rgba(255, 255, 255, 0.06)', 'rgba(255, 255, 255, 0.01)']}
+                          start={{ x: 0, y: 0 }}
+                          end={{ x: 0, y: 0.5 }}
+                          style={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            borderRadius: quickActionRadius,
+                            pointerEvents: 'none',
+                          }}
+                          pointerEvents="none"
+                        />
+                        {/* Subtle inner border */}
+                        <View style={{
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          right: 0,
+                          bottom: 0,
+                          borderRadius: quickActionRadius,
+                          borderWidth: 1,
+                          borderColor: 'rgba(255, 255, 255, 0.42)',
+                          pointerEvents: 'none',
+                        }} />
+                      </>
+                    )}
+                    <View style={[styles.quickActionIconBubble, { backgroundColor: iconBg, borderColor: iconBorder, borderRadius: quickActionIconRadius, shadowColor: 'rgba(59, 130, 246, 0.22)', shadowOpacity: isClassic ? 0.5 : 0, shadowRadius: isClassic ? 5 : 0, shadowOffset: { width: 0, height: 2 } }]}>
+                      {isClassic && (
+                        <LinearGradient
+                          colors={['rgba(255, 255, 255, 0.68)', 'rgba(255, 255, 255, 0.32)', 'rgba(255, 255, 255, 0.10)']}
+                          start={{ x: 0, y: 0 }}
+                          end={{ x: 0, y: 1 }}
+                          style={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            borderRadius: quickActionIconRadius,
+                            pointerEvents: 'none',
+                          }}
+                          pointerEvents="none"
+                        />
+                      )}
+                      {isClassic && (
+                        <View style={{
+                          position: 'absolute',
+                          top: 3,
+                          left: 3,
+                          width: 6,
+                          height: 6,
+                          borderRadius: 3,
+                          backgroundColor: 'rgba(255, 255, 255, 0.45)',
+                          pointerEvents: 'none',
+                        }} />
+                      )}
+                      <MaterialCommunityIcons name={action.icon} size={20} color={iconColor} style={{ zIndex: 1 }} />
                     </View>
-                    <View style={styles.quickActionTextWrap}>
-                      <Text style={[styles.quickActionText, { color: titleColor }]}>{action.title}</Text>
-                      <Text style={[styles.quickActionSubText, { color: subtitleColor }]}>{action.subtitle}</Text>
+                    <View style={[styles.quickActionTextWrap, { zIndex: 1 }]}>
+                      <Text style={[styles.quickActionText, { color: titleColor }]} numberOfLines={1}>{action.title}</Text>
+                      <Text style={[styles.quickActionSubText, { color: subtitleColor }]} numberOfLines={2}>{action.subtitle}</Text>
                     </View>
                   </LinearGradient>
                 </Pressable>

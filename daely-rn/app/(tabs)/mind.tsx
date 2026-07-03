@@ -57,18 +57,25 @@ function getQuickActionTokens(activeThemeId: string) {
   // Sapphire-specific shape tokens for quick actions
   const quickActionRadius = isSapphire ? (currentTheme.colors.shortcutRadius || 12) : 16;
   const quickActionIconRadius = isSapphire ? (currentTheme.colors.iconBubbleRadius || 12) : 14;
-  const quickActionShadowOpacity = isSapphire ? 0.32 : 0.08;
-  const quickActionShadowRadius = isSapphire ? 12 : 8;
+  const quickActionShadowOpacity = isSapphire ? 0.32 : isClassic ? 0.15 : 0.08;
+  const quickActionShadowRadius = isSapphire ? 12 : isClassic ? 12 : 8;
   const quickActionShadowOffset = isSapphire ? { width: 0, height: 4 } : { width: 0, height: 2 };
+
+  // DAELY Classic enhanced styling
+  const classicBorderColor = isClassic ? '#7DBBFF' : undefined;
+  const classicShadowColor = isClassic ? 'rgba(59, 130, 246, 0.35)' : undefined;
+  const classicIconBubbleBg = isClassic ? 'rgba(239, 247, 255, 0.85)' : undefined;
+  const classicIconBubbleBorder = isClassic ? 'rgba(142, 197, 255, 0.65)' : undefined;
 
   return {
     gradientColors: classicGlowGradient,
-    iconColor: isClassic ? '#2563EB' : isForce ? '#DC2626' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? '#E5E7EB' : isSapphire ? '#EAF2FF' : isRuby ? '#FFE4EC' : isCoral ? '#7A2E2E' : isMarble ? '#4B5563' : '#4A3A8C',
-    iconBubbleBg: isClassic ? 'rgba(219, 234, 254, 0.8)' : isForce ? 'rgba(254, 202, 202, 0.75)' : isSahara ? 'rgba(245, 230, 211, 0.75)' : isRetro ? 'rgba(255, 253, 247, 0.88)' : isZen ? 'rgba(255, 255, 255, 0.08)' : isSapphire ? 'rgba(59, 130, 246, 0.14)' : isRuby ? (currentTheme.colors.rubyIconBg || 'rgba(184, 50, 90, 0.14)') : isCoral ? (currentTheme.colors.coralIconBg || 'rgba(255, 177, 153, 0.24)') : isMarble ? (currentTheme.colors.marbleIconBg || 'rgba(255, 255, 255, 0.92)') : 'rgba(255, 255, 255, 0.7)',
-    iconBubbleBorder: isClassic ? '#DBEAFE' : isForce ? '#FCA5A5' : isSahara ? '#E8D0B0' : isRetro ? '#E7C0A3' : isZen ? 'rgba(255, 255, 255, 0.14)' : isSapphire ? 'rgba(147, 197, 253, 0.24)' : isRuby ? (currentTheme.colors.rubyIconBorder || 'rgba(244, 167, 185, 0.24)') : isCoral ? (currentTheme.colors.coralIconBorder || 'rgba(249, 115, 107, 0.26)') : isMarble ? (currentTheme.colors.marbleIconBorder || 'rgba(107, 114, 128, 0.26)') : 'rgba(255, 255, 255, 0.9)',
-    titleColor: isClassic ? '#0F172A' : isForce ? '#7F1D1D' : isSahara ? '#7A4E24' : isRetro ? '#1B2E6B' : isZen ? '#E5E7EB' : isSapphire ? '#EAF2FF' : isRuby ? '#FFE4EC' : isCoral ? '#7A2E2E' : isMarble ? '#111827' : '#1E1B4B',
-    subtitleColor: isClassic ? '#475569' : isForce ? '#B91C1C' : isSahara ? '#9A6B3A' : isRetro ? '#B42318' : isZen ? '#B0B0B0' : isSapphire ? '#BFDBFE' : isRuby ? '#F4A7B9' : isCoral ? '#A95B5B' : isMarble ? '#4B5563' : '#4A3A8C',
-    shadowColor: isClassic ? '#0EA5E9' : isForce ? '#EF4444' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? 'rgba(0, 0, 0, 0.45)' : isSapphire ? 'rgba(59, 130, 246, 0.24)' : isRuby ? (currentTheme.colors.rubyGlowShadow || 'rgba(184, 50, 90, 0.24)') : isCoral ? (currentTheme.colors.coralGlowShadow || 'rgba(249, 115, 107, 0.20)') : isMarble ? (currentTheme.colors.marbleGlowShadow || 'rgba(75, 85, 99, 0.18)') : '#6B5B95',
+    iconColor: isClassic ? '#1565E6' : isForce ? '#DC2626' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? '#E5E7EB' : isSapphire ? '#EAF2FF' : isRuby ? '#FFE4EC' : isCoral ? '#7A2E2E' : isMarble ? '#4B5563' : '#4A3A8C',
+    iconBubbleBg: isClassic ? 'rgba(239, 247, 255, 0.85)' : isForce ? 'rgba(254, 202, 202, 0.75)' : isSahara ? 'rgba(245, 230, 211, 0.75)' : isRetro ? 'rgba(255, 253, 247, 0.88)' : isZen ? 'rgba(255, 255, 255, 0.08)' : isSapphire ? 'rgba(59, 130, 246, 0.14)' : isRuby ? (currentTheme.colors.rubyIconBg || 'rgba(184, 50, 90, 0.14)') : isCoral ? (currentTheme.colors.coralIconBg || 'rgba(255, 177, 153, 0.24)') : isMarble ? (currentTheme.colors.marbleIconBg || 'rgba(255, 255, 255, 0.92)') : 'rgba(255, 255, 255, 0.7)',
+    iconBubbleBorder: isClassic ? 'rgba(142, 197, 255, 0.65)' : isForce ? '#FCA5A5' : isSahara ? '#E8D0B0' : isRetro ? '#E7C0A3' : isZen ? 'rgba(255, 255, 255, 0.14)' : isSapphire ? 'rgba(147, 197, 253, 0.24)' : isRuby ? (currentTheme.colors.rubyIconBorder || 'rgba(244, 167, 185, 0.24)') : isCoral ? (currentTheme.colors.coralIconBorder || 'rgba(249, 115, 107, 0.26)') : isMarble ? (currentTheme.colors.marbleIconBorder || 'rgba(107, 114, 128, 0.26)') : 'rgba(255, 255, 255, 0.9)',
+    titleColor: isClassic ? '#061A40' : isForce ? '#7F1D1D' : isSahara ? '#7A4E24' : isRetro ? '#1B2E6B' : isZen ? '#E5E7EB' : isSapphire ? '#EAF2FF' : isRuby ? '#FFE4EC' : isCoral ? '#7A2E2E' : isMarble ? '#111827' : '#1E1B4B',
+    subtitleColor: isClassic ? '#52627A' : isForce ? '#B91C1C' : isSahara ? '#9A6B3A' : isRetro ? '#B42318' : isZen ? '#B0B0B0' : isSapphire ? '#BFDBFE' : isRuby ? '#F4A7B9' : isCoral ? '#A95B5B' : isMarble ? '#4B5563' : '#4A3A8C',
+    shadowColor: isClassic ? 'rgba(59, 130, 246, 0.35)' : isForce ? '#EF4444' : isSahara ? '#C89B72' : isRetro ? '#1B2E6B' : isZen ? 'rgba(0, 0, 0, 0.45)' : isSapphire ? 'rgba(59, 130, 246, 0.24)' : isRuby ? (currentTheme.colors.rubyGlowShadow || 'rgba(184, 50, 90, 0.24)') : isCoral ? (currentTheme.colors.coralGlowShadow || 'rgba(249, 115, 107, 0.20)') : isMarble ? (currentTheme.colors.marbleGlowShadow || 'rgba(75, 85, 99, 0.18)') : '#6B5B95',
+    borderColor: isClassic ? '#7DBBFF' : undefined,
     // Sapphire shape tokens
     quickActionRadius,
     quickActionIconRadius,
@@ -80,6 +87,7 @@ function getQuickActionTokens(activeThemeId: string) {
 
 export default function MindScreen() {
   const theme = useTheme();
+  const isClassic = theme.id === 'classic';
   const isCoral = theme.id === 'coralBloom';
   const router = useRouter();
   const [unreadMessageCount, setUnreadMessageCount] = useState(0);
@@ -115,7 +123,7 @@ export default function MindScreen() {
               key={action.key}
               style={({ pressed }) => [
                 styles.quickActionButton,
-                { shadowColor, borderRadius: quickActionRadius, shadowOpacity: quickActionShadowOpacity, shadowRadius: quickActionShadowRadius, shadowOffset: quickActionShadowOffset },
+                { shadowColor, borderRadius: quickActionRadius, shadowOpacity: quickActionShadowOpacity, shadowRadius: quickActionShadowRadius, shadowOffset: quickActionShadowOffset, borderWidth: quickActionTokens.borderColor ? 1 : undefined, borderColor: quickActionTokens.borderColor || undefined },
                 pressed && { opacity: 0.85, transform: [{ scale: 0.98 }] },
               ]}
               onPress={() => router.push(action.route)}
@@ -126,6 +134,59 @@ export default function MindScreen() {
                 end={isCoral ? { x: 0.8, y: 1 } : { x: 1, y: 1 }}
                 style={[styles.quickActionButtonGradient, { borderRadius: quickActionRadius }]}
               >
+                {/* DAELY Classic effectlayers */}
+                {isClassic && (
+                  <>
+                    {/* Diagonal light plane */}
+                    <LinearGradient
+                      colors={['rgba(234, 244, 255, 0.4)', 'rgba(191, 223, 255, 0.25)']}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 1 }}
+                      style={{
+                        position: 'absolute',
+                        top: -20,
+                        right: -30,
+                        width: 80,
+                        height: 80,
+                        transform: [{ rotate: '25deg' }],
+                        pointerEvents: 'none',
+                      }}
+                      pointerEvents="none"
+                    />
+                    {/* Shine overlay */}
+                    <LinearGradient
+                      colors={['rgba(255, 255, 255, 0.45)', 'rgba(255, 255, 255, 0.1)', 'rgba(255, 255, 255, 0)']}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 0, y: 1 }}
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        borderRadius: quickActionRadius,
+                        pointerEvents: 'none',
+                      }}
+                      pointerEvents="none"
+                    />
+                    {/* Glass overlay */}
+                    <LinearGradient
+                      colors={['rgba(255, 255, 255, 0.25)', 'rgba(255, 255, 255, 0.08)', 'rgba(255, 255, 255, 0.12)', 'rgba(255, 255, 255, 0.04)']}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 1 }}
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        borderRadius: quickActionRadius,
+                        pointerEvents: 'none',
+                      }}
+                      pointerEvents="none"
+                    />
+                  </>
+                )}
                 <View style={[styles.quickActionIconBubble, { backgroundColor: quickActionTokens.iconBubbleBg, borderColor: quickActionTokens.iconBubbleBorder, borderRadius: quickActionIconRadius }]}>
                   <MaterialCommunityIcons name={action.icon} size={20} color={quickActionTokens.iconColor} />
                 </View>
