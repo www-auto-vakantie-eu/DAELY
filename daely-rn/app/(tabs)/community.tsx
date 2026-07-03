@@ -656,6 +656,20 @@ export default function CommunityScreen() {
     });
   }, [partnerSearch, partnerFilter]);
 
+  // Events filters
+  const [eventSearch, setEventSearch] = useState('');
+  const [eventFilter, setEventFilter] = useState('Alles');
+  const EVENT_FILTERS = ['Alles', 'Obstacle Race', 'Trail Run', 'Event'];
+
+  const filteredEvents = useMemo(() => {
+    return EVENTS.filter(event => {
+      const matchesSearch = event.name.toLowerCase().includes(eventSearch.toLowerCase()) ||
+                         event.description.toLowerCase().includes(eventSearch.toLowerCase());
+      const matchesFilter = eventFilter === 'Alles' || event.type === eventFilter;
+      return matchesSearch && matchesFilter;
+    });
+  }, [eventSearch, eventFilter]);
+
   // Handle post submission
   const handlePost = () => {
     if (!postText.trim()) return;
@@ -1150,11 +1164,51 @@ export default function CommunityScreen() {
           </View>
         )}
 
-        {/* Events Tab */}
+        {/* Events Tab - Zoekbalk + Filters */}
         {activeTab === 'events' && (
           <View style={styles.tabContent}>
+            {/* Search bar */}
+            <View style={[styles.searchBar, { backgroundColor: theme.card, borderColor: theme.border }]}>
+              <MaterialCommunityIcons name="magnify" size={20} color={theme.subtitleColor} />
+              <TextInput
+                style={[styles.searchInput, { color: theme.titleColor }]}
+                placeholder="Zoek events of challenges"
+                placeholderTextColor={theme.subtitleColor}
+                value={eventSearch}
+                onChangeText={setEventSearch}
+              />
+              {eventSearch.length > 0 && (
+                <Pressable onPress={() => setEventSearch('')}>
+                  <MaterialCommunityIcons name="close-circle" size={18} color={theme.subtitleColor} />
+                </Pressable>
+              )}
+            </View>
+
+            {/* Filters */}
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterRow}>
+              {EVENT_FILTERS.map((filter) => {
+                const isActive = eventFilter === filter;
+                return (
+                  <Pressable
+                    key={filter}
+                    style={({ pressed }) => [
+                      styles.filterChip,
+                      { borderColor: isActive ? '#2563EB' : '#DBEAFE', backgroundColor: isActive ? '#2563EB' : '#FFFFFF' },
+                      pressed && { opacity: 0.8 },
+                    ]}
+                    onPress={() => setEventFilter(filter)}
+                  >
+                    <Text style={[styles.filterChipText, { color: isActive ? '#FFFFFF' : '#1D4ED8' }]}>
+                      {filter}
+                    </Text>
+                  </Pressable>
+                );
+              })}
+            </ScrollView>
+
+            {/* Events */}
             <View style={styles.eventsSection}>
-              {EVENTS.map((event) => (
+              {filteredEvents.map((event) => (
                 <GradientCard key={event.id}>
                   <Pressable
                     style={styles.eventCard}
